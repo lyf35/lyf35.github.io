@@ -29,20 +29,21 @@
     var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="一个材料专业毕业的野生程序员的个人博客">
-<meta property="og:type" content="website">
-<meta property="og:title" content="操作系统：并发">
-<meta property="og:url" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91.html">
+  <meta name="description" content="Bristol大学的密码安全工作组为密码学和信息安全相关的博士准备了52个基本知识点，详情见http:&#x2F;&#x2F;www.cs.bris.ac.uk&#x2F;Research&#x2F;CryptographySecurity&#x2F;knowledge.html。 密码学是一个高度跨学科的领域，包含纯数学、计算机科学以及电子工程等多方面的知识。考虑读研读博的学生专业知识背景不一，Bristol大学对这方面的知识点进行了一个全面的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="转载：信息安全与密码学博士应该掌握的52个知识点">
+<meta property="og:url" content="http://lyf35.github.io/2020/11/05/%E8%BD%AC%E8%BD%BD-%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8D%9A%E5%A3%AB%E5%BA%94%E8%AF%A5%E6%8E%8C%E6%8F%A1%E7%9A%8452%E4%B8%AA%E7%9F%A5%E8%AF%86%E7%82%B9/index.html">
 <meta property="og:site_name" content="Yufei Luo&#39;s Blog">
-<meta property="og:description" content="一个材料专业毕业的野生程序员的个人博客">
+<meta property="og:description" content="Bristol大学的密码安全工作组为密码学和信息安全相关的博士准备了52个基本知识点，详情见http:&#x2F;&#x2F;www.cs.bris.ac.uk&#x2F;Research&#x2F;CryptographySecurity&#x2F;knowledge.html。 密码学是一个高度跨学科的领域，包含纯数学、计算机科学以及电子工程等多方面的知识。考虑读研读博的学生专业知识背景不一，Bristol大学对这方面的知识点进行了一个全面的">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-11-05T13:38:23.780Z">
-<meta property="article:modified_time" content="2020-11-05T13:38:23.780Z">
+<meta property="article:published_time" content="2020-11-05T13:38:23.776Z">
+<meta property="article:modified_time" content="2020-11-05T13:38:23.776Z">
 <meta property="article:author" content="Yufei Luo">
-<meta property="article:tag" content="操作系统">
+<meta property="article:tag" content="信息安全">
+<meta property="article:tag" content="转载">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91">
+<link rel="canonical" href="http://lyf35.github.io/2020/11/05/%E8%BD%AC%E8%BD%BD-%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8D%9A%E5%A3%AB%E5%BA%94%E8%AF%A5%E6%8E%8C%E6%8F%A1%E7%9A%8452%E4%B8%AA%E7%9F%A5%E8%AF%86%E7%82%B9/">
 
 
 <script data-pjax class="page-configurations">
@@ -50,13 +51,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>操作系统：并发 | Yufei Luo's Blog
-</title>
+  <title>转载：信息安全与密码学博士应该掌握的52个知识点 | Yufei Luo's Blog</title>
   
 
 
@@ -212,7 +212,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -224,6 +224,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#computer-engineering-e-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%B7%A5%E7%A8%8B%E6%96%B9%E9%9D%A2"><span class="nav-number">1.</span> <span class="nav-text"> Computer Engineering ([E]) 计算机工程方面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#theoretical-computer-science-f-%E7%90%86%E8%AE%BA%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6%E6%96%B9%E9%9D%A2"><span class="nav-number">2.</span> <span class="nav-text"> Theoretical Computer Science ([F]) 理论计算机科学方面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mathematical-background-ab-%E6%95%B0%E5%AD%A6%E8%83%8C%E6%99%AF"><span class="nav-number">3.</span> <span class="nav-text"> Mathematical Background ([A,B]) 数学背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#basic-practical-or-deployed-cryptographic-schemes-and-protocols-a-%E5%9F%BA%E6%9C%AC%E5%AF%86%E7%A0%81%E6%9C%BA%E5%88%B6%E4%B8%8E%E5%8D%8F%E8%AE%AE"><span class="nav-number">4.</span> <span class="nav-text"> Basic (Practical or Deployed) Cryptographic Schemes and Protocols ([A]) 基本密码机制与协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cryptographic-implementation-details-a-%E5%AF%86%E7%A0%81%E5%AE%9E%E7%8E%B0%E8%AF%A6%E6%83%85"><span class="nav-number">5.</span> <span class="nav-text"> Cryptographic Implementation Details ([A]) 密码实现详情</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#security-definitions-and-proofs-abc-%E5%AE%89%E5%85%A8%E5%AE%9A%E4%B9%89%E5%92%8C%E8%AF%81%E6%98%8E"><span class="nav-number">6.</span> <span class="nav-text"> Security Definitions and Proofs ([A,B,C]) 安全定义和证明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mathematical-attacks-ab-%E6%95%B0%E5%AD%A6%E6%94%BB%E5%87%BB"><span class="nav-number">7.</span> <span class="nav-text"> Mathematical Attacks ([A,B]) 数学攻击</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#practical-attacks-d-%E5%AE%9E%E9%99%85%E6%94%BB%E5%87%BB"><span class="nav-number">8.</span> <span class="nav-text"> Practical Attacks ([D]) 实际攻击</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#further-reading-%E8%BF%9B%E4%B8%80%E6%AD%A5%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">9.</span> <span class="nav-text"> Further Reading （进一步参考文献）</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -295,43 +296,237 @@
 
       <div class="main-inner">
         
-  
-  
 
-        <div class="content page posts-expand">
+        <div class="content post posts-expand">
           
 
     
-    
-    
-    <div class="post-block" lang="zh-CN">
-      <header class="post-header">
-
-<h1 class="post-title" itemprop="name headline">操作系统：并发
-</h1>
-
-<div class="post-meta">
   
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/05/%E8%BD%AC%E8%BD%BD-%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8D%9A%E5%A3%AB%E5%BA%94%E8%AF%A5%E6%8E%8C%E6%8F%A1%E7%9A%8452%E4%B8%AA%E7%9F%A5%E8%AF%86%E7%82%B9/">
 
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          转载：信息安全与密码学博士应该掌握的52个知识点
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-05 21:38:23" itemprop="dateCreated datePublished" datetime="2020-11-05T21:38:23+08:00">2020-11-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/%E8%BD%AC%E8%BD%BD/" itemprop="url" rel="index"><span itemprop="name">转载</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/11/05/%E8%BD%AC%E8%BD%BD-%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8D%9A%E5%A3%AB%E5%BA%94%E8%AF%A5%E6%8E%8C%E6%8F%A1%E7%9A%8452%E4%B8%AA%E7%9F%A5%E8%AF%86%E7%82%B9/" class="post-meta-item leancloud_visitors" data-flag-title="转载：信息安全与密码学博士应该掌握的52个知识点" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Bristol大学的密码安全工作组为密码学和信息安全相关的博士准备了52个基本知识点，详情见http://www.cs.bris.ac.uk/Research/CryptographySecurity/knowledge.html。</p>
+<p>密码学是一个高度跨学科的领域，包含纯数学、计算机科学以及电子工程等多方面的知识。考虑读研读博的学生专业知识背景不一，Bristol大学对这方面的知识点进行了一个全面的总结和覆盖。52个知识点，Bristol大学推荐所有博一学生花一年的时间应该基本掌握，也就是差不多一个星期掌握一个知识点。掌握这些知识点后，对之后的课堂学习、项目执行、论文研读、科研协作、参加国际会议、与密码学者沟通会大有益处；要不然，可能一直处于懵懵懂懂的状态，荒废学业。</p>
+<a id="more"></a>
+<p>目前Bristol大学的密码工作组也开了一个博客“<span class="exturl" data-url="aHR0cDovL2JyaXN0b2xjcnlwdG8uYmxvZ3Nwb3QuY29tLyVFMiU4MCU5RA==">http://bristolcrypto.blogspot.com/”<i class="fa fa-external-link-alt"></i></span> （注意，Blogspot被墙了，需要使用代理或者翻墙工具访问，推荐Chrome浏览器+红杏插件）来分别分析这些知识点，截止写这篇博文前，该博客刚更新到第21个，相信每周都会增加。为了恶补，我的基本想法也是每周理解一篇然后总结博文吧。</p>
+<p>下面列出这52个需要掌握的知识点：</p>
+<h1 id="computer-engineering-e-计算机工程方面"><a class="markdownIt-Anchor" href="#computer-engineering-e-计算机工程方面"></a> Computer Engineering ([E]) 计算机工程方面</h1>
+<p>Number 1：What is the difference between the following?</p>
+<ul>
+<li>
+<p>A general-purpose processor.</p>
+</li>
+<li>
+<p>A general-purpose processor with instruction-set extensions.</p>
+</li>
+<li>
+<p>A special-purpose processor (or co-processor).</p>
+</li>
+<li>
+<p>An FPGA.</p>
+</li>
+</ul>
+<p>Number 2：What is the difference between a multi-core processor and a vector processor?</p>
+<p>Number 3：Estimate the relative computational and storage capabilities of…</p>
+<ul>
+<li>
+<p>a smart-card</p>
+</li>
+<li>
+<p>a micro-controller (i.e. a sensor node)</p>
+</li>
+<li>
+<p>an embedded or mobile computer (e.g., a mobile phone or PDA)</p>
+</li>
+<li>
+<p>a laptop- or desktop-class computer.</p>
+</li>
+</ul>
+<h1 id="theoretical-computer-science-f-理论计算机科学方面"><a class="markdownIt-Anchor" href="#theoretical-computer-science-f-理论计算机科学方面"></a> Theoretical Computer Science ([F]) 理论计算机科学方面</h1>
+<p>Number 4：What is meant by the complexity class P?</p>
+<p>Number 5：What is meant by the complexity class NP?</p>
+<p>Number 6：How can we interpret NP as the set of theorems whose proofs can be checked in polynomial time?</p>
+<p>Number 7：How does randomness help in computation, and what is the class BPP?</p>
+<p>Number 8：How does interaction help in computation, and what is the class IP?</p>
+<p>Number 9：What are Shannon’s definitions of entropy and information?</p>
+<h1 id="mathematical-background-ab-数学背景"><a class="markdownIt-Anchor" href="#mathematical-background-ab-数学背景"></a> Mathematical Background ([A,B]) 数学背景</h1>
+<p>Number 10：What is the difference between the RSA and the Strong-RSA problem?</p>
+<p>Number 11：What are the DLP, CDH and DDH problems?</p>
+<p>Number 12：What is the elliptic curve group law?</p>
+<p>Number 13：Outline the use and advantages of projective point representation.</p>
+<p>Number 14：What is a cryptographic pairing?</p>
+<h1 id="basic-practical-or-deployed-cryptographic-schemes-and-protocols-a-基本密码机制与协议"><a class="markdownIt-Anchor" href="#basic-practical-or-deployed-cryptographic-schemes-and-protocols-a-基本密码机制与协议"></a> Basic (Practical or Deployed) Cryptographic Schemes and Protocols ([A]) 基本密码机制与协议</h1>
+<p>Number 15：Describe the key generation, encryption and decryption algorithms for RSA-OAEP and ECIES.</p>
+<p>Number 16： Describe the key generation, signature and verification algorithms for DSA, Schnorr and RSA-FDH.</p>
+<p>Number 17：Describe and compare the round structure of DES and AES.</p>
+<p>Number 18：Draw a diagram (or describe) the ECB, CBC and CTR modes of operation.</p>
+<p>Number 19：Describe the Shamir secret sharing scheme.</p>
+<p>Number 20：How are Merkle-Damgaard style hash functions constructed?</p>
+<h1 id="cryptographic-implementation-details-a-密码实现详情"><a class="markdownIt-Anchor" href="#cryptographic-implementation-details-a-密码实现详情"></a> Cryptographic Implementation Details ([A]) 密码实现详情</h1>
+<p>Number 21：How does the CRT method improve performance of RSA?</p>
+<p>Number 22：How do you represent a number and multiply numbers in Montgomery arithmetic?</p>
+<p>Number 23：Write a C program to implement Montgomery arithmetic.</p>
+<p>Number 24：Describe the binary, m-ary and sliding window exponentiation algorithms.</p>
+<p>Number 25：Describe methods for modular reduction using “special” primes that define GF§ and GF(2^n).</p>
+<p>Number 26：Describe the NAF scalar multiplication algorithm.</p>
+<h1 id="security-definitions-and-proofs-abc-安全定义和证明"><a class="markdownIt-Anchor" href="#security-definitions-and-proofs-abc-安全定义和证明"></a> Security Definitions and Proofs ([A,B,C]) 安全定义和证明</h1>
+<p>Number 27：What is the IND-CCA security definition for symmetric key encryption?</p>
+<p>Number 28：What is the IND-CCA security definition for public key encryption?</p>
+<p>Number 29：What is the UF-CMA security definition for digital signatures?</p>
+<p>Number 30：Roughly outline the BR security definition for key agreement?</p>
+<p>Number 31：Give one proof of something which involves game hopping</p>
+<p>Number 32：Outline the difference between a game based and a simulation based security definition.</p>
+<h1 id="mathematical-attacks-ab-数学攻击"><a class="markdownIt-Anchor" href="#mathematical-attacks-ab-数学攻击"></a> Mathematical Attacks ([A,B]) 数学攻击</h1>
+<p>Number 33：How does the Bellcore attack work against RSA with CRT?</p>
+<p>Number 34：Describe the Baby-Step/Giant-Step method for breaking DLPs</p>
+<p>Number 35：Give the rough idea of Pollard rho, Pollard “kangaroo” and parallel Pollard rho attacks on ECDLP.</p>
+<p>Number 36：What is meant by index calculus algorithms?</p>
+<p>Number 37：Roughly outline (in two paragraphs only) how the NFS works.</p>
+<h1 id="practical-attacks-d-实际攻击"><a class="markdownIt-Anchor" href="#practical-attacks-d-实际攻击"></a> Practical Attacks ([D]) 实际攻击</h1>
+<p>Number 38：What is the difference between a covert channel and a side-channel?</p>
+<p>Number 39：What is the difference between a side-channel attack and a fault attack?</p>
+<p>Number 40：What is usually considered the difference between DPA and SPA?</p>
+<p>Number 41：Are all side channels related to power analysis?</p>
+<p>Number 42：Look at your C code for Montgomery multiplication above; can you determine where it could leak side channel information?</p>
+<p>Number 43：Describe some basic (maybe ineffective) defences against side channel attacks proposed in the literature for AES.</p>
+<p>Number 44：Describe some basic (maybe ineffective) defences against side channel attacks proposed in the literature for ECC.</p>
+<p>Number 45：Describe some basic (maybe ineffective) defences against side channel attacks proposed in the literature for RSA.</p>
+<p>#Advanced Protocols and Constructions ([A,B]) 高级协议与构造</p>
+<p>Number 46：What is the Fiat-Shamir transform?</p>
+<p>Number 47：What does correctness, soundness and zero-knowledge mean in the context of a Sigma protocol?</p>
+<p>Number 48：What is the purpose and use of a TPM?</p>
+<p>Number 49：Describe the basic ideas behind IPSec and TLS.</p>
+<p>Number 50：What is the BLS pairing based signature scheme?</p>
+<p>Number 51：What is the security model for ID-based encryption, and describe one IBE scheme.</p>
+<p>Number 52：Pick an advanced application concept such as e-Voting, Auctions or Multi-Party Computation. What are the rough security requirements of such a system?</p>
+<h1 id="further-reading-进一步参考文献"><a class="markdownIt-Anchor" href="#further-reading-进一步参考文献"></a> Further Reading （进一步参考文献）</h1>
+<p>[A] Nigel’s book is deliberately informal and tries to give quick flavours of what is important in theory and practice.</p>
+<p>[B] The Katz Lindell book is a better formal introduction to modern theoretical cryptography but it is less good in its treatment of what is  important in the real world (e.g. the coverage of AES, ECC, implementation, etc is quite limited).</p>
+<p>[C] Goldreich’s two volume book is a very good introduction to the deep theory, but deliberately does not cover practical cryptography.</p>
+<p>[D] Elisabeth’s DPA book is the best introduction to all things about side-channels.</p>
+<p>[E] Dan’s book is a good starting place for computer architecture and learning VHDL.</p>
+<p>[F] Goldreich’s  book on complexity theory is a good place to start. Its approach is much more down-to-earth and sensible than other approaches (i.e. P vs NP is presented in terms of is it easier to check or find proofs?)</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2020/11/05/%E8%BD%AC%E8%BD%BD-%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8D%9A%E5%A3%AB%E5%BA%94%E8%AF%A5%E6%8E%8C%E6%8F%A1%E7%9A%8452%E4%B8%AA%E7%9F%A5%E8%AF%86%E7%82%B9/" title="转载：信息安全与密码学博士应该掌握的52个知识点">http://lyf35.github.io/2020/11/05/转载-信息安全与密码学博士应该掌握的52个知识点/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
 </div>
 
-</header>
 
-      
-      
-      
-      <div class="post-body">
-          
-      </div>
-      
-      
-      
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 信息安全</a>
+              <a href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag"><i class="fa fa-tag"></i> 转载</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/" rel="prev" title="密码学：公钥加密">
+      <i class="fa fa-chevron-left"></i> 密码学：公钥加密
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/" rel="next" title="计算机网络：OSI七层模型">
+      计算机网络：OSI七层模型 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
+      </footer>
     
+  </article>
+  
+  
+  
 
-    
-    
-    
 
 
         </div>
@@ -633,7 +828,7 @@ NexT.utils.loadComments('#gitalk-container', () => {
       repo        : 'lyf35.github.io',
       owner       : 'lyf35',
       admin       : ['lyf35'],
-      id          : '15a81bbf2e49390b2b64e1f7644e6961',
+      id          : '6560bf84269cc26437aa8f8ab4a4494d',
         language: 'zh-CN',
       distractionFreeMode: true
     });

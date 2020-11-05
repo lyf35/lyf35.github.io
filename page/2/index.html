@@ -299,7 +299,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -315,7 +315,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">密码学：哈希函数</a>
+            <a href="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" class="post-title-link" itemprop="url">计算机组成原理：计算机的硬件组成</a>
         </h2>
 
         <div class="post-meta">
@@ -325,7 +325,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-11-05 00:46:48" itemprop="dateCreated datePublished" datetime="2020-11-05T00:46:48+08:00">2020-11-05</time>
+              <time title="创建时间：2020-11-05 21:38:23" itemprop="dateCreated datePublished" datetime="2020-11-05T21:38:23+08:00">2020-11-05</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -333,16 +333,12 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/%E5%AF%86%E7%A0%81%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">密码学</span></a>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
                 </span>
             </span>
 
           
-            <span id="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/" class="post-meta-item leancloud_visitors" data-flag-title="密码学：哈希函数" title="阅读次数">
+            <span id="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理：计算机的硬件组成" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -354,14 +350,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>10k</span>
+              <span>8.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
+              <span>8 分钟</span>
             </span>
 
         </div>
@@ -371,17 +367,116 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="basic-concepts"><a class="markdownIt-Anchor" href="#basic-concepts"></a> Basic concepts</h1>
-<h2 id="definition"><a class="markdownIt-Anchor" href="#definition"></a> Definition</h2>
-<p>A <strong>hash function</strong> (with output length <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">ℓ</mi></mrow><annotation encoding="application/x-tex">\ell</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">ℓ</span></span></span></span>) is a pair of probabilistic polynomial-time algorithms <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>G</mi><mi>e</mi><mi>n</mi><mo separator="true">,</mo><mi>H</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(Gen,H)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">G</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mclose">)</span></span></span></span> satisfying the following:</p>
+          <h1 id="中央处理器cpu"><a class="markdownIt-Anchor" href="#中央处理器cpu"></a> 中央处理器（CPU）</h1>
+<h2 id="cpu组成"><a class="markdownIt-Anchor" href="#cpu组成"></a> CPU组成</h2>
+<p>冯·诺依曼结构CPU的组成部件包括算术逻辑部件（ALU），寄存器，和连接它们的内部总线。从逻辑上说，这些组成部件可以被划分为运算器和控制器两大部分。</p>
+<p>运算器接收控制器送来的命令并执行相应的动作，对数据进行加工和处理。它主要由算术逻辑单元（ALU，进行算数和逻辑运算）、暂存寄存器（暂存从主存中得到的数据）、通用寄存器（存放操作数和各种地址信息）、状态字寄存器（PSW，保存算术逻辑运算指令或测试指令产生的状态信息）、移位器（对操作数或计算结果进行移位运算）和计数器（CT，控制乘除运算的操作步骤）组成。</p>
+<p>控制器分为硬布线控制器和微程序控制器两种，它的功能是执行指令，每条指令的执行是由控制器发出的一组微操作实现的。控制器包括程序计数器（PC，指向下一条指令在主存内的存放地址）、指令寄存器（IR，保存当前执行的指令）、指令译码器（对操作码字段进行译码，从而向控制器提供特定的操作信号）、存储器地址寄存器（MAR，存放要访问的主存单元的地址）、存储器数据寄存器（MDR，存放向主存写入的信息或是从主存读取到的信息）、时序系统（产生各种时序信号）、微操作信号发生器（根据IR、PSW的内容和时序信号，产生控制信号）。注意MAR、MDR和IR是用户不可见的。控制器的工作原理是根据指令操作码、微指令序列和条件信号来形成计算机各部件需要用到的控制信号。</p>
+<p>另外，在现代处理器中，为了实现操作系统的虚拟内存功能，在CPU内部封装了一个内存管理单元（Memory Management Unit, MMU），用于实现虚拟地址和物理地址之间的相互转化。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-title-link" itemprop="url">计算机组成原理：高速缓存</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-05 21:38:23" itemprop="dateCreated datePublished" datetime="2020-11-05T21:38:23+08:00">2020-11-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理：高速缓存" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="局部性"><a class="markdownIt-Anchor" href="#局部性"></a> 局部性</h1>
+<p>一个编写良好的计算机程序常常具有较好的局部性，它们倾向于引用最近引用过的数据项，或是引用与它们相邻的数据项。这种倾向性被称为<strong>局部性原理</strong>。通常一个局部性良好的程序比局部性差的程序运行地更快。</p>
+<p>局部性分为两种：</p>
 <ul>
-<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>G</mi><mi>e</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">Gen</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">G</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span></span></span></span> is a probabilistic algorithm that takes as input a security parameter <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>1</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">1^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span> and outputs a key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>. We assume that <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>1</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">1^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span> is implicit in <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>.</li>
-<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi></mrow><annotation encoding="application/x-tex">H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span></span></span></span> takes as input a key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span> and a string <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">x\in \{0,1\}^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> and outputs a string <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>H</mi><mi>s</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mrow><mi mathvariant="normal">ℓ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">H^{s}(x)\in \{0,1\}^{\ell(n)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">s</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8879999999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">ℓ</span><span class="mopen mtight">(</span><span class="mord mathdefault mtight">n</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span></span></span></span> (<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span> is the security parameter implicit in <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>).</li>
+<li>时间局部性：被引用过一次的内存位置很可能在不远的将来再被多次引用</li>
+<li>空间局部性：对于一个被引用过一次的内存位置，程序很可能在不远的将来引用它附近的内存位置</li>
 </ul>
-<p>In general case, the function takes as input strings of arbitrary length. If <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>H</mi><mi>s</mi></msup></mrow><annotation encoding="application/x-tex">H^s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">s</span></span></span></span></span></span></span></span></span></span></span> is defined only for inputs <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mrow><msup><mi mathvariant="normal">ℓ</mi><mo mathvariant="normal">′</mo></msup><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">x\in\{0,1\}^{\ell &#x27;(n)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.19248em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.94248em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mtight">ℓ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8278285714285715em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mathdefault mtight">n</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi mathvariant="normal">ℓ</mi><mo mathvariant="normal">′</mo></msup><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>&gt;</mo><mi mathvariant="normal">ℓ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\ell &#x27;(n)&gt;\ell(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">ℓ</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>, then we say that <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>G</mi><mi>e</mi><mi>n</mi><mo separator="true">,</mo><mi>H</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(Gen,H)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">G</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mclose">)</span></span></span></span> is a fixed-length hash function for inputs of length <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi mathvariant="normal">ℓ</mi><mo mathvariant="normal">′</mo></msup></mrow><annotation encoding="application/x-tex">\ell &#x27;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.751892em;vertical-align:0em;"></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>. In this case, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi></mrow><annotation encoding="application/x-tex">H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span></span></span></span> is also called a <em>compression function</em>.</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/#more" rel="contents">
+              <a class="btn" href="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -405,7 +500,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -421,7 +516,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-title-link" itemprop="url">密码学：公钥加密</a>
+            <a href="/2020/11/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-title-link" itemprop="url">密码学：私钥加密</a>
         </h2>
 
         <div class="post-meta">
@@ -431,7 +526,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-11-05 00:46:48" itemprop="dateCreated datePublished" datetime="2020-11-05T00:46:48+08:00">2020-11-05</time>
+              <time title="创建时间：2020-11-05 21:38:23" itemprop="dateCreated datePublished" datetime="2020-11-05T21:38:23+08:00">2020-11-05</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -448,111 +543,7 @@
             </span>
 
           
-            <span id="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="密码学：公钥加密" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>20k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>18 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="math-related-with-public-key-encryption"><a class="markdownIt-Anchor" href="#math-related-with-public-key-encryption"></a> Math related with public-key encryption</h1>
-<h2 id="diffie-hellman-problems"><a class="markdownIt-Anchor" href="#diffie-hellman-problems"></a> Diffie-Hellman problems</h2>
-<p>Fix a cyclic group <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">\mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span> and a generator <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>g</mi><mo>∈</mo><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">g\in \mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span>. Given elements <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo>∈</mo><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">h_{1},h_{2}\in \mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span>, define <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><msub><mi>H</mi><mi>g</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mo>=</mo><msup><mi>g</mi><mrow><mi>l</mi><mi>o</mi><msub><mi>g</mi><mi>g</mi></msub><msub><mi>h</mi><mn>1</mn></msub><mo>⋅</mo><mi>l</mi><mi>o</mi><msub><mi>g</mi><mi>g</mi></msub><msub><mi>h</mi><mn>2</mn></msub></mrow></msup></mrow><annotation encoding="application/x-tex">DH_{g}(h_{1},h_{2})=g^{log_{g}h_{1}\cdot log_{g}h_{2}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.043548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.849108em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span><span class="mord mtight"><span class="mord mathdefault mtight">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">⋅</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span><span class="mord mtight"><span class="mord mathdefault mtight">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>. That is, if <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub><mo>=</mo><msup><mi>g</mi><msub><mi>x</mi><mn>1</mn></msub></msup></mrow><annotation encoding="application/x-tex">h_{1}=g^{x_{1}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.858832em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>2</mn></msub><mo>=</mo><msup><mi>g</mi><msub><mi>x</mi><mn>2</mn></msub></msup></mrow><annotation encoding="application/x-tex">h_{2}=g^{x_{2}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.858832em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span> then</p>
-<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><msub><mi>H</mi><mi>g</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mo>=</mo><msup><mi>g</mi><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>⋅</mo><msub><mi>x</mi><mn>2</mn></msub></mrow></msup><mo>=</mo><msubsup><mi>h</mi><mn>1</mn><msub><mi>x</mi><mn>2</mn></msub></msubsup><mo>=</mo><msubsup><mi>h</mi><mn>2</mn><msub><mi>x</mi><mn>1</mn></msub></msubsup></mrow><annotation encoding="application/x-tex">DH_{g}(h_{1},h_{2})=g^{x_{1}\cdot x_{2}}=h_{1}^{x_{2}}=h_{2}^{x_{1}}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.918555em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.724115em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">⋅</span><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0126em;vertical-align:-0.26630799999999993em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.746292em;"><span style="top:-2.433692em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.26630799999999993em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0126em;vertical-align:-0.26630799999999993em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.746292em;"><span style="top:-2.433692em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.26630799999999993em;"><span></span></span></span></span></span></span></span></span></span></span></p>
-<p>The computational Diffie-Hellman(CDH) problem is to compute <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><msub><mi>H</mi><mi>g</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">DH_{g}(h_{1},h_{2})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> for uniform <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">h_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">h_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>. It is not clear whether hardness of the discrete-logarithm problem implies that the CDH problem is hard as well.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-title-link" itemprop="url">密码学：私钥加密</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-05 00:46:48" itemprop="dateCreated datePublished" datetime="2020-11-05T00:46:48+08:00">2020-11-05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/%E5%AF%86%E7%A0%81%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">密码学</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="密码学：私钥加密" title="阅读次数">
+            <span id="/2020/11/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="密码学：私钥加密" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -595,7 +586,7 @@
 </ol>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/#more" rel="contents">
+              <a class="btn" href="/2020/11/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -619,7 +610,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -635,7 +626,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/11/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-title-link" itemprop="url">操作系统：内存虚拟化</a>
+            <a href="/2020/11/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-title-link" itemprop="url">操作系统：内存虚拟化</a>
         </h2>
 
         <div class="post-meta">
@@ -645,11 +636,11 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-11-05 00:46:48" itemprop="dateCreated datePublished" datetime="2020-11-05T00:46:48+08:00">2020-11-05</time>
+              <time title="创建时间：2020-11-05 21:38:23" itemprop="dateCreated datePublished" datetime="2020-11-05T21:38:23+08:00">2020-11-05</time>
             </span>
 
           
-            <span id="/2020/11/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-meta-item leancloud_visitors" data-flag-title="操作系统：内存虚拟化" title="阅读次数">
+            <span id="/2020/11/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-meta-item leancloud_visitors" data-flag-title="操作系统：内存虚拟化" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -684,7 +675,7 @@
 <p>但是这种做法又对操作系统有了新的要求，人们不希望一个进程可以读取甚至修改其他进程使用的物理内存。因此，操作系统使用了<strong>虚拟内存</strong>（Virtual Memory）的概念，对物理内存进行了抽象，通过这种抽象所形成的地址集合被叫做<strong>虚拟地址空间</strong>（Virtual Address Space）。相应地，一个物理内存所对应的地址集合被称为<strong>物理地址空间</strong>。一个进程的虚拟地址空间是运行中的程序看到的系统中的内存，它包含了这个程序的所有内存状态，包括程序代码、栈、堆等部分。为了给进程提供保护，每个进程都有着自己独立的虚拟地址空间，但是不同进程的虚拟内存可能会共享使用部分物理内存，从而实现数据共享。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/11/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/#more" rel="contents">
+              <a class="btn" href="/2020/11/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -708,7 +699,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -724,7 +715,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/" class="post-title-link" itemprop="url">密码学：数字签名</a>
+            <a href="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/" class="post-title-link" itemprop="url">计算机组成原理：程序的机器级表示</a>
         </h2>
 
         <div class="post-meta">
@@ -734,7 +725,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-11-05 00:46:48" itemprop="dateCreated datePublished" datetime="2020-11-05T00:46:48+08:00">2020-11-05</time>
+              <time title="创建时间：2020-11-05 21:38:23" itemprop="dateCreated datePublished" datetime="2020-11-05T21:38:23+08:00">2020-11-05</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -742,16 +733,16 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/%E5%AF%86%E7%A0%81%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">密码学</span></a>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">汇编语言</span></a>
                 </span>
             </span>
 
           
-            <span id="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/" class="post-meta-item leancloud_visitors" data-flag-title="密码学：数字签名" title="阅读次数">
+            <span id="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理：程序的机器级表示" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -763,14 +754,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>24k</span>
+              <span>17k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>22 分钟</span>
+              <span>15 分钟</span>
             </span>
 
         </div>
@@ -780,12 +771,142 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="overview"><a class="markdownIt-Anchor" href="#overview"></a> Overview</h1>
-<h2 id="introduction"><a class="markdownIt-Anchor" href="#introduction"></a> Introduction</h2>
-<p>Signature schemes allow a signer <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> who has established a public key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">pk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> to “sign” a message using the associated private key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">sk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> in such a way that anyone who knows <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">pk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> (and knows that this public key was established by <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span>) can verify that the message originated from <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> and was not modified in transit. (Note that the owner of the public key behaves as the sender, which is in contrast to the public-key encryption)</p>
+          <h1 id="寄存器"><a class="markdownIt-Anchor" href="#寄存器"></a> 寄存器</h1>
+<ul>
+<li>
+<p>通用寄存器：X64将x86的8个通用寄存器扩展为64位，并且增加8个新的64位寄存器。64位寄存器命名以“r”开始，例如：eax扩展为64位就是rax，8个新的64位寄存器命名为r8到r15。每个寄存器的低32位，16位，8位可以作为操作数直接寻址，这包括向esi这样的寄存器，以前他的低8位不可以直接寻址。下表说明了64位通用寄存器的低位部分在汇编语言中的命名。</p>
+<p>除了r8~r15这8个寄存器只能供64位程序使用外，其余8个可以只使用低32字节以兼容32位程序。</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">64-bit register</th>
+<th style="text-align:center">Lower 32 bits</th>
+<th style="text-align:center">Lower 16 bits</th>
+<th style="text-align:center">Lower 8 bits</th>
+<th style="text-align:center">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">rax</td>
+<td style="text-align:center">eax</td>
+<td style="text-align:center">ax</td>
+<td style="text-align:center">al</td>
+<td style="text-align:center">返回值</td>
+</tr>
+<tr>
+<td style="text-align:center">rbx</td>
+<td style="text-align:center">ebx</td>
+<td style="text-align:center">bx</td>
+<td style="text-align:center">bl</td>
+<td style="text-align:center">被调用者保存</td>
+</tr>
+<tr>
+<td style="text-align:center">rcx</td>
+<td style="text-align:center">ecx</td>
+<td style="text-align:center">cx</td>
+<td style="text-align:center">cl</td>
+<td style="text-align:center">第4个参数</td>
+</tr>
+<tr>
+<td style="text-align:center">rdx</td>
+<td style="text-align:center">edx</td>
+<td style="text-align:center">dx</td>
+<td style="text-align:center">dl</td>
+<td style="text-align:center">第3个参数</td>
+</tr>
+<tr>
+<td style="text-align:center">rsi</td>
+<td style="text-align:center">esi</td>
+<td style="text-align:center">si</td>
+<td style="text-align:center">sil</td>
+<td style="text-align:center">第2个参数</td>
+</tr>
+<tr>
+<td style="text-align:center">rdi</td>
+<td style="text-align:center">edi</td>
+<td style="text-align:center">di</td>
+<td style="text-align:center">dil</td>
+<td style="text-align:center">第1个参数</td>
+</tr>
+<tr>
+<td style="text-align:center">rbp</td>
+<td style="text-align:center">ebp</td>
+<td style="text-align:center">bp</td>
+<td style="text-align:center">bpl</td>
+<td style="text-align:center">被调用者保存</td>
+</tr>
+<tr>
+<td style="text-align:center">rsp</td>
+<td style="text-align:center">esp</td>
+<td style="text-align:center">sp</td>
+<td style="text-align:center">spl</td>
+<td style="text-align:center">栈指针</td>
+</tr>
+<tr>
+<td style="text-align:center">r8</td>
+<td style="text-align:center">r8d</td>
+<td style="text-align:center">r8w</td>
+<td style="text-align:center">r8b</td>
+<td style="text-align:center">第5个参数</td>
+</tr>
+<tr>
+<td style="text-align:center">r9</td>
+<td style="text-align:center">r9d</td>
+<td style="text-align:center">r9w</td>
+<td style="text-align:center">r9b</td>
+<td style="text-align:center">第6个参数</td>
+</tr>
+<tr>
+<td style="text-align:center">r10</td>
+<td style="text-align:center">r10d</td>
+<td style="text-align:center">r10w</td>
+<td style="text-align:center">r10b</td>
+<td style="text-align:center">调用者保存</td>
+</tr>
+<tr>
+<td style="text-align:center">r11</td>
+<td style="text-align:center">r11d</td>
+<td style="text-align:center">r11w</td>
+<td style="text-align:center">r11b</td>
+<td style="text-align:center">调用者保存</td>
+</tr>
+<tr>
+<td style="text-align:center">r12</td>
+<td style="text-align:center">r12d</td>
+<td style="text-align:center">r12w</td>
+<td style="text-align:center">r12b</td>
+<td style="text-align:center">被调用者保存</td>
+</tr>
+<tr>
+<td style="text-align:center">r13</td>
+<td style="text-align:center">r13d</td>
+<td style="text-align:center">r13w</td>
+<td style="text-align:center">r13b</td>
+<td style="text-align:center">被调用者保存</td>
+</tr>
+<tr>
+<td style="text-align:center">r14</td>
+<td style="text-align:center">r14d</td>
+<td style="text-align:center">r14w</td>
+<td style="text-align:center">r14b</td>
+<td style="text-align:center">被调用者保存</td>
+</tr>
+<tr>
+<td style="text-align:center">r15</td>
+<td style="text-align:center">r15d</td>
+<td style="text-align:center">r15w</td>
+<td style="text-align:center">r15b</td>
+<td style="text-align:center">被调用者保存</td>
+</tr>
+</tbody>
+</table>
+<p>​		生成1字节和2字节数字的指令会保持剩下的字节不变；生成4字节数字的指令会把高位4个字节置为0。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/11/04/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/#more" rel="contents">
+              <a class="btn" href="/2020/11/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
