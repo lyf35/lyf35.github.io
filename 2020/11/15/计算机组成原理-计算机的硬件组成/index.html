@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="中央处理器（CPU）  CPU组成 冯·诺依曼结构CPU的组成部件包括算术逻辑部件（ALU），寄存器，和连接它们的内部总线。从逻辑上说，这些组成部件可以被划分为运算器和控制器两大部分。 运算器接收控制器送来的命令并执行相应的动作，对数据进行加工和处理。它主要由算术逻辑单元（ALU，进行算数和逻辑运算）、暂存寄存器（暂存从主存中得到的数据）、通用寄存器（存放操作数和各种地址信息）、状态字寄存器（P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机组成原理：计算机的硬件组成">
+<meta property="og:url" content="http://lyf35.github.io/2020/11/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="中央处理器（CPU）  CPU组成 冯·诺依曼结构CPU的组成部件包括算术逻辑部件（ALU），寄存器，和连接它们的内部总线。从逻辑上说，这些组成部件可以被划分为运算器和控制器两大部分。 运算器接收控制器送来的命令并执行相应的动作，对数据进行加工和处理。它主要由算术逻辑单元（ALU，进行算数和逻辑运算）、暂存寄存器（暂存从主存中得到的数据）、通用寄存器（存放操作数和各种地址信息）、状态字寄存器（P">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000106.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000133.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000126.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000145.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000150.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000159.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000206.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002444.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002444.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002428.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002423.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002417.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002413.png">
+<meta property="article:published_time" content="2020-11-15T14:30:16.576Z">
+<meta property="article:modified_time" content="2020-11-15T14:30:16.576Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="计算机组成原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000106.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2020/11/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机组成原理：计算机的硬件组成 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E5%A4%AE%E5%A4%84%E7%90%86%E5%99%A8cpu"><span class="nav-number">1.</span> <span class="nav-text"> 中央处理器（CPU）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu%E7%BB%84%E6%88%90"><span class="nav-number">1.1.</span> <span class="nav-text"> CPU组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4"><span class="nav-number">1.2.</span> <span class="nav-text"> 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%BA%E5%99%A8%E6%8C%87%E4%BB%A4"><span class="nav-number">1.2.1.</span> <span class="nav-text"> 机器指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E5%91%A8%E6%9C%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text"> 指令周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E6%B5%81%E6%B0%B4"><span class="nav-number">1.2.3.</span> <span class="nav-text"> 指令流水</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%92%E9%99%A9"><span class="nav-number">1.2.3.1.</span> <span class="nav-text"> 冒险</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%9A%84%E5%A4%9A%E5%8F%91%E6%8A%80%E6%9C%AF"><span class="nav-number">1.2.3.2.</span> <span class="nav-text"> 流水线的多发技术</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E7%BA%A7%E5%B9%B6%E8%A1%8C"><span class="nav-number">1.3.</span> <span class="nav-text"> 处理器级并行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BA%BF"><span class="nav-number">2.</span> <span class="nav-text"> 总线</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">2.1.</span> <span class="nav-text"> 分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BA%BF%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.</span> <span class="nav-text"> 总线结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BA%BF%E6%8E%A7%E5%88%B6"><span class="nav-number">2.3.</span> <span class="nav-text"> 总线控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E4%BC%98%E6%8E%A7%E5%88%B6"><span class="nav-number">2.3.1.</span> <span class="nav-text"> 判优控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E6%8E%A7%E5%88%B6"><span class="nav-number">2.3.2.</span> <span class="nav-text"> 通信控制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E8%AE%BE%E5%A4%87"><span class="nav-number">3.</span> <span class="nav-text"> 存储设备</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">3.1.</span> <span class="nav-text"> 主存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E5%86%85%E5%AD%98random-access-memory-ram"><span class="nav-number">3.1.1.</span> <span class="nav-text"> 随机访问内存（Random Access Memory, RAM）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sram"><span class="nav-number">3.1.1.1.</span> <span class="nav-text"> SRAM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dram"><span class="nav-number">3.1.1.2.</span> <span class="nav-text"> DRAM</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#dram%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">3.1.1.2.1.</span> <span class="nav-text"> DRAM的原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dram%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.1.2.2.</span> <span class="nav-text"> DRAM的存储结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A2%9E%E5%BC%BA%E7%9A%84dram"><span class="nav-number">3.1.1.2.3.</span> <span class="nav-text"> 增强的DRAM</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E6%98%93%E5%A4%B1%E6%80%A7%E5%AD%98%E5%82%A8%E5%99%A8read-only-memory-rom"><span class="nav-number">3.1.2.</span> <span class="nav-text"> 非易失性存储器（Read-Only Memory, ROM）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%AD%98%E7%9A%84%E8%AE%BF%E9%97%AE"><span class="nav-number">3.1.3.</span> <span class="nav-text"> 主存的访问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">3.2.</span> <span class="nav-text"> 辅助存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98"><span class="nav-number">3.2.1.</span> <span class="nav-text"> 磁盘</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E6%9E%84%E9%80%A0"><span class="nav-number">3.2.1.1.</span> <span class="nav-text"> 磁盘构造</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E5%AE%B9%E9%87%8F"><span class="nav-number">3.2.1.2.</span> <span class="nav-text"> 磁盘容量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E8%AE%BF%E9%97%AE%E6%97%B6%E9%97%B4"><span class="nav-number">3.2.1.3.</span> <span class="nav-text"> 磁盘访问时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E7%A3%81%E7%9B%98%E5%9D%97"><span class="nav-number">3.2.1.4.</span> <span class="nav-text"> 逻辑磁盘块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E7%9A%84%E8%AE%BF%E9%97%AE"><span class="nav-number">3.2.1.5.</span> <span class="nav-text"> 磁盘的访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98"><span class="nav-number">3.2.2.</span> <span class="nav-text"> 固态硬盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E7%9B%98"><span class="nav-number">3.2.3.</span> <span class="nav-text"> 光盘</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#io%E8%AE%BE%E5%A4%87"><span class="nav-number">4.</span> <span class="nav-text"> I&#x2F;O设备</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%B1%BB-2"><span class="nav-number">4.1.</span> <span class="nav-text"> 分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3"><span class="nav-number">4.2.</span> <span class="nav-text"> 接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8E%E4%B8%BB%E6%9C%BA%E7%9A%84%E4%BF%A1%E6%81%AF%E4%BC%A0%E9%80%81"><span class="nav-number">4.3.</span> <span class="nav-text"> 与主机的信息传送</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.1.</span> <span class="nav-text"> 程序查询方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%96%AD%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.2.</span> <span class="nav-text"> 程序中断方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dma-direct-memory-access"><span class="nav-number">4.3.3.</span> <span class="nav-text"> DMA (Direct Memory Access)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#dma%E6%8E%A5%E5%8F%A3"><span class="nav-number">4.3.3.1.</span> <span class="nav-text"> DMA接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.3.2.</span> <span class="nav-text"> 连接方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E6%95%B0%E6%8D%AE%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.3.3.</span> <span class="nav-text"> 交换数据方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dma%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%BF%87%E7%A8%8B"><span class="nav-number">4.3.3.4.</span> <span class="nav-text"> DMA的工作过程</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机组成原理：计算机的硬件组成
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-15 22:30:16" itemprop="dateCreated datePublished" datetime="2020-11-15T22:30:16+08:00">2020-11-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/11/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理：计算机的硬件组成" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="中央处理器cpu"><a class="markdownIt-Anchor" href="#中央处理器cpu"></a> 中央处理器（CPU）</h1>
+<h2 id="cpu组成"><a class="markdownIt-Anchor" href="#cpu组成"></a> CPU组成</h2>
+<p>冯·诺依曼结构CPU的组成部件包括算术逻辑部件（ALU），寄存器，和连接它们的内部总线。从逻辑上说，这些组成部件可以被划分为运算器和控制器两大部分。</p>
+<p>运算器接收控制器送来的命令并执行相应的动作，对数据进行加工和处理。它主要由算术逻辑单元（ALU，进行算数和逻辑运算）、暂存寄存器（暂存从主存中得到的数据）、通用寄存器（存放操作数和各种地址信息）、状态字寄存器（PSW，保存算术逻辑运算指令或测试指令产生的状态信息）、移位器（对操作数或计算结果进行移位运算）和计数器（CT，控制乘除运算的操作步骤）组成。</p>
+<p>控制器分为硬布线控制器和微程序控制器两种，它的功能是执行指令，每条指令的执行是由控制器发出的一组微操作实现的。控制器包括程序计数器（PC，指向下一条指令在主存内的存放地址）、指令寄存器（IR，保存当前执行的指令）、指令译码器（对操作码字段进行译码，从而向控制器提供特定的操作信号）、存储器地址寄存器（MAR，存放要访问的主存单元的地址）、存储器数据寄存器（MDR，存放向主存写入的信息或是从主存读取到的信息）、时序系统（产生各种时序信号）、微操作信号发生器（根据IR、PSW的内容和时序信号，产生控制信号）。注意MAR、MDR和IR是用户不可见的。控制器的工作原理是根据指令操作码、微指令序列和条件信号来形成计算机各部件需要用到的控制信号。</p>
+<p>另外，在现代处理器中，为了实现操作系统的虚拟内存功能，在CPU内部封装了一个内存管理单元（Memory Management Unit, MMU），用于实现虚拟地址和物理地址之间的相互转化。</p>
+<a id="more"></a>
+<h2 id="指令"><a class="markdownIt-Anchor" href="#指令"></a> 指令</h2>
+<h3 id="机器指令"><a class="markdownIt-Anchor" href="#机器指令"></a> 机器指令</h3>
+<p>对于一条汇编指令，它的机器码分为两部分：操作码字段（对应于汇编指令的类型）和地址码字段（对应于汇编指令的操作数）。指令字长由操作码长度、操作数地址的长度和个数共同决定。</p>
+<p>CPU支持的所有操作指令（即所有的汇编指令）组成指令集。指令集的一个重要性质就是字节编码必须有唯一的解释，任意一个字节序列要么是一个唯一的指令序列的编码，要么就不是一个合法的字节序列。</p>
+<p>根据指令集大小的不同，分为CISC（复杂指令集计算机，如x86-64）和RISC（精简指令集计算机，如嵌入式系统）指令集。它们的主要区别如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">CISC</th>
+<th style="text-align:left">RISC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">指令数量很多（可达1000以上），各个指令使用频率相差很大</td>
+<td style="text-align:left">指令数量少得多（通常少于100），复杂指令用简单指令组合</td>
+</tr>
+<tr>
+<td style="text-align:left">有些指令的延迟很长</td>
+<td style="text-align:left">没有较长延迟的指令</td>
+</tr>
+<tr>
+<td style="text-align:left">编码可变长度</td>
+<td style="text-align:left">编码固定长度</td>
+</tr>
+<tr>
+<td style="text-align:left">指定操作数的方式很多样</td>
+<td style="text-align:left">简单寻址方式</td>
+</tr>
+<tr>
+<td style="text-align:left">可以对内存和寄存器操作数做运算</td>
+<td style="text-align:left">只能对寄存器操作数做运算</td>
+</tr>
+<tr>
+<td style="text-align:left">对机器级程序来说实现细节不可见</td>
+<td style="text-align:left">对机器级程序来说实现细节可见</td>
+</tr>
+<tr>
+<td style="text-align:left">有条件码</td>
+<td style="text-align:left">没有条件码</td>
+</tr>
+<tr>
+<td style="text-align:left">栈密集的过程链接</td>
+<td style="text-align:left">寄存器密集的过程链接</td>
+</tr>
+<tr>
+<td style="text-align:left">采用微程序控制器</td>
+<td style="text-align:left">采用组合逻辑实现控制器</td>
+</tr>
+<tr>
+<td style="text-align:left">有专用寄存器</td>
+<td style="text-align:left">多个通用寄存器</td>
+</tr>
+</tbody>
+</table>
+<p>RISC指令集能够充分利用VLSI芯片的面积，便于实现指令流水，也便于设计，但是不易实现指令系统的兼容。在现代处理器中，常常将二者结合使用。</p>
+<h3 id="指令周期"><a class="markdownIt-Anchor" href="#指令周期"></a> 指令周期</h3>
+<p>指令周期指的是取出并执行一条指令所需的全部时间，一个指令周期最多包含4个工作周期：取指周期（取出指令并分析）、间址周期（可能有，如果指令中包含主存单元的地址则需要从主存单元寻址）、执行周期（不同指令的执行时间不等，且数据流也不同）、中断周期（可能有，如果有则需要保存程序断点）。一个工作周期包含了若干个时钟周期（CPU操作的最基本单位）</p>
+<h3 id="指令流水"><a class="markdownIt-Anchor" href="#指令流水"></a> 指令流水</h3>
+<p>指令流水将指令执行的过程分解为许多部分，每一部分由精心设计的硬件分别执行，都可以并行运行。这样，便可以像流水线一样执行这些指令（时钟周期必须能够满足最慢操作的执行需要），实现指令级并行。如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000106.png" alt="image-20201012233537897" /></p>
+<h4 id="冒险"><a class="markdownIt-Anchor" href="#冒险"></a> 冒险</h4>
+<p>流水线中可能会出现下一个时钟周期中下一条指令不能执行的情况，这种情况被称为冒险，它会显著影响流水线性能。主要分为三种情况：</p>
+<ol>
+<li>结构冒险：硬件不支持多条指令在同一时钟周期执行</li>
+<li>数据冒险：一条指令必须等待另一条指令的完成而造成流水线暂停。解决数据冒险可以采用旁路的办法，即提前从内部寄存器中取出数据；对于取数—使用型数据冒险，也可以通过重新安排代码顺序来避免</li>
+<li>控制冒险：又叫分支冒险，因为在分支中取到的指令不是所需要的，而导致指令不能在预定的时钟周期内执行。计算机常采用分支预测的方法，预测分支结果并立即沿着预测方向执行，流水线的效率与预测的成功率有关</li>
+</ol>
+<h4 id="流水线的多发技术"><a class="markdownIt-Anchor" href="#流水线的多发技术"></a> 流水线的多发技术</h4>
+<ul>
+<li>超标量技术：使用超标量技术，可以在一个时钟周期内并发执行多条独立指令。</li>
+<li>超流水线技术：在一个时钟周期内再分段，使得一个时钟周期内一个功能部件可以被多次使用。</li>
+<li>超长指令字技术：将多条能够并行操作的指令组合成一条具有多个操作码字段的超长指令字，使用多个部件在一个时钟周期内同时执行。</li>
+</ul>
+<h2 id="处理器级并行"><a class="markdownIt-Anchor" href="#处理器级并行"></a> 处理器级并行</h2>
+<ul>
+<li>数据并行计算机：包含SIMD处理器和向量处理器。SIMD处理器是由许多在不同数据集合上执行同样指令序列的完全相同的处理器组成，如GPU便严重依赖于SIMD处理器；而向量处理器的所有运算是由一个单独的高度流水的功能部件实现。</li>
+<li>多处理器：多个CPU同时工作，它们共享内存。CPU之间需要通过软件互相协调，从而避免互相影响。</li>
+<li>多计算机：将多个计算机互联，互相之间通过发送消息进行通信。</li>
+</ul>
+<h1 id="总线"><a class="markdownIt-Anchor" href="#总线"></a> 总线</h1>
+<h2 id="分类"><a class="markdownIt-Anchor" href="#分类"></a> 分类</h2>
+<p>总线是连接计算机各个部件的信息传输线，是各个部件共享的传输介质。总线分为如下几种类型：</p>
+<ul>
+<li>片内总线：芯片内部的总线</li>
+<li>系统总线：计算机各个部件之间的信息传输线，包括数据总线（双向，与机器字长和存储字长有关）、地址总线（单向，与存储地址和I/O地址有关）和控制总线</li>
+<li>通信总线：用于计算机系统之间或者计算机系统和其他系统之间的通信</li>
+</ul>
+<h2 id="总线结构"><a class="markdownIt-Anchor" href="#总线结构"></a> 总线结构</h2>
+<p>如图所示为现代Core i7系统中使用的总线结构：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000133.png" alt="image-20201013215418020" style="zoom:67%;" />
+<p>除此之外，还有一些其他的总线结构：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000126.png" alt="image-20201013202615024" /></p>
+<h2 id="总线控制"><a class="markdownIt-Anchor" href="#总线控制"></a> 总线控制</h2>
+<h3 id="判优控制"><a class="markdownIt-Anchor" href="#判优控制"></a> 判优控制</h3>
+<p>主设备对总线具有控制权，从设备响应从主设备发来的总线命令，主设备需要判定哪一个从设备优先工作。有三种不同的方式：链式查询、计数器定时查询、独立请求</p>
+<h3 id="通信控制"><a class="markdownIt-Anchor" href="#通信控制"></a> 通信控制</h3>
+<p>总线传输分为四个阶段：申请分配阶段、寻址阶段、传输阶段、结束阶段。在这一个传输周期内，需要解决通信双方的协调配合问题。常用的几种通信方式有：</p>
+<ul>
+<li>同步通信：使用统一时标控制数据传送</li>
+<li>异步通信：采用应答方式，没有公共时钟标准</li>
+<li>半同步通信：同步与异步结合。发送方使用系统的时钟前沿发信号，接收方使用时钟后沿判断和识别；可以允许不同速度的模块和谐工作，并增加一条等待响应信号</li>
+<li>分离式通信：在一个总线传输周期中，部分阶段总线内没有数据的传输，此时便放弃总线的使用权，等到需要时再次申请。这样便可提高总线的有效占用，从而充分挖掘了系统总线每个瞬间的潜力。</li>
+</ul>
+<h1 id="存储设备"><a class="markdownIt-Anchor" href="#存储设备"></a> 存储设备</h1>
+<h2 id="主存储器"><a class="markdownIt-Anchor" href="#主存储器"></a> 主存储器</h2>
+<h3 id="随机访问内存random-access-memory-ram"><a class="markdownIt-Anchor" href="#随机访问内存random-access-memory-ram"></a> 随机访问内存（Random Access Memory, RAM）</h3>
+<p>RAM分为两类：静态RAM(Static RAM, SRAM)和动态RAM(Dynamic RAM, DRAM)。SRAM比DRAM的访问速度更快（SRAM为0.5~2.5ns，DRAM为50~70ns），但是价格也更贵。因此SRAM常被用作CPU或是其他设备的<strong>缓存</strong>，而DRAM常被用作<strong>主存或是显卡的内存</strong>。RAM在断电之后，会丢失掉其内部的所有信息。</p>
+<h4 id="sram"><a class="markdownIt-Anchor" href="#sram"></a> SRAM</h4>
+<p>SRAM将每个位存储在一个<strong>双稳态</strong>的存储器单元中，每个单元是用一个六晶体管电路来实现的。这个电路可以无限期地保存在两个不同的电压配置或状态之一，其他任何状态都是不稳定的。由于双稳态特性，即使是受到干扰来扰乱电压，干扰消除之后电路也可以恢复到稳定值。</p>
+<h4 id="dram"><a class="markdownIt-Anchor" href="#dram"></a> DRAM</h4>
+<h5 id="dram的原理"><a class="markdownIt-Anchor" href="#dram的原理"></a> DRAM的原理</h5>
+<p>DRAM将每个位存储为对一个小电容（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>14</mn></msup><mi>F</mi></mrow><annotation encoding="application/x-tex">10^{14}F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">4</span></span></span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span></span></span></span>）的充电，因此DRAM存储器可以造的非常密集，每个存储单元包括一个电容器和一个访问晶体管。</p>
+<p>DRAM对于干扰非常敏感，当电容的电压被扰乱之后就无法再恢复。同时也有很多原因会导致漏电，使得DRAM单元在10~100毫秒内失去电荷，因此内存系统需要周期性地读出并刷写内存中的每一位。一些系统使用纠错码，将计算机中的字多编码几个位，从而发现并纠正一个字中任何单个的错误位。</p>
+<h5 id="dram的存储结构"><a class="markdownIt-Anchor" href="#dram的存储结构"></a> DRAM的存储结构</h5>
+<p>DRAM芯片中的单元被分为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">d</span></span></span></span>个超单元，每个超单元都由<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>个DRAM单元组成，这样一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>d</mi><mo>×</mo><mi>w</mi></mrow><annotation encoding="application/x-tex">d\times w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">d</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>的DRAM共存储了<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>d</mi><mi>w</mi></mrow><annotation encoding="application/x-tex">dw</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">d</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>位信息。超单元被组织为一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span></span></span></span>行<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">c</span></span></span></span>列（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>c</mi><mo>=</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">rc=d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">c</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">d</span></span></span></span>）的长方形阵列，每个超单元有形如<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(i,j)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mclose">)</span></span></span></span>的地址格式。将DRAM组织为二维阵列可以降低芯片上地址引脚的数量，但是分两步发送地址增加了访问时间。通过芯片与外部连接的引脚，可以选择超单元地址，并将数据输入芯片或是从芯片中输出。</p>
+<p>超单元内容读取的过程如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000145.png" alt="image-20201009233043208" /></p>
+<p>DRAM芯片被封装在内存模块中，它插到主板的扩展槽上。每个DRAM芯片被连接到称为内存控制器的电路，这个电路可以一次传送<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>位到每个DRAM芯片，或是一次从每个DRAM芯片传出<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span></span></span></span>位。通过将多个内存模块连接到内存控制器，便可聚合成主存。当控制器收到一个地址A时，控制器选择包含A的模块<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>，并将A转化成该模块对应的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(i,j)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">i</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05724em;">j</span><span class="mclose">)</span></span></span></span>的形式发送给<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>.</p>
+<p>下图所示是从DRAM芯片中读取一个64位字到CPU的过程：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000150.png" alt="image-20201009232705351" /></p>
+<h5 id="增强的dram"><a class="markdownIt-Anchor" href="#增强的dram"></a> 增强的DRAM</h5>
+<ul>
+<li>快页模式DRAM（FPM DRAM）：允许对同一行连续访问时，直接从行缓冲区得到服务。</li>
+<li>扩展数据输出DRAM（EDO DRAM）：是FPM DRAM的增强形式，允许CAS（Column Access Strobe，列访问选通脉冲）信号在时间上靠的更加紧密一些。</li>
+<li>同步DRAM（SDRAM）：使用与驱动内存控制器相同的外部时钟信号的上升沿，从而能够更快地输出它的超单元的内容。</li>
+<li>双倍数据速率同步DRAM（DDR SDRAM）：是对SDRAM的增强，使用两个时钟沿作为控制信号，从而使得DRAM的速度翻倍。</li>
+<li>视频RAM（VRAM）：用于图形系统的帧缓冲区中，与FPM DRAM类似，但是它允许对内存并行地读和写，它的输出是通过依次对内部区的整个内容进行移位得到的。</li>
+</ul>
+<h3 id="非易失性存储器read-only-memory-rom"><a class="markdownIt-Anchor" href="#非易失性存储器read-only-memory-rom"></a> 非易失性存储器（Read-Only Memory, ROM）</h3>
+<p>非易失性存储器在断电后，其内部的信息仍然保存。非易失性存储器的种类很多，而且目前一些ROM中的类型支持读写操作，但是其整体都被称为只读存储器。根据被重编程（写）的次数和机制，ROM主要有以下几种类型：</p>
+<ul>
+<li>PROM(Programmable ROM，可编程ROM)：每个存储器单元有一种熔丝，只能用高电流熔断一次</li>
+<li>EPROM(Erasable Programmable ROM，可擦写可编程ROM)：有一个透明的石英窗口，允许光到达存储单元。紫外线光照过窗口，EPROM单元被清除为0；把1写入EPROM需要使用特殊设备。它被擦除和重编程的次数可以达到1000次。</li>
+<li>EEPROM(Electrically Erasable PROM，电子可擦除PROM)：可以直接在印制电路卡上编程，不需要物理上独立的编程设备。它能够被编程次数的数量级约为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">10^5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">5</span></span></span></span></span></span></span></span></span></span></span>次。闪存便是基于EEPROM的存储技术，SSD也是一种基于闪存的磁盘驱动器。</li>
+</ul>
+<p>存储在ROM设备中的程序被称为固件，当一个计算机系统通电之后，它会运行存储在ROM中的固件。一些系统在固件中提供了少量基本的输入和输出函数，一些复杂设备也依赖于固件翻译来自于CPU的I/O请求。</p>
+<h3 id="主存的访问"><a class="markdownIt-Anchor" href="#主存的访问"></a> 主存的访问</h3>
+<p>数据流通过被称为总线的共享电子电路在处理器与主存之间传输，每次CPU和主存之间的数据传输都是通过一系列步骤完成的，这些步骤被称为总线事务。读事务从主存传送数据到CPU，写事务从CPU传送数据到主存。</p>
+<p>以汇编指令movq A, %rax为例，其步骤分为3步：首先将内存地址A放在系统总线上，I/O桥将信号传递到内存总线；然后主存从内存总线中读取地址，从中取出地址A中的数据字，并将其写入到内存总线。I/O桥将内存总线信号转换为系统总线信号，并沿着系统总线传递；最后CPU从系统总线上面读取数据，并将数据存储在寄存器中。这一步骤如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000159.png" alt="image-20201011210959156" /></p>
+<p>反之，如果执行的是如指令movq %rax, A这样的写操作时，CPU首先把地址放到系统总线上，内存从内存总线中读取地址，并等待数据到达；接下来CPU将%rax中的数据字复制到系统总线；最后主存从内存总线中读取数据字，并将其存入到DRAM中。这一步骤如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105000206.png" alt="image-20201011210034274" /></p>
+<h2 id="辅助存储器"><a class="markdownIt-Anchor" href="#辅助存储器"></a> 辅助存储器</h2>
+<h3 id="磁盘"><a class="markdownIt-Anchor" href="#磁盘"></a> 磁盘</h3>
+<h4 id="磁盘构造"><a class="markdownIt-Anchor" href="#磁盘构造"></a> 磁盘构造</h4>
+<p>磁盘的构造如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002444.png" alt="image-20201011221238694" /></p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002444.png" alt="image-20201011221313895" /></p>
+<p>一个磁盘是由多个盘片构成的，每个盘片有两个表面，表面上覆盖着磁性记录材料。盘片中央是一个可以旋转的主轴，使得盘片以固定的旋转速率旋转，通常是5400~15000转每分钟。</p>
+<p>磁盘用读/写头来读写存储在磁性表面的位，而读写头连接到一个传动臂—端。通过沿着半径轴前后移动这个传动臂，驱动器可以将读/写头定位在盘面上的任何磁道上，这样的机械运动称为寻道。一旦读/写头定位到了期望的磁道上，那么当磁道上的每个位通过它的下面时，读/写头可以感知到这个位的值(读该位），也可以修改这个位的值（写该位）。有多个盘片的磁盘针对每个盘面都有一个独立的读/写头。读/写头垂直排列，一致行动。在任何时刻，所有的读/写头都位于同一个柱面上。</p>
+<p>这些结构被封装在一个密封容器中，从而防止磁盘损伤或是读/写头冲撞。</p>
+<p>同时，磁盘驱动器也具有一块缓存，有时也被称为磁道缓冲区。这块缓存只是大小比较小的内存（8MB、16MB等），驱动器可以使用它来保存从磁盘读取或写入磁盘的数据。</p>
+<h4 id="磁盘容量"><a class="markdownIt-Anchor" href="#磁盘容量"></a> 磁盘容量</h4>
+<p>磁盘的每个表面由一组被称为磁道的同心圆组成，每个磁道被划分成一组扇区，每个扇区包含相等数量的数据位，数据便被编码在扇区上的磁性材料中。扇区之间由一些间隙分割开，间隙存储标识扇区的格式化位，不存储数据位。</p>
+<p>磁盘容量的计算公式：磁盘容量=每扇区字节数×每个磁道的平均扇区数×每个表面的磁道数×每张盘片的表面数×磁盘盘片数</p>
+<h4 id="磁盘访问时间"><a class="markdownIt-Anchor" href="#磁盘访问时间"></a> 磁盘访问时间</h4>
+<p>磁盘以扇区大小的块来读写数据。对一个扇区的访问时间包括三个主要部分：</p>
+<ul>
+<li>寻道时间：传送臂将读/写头定位到包含目标扇区的磁道上所需的时间。寻道时间依赖于传动臂在盘面上的移动速度以及读写头以前的位置。磁盘中的平均寻道时间通常为3~9ms。</li>
+<li>旋转时间：驱动器等待目标扇区的第一个位旋转到读/写头下所需的时间。这个步骤的时间依赖于磁盘旋转速度以及读/写头到达目标扇区时盘面的位置。最坏情况下需要等待磁盘转一整圈（以5400转的磁盘为例，需要约12ms）。</li>
+<li>传送时间：驱动器读/写将扇区中的数据所需的时间。一个扇区的传送时间依赖于旋转速度和每条磁道的扇区数目。传送时间相比于寻道时间和旋转时间要少很多。</li>
+</ul>
+<h4 id="逻辑磁盘块"><a class="markdownIt-Anchor" href="#逻辑磁盘块"></a> 逻辑磁盘块</h4>
+<p>在操作系统中，磁盘常常被分为若干个逻辑块。磁盘封装中有一个被称为磁盘控制器的固件设备，维护逻辑块号和实际的物理磁盘扇区直接的映射关系。当操作系统执行一个I/O操作时，控制器上的固件会执行一个快速表查找，将逻辑块号翻译成一个（盘面，磁道，扇区）的三元组，从而寻找到逻辑块对应的物理块。</p>
+<h4 id="磁盘的访问"><a class="markdownIt-Anchor" href="#磁盘的访问"></a> 磁盘的访问</h4>
+<p>CPU使用一种被称为内存映射I/O的技术向I/O设备发送命令，地址空间中有一块地址是为与I/O设备通信保留的，每个这样的地址被称为I/O端口。当一个设备连接到总线时，它被映射到一个或者多个端口。</p>
+<p>磁盘被通过主机总线适配器连接到计算机的I/O总线上去，使用由主机总线接口定义的通信协议。以磁盘读为例，其过程如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002428.png" alt="image-20201011224957311" /></p>
+<h3 id="固态硬盘"><a class="markdownIt-Anchor" href="#固态硬盘"></a> 固态硬盘</h3>
+<p>固态硬盘是一种基于闪存的存储技术，一个SSD封装由一个或多个闪存芯片和闪存翻译层组成，闪存芯片替代了传统旋转磁盘中的机械驱动器，而闪存翻译层是一个固件设备，将对逻辑块的请求翻译成对物理设备的访问。在SSD中，闪存被划分为多个块，而每个块也被划分为多个页，数据以页为单位进行读写。</p>
+<p>比起旋转磁盘，SSD的随机访问比旋转磁盘更快，同时能耗更低，也更结实。但是反复写会导致SSD的磨损，而且数据损坏之后难以恢复，因此这些存储单元常使用均衡磨损技术，将写操作尽量平均地分配到SSD中的每个存储单元。</p>
+<h3 id="光盘"><a class="markdownIt-Anchor" href="#光盘"></a> 光盘</h3>
+<p>光盘在写入信息时，是通过激光束对光盘表面的记录层进行烧刻，使其光学性质发生改变，从而记录二进制信息。在读取信息时，使用能量较低的激光束照射到盘面，根据光接收器接收到光的强弱并将其转换为二进制信息便可读取数据。</p>
+<p>常见的光盘类型有：</p>
+<ul>
+<li>CD-ROM：只读光盘，出厂时数据已经写好，之后无法擦除</li>
+<li>CD-R：可刻光盘（CD-Recordable），只能刻写一次</li>
+<li>CD-RW：可擦写光盘（CD-ReWriteable），可以多次重写</li>
+<li>DVD：数字多用途盘（Digital Versatile Disk），相比于CD的存储容量更大</li>
+<li>蓝光光盘（Blu-Ray）：使用蓝色激光取代DVD的红色激光，因此存储容量相比于DVD更大。</li>
+</ul>
+<h1 id="io设备"><a class="markdownIt-Anchor" href="#io设备"></a> I/O设备</h1>
+<h2 id="分类-2"><a class="markdownIt-Anchor" href="#分类-2"></a> 分类</h2>
+<p>I/O设备大致可以分为三种：</p>
+<ul>
+<li>人机交互设备：键盘、鼠标、打印机、显示器等</li>
+<li>计算机信息存储设备：磁盘、光盘、U盘等</li>
+<li>机—机通信设备：调制解调器等</li>
+</ul>
+<h2 id="接口"><a class="markdownIt-Anchor" href="#接口"></a> 接口</h2>
+<p>计算机的I/O设备通过I/O接口连接到计算机的I/O总线上。I/O接口的组成如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002423.png" alt="image-20201013212407776" /></p>
+<p>I/O接口包括设备组成电路、命令寄存器和命令译码器、数据缓冲寄存器、设备状态标记和控制逻辑电路五部分，并通过数据线、地址线、命令线和状态线四条线路实现设备与系统之间的交互。</p>
+<p>通过I/O接口，可以实现数据缓冲、数据格式转换、电平转换等，从而进一步实现选址、传送命令、传送数据和反映设备状态等功能。</p>
+<h2 id="与主机的信息传送"><a class="markdownIt-Anchor" href="#与主机的信息传送"></a> 与主机的信息传送</h2>
+<p>I/O设备与主机的信息传送分为3种方式：程序查询方式、程序中断方式和DMA(Direct Memory Access)方式。在这三种方式中，I/O设备的自治能力越来越强，同时效率也越来越高。</p>
+<p>这三种方式的执行流程以及CPU效率比较如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002417.png" alt="image-20201013233243802" /></p>
+<h3 id="程序查询方式"><a class="markdownIt-Anchor" href="#程序查询方式"></a> 程序查询方式</h3>
+<p>使用程序查询方式时，CPU会不断地查询I/O的状态，直到设备准备就绪。然后进行CPU与I/O设备之间的信息传送。这种方式会使得CPU踏步等待，效率很低。</p>
+<p>如果有多个设备，程序会轮转查询设备1~N的状态标记，如果发现某个设备准备就绪，则处理该设备的请求，反之则接着查询下一个设备，如此循环往复。</p>
+<h3 id="程序中断方式"><a class="markdownIt-Anchor" href="#程序中断方式"></a> 程序中断方式</h3>
+<p>当I/O设备需要与计算机进行数据传输时，会在自身准备好之后发出一个I/O中断请求。CPU响应I/O中断，终止执行当前正在执行的程序，并开始执行中断服务程序，实现与I/O设备之间的信息传送。中断服务程序首先会保护现场，然后再执行中断服务，执行完成之后恢复现场并返回。这种方式没有踏步等待现象，但是需要中断现有程序。</p>
+<p>一些中断服务程序不允许被中断（单重中断），也有一些中断服务程序能够被级别更高的中断源中断（多重中断）。</p>
+<h3 id="dma-direct-memory-access"><a class="markdownIt-Anchor" href="#dma-direct-memory-access"></a> DMA (Direct Memory Access)</h3>
+<p>DMA是一种高速的数据传输操作，可以使得I/O设备与存储器之间直接读写数据。整个数据传输过程在DMA控制器的作用下进行，这样使得CPU与输入输出可以并行操作。DMA传送方式主要适用于一些高速的I/O设备中，如音频、视频、网络接口。</p>
+<h4 id="dma接口"><a class="markdownIt-Anchor" href="#dma接口"></a> DMA接口</h4>
+<p>DMA接口的组成如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002413.png" alt="image-20201013230204618" /></p>
+<p>图中，AR为内存地址计数器，用于存放内存中要交换的数据的地址；WC为字计数器，用于记录传送数据块的长度；BR为数据缓冲寄存器，用于暂存每次传送的数据；DAR为设备地址寄存器，存放I/O设备的设备码或是表示设备信息存储区的寻址信息；控制逻辑用于管理DMA的传送过程；中断机构用于向CPU提出中断请求。</p>
+<p>DMA接口的功能有：</p>
+<ul>
+<li>向CPU申请DMA传送</li>
+<li>处理总线控制权的转交</li>
+<li>管理系统总线、控制数据传输</li>
+<li>确定数据传送的首地址和长度，修正传送过程中的数据地址和长度</li>
+<li>DMA传送结束之后给出操作完成信号</li>
+</ul>
+<p>DMA接口有两种类型：一种是选择型，通过一条选择线连接多个物理设备，但是在逻辑上只允许连接一个设备；另外一种是多路型，在物理上连接多个设备，同时逻辑上也允许连接的多个设备同时工作。</p>
+<h4 id="连接方式"><a class="markdownIt-Anchor" href="#连接方式"></a> 连接方式</h4>
+<p>DMA与系统之间有两种连接方式：一种是所有的DMA具有一条公共的请求线，另外一种是每一个DMA接口都有一个独立的请求线</p>
+<h4 id="交换数据方式"><a class="markdownIt-Anchor" href="#交换数据方式"></a> 交换数据方式</h4>
+<p>DMA与主存交换数据主要有三种方式：</p>
+<ol>
+<li>停止CPU访问主存，将总线全部交给DMA使用。这种方法控制简单，但是CPU处于不工作状态或保持状态，不能充分发挥CPU对主存的利用率</li>
+<li>周期挪用（周期窃取），利用CPU不访问主存的那些周期来实现DMA操作。这种方法不会减慢CPU的操作，但是需要复杂的时序电路，而且数据传输过程是不连续和不规则的。由于I/O设备处理总线控制权也需要花费时间，因此这种方法适用于I/O设备读写周期大于内存存储周期的情况。</li>
+<li>交替访问，在一个工作周期内，一部分专供DMA访问主存，另一部分专供CPU访问主存。这样不需要申请建立和归还总线的使用权，具有较高的效率。但是相应的硬件逻辑也更加复杂。</li>
+</ol>
+<h4 id="dma的工作过程"><a class="markdownIt-Anchor" href="#dma的工作过程"></a> DMA的工作过程</h4>
+<p>DMA的传送过程主要包括三部分：预处理、数据传送和后处理。</p>
+<p>在预处理阶段，DMA预置一些信息，包括逻辑传送方向、设备地址、主存地址和传送字数；在数据传送阶段，DMA将主存地址发给总线，将数据送给I/O设备或主存，同时修改主存地址和字计数器；在后处理阶段，需要校正送入主存的数是否正确，测试传送过程是否正确，并决定是否继续使用DMA，这些由中断服务程序完成。</p>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<p>[1] 深入理解计算机系统（第三版）</p>
+<p>[2] 哈尔滨工业大学 计算机组成原理公开课</p>
+<p>[3] 计算机组成：结构化方法</p>
+<p>[4] 计算机组成与设计：硬件/软件接口</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2020/11/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" title="计算机组成原理：计算机的硬件组成">http://lyf35.github.io/2020/11/15/计算机组成原理-计算机的硬件组成/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> 计算机组成原理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" rel="prev" title="计算机组成原理：高速缓存">
+      <i class="fa fa-chevron-left"></i> 计算机组成原理：高速缓存
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/15/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/" rel="next" title="计算机组成原理：数据的表示与运算">
+      计算机组成原理：数据的表示与运算 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">226k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:25</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'a75ff6fb6d24ac67c63264be7fef764c',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
