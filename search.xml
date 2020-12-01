@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>密码学：哈希函数</title>
-    <url>/2020/11/27/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/</url>
+    <url>/2020/12/01/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/</url>
     <content><![CDATA[<h1 id="basic-concepts"><a class="markdownIt-Anchor" href="#basic-concepts"></a> Basic concepts</h1>
 <h2 id="definition"><a class="markdownIt-Anchor" href="#definition"></a> Definition</h2>
 <p>A <strong>hash function</strong> (with output length <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">ℓ</mi></mrow><annotation encoding="application/x-tex">\ell</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">ℓ</span></span></span></span>) is a pair of probabilistic polynomial-time algorithms <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>G</mi><mi>e</mi><mi>n</mi><mo separator="true">,</mo><mi>H</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(Gen,H)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">G</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mclose">)</span></span></span></span> satisfying the following:</p>
@@ -124,7 +124,7 @@
   </entry>
   <entry>
     <title>密码学：基础知识</title>
-    <url>/2020/11/27/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
+    <url>/2020/12/01/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
     <content><![CDATA[<h1 id="basic-concepts"><a class="markdownIt-Anchor" href="#basic-concepts"></a> Basic concepts</h1>
 <h2 id="what-is-cryptography"><a class="markdownIt-Anchor" href="#what-is-cryptography"></a> What is cryptography？</h2>
 <p>The study of mathematical techniques for securing digital information, systems, and distributed computations against adversarial attacks.</p>
@@ -299,7 +299,7 @@ M0 50 h400000 v40H0z m0 194h40000v40H0z'/></svg></span></span></span></span></sp
   </entry>
   <entry>
     <title>密码学：消息验证码</title>
-    <url>/2020/11/27/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%B6%88%E6%81%AF%E9%AA%8C%E8%AF%81%E7%A0%81/</url>
+    <url>/2020/12/01/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%B6%88%E6%81%AF%E9%AA%8C%E8%AF%81%E7%A0%81/</url>
     <content><![CDATA[<h1 id="basic-concepts"><a class="markdownIt-Anchor" href="#basic-concepts"></a> Basic concepts</h1>
 <h2 id="message-integrity"><a class="markdownIt-Anchor" href="#message-integrity"></a> Message integrity</h2>
 <p><strong>Message integrity (Message authentication)</strong>: each party should be able to identify when a message it receives was sent by the party claiming to send it, and it was not modified in transit.</p>
@@ -467,8 +467,70 @@ M0 50 h400000 v40H0z m0 194h40000v40H0z'/></svg></span></span></span></span></sp
       </tags>
   </entry>
   <entry>
+    <title>技术书籍与资料整理</title>
+    <url>/2020/12/01/%E6%8A%80%E6%9C%AF%E4%B9%A6%E7%B1%8D%E4%B8%8E%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<p>本文总结了自己读过的一些技术书籍、看过的网课等内容，并给出了简单评价。当然每个人的阅读习惯不同，因此我的意见仅供参考:)。作为程序员，学无止境，本文内容也会慢慢补充。</p>
+<h1 id="编程语言"><a class="markdownIt-Anchor" href="#编程语言"></a> 编程语言</h1>
+<h2 id="cc"><a class="markdownIt-Anchor" href="#cc"></a> C/C++</h2>
+<p>C++ primer：一本大部头，对C++的语法介绍十分详细。适合先通读一遍并完成课后题，然后当参考书使用，遇到问题时翻看。</p>
+<p>The C Programming Language：自己买来当参考书看的，因为自己学的第一门编程语言是C++，这本书用于对C语言编程的一些特定语法进行补充。</p>
+<h2 id="python"><a class="markdownIt-Anchor" href="#python"></a> Python</h2>
+<p>廖雪峰的Python教程：网页版，对于Python语法的介绍比较详细，唯一的缺点是练习题有一些少。如果已有其他编程语言的基础学起来会很快。</p>
+<h1 id="计算机基础"><a class="markdownIt-Anchor" href="#计算机基础"></a> 计算机基础</h1>
+<h2 id="数据结构与算法"><a class="markdownIt-Anchor" href="#数据结构与算法"></a> 数据结构与算法</h2>
+<p>算法导论：常见的算法基本都有介绍，而且算法的证明过程很详细，但是读下来确实也十分吃力。MIT有配套公开课，可以辅助阅读。注意课后题里面也有许多精华，这些题目在网上有答案。读完之后LeetCode中等及以下难度题目应该很少会因为算法基础知识欠缺而不会做。</p>
+<a id="more"></a>
+<p>数据结构（C++版）邓俊辉：强推的一本数据结构书，有详细代码与图解，可以在读算法导论之前读它来打基础。同时这本书也是算法导论内容的补充，因为算法导论里面对一些数据结构的介绍有一些简略。书读完之后最好是用熟悉的编程语言把这些数据结构实现一遍，既可以加深了解，也可以加强编程能力。学堂在线有配套网课，质量极高，可以搭配使用。</p>
+<h2 id="计算机组成原理"><a class="markdownIt-Anchor" href="#计算机组成原理"></a> 计算机组成原理</h2>
+<p>深入理解计算机系统：这本书是以一个程序员的视角讲述了计算机组成原理和操作系统的一些知识，书中的一部分内容对于代码优化还是很有帮助的。2~6章偏重于讲计算机组成原理的内容，后面的章节偏重于讲操作系统相关的内容。前6章读起来个人感觉难度不大，第7章后面的章节在对操作系统原理了解比较少的时候可能读起来会感觉跳跃度略大（个人感觉这样），适合学过操作系统相关内容之后再读。尤其是第9章，将操作系统的知识与计算机硬件结合起来理解，会有不一样的收获。</p>
+<p>哈尔滨工业大学刘宏伟老师的计算机组成原理公开课：讲解的比较详细，内容更加偏底层硬件一些。网课内容包含了计算机组成原理的大部分知识框架，但是有一些细节需要阅读其他书籍来补充。</p>
+<p>计算机组成与设计-硬件/软件接口：自己写博客的时候参考过其中的部分内容，比起深入理解计算机系统更加详细一些，但是没有仔细读过。</p>
+<h2 id="操作系统"><a class="markdownIt-Anchor" href="#操作系统"></a> 操作系统</h2>
+<h3 id="原理"><a class="markdownIt-Anchor" href="#原理"></a> 原理</h3>
+<p>哈尔滨工业大学李治军老师的操作系统公开课：对于操作系统入门来说，是一门比较好的网课，对于操作系统内涉及到的一些主要思想都有介绍。</p>
+<p>Operating Systems: Three Easy Pieces：将操作系统分为CPU虚拟化、内存虚拟化、并发和持久性四大部分来讲解，这四大部分包含了操作系统设计的主要思想。而且作者的介绍比较符合人的思考习惯，由浅入深，是一本不错的入门书籍。</p>
+<h3 id="实践"><a class="markdownIt-Anchor" href="#实践"></a> 实践</h3>
+<p>鸟哥的Linux私房菜：介绍Linux操作系统的基本使用，可以作为工具书查阅。</p>
+<h2 id="计算机网络"><a class="markdownIt-Anchor" href="#计算机网络"></a> 计算机网络</h2>
+<p>计算机网络：自顶向下方法：按照TCP/IP五层模型的思想来介绍计算机网络，对于入门来说很适合。</p>
+<h2 id="汇编语言"><a class="markdownIt-Anchor" href="#汇编语言"></a> 汇编语言</h2>
+<p>小甲鱼的汇编语言网课：讲解很幽默，适合入门。但是讲解的一些东西对于X86/64架构可能有一些过时。</p>
+<p>深入理解计算机系统的第3章：结合C语言讲解汇编语言的命令，比较简单易懂，可以作为入门。而且比较好的一点是书中的汇编语言是基于X86/64架构的。</p>
+<h1 id="机器学习"><a class="markdownIt-Anchor" href="#机器学习"></a> 机器学习</h1>
+<h2 id="数据处理"><a class="markdownIt-Anchor" href="#数据处理"></a> 数据处理</h2>
+<p>利用Python进行数据分析：介绍了用Python进行数据分析的几个常用函数库的用法，包括Numpy、Pandas、Matplotlib等，同时书中也包含了比较多的使用示例。这本书学习起来难度不大，比较容易上手，作者给出的使用示例在进行实际的数据处理与分析时也会经常用到，应该在学习机器学习之前阅读。</p>
+<h2 id="入门"><a class="markdownIt-Anchor" href="#入门"></a> 入门</h2>
+<p>机器学习-周志华：书中对于算法的介绍比较简略，同时给出的使用示例也少了一些。所以不推荐拿这本书来作为机器学习的入门教材，这本书适合有一个像周志华一样的大佬带着读:(。</p>
+<p>吴恩达的机器学习公开课：可以作为机器学习入门来进行学习，讲解比较浅显易懂。</p>
+<p>机器学习基石/机器学习技法：两门台湾的公开课，自己只看过其中部分内容，但是讲解还不错。</p>
+<h2 id="统计学习"><a class="markdownIt-Anchor" href="#统计学习"></a> 统计学习</h2>
+<p>统计学习方法：必读的一本书，公式推导详细，读的时候可以拿白纸边看边推，对于算法原理的理解很有帮助。</p>
+<p>The Elements of Statistical Learning：统计学习的经典教材，需要的数学功底很高（一些比较简单的推导步骤直接被跳过），对于基础理论的讲解也更深。</p>
+<p>XGBoost和LightGBM的原论文：作为经常使用的两种提升树算法，论文对于原理的介绍也更加详细一些。强推XGBoost的原论文，LightGBM则需要在网上查阅一些其他资料来辅助理解。</p>
+<h2 id="深度学习"><a class="markdownIt-Anchor" href="#深度学习"></a> 深度学习</h2>
+<p>深度学习（花书）：对于深度学习的理论讲解比较详细，适合作为深度学习的入门书籍。其中第三部分在</p>
+<h2 id="强化学习"><a class="markdownIt-Anchor" href="#强化学习"></a> 强化学习</h2>
+<p>Sutton的强化学习：读过一小部分，对于算法理论的介绍很详细，阅读起来难度较大。</p>
+<h2 id="实践-2"><a class="markdownIt-Anchor" href="#实践-2"></a> 实践</h2>
+<p>集体智慧编程：包含了许多机器学习在Web应用开发中的实际案例，并且有详细代码，同时不会涉及太多的理论细节。这本书适合作为入门书籍来阅读，可以了解机器学习技术的一些落地场景。</p>
+<p>机器学习实战：使用Numpy自己实现常见的机器学习算法，如果跟着实践一遍对于算法理解很有帮助。</p>
+<p>机器学习实用指南：前半本讲Scikit-learn的用法，后半本讲的是TensorFlow的用法，带有详细代码，而且GitHub里面也有写好的Jupyter文档。前半部分的内容基本涵盖了用Scikit-learn做机器学习的基本步骤以及常用算法的示例。至于后半部分……嗯，PyTorch真香:)。</p>
+<p>深度学习框架PyTorch-入门与实践：介绍了PyTorch的基本用法，并且给了一些实际案例，涵盖了图像与语言处理的一些应用示例。跟着示例做2~3个实际案例基本上就可以掌握PyTorch的用法。不过PyTorch更新较快，书中一些代码可能会过时，可以参照PyTorch官方文档查找相关API稍作修改。</p>
+<h1 id="网络安全"><a class="markdownIt-Anchor" href="#网络安全"></a> 网络安全</h1>
+<h2 id="密码学"><a class="markdownIt-Anchor" href="#密码学"></a> 密码学</h2>
+<p>深入浅出密码学：对于一些常用的加解密算法介绍比较详细，但是密码学理论的介绍则比较少。</p>
+<p>Introduction to Modern Cryptography：对于密码学的理论讲解的比较详细，但是对于实际应用则讲解的不多，适合与深入浅出密码学互为补充。</p>
+]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>其他</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>计算机组成原理：基于硬件原理的程序优化</title>
-    <url>/2020/11/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E5%9F%BA%E4%BA%8E%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E7%9A%84%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96/</url>
+    <url>/2020/12/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E5%9F%BA%E4%BA%8E%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E7%9A%84%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96/</url>
     <content><![CDATA[<ol>
 <li>
 <p>对于一些简单的函数，用内联函数替换。即：将代码中调用函数的步骤用函数体填充。这样就减少了调用函数的开销。</p>
@@ -530,7 +592,7 @@ M0 50 h400000 v40H0z m0 194h40000v40H0z'/></svg></span></span></span></span></sp
   </entry>
   <entry>
     <title>计算机网络：OSI七层模型</title>
-    <url>/2020/11/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/</url>
+    <url>/2020/12/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/</url>
     <content><![CDATA[<h1 id="osi七层模型"><a class="markdownIt-Anchor" href="#osi七层模型"></a> OSI七层模型</h1>
 <p>OSI（Open System Interconnect），即开放式系统互联。 一般都叫OSI参考模型，是ISO（国际标准化组织）组织在1985年研究的网络互连模型。ISO为了更好的使网络应用更为普及，推出了OSI参考模型。其含义就是推荐所有公司使用这个规范来控制网络。这样所有公司都有相同的规范。</p>
 <p>OSI模型把网络从逻辑上分为七层，每一层都有相应的物理设备。它是一种框架式的设计方法，最主要的功能就是帮助不同类型的主机实现数据传输； 最大优点就是将服务、接口和协议三个概念明确的区分起来。但是这一模型复杂且不实用；在实际中，经常使用的是TCP/IP五层（或四层，将物理层与数据链路层看作同一层）模型。</p>
@@ -570,7 +632,7 @@ M0 50 h400000 v40H0z m0 194h40000v40H0z'/></svg></span></span></span></span></sp
   </entry>
   <entry>
     <title>转载：信息安全与密码学博士应该掌握的52个知识点</title>
-    <url>/2020/11/27/%E8%BD%AC%E8%BD%BD-%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8D%9A%E5%A3%AB%E5%BA%94%E8%AF%A5%E6%8E%8C%E6%8F%A1%E7%9A%8452%E4%B8%AA%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <url>/2020/12/01/%E8%BD%AC%E8%BD%BD-%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6%E5%8D%9A%E5%A3%AB%E5%BA%94%E8%AF%A5%E6%8E%8C%E6%8F%A1%E7%9A%8452%E4%B8%AA%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<p>Bristol大学的密码安全工作组为密码学和信息安全相关的博士准备了52个基本知识点，详情见http://www.cs.bris.ac.uk/Research/CryptographySecurity/knowledge.html。</p>
 <p>密码学是一个高度跨学科的领域，包含纯数学、计算机科学以及电子工程等多方面的知识。考虑读研读博的学生专业知识背景不一，Bristol大学对这方面的知识点进行了一个全面的总结和覆盖。52个知识点，Bristol大学推荐所有博一学生花一年的时间应该基本掌握，也就是差不多一个星期掌握一个知识点。掌握这些知识点后，对之后的课堂学习、项目执行、论文研读、科研协作、参加国际会议、与密码学者沟通会大有益处；要不然，可能一直处于懵懵懂懂的状态，荒废学业。</p>
 <a id="more"></a>
@@ -684,7 +746,7 @@ M0 50 h400000 v40H0z m0 194h40000v40H0z'/></svg></span></span></span></span></sp
   </entry>
   <entry>
     <title>密码学：公钥加密</title>
-    <url>/2020/11/27/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/</url>
+    <url>/2020/12/01/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/</url>
     <content><![CDATA[<h1 id="math-related-with-public-key-encryption"><a class="markdownIt-Anchor" href="#math-related-with-public-key-encryption"></a> Math related with public-key encryption</h1>
 <h2 id="diffie-hellman-problems"><a class="markdownIt-Anchor" href="#diffie-hellman-problems"></a> Diffie-Hellman problems</h2>
 <p>Fix a cyclic group <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">\mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span> and a generator <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>g</mi><mo>∈</mo><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">g\in \mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span>. Given elements <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo>∈</mo><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">h_{1},h_{2}\in \mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span>, define <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><msub><mi>H</mi><mi>g</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mo>=</mo><msup><mi>g</mi><mrow><mi>l</mi><mi>o</mi><msub><mi>g</mi><mi>g</mi></msub><msub><mi>h</mi><mn>1</mn></msub><mo>⋅</mo><mi>l</mi><mi>o</mi><msub><mi>g</mi><mi>g</mi></msub><msub><mi>h</mi><mn>2</mn></msub></mrow></msup></mrow><annotation encoding="application/x-tex">DH_{g}(h_{1},h_{2})=g^{log_{g}h_{1}\cdot log_{g}h_{2}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.043548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.849108em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span><span class="mord mtight"><span class="mord mathdefault mtight">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">⋅</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span><span class="mord mtight"><span class="mord mathdefault mtight">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>. That is, if <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub><mo>=</mo><msup><mi>g</mi><msub><mi>x</mi><mn>1</mn></msub></msup></mrow><annotation encoding="application/x-tex">h_{1}=g^{x_{1}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.858832em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>2</mn></msub><mo>=</mo><msup><mi>g</mi><msub><mi>x</mi><mn>2</mn></msub></msup></mrow><annotation encoding="application/x-tex">h_{2}=g^{x_{2}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.858832em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span> then</p>
@@ -920,7 +982,7 @@ The private-key encrypton scheme is called the data-encapsulation mechanism(DEM)
   </entry>
   <entry>
     <title>密码学：数字签名</title>
-    <url>/2020/11/27/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/</url>
+    <url>/2020/12/01/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/</url>
     <content><![CDATA[<h1 id="overview"><a class="markdownIt-Anchor" href="#overview"></a> Overview</h1>
 <h2 id="introduction"><a class="markdownIt-Anchor" href="#introduction"></a> Introduction</h2>
 <p>Signature schemes allow a signer <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> who has established a public key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">pk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> to “sign” a message using the associated private key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">sk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> in such a way that anyone who knows <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">pk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> (and knows that this public key was established by <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span>) can verify that the message originated from <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> and was not modified in transit. (Note that the owner of the public key behaves as the sender, which is in contrast to the public-key encryption)</p>
@@ -1126,7 +1188,7 @@ Successful execution of the identification protocol convinces the verifier that 
   </entry>
   <entry>
     <title>操作系统：CPU虚拟化</title>
-    <url>/2020/11/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/</url>
+    <url>/2020/12/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/</url>
     <content><![CDATA[<p>​</p>
 <h1 id="进程"><a class="markdownIt-Anchor" href="#进程"></a> 进程</h1>
 <h2 id="定义"><a class="markdownIt-Anchor" href="#定义"></a> 定义</h2>
@@ -1278,7 +1340,7 @@ Successful execution of the identification protocol convinces the verifier that 
   </entry>
   <entry>
     <title>计算机组成原理：数据的表示与运算</title>
-    <url>/2020/11/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/</url>
+    <url>/2020/12/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/</url>
     <content><![CDATA[<h1 id="数据的存储"><a class="markdownIt-Anchor" href="#数据的存储"></a> 数据的存储</h1>
 <h2 id="数据的字长"><a class="markdownIt-Anchor" href="#数据的字长"></a> 数据的字长</h2>
 <p>计算机中，数据存储与访问的最小单位是字节。一个字节对应于8个二进制比特。一个字节可以表示的范围从<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0000000</mn><msub><mn>0</mn><mn>2</mn></msub><mo>∼</mo><mn>1111111</mn><msub><mn>1</mn><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">00000000_2\sim 11111111_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.79444em;vertical-align:-0.15em;"></span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.79444em;vertical-align:-0.15em;"></span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，这相当于十进制数的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn><mo>∼</mo><mn>255</mn></mrow><annotation encoding="application/x-tex">0\sim255</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">5</span><span class="mord">5</span></span></span></span>，或是十六进制数的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>00</mn><mo>∼</mo><mi>F</mi><mi>F</mi></mrow><annotation encoding="application/x-tex">00\sim FF</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span></span></span></span>。</p>
@@ -1971,7 +2033,7 @@ x+y+2^w,~x+y&lt;-2^{w-1}\end{cases}</annotation></semantics></math></span><span 
   </entry>
   <entry>
     <title>计算机组成原理：计算机的硬件组成</title>
-    <url>/2020/11/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/</url>
+    <url>/2020/12/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/</url>
     <content><![CDATA[<h1 id="中央处理器cpu"><a class="markdownIt-Anchor" href="#中央处理器cpu"></a> 中央处理器（CPU）</h1>
 <h2 id="cpu组成"><a class="markdownIt-Anchor" href="#cpu组成"></a> CPU组成</h2>
 <p>冯·诺依曼结构CPU的组成部件包括算术逻辑部件（ALU），寄存器，和连接它们的内部总线。从逻辑上说，这些组成部件可以被划分为运算器和控制器两大部分。</p>
@@ -2226,7 +2288,7 @@ x+y+2^w,~x+y&lt;-2^{w-1}\end{cases}</annotation></semantics></math></span><span 
   </entry>
   <entry>
     <title>计算机组成原理：高速缓存</title>
-    <url>/2020/11/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/</url>
+    <url>/2020/12/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/</url>
     <content><![CDATA[<h1 id="局部性"><a class="markdownIt-Anchor" href="#局部性"></a> 局部性</h1>
 <p>一个编写良好的计算机程序常常具有较好的局部性，它们倾向于引用最近引用过的数据项，或是引用与它们相邻的数据项。这种倾向性被称为<strong>局部性原理</strong>。通常一个局部性良好的程序比局部性差的程序运行地更快。</p>
 <p>局部性分为两种：</p>
@@ -2477,8 +2539,279 @@ x+y+2^w,~x+y&lt;-2^{w-1}\end{cases}</annotation></semantics></math></span><span 
       </tags>
   </entry>
   <entry>
+    <title>计算机网络：应用层</title>
+    <url>/2020/12/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/</url>
+    <content><![CDATA[<h1 id="应用层协议原理"><a class="markdownIt-Anchor" href="#应用层协议原理"></a> 应用层协议原理</h1>
+<h2 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h2>
+<p>应用层的作用是为用户提供服务。应用层是协议簇的最高层，因此应用层协议不为任何其他协议提供服务，它们只接收来自于传输层协议的服务。</p>
+<p>应用层核心：写出能够运行在不同端系统和通过网络彼此通信的程序，不需要在网络核心设备上如路由器、链路层交换机上运行的软件。</p>
+<h2 id="应用层模式"><a class="markdownIt-Anchor" href="#应用层模式"></a> 应用层模式</h2>
+<h3 id="客户-服务器体系结构"><a class="markdownIt-Anchor" href="#客户-服务器体系结构"></a> 客户-服务器体系结构</h3>
+<p>在该体系结构中，有一个<strong>总是打开</strong>的主机，即服务器，它接收和服务来自其他许多被称为客户的主机请求；在该体系结构中，<strong>客户之间是不直接通信</strong>的；该服务器具有固定的、周知的地址。</p>
+<p>客户-服务器体系结构的常见应用有：Web、FTP、Telnet和电子邮件。</p>
+<p>这一体系结构对于服务器的性能要求较高。</p>
+<a id="more"></a>
+<h3 id="p2p体系结构"><a class="markdownIt-Anchor" href="#p2p体系结构"></a> P2P体系结构</h3>
+<p>在P2P体系结构中，对位于数据中心的专用服务器有着最小（或者没有）依赖。应用程序在间断连接的<strong>主机对之间使用直接通信</strong>，这些主机被称为<strong>对等</strong>方。对等方并不为服务提供商所拥有，因为这种对等方通信不需要通过专门的服务器，所以该体系结构也被称为对等方到对等方结构</p>
+<p>目前，流量密集型应用都是P2P体系结构的。这些应用包括文件共享（例如BitTorrent）、协助下载（例如迅雷）、因特网电话（例如Skype）和IPTV(例如迅雷看看)。一些应用也可能同时具有客户-服务器和P2P两种体系结构。</p>
+<p>P2P的优点在于其自扩展性，同时不需要庞大的服务器基础设施和带宽。但是P2P模式的较为开放，安全性差；同时上传流量较大，给ISP带来压力；还需要激励用户提供带宽等资源。</p>
+<h3 id="混合模式"><a class="markdownIt-Anchor" href="#混合模式"></a> 混合模式</h3>
+<p>一个应用可以通过结合两种模式的优点将二者混合起来。例如轻量级的客户-服务器通信会寻找可以提供服务的对等结点的地址。当找到这个地址时，实际服务可以通过使用对等模式从对等结点中获得。</p>
+<h1 id="客户-服务器模式"><a class="markdownIt-Anchor" href="#客户-服务器模式"></a> 客户-服务器模式</h1>
+<h2 id="客户与服务器进程"><a class="markdownIt-Anchor" href="#客户与服务器进程"></a> 客户与服务器进程</h2>
+<p>在客户-服务器模式中，应用层的通信时在两个运行着的应用程序之间进行的，这两个应用程序被称为<strong>进程</strong>。在两个不同端系统上的进程，通过跨越计算机网络交换报文而相互通信。发送进程生成并向网络中发送报文；接收进程接收这些报文并可能通过将报文发送回去进行响应。</p>
+<p>对于每对通信进程，我们通常将这两个进程之一标识为客户，而另一个进程标识为服务器。从发起通信的顺序来定义它们：在给定的一对进程之间，**首先发起通信的进程被标记为客户进程，在会话开始时等待联系的进程被称为服务器进程。**服务器在开启之后需要一直运行，而客户只有在需要的时候才运行。</p>
+<h2 id="套接字接口"><a class="markdownIt-Anchor" href="#套接字接口"></a> 套接字接口</h2>
+<p>进程通过一个称为<strong>套接字</strong>（socket）的软件接口向网络发送报文和从网络接收报文。套接字是同一台主机内应用层与运输层之间的接口。由于该套接字是建立网络应用程序的可编程接口，因此套接字也称为应用程序和网络之间的<strong>应用程序编程接口</strong>（Application Programming Interface，API）。</p>
+<p>应用程序开发者可以控制套接字在应用层端的一切，但是对该套接字在运输层端几乎没有控制权。应用程序开发者对于运输层的控制权仅限于：</p>
+<ul>
+<li>选择运输层协议；</li>
+<li>设定运输层参数，如最大缓存和最大报文段长度等</li>
+</ul>
+<p>因此也可以说，就应用层而言，客户进程与服务器进程间的通信是两个套接字间的通信。客户认为套接字是接收请求和发出响应的实体，服务器认为套接字是发出请求并且需要获得响应的实体。</p>
+<h2 id="套接字地址"><a class="markdownIt-Anchor" href="#套接字地址"></a> 套接字地址</h2>
+<p>客户和服务器的交互是双向通信，因此需要一对套接字地址：本地套接字地址和远程套接字地址。一个套接字地址包括两部分，一部分是32位的IP地址，另一部分是16位的端口号。</p>
+<p>由于套接字定义了通信终端，因此我们可以说套接字是由一对套接字地址标识的。</p>
+<h2 id="使用传输层服务"><a class="markdownIt-Anchor" href="#使用传输层服务"></a> 使用传输层服务</h2>
+<p>因特网为应用层提供的常用传输层协议为UDP、TCP、SCTP。</p>
+<ul>
+<li>TCP：包括面向连接的服务和可靠的数据传输功能，并提供拥塞控制机制。</li>
+<li>UDP：不提供不必要服务的轻量级运输协议，UDP是无连接的（通信前没有握手），不保证数据可靠传输，也没有拥塞控制。</li>
+<li>STCP：SCTP提供了面向连接的可靠服务，但是它不是面向字节流，而是面向报文的。同时它还可以提供多媒体流服务。</li>
+</ul>
+<p>从可靠数据传输、吞吐量、定时、安全性等四个角度来看运输层提供的服务，我们发现，运输层无法对吞吐量和定时做出保证。但是，今天的因特网能够为时间敏感的应用提供满意的服务，尽管它并不提供任何定时或者带宽保证。</p>
+<h2 id="应用层协议"><a class="markdownIt-Anchor" href="#应用层协议"></a> 应用层协议</h2>
+<p>应用层协议定义运行在不同端系统上的应用程序进程如何相互传递信息。涉及的内容包括：交换的报文类型（请求或者响应）、报文中包含哪些字段、字段如何被解释、一个进程何时收发报文并如何对报文进行响应等内容。</p>
+<p>常见的应用层协议：</p>
+<ul>
+<li>HTTP：端口号80，用于浏览器浏览网页，但是网页内容为明文，容易篡改、容易劫持、网页内容容易泄露。</li>
+<li>HTTPS：端口号443，在HTTP与TCP层之间加入一个SSL层用于安全加密，弥补了HTTP协议的缺点。但是可能会受中间人欺骗攻击（参考https://www.cnblogs.com/lulianqi/p/10558719.html）。</li>
+<li>SMTP：端口号25，基于TCP协议，用于邮件发送，只能发送ASCII码。邮件扩充MIME可以发送二进制文件，增加邮件主题结构但是并未改变SMTP。</li>
+<li>POP3：端口号110，基于TCP协议，用于邮件接收，用户从服务器读取邮件之后便删除服务器上的邮件。</li>
+<li>IMAP：端口号143，基于TCP协议，用于邮件接收，客户端与服务器的邮件保持同步，允许用户随时随地访问服务器上的邮件。</li>
+<li>DNS：端口号53，基于TCP/UDP协议，用于解析域名与ip地址。</li>
+<li>DHCP：端口号67/68，基于UDP，用于主机动态获取ip地址、缺省网关、DNS服务器等参数。</li>
+<li>FTP：端口号20（数据连接）/21（控制连接），基于TCP，用于实现交互式文件传输。</li>
+<li>Telnet：端口号23，基于TCP，用于远程终端访问。</li>
+</ul>
+<h1 id="http协议"><a class="markdownIt-Anchor" href="#http协议"></a> HTTP协议</h1>
+<h2 id="万维网"><a class="markdownIt-Anchor" href="#万维网"></a> 万维网</h2>
+<h3 id="结构"><a class="markdownIt-Anchor" href="#结构"></a> 结构</h3>
+<p>万维网简称WWW或Web，它是一个分布式客户-服务器服务。使用浏览器的用户可以访问一个正在服务器上运行的服务。这些服务分布在很多称为站点的地点上，每一个站点有一个或者多个文档，被称为网页。每个网页也可以包含一些到其他网页的链接，被链接的网页可以在同一个站点或是在其它站点。</p>
+<p>客户通过使用浏览器来访问网页。每个浏览器通常包括三个部分：控制程序、客户协议和解释程序。控制程序接收来自键盘和鼠标的输入并使用客户端程序来访问文档。在文档被访问后，控制程序使用解释程序在屏幕上显示文档。客户协议包括HTTP、FTP等。</p>
+<p>网页存储在服务器上，每当请求到达时，相应的文档就会被发送到客户。服务器通常将被请求的文件存储在缓存中，同时也可以通过多线程或多进程，从而提高效率。</p>
+<h3 id="url"><a class="markdownIt-Anchor" href="#url"></a> URL</h3>
+<p>网页需要有一个唯一的标识符域其他网页区别开，这个标识符被称为统一资源定位符（Uniform Resource Locator, URL）。为了定义一个网页，需要如下四个标识符：</p>
+<ul>
+<li>协议：用来访问网页的客户-服务器程序。绝大多数情况下是HTTP协议，也可能会使用FTP等。</li>
+<li>主机：可以是服务器的IP地址，或是主机被给予的唯一名称（域名）。</li>
+<li>端口：是一个16位整数，通常情况下是为客户-服务器应用而预定义好的。</li>
+<li>路径：定义了操作系统中文件的位置和名称。</li>
+</ul>
+<p>将这四部分组合在一起，便设计出了URL，它在四个部分之间使用三个不同的分隔符，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">protocol:&#x2F;&#x2F;host&#x2F;path  #绝大多数情况下使用</span><br><span class="line">protocol:&#x2F;&#x2F;host:port&#x2F;path  #当需要标识出端口号时使用</span><br></pre></td></tr></table></figure>
+<h3 id="网上文档"><a class="markdownIt-Anchor" href="#网上文档"></a> 网上文档</h3>
+<p>万维网上的文档可以分为下面三大类：</p>
+<ul>
+<li>静态文档：在服务器中创建和存储的固定内容的文档。当客户访问文档时，将一个文档的副本发送给用户，然后用户可以用浏览器查看文档。</li>
+<li>动态文档：当浏览器请求文档时，网页服务器运行一个应用程序或者脚本来创建一个动态文档，返回程序或脚本的结果作为对浏览器请求文档操作的响应。动态文档的内容随着用户请求的不同而不同。</li>
+<li>活动文档：浏览器请求一个活动文档时，服务器发送文档或者脚本的一个副本，然后文档在客户站点（浏览器）上运行。例如一个与用户交互的程序或者是在屏幕上创建动画的程序。</li>
+</ul>
+<h2 id="http"><a class="markdownIt-Anchor" href="#http"></a> HTTP</h2>
+<p>HTTP（HyperText Transfer Protocol）是Web的应用层协议，它是Web的核心；HTTP有两部分实现，一个客户端程序一个服务器程序；HTTP定义了客户和服务器进行报文交换的方法，它的核心思想是客户通过HTTP请求对服务器发出对Web页面的请求报文，服务器收到该报文后将返回包含该对象的HTTP响应报文。</p>
+<p>HTTP使用<strong>TCP</strong>作为它的传输层协议：HTTP客户首先发起一个与服务器的TCP连接，服务器根据请求作出响应，但是不存储任何关于该客户的状态信息。也正因为这样，HTTP被称为<strong>无状态协议</strong>。同时，Web使用了客户端-服务器的应用体系结构，其中web服务器总是开着的。</p>
+<p>HTTP可以采用持续连接或是非持续连接两种方式：使用非持续连接时，每个TCP连接在服务器发送一个对象后就会关闭，也就是每个TCP只传送一个请求报文和响应报文，这会使得服务器的负担很重，同时一个对象需要两个RTT（Round-Trip Time，一个短分组从客户端到服务器，然后再返回客户端所用的时间）的时延才能交付；如果使用持续连接，服务器在发送响应报文后将保持该TCP打开，后续客户端可以使用该连接来向服务器发出请求，不但一个完整的页面可以通过同一个连接传送，同一台服务器上的多个页面也可以通过同一个连接发送，这样提高了效率。HTTP默认使用的是带流水线的持续连接。</p>
+<h2 id="请求与响应报文"><a class="markdownIt-Anchor" href="#请求与响应报文"></a> 请求与响应报文</h2>
+<p>请求报文的示例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">GET &#x2F;index.html HTTP&#x2F;1.1\r\n  &#x2F;&#x2F;第一行为请求行，包括：方法字段、URL字段和HTTP版本字段，方法字段包括GET、POST、HEAD、PUT和DELETE等；</span><br><span class="line">Host: www-net.cs.umass.edu\r\n &#x2F;&#x2F;从第二行开始至下面的空行之间全部为首部行，包含是否在发送完响应报文后关闭TCP连接的Connection；请求的主机地址；浏览器版本；可接受的语言等头部信息</span><br><span class="line">User-Agent: Firefox&#x2F;3.6.10\r\n</span><br><span class="line">Accept: text&#x2F;html,application&#x2F;xhtml+xml\r\n</span><br><span class="line">Accept-Language: en-us,en;q&#x3D;0.5\r\n</span><br><span class="line">Accept-Encoding: gzip,deflate\r\n</span><br><span class="line">Accept-Charset: ISO-8859-1,utf-8;q&#x3D;0.7\r\n</span><br><span class="line">Keep-Alive: 115\r\n</span><br><span class="line">Connection: keep-alive\r\n</span><br><span class="line">\r\n</span><br><span class="line">实体主体  &#x2F;&#x2F;可以在POST方法里传递Form表单内容或者传递其它一些二进制流数据等</span><br></pre></td></tr></table></figure>
+<p>响应报文的示例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">HTTP&#x2F;1.1 200 OK\r\n &#x2F;&#x2F;包含HTTP协议版本、状态码字段、以及状态短语。100范围内的代码代表一个报告，200范围内的代码表示一个成功的请求，300范围内表示重定向，400范围内表示客户端发生错误，500范围内表示服务器端发生错误。</span><br><span class="line">Date: Sun, 26 Sep 2010 20:09:20 GMT\r\n &#x2F;&#x2F;从第二行开始到空格之间为响应头部行，包含服务器向客户端发送的额外信息。</span><br><span class="line">Server: Apache&#x2F;2.0.52 (CentOS)\r\n</span><br><span class="line">Last-Modified: Tue, 30 Oct 2007 17:00:02 GMT\r\n</span><br><span class="line">ETag: &quot;17dc6-a5c-bf716880&quot;\r\n</span><br><span class="line">Accept-Ranges: bytes\r\n</span><br><span class="line">Content-Length: 2652\r\n</span><br><span class="line">Keep-Alive: timeout&#x3D;10, max&#x3D;100\r\n</span><br><span class="line">Connection: Keep-Alive\r\n</span><br><span class="line">Content-Type: text&#x2F;html; charset&#x3D;ISO-8859-1\r\n</span><br><span class="line">\r\n</span><br><span class="line">data data data data data ... </span><br></pre></td></tr></table></figure>
+<h2 id="cookie"><a class="markdownIt-Anchor" href="#cookie"></a> Cookie</h2>
+<p>万维网最初被设计成无状态实体，客户发生请求，服务器响应，它们之间的关系便结束了。为了让Web实现更多的功能，便出现了Cookie机制。</p>
+<h3 id="创建与存储"><a class="markdownIt-Anchor" href="#创建与存储"></a> 创建与存储</h3>
+<ol>
+<li>当服务器从客户端接收到请求之后，将客户端的信息存储在文件或字符串中。这些信息可能包含客户端的域名、cookie内容（服务器收集到的关于客户端的信息）、时间戳以及与实现有关的其他信息。</li>
+<li>服务器在响应中包含了它发给客户端的cookie。</li>
+<li>当客户端接收到响应之后，浏览器在cookie目录中存储cookie，并根据服务器域名进行分类。</li>
+</ol>
+<h3 id="cookie的使用"><a class="markdownIt-Anchor" href="#cookie的使用"></a> Cookie的使用</h3>
+<p>当客户向服务器发送请求时，浏览器在cookie目录中查询是否有从那个服务器发送过来的cookie。如果有则在请求中包含这个cookie。当服务器接收到这个请求后，它知道这是一个老客户。下面是cookie的一些使用场景：</p>
+<ul>
+<li>电子商务：当客户端选择商品，并放入购物车中后，包含这些商品信息的cookie就会被发送到浏览器。如果客户端选择第二个商品，就会更新cookie，以此类推。当客户端结束购物并付款时，就检索最后的cookie，然后计算总价格。</li>
+<li>用户注册：当客户端第一次注册时，网站向客户端发送一个cookie，网站通过这种方式限制注册用户访问。只有能发送正确cookie的用户才允许今后重复访问。</li>
+<li>Web门户：当用户选择最喜欢的网页时，就生成一个cookie并发送到浏览器。当网站再次被访问时，这个cookie就发送给服务器说明客户端要查找的页面。</li>
+<li>广告代理：当用户访问网站主页并点击广告图标时，一个请求发送给广告代理，广告代理就会发送一个大字标题广告，同时也包含一个含有用户ID的cookie。将来对这个大字标题广告的任何使用都会加入到一个分析用户Web行为的数据库中。这种使用方法侵犯用户隐私，引起很多争议。</li>
+</ul>
+<p>注意，cookie的内容不允许浏览器读取或者透露给用户，只能由服务器创建并回收。</p>
+<h2 id="代理服务器"><a class="markdownIt-Anchor" href="#代理服务器"></a> 代理服务器</h2>
+<p>HTTP支持代理服务器，代理服务器是一台计算机，能够保存最近请求的响应副本。HTTP客户端向代理服务器发送请求，代理服务器检查本地高速缓存。如果高速缓存中不存在响应报文，代理服务器就向相应的服务器发送请求。返回的响应会发送到代理服务器中并存储，以用于其他客户端未来的请求。</p>
+<p>代理服务器降低了原服务器的负载，减少了通信量并降低了延迟。但是为了使用代理服务器，需要在客户端配置，使其访问代理服务器。</p>
+<h1 id="ftp"><a class="markdownIt-Anchor" href="#ftp"></a> FTP</h1>
+<p>文件传输协议（File Transfer Protocol, FTP）是TCP/IP提供的标准机制，用于将文件从一个主机复制到另一个主机。在FTP的基本模型中，客户有三个组件：用户接口、客户控制进程和客户数据传输进程，服务器有两个组件：服务器控制进程和服务器数据传输进程。</p>
+<p>在FTP协议中，控制连接是在控制进程之间进行的，而数据连接是在数据传输进程之间进行的。将命令和数据分开传输使得FTP效率更高。</p>
+<h2 id="控制连接和数据连接"><a class="markdownIt-Anchor" href="#控制连接和数据连接"></a> 控制连接和数据连接</h2>
+<h3 id="连接的寿命"><a class="markdownIt-Anchor" href="#连接的寿命"></a> 连接的寿命</h3>
+<p>在整个交互的FTP会话期间，控制连接始终处于连接状态，数据连接则在每次传输文件时开启然后关闭。控制连接的端口是21，数据连接的端口是20。</p>
+<h3 id="控制连接"><a class="markdownIt-Anchor" href="#控制连接"></a> 控制连接</h3>
+<p>FTP的控制通信使用与TELNET相同的方法。FTP与TELNET一样使用NVT ASCII字符集，通信是通过命令和响应来完成的。这种简单方法适合控制连接，因为一次发送一条命令或响应，而每一条命令或响应都是一个短行。</p>
+<p>在控制连接期间，命令从客户端发送到服务器，并且响应从服务器发送到客户端。从FTP客户控制进程发送的命令是ASCII大写字母形式的，某些带有参数。每个FTP命令至少产生一个响应，一个响应有两部分，包括文本与其后的一个三位数字。数字部分定义了编码，文本部分定义了需要的参数或是进一步的解释。数字中的第一位定义了命令状态，第二位定义了状态应用的区域，第三个数字提供了额外信息。</p>
+<h3 id="数据连接"><a class="markdownIt-Anchor" href="#数据连接"></a> 数据连接</h3>
+<p>数据连接的步骤如下：</p>
+<ol>
+<li>客户使用临时端口发起一个被动打开。</li>
+<li>客户使用PORT命令发送端口号到服务器。</li>
+<li>服务器接收到端口号，使用端口20发出主动打开并且接收临时端口号。</li>
+</ol>
+<p>在数据连接中，客户必须定义传输文件的类型、数据结构和传输模式。在通过数据连接发送文件之前，通过控制连接进行准备。</p>
+<ul>
+<li>数据结构：FTP可以使用文件结构、记录结构和页面结构中的一种。文件结构格式（默认）是连续的字节流；记录结构中将文件划分成一些记录；在页面结构中是将文件划分为多个页面，每个页面有一个页面号和页面头部。</li>
+<li>文件类型：可以是ASCII、EBCIDC和图像文件三种中的一种</li>
+<li>传输方式：包括流方式、块方式和压缩方式。流方式（默认）将数据作为连续字节流进行传递；块方式中数据按块传递，每个块前面包括块描述符和块大小。</li>
+</ul>
+<h2 id="文件传输"><a class="markdownIt-Anchor" href="#文件传输"></a> 文件传输</h2>
+<p>文件传输是在控制连接发送出来的命令的控制之下，在数据连接上进行的。FTP的文件传输表示三件事情之一：读取文件（服务器到客户）、存储文件（客户到服务器）和目录列表（服务器到客户）。</p>
+<h1 id="电子邮件"><a class="markdownIt-Anchor" href="#电子邮件"></a> 电子邮件</h1>
+<h2 id="架构"><a class="markdownIt-Anchor" href="#架构"></a> 架构</h2>
+<p>通常情况下，电子邮件的发送者和接收者通过WAN或者LAN连接到两个邮件服务器上。管理员为每个用户创建了一个邮箱，接收到的报文被存储在邮箱里。邮箱是服务器硬盘的一部分，是一个带有限制的特殊文件，只有邮箱拥有者才能访问它。</p>
+<p>一个电子邮件从发送者到接收者的过程如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232435.png" alt="image-20201125210219177" /></p>
+<h3 id="用户代理"><a class="markdownIt-Anchor" href="#用户代理"></a> 用户代理</h3>
+<p>用户代理（User Agent, UA）是一个软件包，由读写、回答和转发报文组成。它也处理用户计算机的本地邮箱。现在的用户代理都是基于GUI型的，允许用户使用键盘和鼠标与软件进行交互。典型的例子有Outlook。</p>
+<h4 id="发送邮件"><a class="markdownIt-Anchor" href="#发送邮件"></a> 发送邮件</h4>
+<p>在发送邮件时，用户通过UA创建邮件，一封邮件包含一个信封和一个报文。信封包含发信人的地址、收件人的地址以及其他信息；报文包含头部和主体，头部定义了发信人、收件人、报文的主题以及其他信息，报文的主体包含了收件人要读取的真正信息。</p>
+<h4 id="接收邮件"><a class="markdownIt-Anchor" href="#接收邮件"></a> 接收邮件</h4>
+<p>用户或定时器触发用户代理检查邮箱。如果用户有邮件，UA就通过一个通知来告诉用户。如果用户准备读取邮件则会显示一个列表，列表每一行包含邮箱中一个特定报文的信息概要。用户可以选择其中任何一个报文阅读其内容。</p>
+<h4 id="地址"><a class="markdownIt-Anchor" href="#地址"></a> 地址</h4>
+<p>为了传递邮件，邮件处理系统使用具有唯一地址的寻址系统。在因特网中，地址包括两部分，本地部分和域名，并且用逗号隔开。它们组成如下的格式：<code>本地部分@域名</code>。</p>
+<p>本地部分定义了一个特定文件的名字，被称为用户邮箱，在其中存储了用户接收到的所有邮件，以便UA进行读取。第二部分是域名，一个组织机构通常使用一个或多个主机来接收和发送邮件，这些主机被称为邮件服务器或交换机。分配给每个邮件交换机的域名来自于DNS数据库或是一个逻辑名称。</p>
+<h3 id="报文传输代理smtp"><a class="markdownIt-Anchor" href="#报文传输代理smtp"></a> 报文传输代理：SMTP</h3>
+<p>在因特网中定义报文传输代理（Mail Transfer Agent, MTA）客户机和服务器的常用协议称为简单邮件传输协议（SMTP）。SMTP是一个推协议，它将报文从客户推入服务器。SMTP协议在发送放和接收方邮件服务器之间以及两个邮件服务器之间被使用两次。</p>
+<h4 id="命令和响应"><a class="markdownIt-Anchor" href="#命令和响应"></a> 命令和响应</h4>
+<p>SMTP使用一些命令和响应在MTA客户和MTA服务器之间传输报文。命令从MTA客户发生到MTA服务器；响应从MTA服务器发送到MTA客户。每一个命令或者响应都是以一个双字符（回车和换行）的行结束标记来终止的。</p>
+<p>客户发给服务器命令的格式如下：<code>关键词：变量</code>。服务器发给用户的响应是一个三位数字码，后面可以跟着附加的文本信息。</p>
+<h4 id="邮件传输"><a class="markdownIt-Anchor" href="#邮件传输"></a> 邮件传输</h4>
+<p>传输一个邮件可以大体分为3个阶段：连接建立、邮件传输和连接终止：</p>
+<ol>
+<li>连接建立：在客户创建了到端口25的TCP连接之后，SMTP服务器开始连接阶段。这个阶段的步骤包括：
+<ol>
+<li>服务器发送代码220（服务就绪）告知客户它准备好接收邮件。如果未准备就绪就发送代码421（服务不可用）。</li>
+<li>客户发送HELO报文，使用自身域名地址来让服务器识别自身，需要将客户的域名告知服务器。</li>
+<li>服务器以代码250（请求命令完成）响应，或者做其他响应。</li>
+</ol>
+</li>
+<li>邮件传输：在SMTP客户与服务器的连接建立之后，单个报文可以在一个发信人和多个收信人之间交换。这一阶段涉及8个步骤，如果收信人有多个则重复3和4：
+<ol>
+<li>客户发送MAIL FROM报文以介绍发信人，其中包括发信人的邮件地址。同时服务器向发信人提供回信地址，用于返回错误以及报告报文。</li>
+<li>服务器用代码250或其他代码响应。</li>
+<li>客户发送RCPT TO（收信人）报文，包含收信人的邮箱地址。</li>
+<li>服务器用代码250或其它代码响应。</li>
+<li>客户发送DATA报文，初始化报文传输。</li>
+<li>服务器用代码354（开始邮件输入）或者其他代码响应。</li>
+<li>客户以连续行的形式发送报文内容。每行用两个行结束标记终止。报文用一个只包含一个句点的行终止。</li>
+<li>服务器用代码250或其他代码响应。</li>
+</ol>
+</li>
+<li>连接终止：在报文成功传送之后客户终止连接，这个阶段包括两步：
+<ol>
+<li>客户发送QUIT命令</li>
+<li>服务器用代码221或其他代码响应</li>
+</ol>
+</li>
+</ol>
+<p>上述的整个过程可以用下图来表示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232444.png" alt="邮件发送全过程" /></p>
+<h3 id="报文访问代理pop和imap"><a class="markdownIt-Anchor" href="#报文访问代理pop和imap"></a> 报文访问代理：POP和IMAP</h3>
+<p>在邮件传递的最后一个阶段，需要使用到报文访问代理（Mail Access Agent, MAA）。报文访问代理协议是一个拉协议，使得客户可以从服务器拉出报文。目前有两种报文访问代理协议：POP3和IMAP4。</p>
+<h4 id="pop3"><a class="markdownIt-Anchor" href="#pop3"></a> POP3</h4>
+<p>POP3比较简单，但是功能上受到一定的限制。客户端的POP3软件安装在收信人的计算机中，服务器POP3软件安装在邮件服务器中。当用户需要从邮件服务器的邮箱中下载邮件时，客户端发起邮件访问操作。客户端开启与服务器110端口之间的TCP连接，然后发送用户名和口令来访问邮箱，用户便可逐条列出和读取邮件信息了。</p>
+<p>POP3有两种模式，分别为删除模式和保存模式。删除模式中，当邮件从邮箱中读取完之后就会从邮箱中删除。在保存模式中，邮件经过读取之后仍然保存在邮箱中。</p>
+<h4 id="imap4"><a class="markdownIt-Anchor" href="#imap4"></a> IMAP4</h4>
+<p>IMAP4比起POP3来说功能更强并且更加复杂，它提供了一些额外的功能，例如：</p>
+<ul>
+<li>下载电子邮件之前可以检查电子邮件头部</li>
+<li>下载电子邮件之前可以读取邮件内容中的特定字符串</li>
+<li>可以部分下载电子邮件</li>
+<li>可以在邮件服务器上创建或删除邮箱，也可以改变邮箱名字</li>
+<li>可以在文件夹中创建邮箱的层次结构以用于邮件存储</li>
+</ul>
+<h4 id="mime"><a class="markdownIt-Anchor" href="#mime"></a> MIME</h4>
+<p>多用途因特网邮件扩充（Multipurpose Internet Mail Extensions, MIME）是一个辅助协议，允许非ASCII数据通过电子邮件传送。在发送方将非ASCII数据转换为NVT ASCII数据，并将其传递给MTA客户机通过因特网发送出去，接收方再转换为原来的数据。</p>
+<h1 id="远程登录"><a class="markdownIt-Anchor" href="#远程登录"></a> 远程登录</h1>
+<h2 id="telnet"><a class="markdownIt-Anchor" href="#telnet"></a> TELNET</h2>
+<p>TELNET（TErminaL NETwork）是一种原始的远程登录协议，虽然登录时需要用户名和口令，但是所有的数据全部采用明文传输，因此很容易遭受攻击。因此目前常常使用SSH（Secure Shell）代替它。</p>
+<h3 id="基本原理"><a class="markdownIt-Anchor" href="#基本原理"></a> 基本原理</h3>
+<p>当用户使用TELNET访问一个远程机器时，用户将击键发送给终端驱动程序，同时本地操作系统接收这些字符但是并不解释它们。这些字符被发送到TELNET客户机，它将这些字符转换成网络虚拟终端（Network Virtual Terminal, NVT）字符的通用字符集，然后将其传送给本地的TCP/IP协议堆栈。</p>
+<p>采用NVT形式的命令或文本通过因特网传送到远程机器的TCP/IP堆栈，在那里字符传递给操作系统，然后传送给TELNET服务器，TELNET服务器将这些字符转换成远程计算机可以理解的字符。但是这些字符不能直接传递给操作系统，需要使用一个终端驱动程序的软件块，将这些字符伪装成是从一个终端发过来的，然后操作系统将这些字符传输给适当的应用程序。</p>
+<h2 id="安全shellssh"><a class="markdownIt-Anchor" href="#安全shellssh"></a> 安全Shell（SSH）</h2>
+<h3 id="组件"><a class="markdownIt-Anchor" href="#组件"></a> 组件</h3>
+<p>SSH是一个有三个组件的应用层协议，包括：</p>
+<ul>
+<li>SSH应用层协议：建立安全信道，提供数据完整性、服务认证、报文压缩、报文保密性服务</li>
+<li>SSH认证协议：为服务器对客户进行认证</li>
+<li>SSH连接协议：创建不同的逻辑信道用于实现不同的通信</li>
+</ul>
+<h3 id="应用"><a class="markdownIt-Anchor" href="#应用"></a> 应用</h3>
+<p>SSH是一个提供客户和服务器之间安全连接的通用协议，可以提供如下的应用：</p>
+<ul>
+<li>远程登录</li>
+<li>文件传输</li>
+<li>端口转发</li>
+</ul>
+<h1 id="域名系统"><a class="markdownIt-Anchor" href="#域名系统"></a> 域名系统</h1>
+<h2 id="地址映射"><a class="markdownIt-Anchor" href="#地址映射"></a> 地址映射</h2>
+<p>在访问网址时，人们更喜欢用名字而不是数字IP地址，但是TCP协议却需要使用IP地址来唯一地确定一台主机到因特网的连接。因此，因特网需要一种能够将名字映射地址的目录系统。这个系统被称为域名系统（Domain Name System, DNS）</p>
+<p>例如一个用户想访问一个文件传输服务器，将服务器的主机名映射到IP地址需要如下几个步骤：</p>
+<ol>
+<li>用户将主机名传递给文件传输客户端</li>
+<li>文件传输客户端将主机名传递到DNS客户端</li>
+<li>在启动后，每一台电脑都知道DNS服务器的地址。DNS客户端使用已知DNS服务器IP地址向DNS服务器发送附有查询的报文，报文中包含文件服务器名</li>
+<li>DNS服务器进行响应，发回客户想要获得的文件传输服务器的IP地址</li>
+<li>DNS客户端将IP地址传递到文件传输服务器</li>
+<li>文件传输客户端使用接收到的IP地址访问文件传输服务器</li>
+</ol>
+<h2 id="域名空间"><a class="markdownIt-Anchor" href="#域名空间"></a> 域名空间</h2>
+<p>域名空间是一种层次名字空间，在这种设计方式中，所有的名字由根在底部的倒置树结构定义。该树最多有128级：0（根节点）~127级。</p>
+<p>域名空间中一些概念的定义如下：</p>
+<ul>
+<li>标签：树上的每个节点有一个标签。标签是一个最多为63个字符的字符串，根节点的符号是空字符串。DNS要求每一个结点的子节点有不同的标签，这样便保证了域名的唯一性</li>
+<li>域名：树上的每一个节点都有一个域名。一个完整的域名是用点（.）分割的标签序列。域名总是从某一节点向上读到根节点。由于最后一个标签一定是根节点的空标签，因此完整域名的最后一个字符一定是一个点。如果一个标签以空字符串结束，则被称为全称域名；反之则被称为部分域名。</li>
+<li>域：一个域是域命名空间的子树，域的名称是子树顶端节点的名称。也就是说树中的每一个节点定义一个域。</li>
+</ul>
+<p>域名空间被划分为三部分：通用域、国家域和反向域。反向域可以被用于在给定IP地址的情况下找到主机名，由于太复杂目前已经被废止。通用域按照已经注册主机的一般行为对主机进行定义，在通用域的一个层次允许有14个可能的标签，这些标签对应于不同的机构类型。国家域部分使用双字母的国家缩写，第二级标号由各个国家自己制定。</p>
+<p>当一个新的域名需要加入到DNS中时，需要通过注册机构来完成。注册机构首先确认域名的唯一性，然后将它输入到DNS数据库中。</p>
+<h2 id="dns服务器"><a class="markdownIt-Anchor" href="#dns服务器"></a> DNS服务器</h2>
+<p>域名空间中的信息被分布存储在多台DNS服务器中。一个服务器负责或者授权的域名空间被称为区域。一个区域可以是一个域，也可以是一个域的一部分。</p>
+<p>根服务器的区域由整颗树组成，它通常不保存关于域的任何信息，只是将其授权委托给其他服务器，并保持与这些服务器的参照关系。目前有多个根服务器，每一台都覆盖了整个域名空间，它们分布于世界各地。</p>
+<p>主服务器是存储了授权区域有关文件的服务器，它负责创建、维护和更新区域文件，并将区域文件存储在本地磁盘中。</p>
+<p>辅助服务器负责从另一个服务器（主服务器或辅助服务器）传输一个区域的全部信息，并将文件存储在它的本地磁盘中。辅助服务器不创建也不更新区域文件，如果需要更新则从主服务器传到辅助服务器上。</p>
+<h2 id="地址解析"><a class="markdownIt-Anchor" href="#地址解析"></a> 地址解析</h2>
+<p>将名字映射为地址或是将地址映射为名字的过程被称为名字-地址解析。需要完成这一工作时，主机调用一个称为解析程序的DNS客户程序，解析程序用一个映射请求访问最近的一个DNS服务器。如果服务器含有该信息，就满足解析程序的请求；否则它将解析程序交付给其他服务器，或者查询其他服务器来提供这种服务。</p>
+<h2 id="dns报文"><a class="markdownIt-Anchor" href="#dns报文"></a> DNS报文</h2>
+<p>为了获取关于主机的信息，DNS使用查询报文和响应报文，二者具有相同的格式。一个DNS报文的结构如下：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232459.png" alt="DNS报文" style="zoom: 33%;" />
+<p>标识字段用来匹配对查询的响应；标记定义了报文是查询报文还是响应报文；查询部分包含在查询报文中，并且在响应中被重复，它包含一个或者多个问题记录；响应部分包含一个或多个资源记录，只出现在响应报文中；授权部分给出一个或多个负责查询的授权服务器的信息；额外信息部分提供了可能帮助解析程序的额外信息。</p>
+<p>DNS使用的熟知端口号为53，当响应报文长度小于512字节时使用UDP连接，大于512字节时则使用TCP连接。如果事先无法确定报文长度，则先使用UDP端口，当超过512字节时服务器会截断这一报文，解析程序开启TCP连接并重复该请求。</p>
+<h2 id="ddns"><a class="markdownIt-Anchor" href="#ddns"></a> DDNS</h2>
+<p>如果做了增加主机、改变IP地址等操作时，这些改变会使得DNS的主文件发生变化。由于因特网规模太大，如果手动进行更新几乎不可能，因此要求DNS主文件可以进行动态更新。在DDNS中，当名字和地址之间的绑定被确定时，这些信息通常由DHCP发送给主DNS服务器。主服务器更新这一区域，并以主动或被动方式通知辅助服务器。</p>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<ol>
+<li>计算机网络：自顶向下方法</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MzI2NDcyL2FydGljbGUvZGV0YWlscy84ODA4OTc0Nw==">https://blog.csdn.net/qq_39326472/article/details/88089747<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5Mzg0MTg0L2FydGljbGUvZGV0YWlscy84NDAzMzcyOA==">https://blog.csdn.net/qq_39384184/article/details/84033728<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9iZXRhLnNlZ21lbnRmYXVsdC5jb20vYS8xMTkwMDAwMDIzNzI2Mjc4">https://beta.segmentfault.com/a/1190000023726278<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzUwMjkzMjAw">https://www.zhihu.com/question/50293200<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>密码学：私钥加密</title>
-    <url>/2020/11/27/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/</url>
+    <url>/2020/12/01/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/</url>
     <content><![CDATA[<h1 id="computational-secure-encryption"><a class="markdownIt-Anchor" href="#computational-secure-encryption"></a> Computational secure encryption</h1>
 <h2 id="perfect-secrecy"><a class="markdownIt-Anchor" href="#perfect-secrecy"></a> Perfect secrecy</h2>
 <p><strong>Perfect secrecy</strong>: absolutely no information is leaked, even the eavesdropper has unlimited computational power(not practical in reality so it could be compromised in implementation).</p>
@@ -2955,7 +3288,7 @@ Pr[PrivK_{\cal{A},\tilde{\pi}}^{cpa}(n)=1] &amp;= Pr[PrivK_{\cal{A},\tilde{\pi}}
   </entry>
   <entry>
     <title>操作系统：内存虚拟化</title>
-    <url>/2020/11/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/</url>
+    <url>/2020/12/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/</url>
     <content><![CDATA[<h1 id="地址空间与地址转换"><a class="markdownIt-Anchor" href="#地址空间与地址转换"></a> 地址空间与地址转换</h1>
 <h2 id="内存虚拟化与虚拟地址空间"><a class="markdownIt-Anchor" href="#内存虚拟化与虚拟地址空间"></a> 内存虚拟化与虚拟地址空间</h2>
 <p>一个操作系统内部同时运行着多个进程，这些进程之间采用时分共享的方式来使用硬件。对于CPU来说，时分共享是通过让一个进程全部占用CPU运行一段时间，在进程切换的时候通过上下文切换来完成；但是对于内存来说，如果采用这种方式，在进程切换的时候需要将物理内存中当前所有的内容保存到磁盘中去，并从磁盘中读取另一个进程的物理内存数据到物理内存中。根据计算机组成原理的知识，磁盘与物理内存之间的数据传输是很慢的。因此，操作系统的做法是在进程切换的时候仍然将进程信息放在物理内存中，也就意味着许多程序在同一时刻共享着物理内存。</p>
@@ -3276,7 +3609,7 @@ Pr[PrivK_{\cal{A},\tilde{\pi}}^{cpa}(n)=1] &amp;= Pr[PrivK_{\cal{A},\tilde{\pi}}
   </entry>
   <entry>
     <title>操作系统：并发</title>
-    <url>/2020/11/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91/</url>
+    <url>/2020/12/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91/</url>
     <content><![CDATA[<h1 id="线程"><a class="markdownIt-Anchor" href="#线程"></a> 线程</h1>
 <h2 id="概念"><a class="markdownIt-Anchor" href="#概念"></a> 概念</h2>
 <p>**线程（thread）**是操作系统能够进行CPU运算调度的最小单位，它被包含在进程之中，是进程的实际运作单位。对于一个进程来说，它可以有一个或多个线程，多线程的程序拥有多个执行点，同时它们共享地址空间。在进程的地址空间中，每个线程都会有一块自己的栈空间。因此也可以这样理解，多线程中的每个线程类似于独立的进程，只是这些线程共享地址空间，从而能够访问相同的数据。</p>
@@ -3501,7 +3834,7 @@ Pr[PrivK_{\cal{A},\tilde{\pi}}^{cpa}(n)=1] &amp;= Pr[PrivK_{\cal{A},\tilde{\pi}}
   </entry>
   <entry>
     <title>操作系统：持久性</title>
-    <url>/2020/11/27/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/</url>
+    <url>/2020/12/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/</url>
     <content><![CDATA[<h1 id="io设备"><a class="markdownIt-Anchor" href="#io设备"></a> I/O设备</h1>
 <h2 id="标准设备"><a class="markdownIt-Anchor" href="#标准设备"></a> 标准设备</h2>
 <p>一个标准设备包含两部分重要组件：其中一部分是向系统其他部分展示的硬件接口，用于让系统软件控制它的操作；另一部分是它的内部结构，包含设备相关的特定实现，负责具体实现设备展示给系统的抽象接口。标准设备的示意图如下所示：</p>
@@ -4032,7 +4365,7 @@ Pr[PrivK_{\cal{A},\tilde{\pi}}^{cpa}(n)=1] &amp;= Pr[PrivK_{\cal{A},\tilde{\pi}}
   </entry>
   <entry>
     <title>计算机组成原理：程序的机器级表示</title>
-    <url>/2020/11/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</url>
+    <url>/2020/12/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/</url>
     <content><![CDATA[<h1 id="寄存器"><a class="markdownIt-Anchor" href="#寄存器"></a> 寄存器</h1>
 <ul>
 <li>
@@ -5430,6 +5763,296 @@ ATT：%segreg:disp(base,index,scale)</p>
       <tags>
         <tag>计算机组成原理</tag>
         <tag>汇编语言</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机网络：传输层</title>
+    <url>/2020/12/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/</url>
+    <content><![CDATA[<h1 id="传输层服务"><a class="markdownIt-Anchor" href="#传输层服务"></a> 传输层服务</h1>
+<h2 id="进程到进程通信"><a class="markdownIt-Anchor" href="#进程到进程通信"></a> 进程到进程通信</h2>
+<p>传输层位于应用层和网络层之间，它在两个应用层之间提供进程到进程的通信，两个进程分别位于本地和远程主机上。</p>
+<p>注意：网络层负责的是计算机层次的通信（即主机到主机），但是网络层协议只是把报文传递到目的计算机。由于报文需要递交给正确的进程，而这一部分正是传输层负责的部分。</p>
+<a id="more"></a>
+<h2 id="寻址端口号"><a class="markdownIt-Anchor" href="#寻址端口号"></a> 寻址：端口号</h2>
+<p>一个远程计算机在同一时间可以运行多个服务器程序。因此在通信过程中，我们需要定义本地主机、本地进程、远程主机和远程进程。本地主机和远程主机使用IP地址来定义，而本地进程和远程进程则是通过<strong>端口号</strong>来定义的。在TCP/IP协议簇中，端口号是0~65536之间的16位整数。</p>
+<p>客户程序一般使用临时端口号来定义它自己，临时表明这个端口号是短期的。为了客户-服务器程序可以正常工作，临时端口号推荐值为大于1023。</p>
+<p>对于服务器而言，TCP/IP协议使用全局端口号，它们被称为熟知端口号。但是这一条规则也有例外，例如一些客户端也可能被分配熟知端口号。</p>
+<p>ICANN将端口号编码划分为如下的三个范围：</p>
+<ul>
+<li>熟知端口：端口号范围0~1023，由ICANN分配和控制</li>
+<li>注册端口：端口号范围1024~49151，ICANN不分配也不控制，它们可在ICANN注册以防止重复</li>
+<li>动态端口：端口号范围49152~65535，这一范围内的端口号即不受控制也不需要注册，可以由任何进程使用。它们是临时或者私有端口号。</li>
+</ul>
+<p>一个IP地址和一个端口号结合起来被称为<strong>套接字地址</strong>，客户套接字地址唯一定义了客户进程，而服务器套接字地址唯一定义了服务器进程。</p>
+<h2 id="封装与解封装"><a class="markdownIt-Anchor" href="#封装与解封装"></a> 封装与解封装</h2>
+<p>为了将报文从一个进程发送到另一个进程，传输层协议负责封装和解封装报文。封装在发送端发生，当进程有报文要发送，它将报文与一组套接字地址和其他信息一起发送到传输层，这依赖于传输层协议。传输层接收这些数据并加入到传输层头部。</p>
+<p>解封装发生在接收端。当报文到达目的传输层，头部被丢弃，传输层将报文传递到应用层运行的进程。如果需要响应接收到的报文，发送方的套接字地址被发送到进程。</p>
+<h2 id="多路复用与多路分解"><a class="markdownIt-Anchor" href="#多路复用与多路分解"></a> 多路复用与多路分解</h2>
+<p><strong>多路复用</strong>指的是一个实体从一个以上的源接收到数据项，源端的传输层执行复用。例如一个用户将不同进程的请求发送到对应的服务器进程。</p>
+<p><strong>多路分解</strong>指的是一个实体将数据项传递到一个以上的源，目的端的传输层执行多路分解。例如一个服务器接收到应该分发给不同进程的请求。</p>
+<h2 id="流量控制"><a class="markdownIt-Anchor" href="#流量控制"></a> 流量控制</h2>
+<p>每当一个实体创建数据项并且有另一个实体消耗它们时，就存在生产速率和消费速率的平衡问题。流量控制主要是解决数据项的生产比消费快的问题。</p>
+<h3 id="推或拉"><a class="markdownIt-Anchor" href="#推或拉"></a> 推或拉</h3>
+<p>发送方生产数据项时，它无需事先获得消费者请求就发送，这种传递被称为推；如果生产者在消费者请求这些数据时才进行传送，这种传递被称为拉。</p>
+<p>当生产者<strong>推</strong>数据项时，消费者需要相反方向的流量控制，以此来防止丢弃这些数据项。因此消费者需要告诉生产者停止传递，并且当它再次准备好接受数据时通知生产者。当消费者拉数据项时则不需要流量控制。</p>
+<h3 id="传输层流量控制"><a class="markdownIt-Anchor" href="#传输层流量控制"></a> 传输层流量控制</h3>
+<p>传输层通信中，四个实体的关系如下：</p>
+<ul>
+<li>发送方的应用层是一个生产者，它生产报文块并推给传输层</li>
+<li>发送方传输层既是生产者又是消费者，它消费来自于应用层的报文块，同时有奖报文封装并传给接收方传输层</li>
+<li>接收方传输层既是生产者又是消费者，它消费从发送方接收来的分组，同时解封装报文并传给应用层</li>
+<li>接收方的应用层通常使用拉传递，传输层等待应用层进程请求报文，它是一个消费者</li>
+</ul>
+<p>因此，这一过程至少需要两种流量控制：从发送方传输层到发送方应用层的流量控制，以及接收方传输层到发送方传输层的流量控制。</p>
+<h3 id="缓冲区"><a class="markdownIt-Anchor" href="#缓冲区"></a> 缓冲区</h3>
+<p>流量控制通常使用缓冲区来实现，一个位于发送方传输层，另一个位于接收方传输层（也就是说缓冲区位于消费者处）。消费者向生产者发送信号从而进行流量控制通信，当缓冲区满的时候，通知生产者停止传输；当有空闲位置的时候，通知生产者可以再次传输。</p>
+<h2 id="差错控制"><a class="markdownIt-Anchor" href="#差错控制"></a> 差错控制</h2>
+<p>在因特网中，网络层是不可靠的，应用层的可靠性是通过传输层来实现的。传输层的差错控制通过负责以下几个方面来实现可靠性：</p>
+<ul>
+<li>发现并丢弃被破坏的分组</li>
+<li>记录丢失和丢弃的分组并重传</li>
+<li>识别重复分组并丢弃</li>
+<li>缓冲失序分组直到丢失的分组到达</li>
+</ul>
+<p>大多数情况下，接收方传输层管理差错控制，它通过告知发送方传输层存在问题来进行管理。</p>
+<h3 id="序号"><a class="markdownIt-Anchor" href="#序号"></a> 序号</h3>
+<p>可以在传输层分组中加入一个字段来保存分组的序号。当分组被破坏或者丢失，接收方传输层可以按照某种方式通知发送方传输层利用序号来重传分组；如果两个接收到的分组具有相同序号，接收方传输层可以发现重复分组；可以通过观察序号间隔来辨别失序分组。</p>
+<p>分组一般按序编号，假设分组头部允许序号最多为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span>比特位，那么所有的序号都是模<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mi>m</mi></msup></mrow><annotation encoding="application/x-tex">2^m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">m</span></span></span></span></span></span></span></span></span></span></span>的。</p>
+<h3 id="确认"><a class="markdownIt-Anchor" href="#确认"></a> 确认</h3>
+<p>接收方可以为每一组正确到达的分组发送一个确认（ACK）。当一个分组被发送，发送方就开启一个计时器，如果ACK在计时器超时之前没有到达，那么发送方就重新发送这个分组。重复的分组可以被接收方默默丢弃；失序的分组既可以被丢弃，也可以存储直到丢失的那个分组被传输过来。</p>
+<h3 id="流量和差错控制的组合"><a class="markdownIt-Anchor" href="#流量和差错控制的组合"></a> 流量和差错控制的组合</h3>
+<p>由于流量控制要求使用两个缓冲区，一个在发送端另一个在接收端；而差错控制也要求两端使用序号和确认号。因此如果我们使用两个带有序号的缓冲区，一个位于发送端，一个位于接收端，便可将流量控制与差错控制功能结合起来。</p>
+<p>在发送端，当分组准备发送时，我们使用下一个缓冲区空闲位置号码<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span>作为分组的序号；当分组被发送，一个分组的备份存储在位置<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span>，直到与被发送分组相关的确认信息到达时，将这一位置清除出来。</p>
+<p>在接收端，当带有序号<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span>的分组到达时，它也被存储在缓冲区的位置<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span>上，直到应用层准备好接收它。此时发送一个确认表明分组<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span>到达。</p>
+<h2 id="拥塞控制"><a class="markdownIt-Anchor" href="#拥塞控制"></a> 拥塞控制</h2>
+<p>如果网络中的复杂大于网络的容量，那么网络就可能会发生拥塞。TCP协议提供了拥塞控制机制，它控制拥塞并将负载保持在容量以内。</p>
+<h2 id="无连接和面向连接服务"><a class="markdownIt-Anchor" href="#无连接和面向连接服务"></a> 无连接和面向连接服务</h2>
+<h3 id="无连接服务"><a class="markdownIt-Anchor" href="#无连接服务"></a> 无连接服务</h3>
+<p>在无连接服务中，源进程需要将报文分成传输层可接受大小的数据块，并把它们一个个地传递到传输层。传输层将每一个数据块看作彼此没有关系的单元，因此，它们可能会失序地传递给服务器进程。</p>
+<p>流量控制、差错控制以及拥塞控制都不能在无连接服务中有效实现。</p>
+<h3 id="面向连接服务"><a class="markdownIt-Anchor" href="#面向连接服务"></a> 面向连接服务</h3>
+<p>在面向连接的服务中，首先需要建立客户和服务器之间的逻辑连接。只有连接建立之后才能进行数据交换。在数据交换之后，连接需要拆除。</p>
+<p>在面向连接协议中，可以实现流量控制、差错控制以及拥塞控制。</p>
+<h1 id="udp协议"><a class="markdownIt-Anchor" href="#udp协议"></a> UDP协议</h1>
+<h2 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h2>
+<p>用户数据报协议（User Datagram Protocol, UDP）是无连接不可靠传输层协议。它不提供主机到主机通信，它除了提供进程到进程之间的通信之外没有给IP服务增加任何内容。此外它进行非常有限的差错检验。</p>
+<p>UDP是一个简单的协议，开销很小。如果一个进程想发送一个很短的报文，而且不在意可靠性，就可以使用UDP。使用UDP发送一个很短的报文，在发送方和接收方之间的交互要比使用TCP时少得多。</p>
+<h2 id="用户数据报"><a class="markdownIt-Anchor" href="#用户数据报"></a> 用户数据报</h2>
+<p>UDP分组被称为用户数据报，有8个字节的固定头部，这个头部由4个字段组成，每个字段2字节。头两个字段定义了源和目的端口号，第三个字段定义了用户数据报的总长，即头部加数据的长度。16位可以定义的总长度范围是0~65535，但是因为UDP数据报需要存储在总长度为65535的IP数据报中，因此总长度需要更小一些。最后一个字段可以携带可选校验和。一个UDP用户数据报的结构如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232153.png" alt="UDP数据报" /></p>
+<h2 id="udp服务"><a class="markdownIt-Anchor" href="#udp服务"></a> UDP服务</h2>
+<h3 id="进程到进程的通信"><a class="markdownIt-Anchor" href="#进程到进程的通信"></a> 进程到进程的通信</h3>
+<p>UDP使用套接字地址提供进程到进程的通信，这是IP地址与端口号的组合。</p>
+<h3 id="无连接服务-2"><a class="markdownIt-Anchor" href="#无连接服务-2"></a> 无连接服务</h3>
+<p>UDP提供无连接服务，这表示UDP发送出去的每一个用户数据报都是一个独立的数据报。即使这些数据报来自于相同的源进程并且发送到相同的目的进程，不同的数据报之间也没有关系。用户数据报不进行编号，此外也没有像TCP协议那样的连接建立和终止。</p>
+<p>无连接的一个结果就是使用UDP的进程不能向UDP发送数据流，并期望它将这个数据流分割成许多相关联的用户数据报。相反，每一个请求需要足够小以使其可以被装入用户数据报中，因此只有那些发送短报文的进程才应当使用UDP。</p>
+<p>UDP没有流量控制，因而也没有窗口机制。如果到来的报文太多时，接收方可能会溢出。因此，如果需要流量控制，这个服务应该由使用UDP的进程来提供。同时，UDP也不提供拥塞控制。UDP假设被发送的分组很小且零星，不会造成拥塞。但是UDP被用作音频和视频的交互实时传输时，这一假设可能不成立。</p>
+<h3 id="校验和"><a class="markdownIt-Anchor" href="#校验和"></a> 校验和</h3>
+<p>UDP没有差错控制机制，发送方不知道报文是丢失还是重传，仅仅提供了简单的校验和功能。因此如果需要差错控制需要由应用层提供。</p>
+<p>UDP的校验和是可选的，如果不计算校验和，则将校验和字段全部填充为0。如果计算校验和时恰巧校验和全部为0，则将它改为全1。这一方法不会产生混淆，因为校验和的值在正常情况下不会全为1。</p>
+<h3 id="封装和解封装"><a class="markdownIt-Anchor" href="#封装和解封装"></a> 封装和解封装</h3>
+<p>UDP协议提供了报文的封装和解封装功能。</p>
+<h3 id="多路复用与多路分解-2"><a class="markdownIt-Anchor" href="#多路复用与多路分解-2"></a> 多路复用与多路分解</h3>
+<p>在运行TCP/IP协议簇的主机上只有一个UDP，但可能有多个想使用UDP服务的进程。UDP使用多路复用和多路分解来处理这种情况。</p>
+<h2 id="udp应用"><a class="markdownIt-Anchor" href="#udp应用"></a> UDP应用</h2>
+<h3 id="udp特性"><a class="markdownIt-Anchor" href="#udp特性"></a> UDP特性</h3>
+<p>UDP连接具有的特性以及它们的优势和劣势如下：</p>
+<ul>
+<li>无连接服务：当客户需要向服务器发送短请求并接收短响应时，这一特性是优势，因为这种情况下建立和关闭连接的开销可能很可观。假设请求和响应各自可以填充进一个数据报时，TCP连接需要至少交换9个分组，而UDP最少只需要2个。同时，无连接服务提供了更小的延迟，如果延迟是应用的重要问题时选择UDP连接更可取。</li>
+<li>缺乏差错控制：TCP提供可靠服务，如果报文一部分丢失或被破坏则需要重传。这就意味着接收方传向应用层的不同报文间有不一致的延迟。对于一些应用来说，这一延迟可能至关重要。</li>
+<li>缺乏拥塞控制：在一些网络中可能出错的概率较大，如果使用TCP连接需要多次重发，这样便会促使拥塞的发生或者使得拥塞情况加重。因此，一些情况下，这一特性可以看作是优势。</li>
+</ul>
+<h3 id="典型应用"><a class="markdownIt-Anchor" href="#典型应用"></a> 典型应用</h3>
+<ul>
+<li>需要简单的请求-响应通信，而较少考虑流量控制和差错控制，例如DNS协议。如果需要传输成块数据的进程如FTP，则通常不适用UDP协议。</li>
+<li>适用于应用层实现了内部流量控制和差错控制机制的进程，如TFTP协议。</li>
+<li>对于多播来说UDP是一个合适的传输协议。</li>
+<li>UDP可用于管理进程，如SNMP协议。</li>
+<li>UDP可用于某些路由选择更新协议，如路由选择信息协议（RIP）。</li>
+<li>UDP通常用于交互实时应用，如Skype，这些应用无法忍受报文之间的不一致延迟。</li>
+</ul>
+<h1 id="tcp协议"><a class="markdownIt-Anchor" href="#tcp协议"></a> TCP协议</h1>
+<h2 id="概述-2"><a class="markdownIt-Anchor" href="#概述-2"></a> 概述</h2>
+<p>传输控制协议（Transmission Control Protocol, TCP）是一个面向连接可靠的协议。TCP显式定义了连接建立、数据传输以及连接拆除阶段来提供面向连接服务。</p>
+<h2 id="tcp服务"><a class="markdownIt-Anchor" href="#tcp服务"></a> TCP服务</h2>
+<h3 id="进程到进程的通信-2"><a class="markdownIt-Anchor" href="#进程到进程的通信-2"></a> 进程到进程的通信</h3>
+<p>与UDP一样，TCP通过使用端口号来提供进程到进程的通信</p>
+<h3 id="流传递服务"><a class="markdownIt-Anchor" href="#流传递服务"></a> 流传递服务</h3>
+<p>TCP是一个面向流的协议，它允许发送进程以字节流的形式传递数据，并且接收进程也以字节流的形式接收数据。TCP建立一种环境，在这种环境中，两个进程之间类似于有一条假想的“管道”连接，发送进程产生字节流并输入到管道，接收进程从管道中读出这些字节流。</p>
+<p>因为发送和接收进程可能以不同的速度写入和读出数据，所以TCP需要用于存储的缓冲区。缓冲区一般使用循环数组来实现。</p>
+<p>由于IP层作为TCP服务的提供者，它需要以分组的方式而不是字节流的方式发送数据。因此，在传输层，TCP将多个字节组合在一起成为一个分组，这个分组被称为段，同时给每个段添加头部，并将该段传递给IP层。</p>
+<p>上述这一系列流程可以用下图来表示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232200.png" alt="TCP缓冲区" /></p>
+<h3 id="全双工通信"><a class="markdownIt-Anchor" href="#全双工通信"></a> 全双工通信</h3>
+<p>TCP提供全双工服务，即数据可以在同一时间双向流动。每一个方向TCP都有发送和接收缓冲区，它们可以在双向发送和接收段。</p>
+<h3 id="多路复用和多路分解"><a class="markdownIt-Anchor" href="#多路复用和多路分解"></a> 多路复用和多路分解</h3>
+<p>TCP在发送端执行多路复用，在接收端执行多路分解。由于TCP是一个面向连接的协议，因此需要为每对进程建立连接。</p>
+<h3 id="面向连接的服务"><a class="markdownIt-Anchor" href="#面向连接的服务"></a> 面向连接的服务</h3>
+<p>TCP是一种面向连接的协议。位于站点A的一个进程和与站点B的另外一个进程想要进行数据的发送和接收时要经过如下三步：</p>
+<ol>
+<li>在两个TCP之间建立一个连接</li>
+<li>在两个方向交换数据</li>
+<li>连接终止</li>
+</ol>
+<p>上述建立的连接是一个逻辑连接，而不是一个物理连接。TCP建立一种面向字节流的环境，在这种环境中，TCP能承担按顺序传递这些字节到其他站点的服务。</p>
+<h3 id="可靠的服务"><a class="markdownIt-Anchor" href="#可靠的服务"></a> 可靠的服务</h3>
+<p>TCP是一种可靠的传输协议，它使用确认机制来检查数据是否安全和完整地到达。</p>
+<h2 id="tcp的特点"><a class="markdownIt-Anchor" href="#tcp的特点"></a> TCP的特点</h2>
+<h3 id="序号系统"><a class="markdownIt-Anchor" href="#序号系统"></a> 序号系统</h3>
+<h4 id="字节序号"><a class="markdownIt-Anchor" href="#字节序号"></a> 字节序号</h4>
+<p>TCP为在一个连接中传输的所有数据字节编号，在每个方向上的序号都是独立的。当TCP接收来自一个进程的数据字节时，TCP将它们存储在发送缓冲区中并给它们编号。在编码时，不必从0开始编码，TCP在0到<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mn>32</mn></msup><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2^{32}-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">3</span><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>之间生成一个随机数作为第一个字节的序号。这些资金序号被用于流量和差错控制。</p>
+<h4 id="序号-2"><a class="markdownIt-Anchor" href="#序号-2"></a> 序号</h4>
+<p>字节被编号之后，TCP对发送的每一个段也分配一个序号。第一个段的序号是初始序号，它是一个随机数；其他段的序号是之前段的序号加上之前段携带的字节数。</p>
+<h4 id="确认号"><a class="markdownIt-Anchor" href="#确认号"></a> 确认号</h4>
+<p>TCP中的通信是全双工的，当建立一个连接时，双方同时都能发送和接收数据。因此，每一方会使用确认号来确认它已经收到的字节。确认号的值是该方向预期接收的下一个字节的序号，如果接收方安全并完整地接收到这一字节的序号，就会将它加1。</p>
+<h3 id="tcp分组段"><a class="markdownIt-Anchor" href="#tcp分组段"></a> TCP分组—段</h3>
+<h4 id="格式"><a class="markdownIt-Anchor" href="#格式"></a> 格式</h4>
+<p>在TCP中的分组被称为段，它包含20~60字节的头部，接着是来自应用程序的数据。如果没有选项，那么头部为20字节；如果有选项则最多是60字节。TCP的段格式如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232216.png" alt="TCP段结构" /></p>
+<p>一些头部字段的意义如下：</p>
+<ul>
+<li>源端口地址：一个16位字段，定义了在主机中发送该段的应用程序的端口号。</li>
+<li>目的端口地址：一个16位字段，定义了主机中接收该段的应用程序的端口号。</li>
+<li>序号：这个32位字段定义了一个数，分配给段中数据的第一个字节。这个序号告诉目的端，在这个序列中的哪一个字节是该段的第一个字节。在连接建立时，每一方都使用随机数产生器生成一个初始序号（Initial Sequence Number, ISN），通常每一个方向的ISN都不同。</li>
+<li>确认号：这个32位字段定义了段的接收方期待从对方接收的字节号。如果段的接收方成功地接收了对方发来的字节号x，确认号就被定义为x+1，确认和数据可以捎带一起发送。</li>
+<li>头部长度：这个4位字段指明了TCP头部中有多少个4字节长的字。由于头部长度可以在20~60字节之间，因此这个字段的值在5~15之间。</li>
+<li>控制：这个字段定义了6种不同的控制位或标记，在同一时间可以设置一位或多位。其中：
+<ul>
+<li>URG：紧急指针有效</li>
+<li>ACK：确认有效</li>
+<li>PSH：请求推送</li>
+<li>RST：连接复位</li>
+<li>SYN：同步序号</li>
+<li>FIN：终止连接</li>
+</ul>
+</li>
+<li>窗口大小：定义对方必须维持的窗口的大小（以字节为单位）。这个字段长度为16位，因此窗口的最大长度为65535字节。这个值通常称为接收窗口，它由接收方确定。</li>
+<li>校验和：TCP的校验和是强制的，它的计算与UDP相同。</li>
+<li>紧急指示符：这个16位字段只有当紧急标志置位时才有效，这个段包含了紧急数据。它定义了一个数，将此数加到序号上就可以得出此段数据部分中最后一个紧急字节。</li>
+<li>选项：在TCP头部可以有最多40字节的可选信息。</li>
+</ul>
+<h4 id="封装"><a class="markdownIt-Anchor" href="#封装"></a> 封装</h4>
+<p>一个TCP段封装了来自应用层的数据。TCP段被封装在IP数据报中，IP数据报被封装在数据链路层的帧中。</p>
+<h2 id="tcp连接"><a class="markdownIt-Anchor" href="#tcp连接"></a> TCP连接</h2>
+<h3 id="连接建立"><a class="markdownIt-Anchor" href="#连接建立"></a> 连接建立</h3>
+<p>在TCP中连接的建立被称为<strong>三次握手</strong>。我们假设客户应用程序想要与另一个服务器应用程序之间使用TCP作为传输层协议建立连接。</p>
+<p>这一过程从服务器开始，服务器程序会一直处于被动打开状态，准备接收从任何一个用户发过来的连接。当客户程序想要与某个特定服务器进行TCP连接时，它发出请求进行主动打开。接下来，TCP进行三次握手的过程来建立连接，这一过程如下：</p>
+<ol>
+<li>用户发送的第一个段是SYN段。这个段只有SYN标志被置位，它被用于序号同步。当数据传输开始时，用户随机选择一个数字作为初始序号ISN。SYN段不包含确认号，也没有定义窗口大小。需要注意的是，SYN段是一个控制段并且不携带数据，但是它需要消耗一个序号（因为它需要被确认），因此可以说SYN段携带了一个假想字节。</li>
+<li>服务器发送第二个段，即两个标志位SYN和ACK置位的段。这个段有两个目的：首先，它是另一方向通信的SYN段，服务器使用这个段来初始化序号，这个序号用于给从服务器发向客户的字节编号；同时，服务器也通过给ACK置位并展示下一个序号来确认接收到来自客户的SYN段。因为它包含确认，因此也需要定义接收窗口（即rwnd）给客户使用。同时，因为这个段也起到SYN段的作用，它需要被确认，因此它也占用一个序号。</li>
+<li>客户发送第三个段。这个段仅仅是一个ACK段。它使用ACK标志和确认序号字段来确认收到了第二个段。如果不携带数据，ACK段没有占用任何序号；也有一些实现允许第三个段在连接阶段从客户端携带第一块数据，这种情况下段消耗的序号与数据字节数相同。</li>
+</ol>
+<p>上述的过程可以用下图来表示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232232.png" alt="TCP三次握手" /></p>
+<p>在TCP中，连接建立的过程容易遭受到SYN泛洪攻击的严重安全问题。一个恶意攻击者将大量的SYN段发送到一个服务器，在数据报中通过伪装源IP地址假装这些SYN段来自于不同的客户端。此时，服务器发送SYN+ACK段给这些假客户，但是这些段都会丢失。服务器会等待第三段的握手过程，此时许多资源被占用但是没有被使用。如果在短时间内，SYN段的数量很大，服务器最终会因为耗尽资源而崩溃。一些TCP的实现拥有减轻SYN攻击影响的策略。</p>
+<h3 id="数据传输"><a class="markdownIt-Anchor" href="#数据传输"></a> 数据传输</h3>
+<p>连接建立之后，便可进行双向的数据传输，客户端与服务器双方都可以发生数据和确认。</p>
+<p>当两个应用程序进行交互式通信时，希望收到立即响应。此时，发送端的TCP需要设置推送位（PSH）来告诉接收端的TCP，这个段所包含的数据需要尽快传递给接收应用程序，而不需要等待更多数据的到来。此时，发送端的TCP也不会等待窗口被填满，它创建一个段就立即将其发送。</p>
+<p>如果一些情况下，应用程序需要发送紧急字节，需要另一端的应用以特殊方式对待。此时，应用程序会将URG标志置位。同时，紧急数据被放在段的开始，并使用紧急指针字段定义紧急数据的结束。而在其余部分，则可以存放来自于缓冲区的普通数据，这一部分数据是非紧急的。但是TCP的紧急数据并不意味着优先服务，仅仅是让接收端TCP通知应用程序紧急数据的开始和结束，留给应用程序决定如何处理紧急数据。</p>
+<h3 id="连接终止"><a class="markdownIt-Anchor" href="#连接终止"></a> 连接终止</h3>
+<p>交换数据双方的任意一方都可以关闭连接。连接终止的实现有两种方法：三次挥手和带有半关闭选项的四次挥手。</p>
+<h4 id="三次挥手"><a class="markdownIt-Anchor" href="#三次挥手"></a> 三次挥手</h4>
+<p>三次挥手断开连接的步骤如下：</p>
+<ol>
+<li>客户TCP发送一个FIN段，其中的FIN标志被置位。同时，FIN段可以包含客户要发送的最后数据块。如果它只是控制段，则只占有一个序号。</li>
+<li>服务器TCP接收到FIN段之后，通知进程并发送第二个FIN+ACK段，证明它接收到了来自客户端的FIN段，同时告诉客户端，服务器端的连接已关闭。这个段还可以包含来自服务器的最后数据块。如果不携带数据，则只占用一个序号。</li>
+<li>客户端的TCP发送最后一个ACK段，证明它接收到了服务器的FIN段。这个段包含确认号，它是来自服务器的FIN段的序号再加1。这个段不携带数据也不占用序号。</li>
+</ol>
+<p>这一过程可总结为下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232343.png" alt="TCP三次挥手" /></p>
+<h4 id="带有半关闭选项的四次挥手"><a class="markdownIt-Anchor" href="#带有半关闭选项的四次挥手"></a> 带有半关闭选项的四次挥手</h4>
+<p>在TCP中，一端可以在停止发送数据之后继续接收数据，这就是所谓的半关闭。虽然任意一端都可发出半关闭指令，但是通常情况下是由客户端发起。例如，当服务器在开始处理之前需要接收到所有的数据，此时就会出现半关闭。客户端发送全部数据之后，它在客户到服务器方向便可关闭连接；但是为了接收返回数据，服务器到客户的方向必须保持打开。此时的关闭过程为四次挥手，它的过程如下：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232350.png" alt="TCP四次挥手" /></p>
+<h3 id="连接重置"><a class="markdownIt-Anchor" href="#连接重置"></a> 连接重置</h3>
+<p>在一段的TCP可能会拒绝连接请求、终止已存在的连接、或是结束空闲连接。这些操作是通过RST标志完成的。</p>
+<h2 id="tcp的窗口"><a class="markdownIt-Anchor" href="#tcp的窗口"></a> TCP的窗口</h2>
+<p>TCP在每个方向的数据传输上使用两个窗口：发送和接收窗口，也就是说双向通信有四个窗口。</p>
+<h3 id="发送窗口"><a class="markdownIt-Anchor" href="#发送窗口"></a> 发送窗口</h3>
+<p>发送窗口是一个想象的盒子，它覆盖了处于运送途中的以及可以被发送的数据分组序号。在每个窗口位置，一些序号定义了已经被发送的分组，其他序号定义了可以被发送的分组。</p>
+<p>在任何时候，发送窗口将序号从左向右分成四部分：</p>
+<ol>
+<li>窗口左侧：已经确认的分组的序号，发送方可以丢弃掉这些分组</li>
+<li>未完成分组：发送方已经发送，但是状态未知的序号，发送方需要等待，从而确认这些分组是否已被接收还是丢失</li>
+<li>可发送分组：可以发送的分组的序号，但是相应的数据还没有从应用层接收到</li>
+<li>窗口右侧：直到窗口滑动之前都不能使用的序号</li>
+</ol>
+<p>在TCP中使用的发送窗口中，窗口的大小是字节的数量，控制窗口的变量是以字节为单位的。在某些实现中，TCP可以存储来自于进程的数据并且在之后发送它们。同时，TCP只使用一个计时器。计时器被用来实现分组的重发，在发送一个分组时需要打开计时器（如果已运行则不用再打开），当计时器终止时，发送方需要重发所有的未完成分组。</p>
+<p>TCP的发送窗口如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232356.png" alt="TCP发送窗口" /></p>
+<h3 id="接收窗口"><a class="markdownIt-Anchor" href="#接收窗口"></a> 接收窗口</h3>
+<p>接收窗口用于确保正确的分组数据被接收，并且确保正确的确认被发送。</p>
+<p>TCP允许接收进程以自己的速率拉取数据，因此接收方部分被分配缓冲区可以被已接收并且确认的字节所占据，但是它们正在等待被接收进程拉过去。因此，接收窗口的大小总是小于或等于缓冲区大小，它决定了接收窗口在被淹没之前可以从发送方接收的字节数量，又被称为rwnd。</p>
+<p>同时，TCP协议中的主要确认机制是累积确认，它声明了下一个预期接收字节。在TCP的新版本中也使用了选择性确认。</p>
+<p>TCP的接收窗口如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232405.png" alt="TCP接收窗口" /></p>
+<h3 id="流量控制-2"><a class="markdownIt-Anchor" href="#流量控制-2"></a> 流量控制</h3>
+<p>为了实现流量控制，TCP可以迫使发送方和接收方调整它们的窗口大小。当更多的数据从发送方到来时，接收方窗口关闭；当更多的数据被进程拉取后，它打开窗口。发送窗口的打开、关闭和收缩由接收方控制。</p>
+<h2 id="差错控制-2"><a class="markdownIt-Anchor" href="#差错控制-2"></a> 差错控制</h2>
+<p>TCP使用差错控制来提供可靠性，它包括用于检测并重发损坏段的机制、用于重发丢失段的机制、用于存储失序的段直到丢失段到达的机制、以及检测并丢弃重复段的机制。上述机制主要是通过使用校验和、确认和超时来完成的。</p>
+<h3 id="校验和-2"><a class="markdownIt-Anchor" href="#校验和-2"></a> 校验和</h3>
+<p>TCP的每个段都包括校验和字段，用于检查损坏的段。如果段被损坏，它将目的端TCP丢弃，因此发送端会认为其丢失而重发。</p>
+<h3 id="确认-2"><a class="markdownIt-Anchor" href="#确认-2"></a> 确认</h3>
+<p>TCP使用确认方法来证实收到了数据段，不携带数据但是占用序号额一些控制段也需要确认，但是ACK段因为不占用序号所以不需要确认。</p>
+<p>TCP的确认方式有两种，累积确认和选择性确认。累积确认指的是接收方通告下一个预期接收的字节，忽略所有的失序段。TCP头部的32位ACK字段用于累积确认，且只有当ACK标志为1时才有效。选择性确认（SACK）指的是向发送方报告额外信息，包括失序字节块和重复字节块。SACK以TCP头部末端选项的形式实现。</p>
+<p>接收方产生确认的规则有：</p>
+<ul>
+<li>终端A向终端B发送一个数据段时，必须包含一个确认，这个确认给出下一个期待接收的序号。这个规则降低了所需段的数量。</li>
+<li>如果只有一个未完成的有序段，接收方需要延迟发送ACK段。这一规则减少了ACK段。</li>
+<li>任何时候不能多于两个有序的未确认段存在。这样防止了不必要的重传，避免引起网络拥塞。</li>
+<li>当一个失序段到达，且序号大于预期，接收方立即发送一个ACK段，声明下一个预期段的序号。这使得丢失段可以快速重传。</li>
+<li>当一个丢失段到达，接收方发送一个ACK段，声明下一个预期序号。这通知接收方被报告丢失段已经到达。</li>
+<li>如果重复段到达，接收方丢弃段，但是立即发送一个确认指出下一个预期的有序段。这解决了当ACK段丢失时的一些问题。</li>
+</ul>
+<h3 id="重传"><a class="markdownIt-Anchor" href="#重传"></a> 重传</h3>
+<p>当一个段被发送，它会被储存在一个队列中直到被确认。当重传计时器超时或者当发送方接收到对队列中第一个段的三次重复ACK时，就重传这个段。</p>
+<p>发送方TCP为每个连接维护一个重传超时，当计时器到时即超时，TCP重发队列中具有最小序号的段并重启计时器。</p>
+<p>而三次重复ACK立即重发的规则，允许发送方不等待超时而重传，这加速了因特网中的服务。这一特性也被称为快速重传。</p>
+<h3 id="失序段"><a class="markdownIt-Anchor" href="#失序段"></a> 失序段</h3>
+<p>TCP不丢弃失序段，它们暂时存储这些失序段，并将其标记为失序段直到缺失的段到达。但是TCP会确保传递给进程的段是非失序的。</p>
+<h2 id="拥塞控制-2"><a class="markdownIt-Anchor" href="#拥塞控制-2"></a> 拥塞控制</h2>
+<h3 id="拥塞窗口"><a class="markdownIt-Anchor" href="#拥塞窗口"></a> 拥塞窗口</h3>
+<p>TCP使用称为拥塞窗口（cwnd）的变量来控制段的发送数量，这个变量的值由网络中的拥塞情况所控制。cwnd变量和rwnd变量一起定义了TCP中的发送窗口大小。cwnd与网络中间的拥塞相关，而rwnd与终端的拥塞相关，实际窗口的大小为二者中的最小值。</p>
+<h3 id="拥塞检测"><a class="markdownIt-Anchor" href="#拥塞检测"></a> 拥塞检测</h3>
+<p>TCP的发送方使用两个事件来作为网络中拥塞的标志：</p>
+<ul>
+<li>超时：如果一个TCP发送方在超时之前没有接收到对于某个段或者某些段的ACK，那么它就假设它们丢失，并且丢失是由于<em>严重拥塞</em>引起的。</li>
+<li>接收到三次重复ACK：当接收方发送三次重复ACK时，这意味着一个段丢失，说明网络此时处于<em>轻微拥塞</em>或者已经从拥塞中恢复。</li>
+</ul>
+<h3 id="拥塞策略"><a class="markdownIt-Anchor" href="#拥塞策略"></a> 拥塞策略</h3>
+<h4 id="慢启动"><a class="markdownIt-Anchor" href="#慢启动"></a> 慢启动</h4>
+<p>慢启动算法是基于拥塞窗口大小的思想，它以最大段长度（MSS）开始，但是每当一个确认到达时它只增加一个MSS。</p>
+<p>初始时cwnd=1，当一个ACK到达时，cwnd=cwnd+1。这一算法启动慢，但是它是以指数增长的。因此，它不能一直继续下去，存在一个停止该阶段的阈值，当窗口中的字节达到这个阈值时，慢启动停止且下一个阶段开始。</p>
+<h4 id="拥塞避免"><a class="markdownIt-Anchor" href="#拥塞避免"></a> 拥塞避免</h4>
+<p>由于慢启动算法使得拥塞窗口大小按照指数规律增大，因此为了在拥塞发生之前避免堵塞，TCP定义了另一个被称为拥塞避免的算法。</p>
+<p>在这个算法中，每次整个窗口的所有段都被确认之后，拥塞窗口才增加1。也就是说，此时如果有一个ACK到达，cwnd=cwnd+(1/cwnd)。此时，增长速率以每次往返时间为单位是线性的，因此这种方法比慢启动方法保守得多。</p>
+<h4 id="快速恢复"><a class="markdownIt-Anchor" href="#快速恢复"></a> 快速恢复</h4>
+<p>快速恢复算法在TCP中是可选的。它开始于三次重复ACK到达，这被解释为网络的轻微阻塞。这个算法也是加性增加的，在三次重复ACK触发使用这个算法之后（三次重复ACK通常会使得cwnd的值减小），当一个重复ACK到达时，cwnd=cwnd+(1/cwnd)。</p>
+<h2 id="tcp计时器"><a class="markdownIt-Anchor" href="#tcp计时器"></a> TCP计时器</h2>
+<h3 id="重传计时器"><a class="markdownIt-Anchor" href="#重传计时器"></a> 重传计时器</h3>
+<p>为了重传丢失的段，TCP在整个连接期间使用一种重传计时器来处理重传超时（RTO）。重传计时器的使用有如下规则：</p>
+<ul>
+<li>当TCP发送位于发送队列前端中的段时，它开启计时器</li>
+<li>当计时器到时，TCP重发队列前端的第一个段并且重启计时器</li>
+<li>当一个或者多个段被累积确认，一个或者多个段从队列中被清除，如果清除至队列为空，则停止计时器。而当队列不为空时重启计时器。</li>
+</ul>
+<p>RTO的计算依赖于RTT的计算，我们将每一个包从发出到接收的时间称为往返时间（Round-Trip Time, RTT）。RTO的计算公式为：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><mi>O</mi><mo>=</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>+</mo><mn>4</mn><mo>×</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">RTO=RTT_{S}+4\times RTT_{D}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub></mrow><annotation encoding="application/x-tex">RTT_S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>代表平滑RTT，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">RTT_D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>代表RTT偏差。将每一次测量的RTT记作<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，二者的值通过多次测量<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>并迭代计算而得。在第一次测量后，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>=</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_{S}=RTT_{M}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub><mo>=</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">RTT_{D}=RTT_{M}/2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord">2</span></span></span></span>；而在这之后每一次测量出新的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub></mrow><annotation encoding="application/x-tex">RTT_S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">RTT_D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>通过下面两个式子更新：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="false">)</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>+</mo><mi>α</mi><mo>×</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_{S}=(1-\alpha)RTT_{S}+\alpha \times RTT_{M}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>β</mi><mo stretchy="false">)</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub><mo>+</mo><mi>β</mi><mo>×</mo><mi mathvariant="normal">∣</mi><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>−</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">RTT_{D}=(1-\beta)RTT_{D}+\beta \times |RTT_{S}-RTT_{M}|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span></span></span></span>。</p>
+<h3 id="坚持计时器"><a class="markdownIt-Anchor" href="#坚持计时器"></a> 坚持计时器</h3>
+<p>为了处理0窗口大小的通告，TCP需要使用坚持计时器。如果接收TCP声明了0窗口大小，那么发送TCP停止传输段，直到接收TCP发送一个ACK段声明非零的窗口大小。由于这个声明非0的ACK段可能会丢失，而且它不存在重传计时器，如果不使用坚持计数器就可能会因为双方TCP互相等待造成死锁。</p>
+<p>因此，当发送方TCP接收一个窗口大小为0的确认时，开启坚持计时器。当坚持计时器到时，发送方TCP发送一个特殊的探测段，这个段只包含一个字节的新数据，同时有一个序号，但是序号从来不被确认。探测报文引发接收方TCP重发确认。</p>
+<h3 id="保活计时器"><a class="markdownIt-Anchor" href="#保活计时器"></a> 保活计时器</h3>
+<p>保活计时器用于防止两个TCP之间的长期空闲连接。假设一个用户与服务器建立了连接，传输了一些数据并进入沉默状态，但是此时连接会永远保持打开。为了消除这种情况，每当服务器从客户收到一次数据就重置保活计时器。而当保活计时器超时之后，它发送一个探测段，如果多次发送探测段之后仍然无响应，那么服务器就认为用户出现故障，会终止连接。</p>
+<h3 id="时间等待计时器"><a class="markdownIt-Anchor" href="#时间等待计时器"></a> 时间等待计时器</h3>
+<p>时间等待（2MSL）计时器在连接终止期间使用。最大报文段寿命（Maximum Segment Lifetime, MSL）是任意报文在被丢弃之前在网络中的存在时间。当TCP执行主动关闭并发送最后一个ACK时，使用2MSL计时器，连接保持2MSL的时间，从而允许TCP重发最后一个ACK，以防ACK丢失。</p>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<ol>
+<li>计算机网络：自顶向下方法</li>
+</ol>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
       </tags>
   </entry>
 </search>
