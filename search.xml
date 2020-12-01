@@ -508,7 +508,7 @@ M0 50 h400000 v40H0z m0 194h40000v40H0z'/></svg></span></span></span></span></sp
 <p>The Elements of Statistical Learning：统计学习的经典教材，需要的数学功底很高（一些比较简单的推导步骤直接被跳过），对于基础理论的讲解也更深。</p>
 <p>XGBoost和LightGBM的原论文：作为经常使用的两种提升树算法，论文对于原理的介绍也更加详细一些。强推XGBoost的原论文，LightGBM则需要在网上查阅一些其他资料来辅助理解。</p>
 <h2 id="深度学习"><a class="markdownIt-Anchor" href="#深度学习"></a> 深度学习</h2>
-<p>深度学习（花书）：对于深度学习的理论讲解比较详细，适合作为深度学习的入门书籍。其中第三部分在</p>
+<p>深度学习（花书）：对于深度学习的理论讲解比较详细，适合作为深度学习的入门书籍。</p>
 <h2 id="强化学习"><a class="markdownIt-Anchor" href="#强化学习"></a> 强化学习</h2>
 <p>Sutton的强化学习：读过一小部分，对于算法理论的介绍很详细，阅读起来难度较大。</p>
 <h2 id="实践-2"><a class="markdownIt-Anchor" href="#实践-2"></a> 实践</h2>
