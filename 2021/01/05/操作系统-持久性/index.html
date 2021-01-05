@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="I&#x2F;O设备  标准设备 一个标准设备包含两部分重要组件：其中一部分是向系统其他部分展示的硬件接口，用于让系统软件控制它的操作；另一部分是它的内部结构，包含设备相关的特定实现，负责具体实现设备展示给系统的抽象接口。标准设备的示意图如下所示：  从图中可以看出，一个设备接口包括3个寄存器：一个可以读取并查看当前设备状态的状态寄存器、一个通知设备执行某个具体任务的命令寄存器、和一个用于将数据传给设备或">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统：持久性">
+<meta property="og:url" content="http://lyf35.github.io/2021/01/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="I&#x2F;O设备  标准设备 一个标准设备包含两部分重要组件：其中一部分是向系统其他部分展示的硬件接口，用于让系统软件控制它的操作；另一部分是它的内部结构，包含设备相关的特定实现，负责具体实现设备展示给系统的抽象接口。标准设备的示意图如下所示：  从图中可以看出，一个设备接口包括3个寄存器：一个可以读取并查看当前设备状态的状态寄存器、一个通知设备执行某个具体任务的命令寄存器、和一个用于将数据传给设备或">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222652.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222657.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222710.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222715.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222726.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222731.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222738.png">
+<meta property="article:published_time" content="2021-01-05T15:50:15.037Z">
+<meta property="article:modified_time" content="2021-01-05T15:50:15.037Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222652.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/01/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>操作系统：持久性 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#io%E8%AE%BE%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text"> I&#x2F;O设备</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E8%AE%BE%E5%A4%87"><span class="nav-number">1.1.</span> <span class="nav-text"> 标准设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%8E%E8%AE%BE%E5%A4%87%E7%9A%84%E4%BA%A4%E4%BA%92"><span class="nav-number">1.2.</span> <span class="nav-text"> 操作系统与设备的交互</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E9%A9%B1%E5%8A%A8%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text"> 磁盘驱动器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text"> 结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E8%B0%83%E5%BA%A6"><span class="nav-number">1.3.2.</span> <span class="nav-text"> 磁盘调度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%89%E4%BB%B7%E5%86%97%E4%BD%99%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97raid"><span class="nav-number">1.4.</span> <span class="nav-text"> 廉价冗余磁盘阵列（RAID）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#raid-0"><span class="nav-number">1.4.2.</span> <span class="nav-text"> RAID-0</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%A1%E5%B8%A6%E5%8C%96"><span class="nav-number">1.4.2.1.</span> <span class="nav-text"> 条带化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%97%E5%A4%A7%E5%B0%8F%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">1.4.2.2.</span> <span class="nav-text"> 块大小的影响</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0"><span class="nav-number">1.4.2.3.</span> <span class="nav-text"> 性能评估</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#raid-1%E7%BA%A7"><span class="nav-number">1.4.3.</span> <span class="nav-text"> RAID-1级</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%95%9C%E5%83%8F"><span class="nav-number">1.4.3.1.</span> <span class="nav-text"> 镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-number">1.4.3.2.</span> <span class="nav-text"> 性能分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#raid-4%E7%BA%A7"><span class="nav-number">1.4.4.</span> <span class="nav-text"> RAID-4级</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A5%87%E5%81%B6%E6%A0%A1%E9%AA%8C"><span class="nav-number">1.4.4.1.</span> <span class="nav-text"> 奇偶校验</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-2"><span class="nav-number">1.4.4.2.</span> <span class="nav-text"> 性能分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#raid-5%E7%BA%A7"><span class="nav-number">1.4.5.</span> <span class="nav-text"> RAID-5级</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%8B%E8%BD%AC%E5%A5%87%E5%81%B6%E6%A0%A1%E9%AA%8C"><span class="nav-number">1.4.5.1.</span> <span class="nav-text"> 旋转奇偶校验</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-3"><span class="nav-number">1.4.5.2.</span> <span class="nav-text"> 性能分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.6.</span> <span class="nav-text"> 总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text"> 文件系统的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.1.</span> <span class="nav-text"> 简单文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E7%BB%84%E7%BB%87"><span class="nav-number">2.1.1.</span> <span class="nav-text"> 整体组织</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inode"><span class="nav-number">2.1.2.</span> <span class="nav-text"> inode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E7%BB%84%E7%BB%87"><span class="nav-number">2.1.3.</span> <span class="nav-text"> 目录组织</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E9%97%B2%E7%A9%BA%E9%97%B4%E7%AE%A1%E7%90%86"><span class="nav-number">2.1.4.</span> <span class="nav-text"> 空闲空间管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E4%B8%8E%E5%86%99%E5%85%A5"><span class="nav-number">2.1.5.</span> <span class="nav-text"> 读取与写入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E7%A3%81%E7%9B%98%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.5.1.</span> <span class="nav-text"> 从磁盘读取文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E7%A3%81%E7%9B%98"><span class="nav-number">2.1.5.2.</span> <span class="nav-text"> 写入磁盘</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E4%B8%8E%E7%BC%93%E5%86%B2"><span class="nav-number">2.1.6.</span> <span class="nav-text"> 缓存与缓冲</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.2.</span> <span class="nav-text"> 快速文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.1.</span> <span class="nav-text"> 简单文件系统的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.2.2.</span> <span class="nav-text"> 解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%B1%E9%9D%A2%E7%BB%84"><span class="nav-number">2.2.2.1.</span> <span class="nav-text"> 柱面组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5"><span class="nav-number">2.2.2.2.</span> <span class="nav-text"> 分配策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B4%A9%E6%BA%83%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">2.3.</span> <span class="nav-text"> 崩溃一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-number">2.3.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%A3%80%E6%9F%A5%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.3.2.</span> <span class="nav-text"> 文件系统检查程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E5%86%99%E6%97%A5%E5%BF%97"><span class="nav-number">2.3.3.</span> <span class="nav-text"> （预写）日志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.3.3.1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%97%A5%E5%BF%97"><span class="nav-number">2.3.3.2.</span> <span class="nav-text"> 数据日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E5%B4%A9%E6%BA%83%E4%B8%AD%E6%81%A2%E5%A4%8D"><span class="nav-number">2.3.3.3.</span> <span class="nav-text"> 从崩溃中恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E6%97%A5%E5%BF%97"><span class="nav-number">2.3.3.4.</span> <span class="nav-text"> 元数据日志</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E7%BB%93%E6%9E%84%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text"> 日志结构文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-3"><span class="nav-number">3.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%85%A5"><span class="nav-number">3.2.</span> <span class="nav-text"> 写入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E6%89%BEinode"><span class="nav-number">3.3.</span> <span class="nav-text"> 查找inode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">3.4.</span> <span class="nav-text"> 目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86"><span class="nav-number">3.5.</span> <span class="nav-text"> 垃圾收集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">3.5.1.</span> <span class="nav-text"> 基本原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E5%9D%97%E6%98%AF%E5%90%A6%E8%A2%AB%E4%BD%BF%E7%94%A8"><span class="nav-number">3.5.2.</span> <span class="nav-text"> 确定块是否被使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E7%90%86%E7%AD%96%E7%95%A5"><span class="nav-number">3.5.3.</span> <span class="nav-text"> 清理策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D%E4%B8%8E%E6%97%A5%E5%BF%97"><span class="nav-number">3.6.</span> <span class="nav-text"> 崩溃恢复与日志</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7%E5%92%8C%E4%BF%9D%E6%8A%A4"><span class="nav-number">4.</span> <span class="nav-text"> 数据完整性和保护</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E6%95%85%E9%9A%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.1.</span> <span class="nav-text"> 磁盘故障模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%A1%E9%AA%8C%E5%92%8C"><span class="nav-number">4.2.</span> <span class="nav-text"> 校验和</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-4"><span class="nav-number">4.2.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%A1%E9%AA%8C%E5%92%8C%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.2.</span> <span class="nav-text"> 校验和函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%A1%E9%AA%8C%E5%92%8C%E5%B8%83%E5%B1%80"><span class="nav-number">4.2.3.</span> <span class="nav-text"> 校验和布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%A1%E9%AA%8C%E5%92%8C%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">4.2.4.</span> <span class="nav-text"> 校验和的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%A1%E9%AA%8C%E5%92%8C%E7%9A%84%E5%BC%80%E9%94%80"><span class="nav-number">4.2.5.</span> <span class="nav-text"> 校验和的开销</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98"><span class="nav-number">4.3.</span> <span class="nav-text"> 其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E7%9A%84%E5%86%99%E5%85%A5"><span class="nav-number">4.3.1.</span> <span class="nav-text"> 错误的写入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A2%E5%A4%B1%E7%9A%84%E5%86%99%E5%85%A5"><span class="nav-number">4.3.2.</span> <span class="nav-text"> 丢失的写入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E6%93%A6%E5%87%80"><span class="nav-number">4.4.</span> <span class="nav-text"> 磁盘擦净</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/01/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统：持久性
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-05 23:50:15" itemprop="dateCreated datePublished" datetime="2021-01-05T23:50:15+08:00">2021-01-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/01/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/" class="post-meta-item leancloud_visitors" data-flag-title="操作系统：持久性" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="io设备"><a class="markdownIt-Anchor" href="#io设备"></a> I/O设备</h1>
+<h2 id="标准设备"><a class="markdownIt-Anchor" href="#标准设备"></a> 标准设备</h2>
+<p>一个标准设备包含两部分重要组件：其中一部分是向系统其他部分展示的硬件接口，用于让系统软件控制它的操作；另一部分是它的内部结构，包含设备相关的特定实现，负责具体实现设备展示给系统的抽象接口。标准设备的示意图如下所示：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222652.png" alt="标准设备" style="zoom: 50%;" />
+<p>从图中可以看出，一个设备接口包括3个寄存器：一个可以读取并查看当前设备状态的状态寄存器、一个通知设备执行某个具体任务的命令寄存器、和一个用于将数据传给设备或是从设备接收数据的数据寄存器。通过读写这些寄存器，操作系统可以控制设备的行为。</p>
+<a id="more"></a>
+<h2 id="操作系统与设备的交互"><a class="markdownIt-Anchor" href="#操作系统与设备的交互"></a> 操作系统与设备的交互</h2>
+<p>操作系统与设备的交互有两种方式，第一种是使用明确的I/O指令，这些指令规定了操作系统将数据发送到特定设备寄存器的方法，从而允许构造交互协议。第二种是使用内存映射I/O，硬件将设备寄存器作为内存地址提供，当需要访问设备寄存器时，操作系统读取或者写入到该内存地址，硬件会将装载/存入转移到设备上而不是物理内存。</p>
+<p>I/O设备与主机的信息传送分为3种方式：程序查询方式、程序中断方式和DMA(Direct Memory Access)方式。在这三种方式中，I/O设备的自治能力越来越强，同时效率也越来越高。更加详细的介绍可查看计算机组成原理相关内容。</p>
+<p>由于设备的种类很多，因此我们需要实现一个设备无关的操作系统，这个问题是通过抽象来实现的。在文件系统的最底层有一部分是设备驱动程序，所有设备交互的细节都封装在其中。因此，所有需要插入系统的设备都需要安装对应的驱动程序，所以驱动程序的代码在整个内核中的代码会随着时间的推移而越来越多。但是这种封装也存在不足，如果一个设备可以提供很多特殊功能，但是为了兼容操作系统不得不提供一个通用接口，这样就可能会使得自身的特殊功能无法使用。一个文件系统栈的结构如下图所示：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222657.png" alt="文件系统栈" style="zoom:50%;" />
+<h2 id="磁盘驱动器"><a class="markdownIt-Anchor" href="#磁盘驱动器"></a> 磁盘驱动器</h2>
+<h3 id="结构"><a class="markdownIt-Anchor" href="#结构"></a> 结构</h3>
+<p>磁盘驱动器由大量扇区组成，每个扇区都可以读取或写入。在具有n个扇区的磁盘上，扇区从0到n-1编号。关于磁盘的物理结构以及工作原理可查看计算机组成原理的相关内容。</p>
+<p>磁盘驱动器制造商保证每个扇区的写入是原子的，也就是要么完整地被写入要么一点都没有被写入。因此，如果在写入的时候突然断电，则只能完成较大写入的一部分（又称为不完整写入）。</p>
+<h3 id="磁盘调度"><a class="markdownIt-Anchor" href="#磁盘调度"></a> 磁盘调度</h3>
+<p>对于磁盘调度来说，可以通过估计请求的查找和可能的旋转延迟，猜测一个磁盘请求大致需要多长时间。因此，磁盘调度程序尝试在其操作中遵循最短任务优先的原则。一些调度算法如下：</p>
+<ul>
+<li>最短寻道时间优先（Shortest-Seek-Time-First, SSTF）：这种调度方法按照磁道对I/O请求队列排序，选择在最近磁道上的请求先完成。由于操作系统无法知道磁盘的几何结构，因此操作系统使用的是最近块优先的近似调度。但是这种方法却出现了饥饿问题，在一些情况下某些磁道的调度请求会被忽略。</li>
+<li>电梯（SCAN或C-SCAN）：这种算法简单地以跨越磁道的顺序来服务磁盘请求，磁盘的磁头从内圈扫到外圈，再从外圈扫到内圈，如此循环下去。在此期间，按照类似于电梯调度的方式处理磁盘请求。这种方式可以避免饥饿，但是却忽略了磁盘的旋转。</li>
+<li>最短定位时间优先（Shortest Positioning Time First, SPTF）：又称为最短接入时间优先。这种算法会按照当前磁头的位置，计算定位到目标扇区所需的时间，选择最短的一个进行调度。这种方法同时考虑了磁盘寻道和旋转所需的时间，但是对于操作系统来说却很难实现，因此通常在磁盘内部执行。</li>
+</ul>
+<p>在现代系统中，磁盘可以接受多个分离的请求，它们本身具有复杂的内部调度程序，可以准确地实现SPTF。同时，磁盘调度系统也会完成I/O合并，调度程序执行的是合并之后的请求，这样便减少了开销。</p>
+<h2 id="廉价冗余磁盘阵列raid"><a class="markdownIt-Anchor" href="#廉价冗余磁盘阵列raid"></a> 廉价冗余磁盘阵列（RAID）</h2>
+<h3 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h3>
+<p>廉价冗余磁盘阵列（Redundant Array of Inexpensive Disks, RAID）技术使用多个磁盘一起构建更快、更大、更可靠的磁盘系统。RAID的内部是一个复杂的计算机系统，包括一个微控制器用于运行控制RAID操作的固件、用于缓冲数据块的易失性和非易失性存储器、多个磁盘用于存储数据、甚至包含专用的逻辑电路执行奇偶校验计算。当文件系统向RAID发出逻辑I/O请求时，RAID内部需要计算要访问的磁盘，然后发出一个或者多个I/O请求来执行此操作。</p>
+<p>与单个磁盘相比，RAID的优点有：</p>
+<ul>
+<li>性能：并行使用多个磁盘可以大大加快I/O时间</li>
+<li>容量：使用多个磁盘使得存储空间更大</li>
+<li>提高可靠性：RAID通过某种形式的冗余可以容许损失一个硬盘并保持运行，就像没有错误一样。</li>
+</ul>
+<p>RAID为使用它们的系统透明地提供了这些优势，也就是说RAID对于主机系统看起来就像一个大磁盘，是一组可以读取或写入的块。这样就意味着可以简单地用RAID去替换磁盘，操作系统与用户程序无需做任何修改。通过这种方式，极大提高了RAID的可部署性和兼容性。</p>
+<h3 id="raid-0"><a class="markdownIt-Anchor" href="#raid-0"></a> RAID-0</h3>
+<h4 id="条带化"><a class="markdownIt-Anchor" href="#条带化"></a> 条带化</h4>
+<p>RAID-0级是以轮转方式将磁盘阵列的块分布在磁盘上，这种方法的目的是在对数组的连续块进行请求时，从阵列中获取最大的并行性。一个块大小（chunk size）为2，共4个磁盘组成的RAID-0磁盘阵列如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">磁盘0</th>
+<th style="text-align:center">磁盘1</th>
+<th style="text-align:center">磁盘2</th>
+<th style="text-align:center">磁盘3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">6</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">7</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">14</td>
+</tr>
+<tr>
+<td style="text-align:center">9</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">15</td>
+</tr>
+<tr>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+</tr>
+</tbody>
+</table>
+<p>通过这种方式，我们在磁盘上将块条带化。在上表中，我们将每两行（因为块大小为2）中的所有块称为一个条带。</p>
+<h4 id="块大小的影响"><a class="markdownIt-Anchor" href="#块大小的影响"></a> 块大小的影响</h4>
+<p>块大小主要影响阵列的性能。如果块大小设置的比较小，就意味着许多文件将跨磁盘进行条带化，从而增加了对于单个文件的读取和写入的并行性。但是跨多个磁盘访问块的定位时间会增加，因为整个请求的定位时间由所有驱动器上请求的最大定位时间决定。但是如果将块大小设置的比较大，则减少了文件内的并行性，但是却可以减少定位时间。因此，确定最佳的块大小是一件比较困难的事情，需要大量提供给磁盘系统工作负载的知识</p>
+<h4 id="性能评估"><a class="markdownIt-Anchor" href="#性能评估"></a> 性能评估</h4>
+<p>从容量的角度来看，RAID-0给定N个磁盘便提供了N个磁盘的有用容量。</p>
+<p>从可靠性角度看，RAID-0具有最糟糕的可靠性。</p>
+<p>从数据传输的角度来说，RAID-0可以获得系统的全部带宽，即无论是顺序读写还是随机读写，总带宽都为所有磁盘的总和。</p>
+<p>从延迟的角度来看，单块请求的延迟与单个磁盘的延迟几乎相同。</p>
+<h3 id="raid-1级"><a class="markdownIt-Anchor" href="#raid-1级"></a> RAID-1级</h3>
+<h4 id="镜像"><a class="markdownIt-Anchor" href="#镜像"></a> 镜像</h4>
+<p>在RAID-1级中，使用了镜像系统，即生成系统中每个块的多个副本，并且将每个副本放在一个单独的磁盘上。通过这种方式，便可以容许磁盘故障。一个保留两个物理副本的RAID-1级磁盘阵列如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">磁盘0</th>
+<th style="text-align:center">磁盘1</th>
+<th style="text-align:center">磁盘2</th>
+<th style="text-align:center">磁盘3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">7</td>
+</tr>
+<tr>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+</tr>
+</tbody>
+</table>
+<p>从镜像阵列中读取块时，RAID可以读取任一副本；但是在写入块时，RAID必须更新两个副本的数据以保持可靠性，同时这些写入可以并行进行。</p>
+<h4 id="性能分析"><a class="markdownIt-Anchor" href="#性能分析"></a> 性能分析</h4>
+<p>从容量角度看，RAID-1价格昂贵，在镜像级别=2的情况下也只能获得峰值有用容量的一半。</p>
+<p>从可靠性角度来看，RAID-1表现良好，它可以容许任何一个磁盘出现故障。考虑保留2个物理副本的RAID-1磁盘阵列，它最大容许的故障数为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>N</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">N/2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mord">/</span><span class="mord">2</span></span></span></span>（如上表所示，假设所有奇数编号的磁盘损坏）。</p>
+<p>从延迟的角度来看，读取请求的延迟与单个磁盘上的延迟相同，但是写入时必须等待所有副本的写入都完成，其写入延迟为所有副本写入中最高者，因此比单个磁盘略高。</p>
+<p>从数据传输的角度来看，顺序写入、随机写入与顺序读取时的带宽都为峰值带宽的一半，而随机读取可以获得完整的可用带宽。注意顺序读取与顺序读取的差别来自于，随机读取时可以在所有磁盘上分配读取数据的操作，而顺序读取时由于磁盘上的块连续，因此即使是从不同的磁盘上读取不同的块，它也需要在读取的时候扫过连续的块但是只读取一部分（比如顺序读取块0—23，磁盘0上保存的块如上表所示，即使是安排磁盘0读取块0、4、8、12、16、20，在读取的时候磁盘0也必须扫过2、6、10……这些块但是并不读取），因此无法获得阵列的全部带宽。</p>
+<h3 id="raid-4级"><a class="markdownIt-Anchor" href="#raid-4级"></a> RAID-4级</h3>
+<h4 id="奇偶校验"><a class="markdownIt-Anchor" href="#奇偶校验"></a> 奇偶校验</h4>
+<p>在RAID-4级磁盘阵列中，使用了奇偶校验的方法来添加冗余，这种方法试图使用较少的容量来克服镜像系统付出的巨大空间损失，但是这种办法却损失了性能。一个5个磁盘组成的具有奇偶校验的RAID-4磁盘阵列如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">磁盘0</th>
+<th style="text-align:center">磁盘1</th>
+<th style="text-align:center">磁盘2</th>
+<th style="text-align:center">磁盘3</th>
+<th style="text-align:center">磁盘4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">P0</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">P1</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:center">9</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">P2</td>
+</tr>
+<tr>
+<td style="text-align:center">12</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">14</td>
+<td style="text-align:center">15</td>
+<td style="text-align:center">P3</td>
+</tr>
+<tr>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+</tr>
+</tbody>
+</table>
+<p>在表中，每一行的数据都有一个奇偶校验块，用于存储这一行数据的冗余信息。例如P0便是使用磁盘块0、1、2、3的信息，通过<em>异或函数</em>计算出来的。由于使用了异或函数，因此当某个磁盘中的信息丢失时，还可以使用奇偶校验块中的数据从故障中恢复。</p>
+<h4 id="性能分析-2"><a class="markdownIt-Anchor" href="#性能分析-2"></a> 性能分析</h4>
+<p>从容量角度来看，RAID-4磁盘阵列的有用容量为N-1。</p>
+<p>从可靠性角度来看，RAID-4最多容许1个磁盘故障，如果丢失多个磁盘则无法恢复数据。</p>
+<p>从延迟角度来看，单次读取（假设没有数据损坏）的延迟等同于单个磁盘请求的延迟，而单次写入则一共需要两次写入并且需要从其他磁盘中读取来计算校验块，因此总延迟大约为单个磁盘的两倍（可并行执行读写操作）。</p>
+<p>从数据传输角度来看，顺序读取与随机读取的性能可以利用除了奇偶校验磁盘外的所有磁盘，顺序写入时使用全条带写入（例如上表中每次将块0、1、2、3同时写入）也可以利用除了奇偶校验磁盘外所有磁盘的带宽。而在随机写入时，则会面临基于奇偶校验的RAID的小写入问题，由于奇偶校验磁盘无法执行任何的并行，而且奇偶校验磁盘需要为每个写操作都进行一次读写操作，因此这种情况下的吞吐量很糟糕。</p>
+<h3 id="raid-5级"><a class="markdownIt-Anchor" href="#raid-5级"></a> RAID-5级</h3>
+<h4 id="旋转奇偶校验"><a class="markdownIt-Anchor" href="#旋转奇偶校验"></a> 旋转奇偶校验</h4>
+<p>RAID-5的工作原理与RAID-4类似，但是它将奇偶校验块跨驱动器旋转，这样就消除了RAID-4的奇偶校验磁盘瓶颈。下表所示为一个RAID-5级的磁盘阵列：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">磁盘0</th>
+<th style="text-align:center">磁盘1</th>
+<th style="text-align:center">磁盘2</th>
+<th style="text-align:center">磁盘3</th>
+<th style="text-align:center">磁盘4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">P0</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">P1</td>
+<td style="text-align:center">7</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:center">9</td>
+<td style="text-align:center">P2</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">11</td>
+</tr>
+<tr>
+<td style="text-align:center">12</td>
+<td style="text-align:center">P3</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">14</td>
+<td style="text-align:center">15</td>
+</tr>
+<tr>
+<td style="text-align:center">P4</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">17</td>
+<td style="text-align:center">18</td>
+<td style="text-align:center">19</td>
+</tr>
+<tr>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+<td style="text-align:center">……</td>
+</tr>
+</tbody>
+</table>
+<h4 id="性能分析-3"><a class="markdownIt-Anchor" href="#性能分析-3"></a> 性能分析</h4>
+<p>RAID-5的有效容量、容错能力、顺序读写能力、以及单个读写请求的延迟与RAID-4都相同。但是其随机读取的性能比RAID-4要稍好一些，此时可以利用所有的磁盘。对于随机写入来说，RAID-5的性能明显提高，因为它允许跨请求进行并行处理，如果有大量的随机请求便可以保持所有磁盘均匀忙碌。因为每个RAID-5写入会产生总计4个I/O操作，所以随机写入的最大带宽为总带宽的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mi mathvariant="normal">/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">1/4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mord">/</span><span class="mord">4</span></span></span></span>。</p>
+<h3 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h3>
+<p>假设RAID磁盘阵列中，所有磁盘的容量为N，每个磁盘在连续工作负载下的传输速度为S，随机工作负载下的传输速度为R，单个磁盘的读写延迟为T，则它们的性能对比可总结为下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">RAID-0</th>
+<th style="text-align:center">RAID-1(设副本数为2)</th>
+<th style="text-align:center">RAID-4</th>
+<th style="text-align:center">RAID-5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">容量</td>
+<td style="text-align:center">N</td>
+<td style="text-align:center">N/2</td>
+<td style="text-align:center">N-1</td>
+<td style="text-align:center">N-1</td>
+</tr>
+<tr>
+<td style="text-align:center">可靠性</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1(可以保证)、N/2(运气最好)</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">顺序读</td>
+<td style="text-align:center">N*S</td>
+<td style="text-align:center">(N/2)*S</td>
+<td style="text-align:center">(N-1)*S</td>
+<td style="text-align:center">(N-1)*S</td>
+</tr>
+<tr>
+<td style="text-align:center">顺序写</td>
+<td style="text-align:center">N*S</td>
+<td style="text-align:center">(N/2)*S</td>
+<td style="text-align:center">(N-1)*S</td>
+<td style="text-align:center">(N-1)*S</td>
+</tr>
+<tr>
+<td style="text-align:center">随机读</td>
+<td style="text-align:center">N*R</td>
+<td style="text-align:center">N*R</td>
+<td style="text-align:center">(N-1)*R</td>
+<td style="text-align:center">N*R</td>
+</tr>
+<tr>
+<td style="text-align:center">随机写</td>
+<td style="text-align:center">N*R</td>
+<td style="text-align:center">(N/2)*R</td>
+<td style="text-align:center">R/2</td>
+<td style="text-align:center">N*R/4</td>
+</tr>
+<tr>
+<td style="text-align:center">读延迟</td>
+<td style="text-align:center">T</td>
+<td style="text-align:center">T</td>
+<td style="text-align:center">T</td>
+<td style="text-align:center">T</td>
+</tr>
+<tr>
+<td style="text-align:center">写延迟</td>
+<td style="text-align:center">T</td>
+<td style="text-align:center">T</td>
+<td style="text-align:center">2T</td>
+<td style="text-align:center">2T</td>
+</tr>
+</tbody>
+</table>
+<h1 id="文件系统的实现"><a class="markdownIt-Anchor" href="#文件系统的实现"></a> 文件系统的实现</h1>
+<h2 id="简单文件系统"><a class="markdownIt-Anchor" href="#简单文件系统"></a> 简单文件系统</h2>
+<h3 id="整体组织"><a class="markdownIt-Anchor" href="#整体组织"></a> 整体组织</h3>
+<p>假设我们的磁盘有N个块，编号为0~N-1，在一个简单的文件系统中磁盘上保存着下面几种不同的数据：</p>
+<ul>
+<li>数据区域：存放用户数据。</li>
+<li>inode表：用于存储文件包含的数据块、文件大小、所有者及访问权限、访问和修改时间等信息。</li>
+<li>位图（bitmap）：包含inode位图和数据位图，用于指示相应的磁盘块是空闲还是正在使用。</li>
+<li>超级块（Superblock）：包含文件系统的信息，如文件系统中inode和数据块的个数、inode表的开始位置、标识文件系统类型的幻数等。</li>
+</ul>
+<p>在挂载文件系统时，操作系统首先读取超级块，初始化各种参数，然后将该磁盘添加到文件系统树中。当磁盘中的文件被访问时，系统就会知道如何查找所需的磁盘上的结构。</p>
+<p>通过这种方式便构造了一个简单文件系统（Very Simple File System, VSFS），这一文件系统对应的磁盘布局大致如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222710.png" alt="简单文件系统" /></p>
+<h3 id="inode"><a class="markdownIt-Anchor" href="#inode"></a> inode</h3>
+<p>inode是index node的缩写，表示索引节点。每个inode都由一个数字（inode号）隐式引用，这个数字为文件的低级名称（low-level name）。给定这个数字，便可以找到磁盘上相应inode所在的扇区号（也就是说一个扇区里面可能保存有多个inode）。</p>
+<p>在每个inode中，实际上是所有关于文件的信息：文件类型（如常规文件、目录等），大小，分配给它的块数，保护信息（谁拥有该文件，谁可以访问它），时间信息（创建时间、修改时间、上次访问的时间等），以及有关其数据块驻留在磁盘上的位置的信息。这些关于文件的信息被成为元数据（文件系统中除了用户数据外其余的都叫元数据）。</p>
+<p>对于inode引用数据块的方式有三种：</p>
+<ul>
+<li>一种是使用范围来表示，即使用一个磁盘指针表示开始位置，加上一个长度表示数据存储的范围。如果只有一个范围则分配文件时的局限性较大，因此通常允许使用多个范围。这种方法不够灵活，但是空间布局更加紧凑。Linux ext4文件系统使用这种方式。</li>
+<li>另一种方式是使用指针来表示，inode中有一个或多个直接指针，每个指针都指向属于该文件的一个磁盘块。如果要支持更大的文件，则需要使用多级索引的方式，即使用间接指针，这一指针指向包含更多指针的块，这个块中的每个指针指向用户数据。这种方法最灵活，但是每个文件都需要使用大量的元数据。Linux的ext2和ext3文件系统使用这种方式。</li>
+<li>还有一种方式是使用链表，在inode中只需要一个指针指向文件的第一个块，对于比较大的文件就在每个数据块的末尾加上指向下个数据块的指针即可。这种方式对于某些工作负载表现不佳，比如随机访问等。旧Windows文件系统FAT便使用的是这种方式。</li>
+</ul>
+<h3 id="目录组织"><a class="markdownIt-Anchor" href="#目录组织"></a> 目录组织</h3>
+<p>一个目录基本上只包含一个二元组（条目名称，inode号）的列表，其中列表的每个条目都指向一个文件或一个其它的目录。在UNIX文件系统中，每个目录下面有两个特殊的条目：一个引用自身的条目（&quot;.&quot;）和一个引用其父目录的条目（&quot;…&quot;）。通常，文件系统将目录视为特殊类型的文件。因此目录也有一个inode，位于inode表的某处，该目录具有由inode指向的数据块，这些数据块存储在文件系统的数据块区域中。</p>
+<p>通过这种方式，用户便可以构建任意的目录树（或成为目录层次结构），在该目录树下存储所有的文件和目录。目录层次结构从根目录开始（在基于UNIX的系统中记作&quot;/&quot;），而后续的子目录也将&quot;/&quot;符号放在目录名称之后用于与文件进行区分。按照惯例，一个文件名通常包含两部分，第一部分为任意名称，第二部分用于指示文件的类型。</p>
+<p>在UNIX系统中，可以使用mount命令将一个新的文件系统挂载到当前的目录中（相当于是将新的文件系统粘贴到目录树的这个节点上）。通过这种方式，便将所有的文件系统统一到一棵树上，提供了一种统一的方式来访问磁盘、U盘、CD或是其它设备上的文件。</p>
+<p>一个简单的目录树的结构如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222715.png" alt="目录树" /></p>
+<h3 id="空闲空间管理"><a class="markdownIt-Anchor" href="#空闲空间管理"></a> 空闲空间管理</h3>
+<p>文件系统需要记录哪些inode和数据块是空闲的，以便于在分配新文件或目录时可以为它找到空间。在简单文件系统中，我们使用inode位图和数据位图来记录空间的使用情况。</p>
+<p>在创建一个文件时，我们为该文件分配一个inode，文件系统便通过inode位图搜索一个空闲的区域并将它分配给该文件。然后文件系统将分配到的inode标记为已使用，并使用正确的信息去更新位图。在分配数据块时也会发生类似的活动。</p>
+<h3 id="读取与写入"><a class="markdownIt-Anchor" href="#读取与写入"></a> 读取与写入</h3>
+<h4 id="从磁盘读取文件"><a class="markdownIt-Anchor" href="#从磁盘读取文件"></a> 从磁盘读取文件</h4>
+<p>当我们要读取一个文件时，文件系统必须遍历路径名，从而找到文件所对应的inode。所有的遍历都是从文件系统的根目录&quot;/&quot;开始的（根目录的inode号必须是众所周知的，在大多数UNIX文件系统中为2），这一查找过程大致如下：</p>
+<ol>
+<li>读入根目录的inode；</li>
+<li>文件系统在根目录的inode中查找指向数据块的指针，然后从数据块中读取根目录中的内容；</li>
+<li>文件系统从根目录数据块中找到下一级目录所对应的inode号；</li>
+<li>递归遍历路径名（重复上述步骤，除了每一次递归读取的inode号不同），直至读取到文件对应的inode。</li>
+<li>文件系统最后进行权限检查，在每个进程的打开文件表中为此进程分配一个文件描述符并将它返回给用户，之后用户便可通过<code>read()</code>系统调用来读取文件。</li>
+</ol>
+<h4 id="写入磁盘"><a class="markdownIt-Anchor" href="#写入磁盘"></a> 写入磁盘</h4>
+<p>在写入文件时，首先必须确保文件打开，然后应用程序调用<code>write()</code>使用新内容更新文件，最后将文件关闭。写入文件所需的操作比读取文件更加复杂。</p>
+<p>当写入一个新文件（文件已经创建好）时，每次写入操作不仅要将数据写入磁盘，还必须在写入之前决定将哪个块分配给文件，从而相应地更新磁盘的其它结构（如数据位图和inode）。因此，每次写入文件的操作在逻辑上会导致5个I/O：一次读取数据位图（对新分配的块进行标记），一次写入数据位图（将新状态存入磁盘），一次读取inode，一次写inode（更新数据块的位置），最后一次写入真正的数据本身。</p>
+<p>对于文件创建来说工作量更大，创建一个新文件时不仅要分配一个inode，还要在包含新文件的目录中分配空间。此时，需要的I/O操作更多：一个读取inode位图（查找空闲inode），一个写入inode位图（更新inode使用情况），一个写入新的inode本身（初始化），一个写入文件所在目录的数据块（将文件的高级名称与它的inode号的组合写入到它所在目录的文件列表中），一个读取文件所在目录inode和一个写入目录inode操作（更新它）。如果目录需要增长以容纳新条目，则还需要额外的I/O。</p>
+<h3 id="缓存与缓冲"><a class="markdownIt-Anchor" href="#缓存与缓冲"></a> 缓存与缓冲</h3>
+<p>由于读写文件都需要许多I/O操作，将会出现性能问题，因此大多数文件系统会使用内存来缓存重要的块。早期的文件系统使用一个固定大小的缓存来保存常用的块，这块缓存会在启动时分配，但是这种办法可能导致浪费。现代的文件系统采用动态划分的办法，将虚拟内存页面和文件系统页面集成到统一页面缓存中，这样便可在虚拟内存与文件系统之间更加灵活地分配内存。</p>
+<p>通过使用缓存，便可以实现写缓冲，这样做有一些优点：</p>
+<ul>
+<li>延迟写入可以让我们将一些更新编成一批同时进行，从而节省了I/O；</li>
+<li>将写入缓冲到内存中，系统可以对后续的I/O进行合理调度；</li>
+<li>一些写入可以通过拖延来避免</li>
+</ul>
+<p>但是如果系统在更新传递到磁盘之前崩溃，那么更新就会丢失。因此一些应用程序如数据库，为了避免这种情况发生，数据写入采用的是强制写入的办法，这是通过使用绕过缓存的直接I/O或是使用原始磁盘接口来实现的。</p>
+<h2 id="快速文件系统"><a class="markdownIt-Anchor" href="#快速文件系统"></a> 快速文件系统</h2>
+<h3 id="简单文件系统的问题"><a class="markdownIt-Anchor" href="#简单文件系统的问题"></a> 简单文件系统的问题</h3>
+<p>简单文件系统被用于早期的UNIX操作系统。这种文件系统将磁盘当成了随机存取内存，因此在使用过程中会导致数据遍布各处，文件系统变得碎片化，从而导致读写时昂贵的定位成本。另一个问题是块大小设置的太小，虽然这样会减少内部碎片的出现，但是这样会导致磁盘数据传输变得低效。</p>
+<h3 id="解决方案"><a class="markdownIt-Anchor" href="#解决方案"></a> 解决方案</h3>
+<p>为了让文件系统的结构与分配策略能够更加符合磁盘本身的工作特性，一些人构造了快速文件系统（Fast File System, FFS）。这一文件系统改变了内部实现从而提高性能，但是保持了相同的API以便兼容应用程序。</p>
+<h4 id="柱面组"><a class="markdownIt-Anchor" href="#柱面组"></a> 柱面组</h4>
+<p>FFS将磁盘划分为多个柱面组（这个柱面与计算机组成原理中磁盘的柱面相对应），如果要访问在同一个柱面组中放置的不同文件，可以确保访问这些文件时不会导致穿越磁盘的长时间寻道。这种分组方式是FFS用于改善性能的核心机制。同时，早期的FFS也针对性能对磁盘布局进行了优化，将块进行交错布局（现代磁盘不需要这么做，它会读取整个磁道并将其缓冲在内部的磁盘缓存中，之后便可从磁盘缓存中取数据）。</p>
+<p>而在一个柱面组中，其构成与简单文件系统相似，都包括超级块、inode位图、数据位图、inodes和数据块。但是不同的一点是，每一个柱面组中的超级块都保存了一个副本，因此即使是其中一个被损伤，仍然可以通过使用副本来挂载和访问文件系统。同时为了改善内部碎片问题，FFS系统引入了子块的概念，这样就可以让小文件不会浪费掉整个的块。</p>
+<h4 id="分配策略"><a class="markdownIt-Anchor" href="#分配策略"></a> 分配策略</h4>
+<p>FFS在磁盘上放置文件、目录和相关元数据的基本思想就是将相关的数据放在一起（这样做使得数据访问具有了更好的局部性，便于磁盘的读写操作）。</p>
+<p>对于目录的放置，FFS会找到分配数量少和具有大量自由inode的柱面组，并将目录数据和inode放在该分组中。这样做可以跨组平衡目录，并且能够尽量保证后续在分配文件的时候能够有充足的空间。</p>
+<p>对于文件，FFS会尽量确保文件的数据块分配到与其inode相同的组中，从而避免了inode和数据之间的长时间寻道。同时，它会将位于同一目录中的所有文件，都放在它们所在目录的柱面组中。</p>
+<p>但是对于大文件来说则例外。由于大文件会将它首先放入的块组填满，这样便会妨碍随后相关文件的放置，破坏了文件访问的局部性。因此，对于大文件来说，通常会将所有的块分成若干份。在将第一份分配到第一个块组之后，FFS便会将文件的第二份放在另一个块组中，然后以此类推。如果分割大文件时选择的分割份数合适，那么大部分时间仍然会花在从磁盘传输数据上，而花费在磁盘寻道上的时间相对较小。FFS会基于inode本身的结构来对大文件进行分割，前12个直接块与inode放在同一组中，每个后续的间接块及其指向的所有块被放置于不同的组中。</p>
+<h2 id="崩溃一致性"><a class="markdownIt-Anchor" href="#崩溃一致性"></a> 崩溃一致性</h2>
+<h3 id="概述-2"><a class="markdownIt-Anchor" href="#概述-2"></a> 概述</h3>
+<p>假设我们要对文件进行追加写入，在使用简单文件系统时，我们需要同时更新inode、数据位图和写入的数据块，而且这三个写入是单独进行的。如果在所有步骤执行完成之前，突然发生了机器断电或者操作系统崩溃，此时磁盘状态只会被部分更新，文件系统将会处于不一致的状态。可能出现的崩溃场景如下：</p>
+<ul>
+<li>只将数据块写入磁盘：此时数据在磁盘上，但是没有指向它的inode，也没有表示块已分配的位图，好像写入从未发生过。</li>
+<li>只有更新的inode写入磁盘：将会从磁盘中读取到垃圾数据。</li>
+<li>只有更新后的位图写入磁盘：出现文件系统不一致的问题，如果不解决则会造成某些空间永远不会使用，从而导致浪费。</li>
+<li>没有写入数据块：将会从磁盘中读取到垃圾数据。</li>
+<li>没有写入位图：inode和位图之间存在不一致，可能会导致数据被覆盖掉。</li>
+<li>没有写入inode：inode和位图之间不一致，文件系统无法找到新写入的数据。</li>
+</ul>
+<p>在上述的一些场景中，出现了崩溃之后文件系统不一致的情况。因此我们需要考虑崩溃一致性（crush-consistency）的问题，也称为一致性更新问题，确保磁盘上存储的文件系统保持合理的状态。</p>
+<h3 id="文件系统检查程序"><a class="markdownIt-Anchor" href="#文件系统检查程序"></a> 文件系统检查程序</h3>
+<p>fsck是一个UNIX工具，用于查找文件系统不一致并修复，但是这种方法无法修复全部问题。它会在许多阶段运行，比如在文件系统挂载并可用之前运行。fsck检查的步骤如下：</p>
+<ol>
+<li>超级块：检查超级块是否合理，主要是进行健全性检查，目的是找到冲突的超级块。如果有冲突的超级块则需要系统或管理员决定使用超级块的备用副本。</li>
+<li>空闲块：扫描inode、间接块、双重间接块等，了解当前在文件系统中分配的块，并利用扫描的结果生成一个正确版本的分配位图。如果位图与inode之前存在差异则通过信任inode内的信息来解决它。</li>
+<li>inode状态：检查inode是否存在损坏或其他问题。</li>
+<li>inode链接：验证每个已分配的inode的链接数。如果链接计数不匹配则需要修正计数，如果发现已分配的inode但是没有目录引用它则将它移动到一个专门的文件夹内。</li>
+<li>重复：检查重复指针，即两个不同inode引用同一个块的情况。或是清除一个inode，也或是生成一个副本。</li>
+<li>坏块：检查坏块指针，并从inode中清除它。</li>
+<li>目录检查：为每个目录内容进行完整性检查。</li>
+</ol>
+<p>这种方法的根本问题是速度过慢，它需要扫描整个磁盘；而如果要解决一个小文件导致的不一致性，扫描整个磁盘的这种做法也过于浪费，大部分的时间都被用于检查文件系统中正确的部分。随着磁盘容量的增长，这种方法变得不实用。</p>
+<h3 id="预写日志"><a class="markdownIt-Anchor" href="#预写日志"></a> （预写）日志</h3>
+<h4 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h4>
+<p>预写日志的方法在Linux ext3和ext4、Windows NTFS等文件系统中都被使用。这种方法的思路是，在更新磁盘时，首先在磁盘的日志区写入“注释”再去覆写文件结构。通过将注释写入磁盘，可以保证在更新期间发生崩溃时，系统能够返回并查看这些注记然后重试。这样做可以在崩溃之后准确知道要修复的内容，而不必扫描整个磁盘，从而大大减少了恢复所需的工作量。</p>
+<h4 id="数据日志"><a class="markdownIt-Anchor" href="#数据日志"></a> 数据日志</h4>
+<p>在Linux ext3文件系统中，使用了数据日志（Data journaling）的方法。数据日志的方法指的是，在做文件系统更新的时候，先把需要更新的内容写入日志，然后再将其写入最终的磁盘位置。一个日志文件系统的大致结构如下图所示：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222726.png" alt="数据日志" style="zoom: 50%;" />
+<p>日志文件系统将日志视为一个循环数据结构，因此文件必须要在加检查点之后的某个时间将其在日志中占有的空间释放，允许重用空间。在日志文件系统内有一个日志超级块，用于记录哪些事务尚未加检查点，并且记录日志中最旧和最新的事务。这样便可减少恢复时间，并允许以循环的方式使用日志。</p>
+<p>这种方法的操作顺序如下：</p>
+<ol>
+<li>日志写入：将一个事务写入日志，包括事务开始块、所有即将写入的数据和元数据，并等待写入完成。</li>
+<li>日志提交：将事务提交块（即事务结束块）写入日志，在写完成之后事务被认为已经提交。将步骤1和2分开是为了防止在写日志时出现崩溃，从而导致文件系统的更新出错。</li>
+<li>加检查点：将待处理的元数据和数据更新写入文件系统的最终位置。</li>
+<li>释放：在一段时间后，通过更新日志超级块，在日志中标记事务为空闲。</li>
+</ol>
+<p>由于更新文件系统需要对磁盘上的许多结构进行更新，造成大量的磁盘流量，而且不同的事务可能更新的是同一个数据块。因此为了解决这一问题，一些文件系统不会一次一个地提交更新事务，而是会将更新缓冲到全局事务中，在写入磁盘时提交所有的更新。</p>
+<p>另一个需要考虑的问题是块复用，当块被删除然后又重新分配时便会出现这个问题。此时如果发生崩溃，在之后的恢复过程中如果简单地重放日志内的所有内容，便会用旧内容覆盖当前的用户数据。为了解决这一问题，可以直到日志中的内容被清除之后再重复使用块，或是将撤销记录加入到日志中，在重放日志之前先扫描这样的记录，任何被撤销的数据都不会被重放。</p>
+<h4 id="从崩溃中恢复"><a class="markdownIt-Anchor" href="#从崩溃中恢复"></a> 从崩溃中恢复</h4>
+<p>在更新文件系统的过程中，任何时候都有可能发生崩溃。对于不同的情况，我们也有不同的处理办法：</p>
+<ul>
+<li>如果崩溃发生在事务被安全地写入日志之前（即步骤2完成之前），就简单地跳过待执行的更新；</li>
+<li>如果在事务已经提交到日志之后，但是在加检查点之前发生崩溃，文件系统会按如下步骤恢复：
+<ol>
+<li>系统引导时，文件系统恢复过程会扫描日志，并查找已经提交到磁盘的事务；</li>
+<li>这些事务被重放，文件系统再次尝试将事务中的块写入到最终的磁盘位置。</li>
+</ol>
+</li>
+</ul>
+<h4 id="元数据日志"><a class="markdownIt-Anchor" href="#元数据日志"></a> 元数据日志</h4>
+<p>由于使用用户日志的方式记录了所有的用户数据，这样便显著增加了开销。为了提高性能，一些文件系统使用了一种更简单的日志形式，被称为有序日志（Ordered Journaling）或元数据日志（Metadata Journaling）。它与数据日志几乎相同，只是用户数据没有写入日志。在Windows NTFS与Linux ext3（可选）中使用了元数据日志的方法。</p>
+<p>此时，数据写入的顺序对于元数据日志变得很重要。为了确保文件系统的一致，需要先将数据写入到最终位置，然后再执行与数据日志相同的四个步骤。通过强制先写入数据，文件系统可以保证inode中的指针永远不会指向垃圾。</p>
+<h1 id="日志结构文件系统"><a class="markdownIt-Anchor" href="#日志结构文件系统"></a> 日志结构文件系统</h1>
+<h2 id="概述-3"><a class="markdownIt-Anchor" href="#概述-3"></a> 概述</h2>
+<p>日志结构文件系统（Log-structured File System, LFS）简单地将所有更新（如数据块，inode等）顺序地写入磁盘。在写入磁盘时，LFS首先将所有更新缓存在内存段中，当段已满时它就会在一次长时间的顺序传输中写入磁盘，并传输到磁盘的未使用部分。LFS永远不会覆盖现有数据，而是始终将段写入空闲位置。由于段很大，因此可以有效地使用磁盘，并使得文件系统的性能达到峰值。</p>
+<p>下图所示为一个简单的文件系统示意图，其中每一部分的含义及用途会在下文详细描述：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222731.png" alt="LFS概况" style="zoom: 67%;" />
+<h2 id="写入"><a class="markdownIt-Anchor" href="#写入"></a> 写入</h2>
+<p>LFS使用了写入缓冲的技术，在写入磁盘之前，LFS会跟踪内存中的更新，收到足够数量的更新时会立即将他们写入磁盘。LFS一次写入的大块更新被称为段，每次写入之前缓冲的数据越多，那么每次更新时的有效速率就会更加接近于峰值速率。</p>
+<h2 id="查找inode"><a class="markdownIt-Anchor" href="#查找inode"></a> 查找inode</h2>
+<p>为了在LFS中查找inode，引入了一个被称为inode映射（imap）的数据结构，在inode号和inode之间引入了一个间接层。imap结构中存储了inode的指针，使用inode号作为输入，便可获得相对应inode的磁盘地址。LFS将imap放在它写入的所有其他新信息的位置旁边。</p>
+<p>在引入imap之后，由于imap分布于整个磁盘上，因此我们需要从磁盘上的某个固定位置开始找到这些imap。LFS在磁盘上有一个这样的区域，被称为检查点区域（Checkpoint Region, CR），它包含了指向最新的imap片段的指针。这一区域会定时更新，因此性能不会受到影响。</p>
+<h2 id="目录"><a class="markdownIt-Anchor" href="#目录"></a> 目录</h2>
+<p>LFS中的目录结构与传统的UNIX文件系统基本相同，因为目录只是一系列（名称，inode号）映射的集合。在磁盘上创建文件时，LFS需要同时写入新的inode、数据、引用此文件的目录数据及其inode。而在imap中，也同时保存了新创建文件和文件目录所对应的inode的映射。下图所示为在一个目录中创建一个名为foo的新文件所形成的结构：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222738.png" alt="LFS目录结构" style="zoom: 50%;" />
+<p>按照上图，以访问文件foo为例，步骤如下：</p>
+<ol>
+<li>查看imap并找到目录dir所对应的inode的位置（即A3）；</li>
+<li>读取目录的inode，从中可以找到目录数据的位置（即A2）；</li>
+<li>从目录数据中找到文件foo的inode号码（本例中为k）；</li>
+<li>再次访问imap，从中找到inode号k在磁盘中存储的位置（即A1）；</li>
+<li>访问文件的inode，并读取到文件。</li>
+</ol>
+<p>LFS中存在的递归更新问题（任何不会原地更新的文件系统都会遇到这一问题，即更新inode时会导致沿着文件系统树一直向上更新）是通过使用imap被间接解决的。当inode的位置发生变化时，imap中存储的地址也会随之更新，但是目录中的内容仍然是文件名到inode号的映射，也就是说此时的一系列更改不会影响到目录结构本身。因此，这样的修改不会影响它的上级目录对它进行访问。</p>
+<h2 id="垃圾收集"><a class="markdownIt-Anchor" href="#垃圾收集"></a> 垃圾收集</h2>
+<h3 id="基本原理"><a class="markdownIt-Anchor" href="#基本原理"></a> 基本原理</h3>
+<p>LFS会反复地将最新版本的文件写入到磁盘上的新位置，在文件系统中留下的旧版本就变成了垃圾。因此，LFS会定期的在后台查找文件数据、索引节点和其他结构的旧版本，并清理它们。具体来说，清理程序会定期地读入许多旧的段，确定哪些块在这些段中仍然在使用，然后写出一组新的段，只包含其中仍在使用的块。之后便可以将旧段释放掉，从而用于写入。</p>
+<p>当然也可以保留旧版本的数据，并允许用户恢复旧文件版本。这样便形成了一个版本控制文件系统。</p>
+<h3 id="确定块是否被使用"><a class="markdownIt-Anchor" href="#确定块是否被使用"></a> 确定块是否被使用</h3>
+<p>为了确定块是否被使用，LFS会为每个段添加一些额外信息。具体来说，在段的头部添加一个段摘要块（标记为SS），里面包括每个数据块的inode号和偏移量。之后，如果要确定位于地址A的块D是否被使用，可以按如下步骤进行：</p>
+<ol>
+<li>先查看段摘要块从中找到它对应的inode号N和偏移量T；</li>
+<li>接下来查看imap以找到N所在的位置，并从磁盘读取N；</li>
+<li>最后查看inode N中保存的偏移量为T的块在磁盘中的实际位置A’；</li>
+<li>如果A’=A，那么便可以确定块D正在被使用；反之则可以认为块D未被使用，它可以被删除掉。</li>
+</ol>
+<h3 id="清理策略"><a class="markdownIt-Anchor" href="#清理策略"></a> 清理策略</h3>
+<p>在上述机制的基础上，LFS需要确定何时清理以及哪些块值得清理。要确定何时清理很容易，可以周期性清理，可以使用空闲时间，也可以在磁盘已满时清理。而确定清理哪些块则很难取得最佳方法，在最初的LFS中使用的是试图分离冷热段的方法，由于热段经常覆盖内容，因此每次清理的间隔时间较长，而冷段的内容比较稳定，每次清理的间隔短。</p>
+<h2 id="崩溃恢复与日志"><a class="markdownIt-Anchor" href="#崩溃恢复与日志"></a> 崩溃恢复与日志</h2>
+<p>LFS在更新检查点区域（CR）以及将段写入时都可能会发生崩溃。为了确保CR的更新以原子方式发生，LFS在磁盘两端各保留了一个CR，并交替写入它们。同时在CR中写入时间戳，这样便可以检测出更新时发生崩溃。而对于段写入时的崩溃，LFS会在重新启动时读取检查点区域、它指向的imap片段、以及后续的文件和目录，对文件系统进行恢复，同时使用了前滚的技术对许多段进行重建。</p>
+<h1 id="数据完整性和保护"><a class="markdownIt-Anchor" href="#数据完整性和保护"></a> 数据完整性和保护</h1>
+<h2 id="磁盘故障模式"><a class="markdownIt-Anchor" href="#磁盘故障模式"></a> 磁盘故障模式</h2>
+<p>潜在扇区错误（Latent-Sector Errors, LSE）指的是磁盘扇区或扇区组以某种方式出现了讹误，此时会出现部分数据位不可读或是数据位的内容不正确。驱动器使用磁盘内纠错码（Error Correcting Code, ECC）来确定块中的磁盘位是否良好，并且在某些情况下修复它们。如果磁盘位确实有错，且驱动器没有足够的信息来修正错误，那么在发出读取请求时就会返回错误。这种错误很容易处理，当系统返回错误时，存储系统就可以使用它具有的任何冗余机制，例如RAID-1可以访问备用副本，基于奇偶校验的RAID-4和RAID-5可以使用奇偶校验块来重建。</p>
+<p>块讹误（block corruption）指的是磁盘块出现问题，但是磁盘本身无法检测到，比如将块写入到错误的位置。在这种情况下，ECC指示块的内容没有问题，但是在随后访问时却会返回错误的块。在返回故障数据时，磁盘不会报告任何问题，因此这种类型的故障特别隐蔽。在下面的内容中我们将讨论这种错误如何解决。</p>
+<h2 id="校验和"><a class="markdownIt-Anchor" href="#校验和"></a> 校验和</h2>
+<h3 id="概述-4"><a class="markdownIt-Anchor" href="#概述-4"></a> 概述</h3>
+<p>现代存储系统用于保持数据完整性的主要机制被称为校验和（checksum）。校验和指的是一个函数的结果，这个函数以一块数据作为输入，并计算这段数据的函数，产生数据内容的摘要，这个摘要便被称为校验和。</p>
+<p>系统通过将原始数据和校验和一起存储，然后在访问时确认数据的当前校验和与原始的存储值是否可以相匹配，从而检测数据是否被破坏或者改变。</p>
+<h3 id="校验和函数"><a class="markdownIt-Anchor" href="#校验和函数"></a> 校验和函数</h3>
+<p>计算校验和的函数有许多，并且保护数据完整性的强度和计算速度都不同。因为摘要比元素数据会小得多，两个具有不相同数据块的校验和可能是相同的（即发生碰撞），所以没有完美的校验和函数。常用的校验和函数有：</p>
+<ul>
+<li>奇偶校验：将整个数据块均分成若干小块，然后计算每个数据块内所有比特的异或。异或值可以表示这一数据块中1的数量是奇数或者偶数。如果数据块内有两个位发生变化，就无法检测到讹误，而且这种方式计算速度较慢。</li>
+<li>纵向冗余校验（XOR校验和）：将整个数据块均分成若干小块，然后以整个数据块作为计算单位，计算所有数据块的异或值。这种方式是对奇偶校验的扩展，只能检测纵向奇数个错误。</li>
+<li>加法校验和：在每个数据块上执行二进制加法，忽略溢出。这种方法计算速度快，但是如果数据被移位则效果不好。</li>
+<li>Fletcher校验和：假设块D由字节d1,……,dn组成，则从i=1~n重复计算：s1=(s1+di) mod 255, s2=(s1+s2) mod 255，取最后一步得到的s1和s2拼接在一起作为最终的校验和。</li>
+<li>循环冗余校验（CRC）：将数据块中的内容看成一个大的二进制数字，然后用一个事先约定好的值k除以它，取最终的余数作为校验和。</li>
+</ul>
+<h3 id="校验和布局"><a class="markdownIt-Anchor" href="#校验和布局"></a> 校验和布局</h3>
+<p>校验和的存储有两种方式：一种方式是驱动器制造厂商在划分扇区的时候将校验和考虑在内，也就是说一个扇区内部包括数据与它的校验和；另外一种方式是将n个校验和同时存储在一个扇区内部，后面接着n个数据块，然后按照这种排列方式重复，这种方法的效率较低，因其写入的时候需要一次读取和两次写入操作。</p>
+<h3 id="校验和的使用"><a class="markdownIt-Anchor" href="#校验和的使用"></a> 校验和的使用</h3>
+<p>当我们在读取数据时，计算机同时读取磁盘上这段数据的校验和。同时，计算机也会使用读取到的数据计算校验和。如果这两个校验和相等，则数据很可能没有被损坏，因此可以返回给用户；如果不等，则说明数据存在讹误，此时如果存储系统有冗余副本，则可以使用它来恢复数据，如果没有则返回错误。</p>
+<h3 id="校验和的开销"><a class="markdownIt-Anchor" href="#校验和的开销"></a> 校验和的开销</h3>
+<p>校验和的开销主要是空间和时间两个方面。空间开销包括存储介质开销以及系统内存开销，由于校验和相比于原始的数据块本身在磁盘中所占的比例很小，而且内存在使用完校验和之后便可以把它丢掉，因此空间开销很小。而校验和引起的时间开销会很大，因为使用校验和的时候需要CPU计算校验和，并且需要从磁盘中读取或是写入校验和，这就带来了额外的时间开销。</p>
+<h2 id="其他问题"><a class="markdownIt-Anchor" href="#其他问题"></a> 其他问题</h2>
+<h3 id="错误的写入"><a class="markdownIt-Anchor" href="#错误的写入"></a> 错误的写入</h3>
+<p>有一种失败模式被称为错误位置的写入，指的是数据可以正确地写入磁盘，但是写入位置不正确。为了解决这一问题，需要在每个校验和中添加更多信息，具体为添加物理标识符（块的磁盘和扇区号）。</p>
+<h3 id="丢失的写入"><a class="markdownIt-Anchor" href="#丢失的写入"></a> 丢失的写入</h3>
+<p>当设备通知上层写入已完成，但是事实上这一过程并未完成，就会发生丢失写入的问题。此时，磁盘上留下的仍然是旧内容，而不是更新后的内容。这种情况下的校验和策略也会失效。解决这一问题的办法包括写入验证、写入后读取、在系统的其它位置添加校验和等。</p>
+<h2 id="磁盘擦净"><a class="markdownIt-Anchor" href="#磁盘擦净"></a> 磁盘擦净</h2>
+<p>由于存储在磁盘上的数据可能长时间未被访问，因此将保持未检查状态。为了解决这一问题，系统使用了各种形式的磁盘擦净（disk scrubbing）。系统会定期读取每一个块，并检查校验和是否有效，这样便减少了某个数据项的所有副本都被破坏的可能性。</p>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<ol>
+<li>Operating Systems: Three Easy Pieces</li>
+<li>深入理解计算机系统（第三版）</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2pjX2JlbmJlbi9hcnRpY2xlL2RldGFpbHMvMTA3OTA1MDMw">https://blog.csdn.net/jc_benben/article/details/107905030<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/01/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/" title="操作系统：持久性">http://lyf35.github.io/2021/01/05/操作系统-持久性/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"><i class="fa fa-tag"></i> 操作系统</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/05/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-NumPy/" rel="prev" title="数据分析-NumPy">
+      <i class="fa fa-chevron-left"></i> 数据分析-NumPy
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/05/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91/" rel="next" title="操作系统：并发">
+      操作系统：并发 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">15:24</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'ccf0c8cd36bec6c6eb55f61abf81892f',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

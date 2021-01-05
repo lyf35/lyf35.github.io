@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="局部性 一个编写良好的计算机程序常常具有较好的局部性，它们倾向于引用最近引用过的数据项，或是引用与它们相邻的数据项。这种倾向性被称为局部性原理。通常一个局部性良好的程序比局部性差的程序运行地更快。 局部性分为两种：  时间局部性：被引用过一次的内存位置很可能在不远的将来再被多次引用 空间局部性：对于一个被引用过一次的内存位置，程序很可能在不远的将来引用它附近的内存位置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机组成原理：高速缓存">
+<meta property="og:url" content="http://lyf35.github.io/2021/01/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="局部性 一个编写良好的计算机程序常常具有较好的局部性，它们倾向于引用最近引用过的数据项，或是引用与它们相邻的数据项。这种倾向性被称为局部性原理。通常一个局部性良好的程序比局部性差的程序运行地更快。 局部性分为两种：  时间局部性：被引用过一次的内存位置很可能在不远的将来再被多次引用 空间局部性：对于一个被引用过一次的内存位置，程序很可能在不远的将来引用它附近的内存位置">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201104233206.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002113.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002127.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002133.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002142.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002146.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002152.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002157.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002203.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002211.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002216.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002220.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002227.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002233.png">
+<meta property="article:published_time" content="2021-01-05T15:50:15.037Z">
+<meta property="article:modified_time" content="2021-01-05T15:50:15.037Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="计算机组成原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201104233206.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/01/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机组成原理：高速缓存 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text"> 局部性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text"> 存储器层次结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E4%B8%AD%E7%9A%84%E7%BC%93%E5%AD%98%E6%80%9D%E6%83%B3"><span class="nav-number">2.1.</span> <span class="nav-text"> 存储器层次结构中的缓存思想</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E4%B8%80%E8%88%AC%E6%80%A7%E6%A6%82%E5%BF%B5"><span class="nav-number">2.1.1.</span> <span class="nav-text"> 缓存的一般性概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">2.1.2.</span> <span class="nav-text"> 缓存管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E8%AF%BB%E5%8F%96"><span class="nav-number">2.1.3.</span> <span class="nav-text"> 缓存读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%B1"><span class="nav-number">2.2.</span> <span class="nav-text"> 存储器山</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AD%98%E5%82%A8%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text"> 高速缓存存储器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E7%BB%87%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text"> 组织结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E7%9A%84%E8%AF%BB%E5%86%99"><span class="nav-number">3.2.</span> <span class="nav-text"> 高速缓存的读写</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.1.</span> <span class="nav-text"> 读操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.2.</span> <span class="nav-text"> 写操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9C%9F%E5%AE%9E%E7%9A%84%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">3.3.</span> <span class="nav-text"> 真实的高速缓存层次结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%8F%82%E6%95%B0%E7%9A%84%E6%80%A7%E8%83%BD%E5%BD%B1%E5%93%8D"><span class="nav-number">3.4.</span> <span class="nav-text"> 高速缓存参数的性能影响</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%8F%8B%E5%A5%BD%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text"> 编写高速缓存友好的代码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99"><span class="nav-number">4.1.</span> <span class="nav-text"> 基本原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.2.</span> <span class="nav-text"> 示例</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/01/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机组成原理：高速缓存
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-05 23:50:15" itemprop="dateCreated datePublished" datetime="2021-01-05T23:50:15+08:00">2021-01-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/01/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理：高速缓存" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="局部性"><a class="markdownIt-Anchor" href="#局部性"></a> 局部性</h1>
+<p>一个编写良好的计算机程序常常具有较好的局部性，它们倾向于引用最近引用过的数据项，或是引用与它们相邻的数据项。这种倾向性被称为<strong>局部性原理</strong>。通常一个局部性良好的程序比局部性差的程序运行地更快。</p>
+<p>局部性分为两种：</p>
+<ul>
+<li>时间局部性：被引用过一次的内存位置很可能在不远的将来再被多次引用</li>
+<li>空间局部性：对于一个被引用过一次的内存位置，程序很可能在不远的将来引用它附近的内存位置</li>
+</ul>
+<a id="more"></a>
+<p>对于程序来说，局部性包括对数据引用的局部性以及取指令的局部性。例如下面的两个求二维数组中所有元素和的代码，第一段代码比第二段代码就要有更好的局部性，因为第一段代码具有步长为1的引用模式，而第二段代码具有步长为N的引用模式。同时，这两段代码中都包含了循环体，由于循环体内的指令是按照连续的内存顺序执行的，而且这些代码也会被执行多次，所以循环体具有良好的时间与空间局部性。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sumarrayrows</span><span class="params">(<span class="keyword">int</span> a[M][N])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> 	<span class="keyword">int</span> i, j, sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"> 	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; M; i++)</span><br><span class="line"> 		<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line"> 			sum += a[i][j];</span><br><span class="line"> 	<span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sumarraycols</span><span class="params">(<span class="keyword">int</span> a[M][N])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i, j, sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"> 	<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line"> 		<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; M; i++)</span><br><span class="line"> 			sum += a[i][j];</span><br><span class="line"> 	<span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>量化评价程序中局部性的一些简单原则：</p>
+<ul>
+<li>重复引用相同变量的程序具有良好的时间局部性</li>
+<li>对于具有步长为k的引用模式的程序，步长越小，空间局部性越好，反之则越差</li>
+<li>对于取指令来说，循环具有好的时间与空间局部性。循环体越小，循环迭代次数越多则局部性越好</li>
+</ul>
+<h1 id="存储器层次结构"><a class="markdownIt-Anchor" href="#存储器层次结构"></a> 存储器层次结构</h1>
+<p>对于计算机硬件来说，一台计算机中使用了不同种类的存储技术，这些存储技术的访问时间差异很大。而且，CPU与主存之间的速度差距也在增大。而对于计算机软件来说，一个编写良好的程序通常会具有较好的局部性。这两个特点能够相互补充，使得计算机中的存储器能够被组织成<strong>存储器层次结构</strong>，如下图所示。在图中，从高层往低层走，存储设备变得更慢、更便宜和更大。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201104233206.png" alt="image-20201015215951212" /></p>
+<h2 id="存储器层次结构中的缓存思想"><a class="markdownIt-Anchor" href="#存储器层次结构中的缓存思想"></a> 存储器层次结构中的缓存思想</h2>
+<h3 id="缓存的一般性概念"><a class="markdownIt-Anchor" href="#缓存的一般性概念"></a> 缓存的一般性概念</h3>
+<p>存储器层次结构的本质就是，对于每个k，位于第k层的更快更小的存储设备作为位于k+1层的更大更慢的存储设备的缓存。也就是说，层次结构中的每一层都缓存来自较低一层的数据对象。</p>
+<p>第k+1层的存储器被划分为连续的数据对象组块，每一个组块都有唯一的地址或名字。这些块的大小可以是固定的，也可以是可变的。第k层的存储器被划分为较少的块的集合，每个块的大小与k+1层的块大小一样。在任何时刻，第k层的缓存包含第k+1层块的一个子集的副本。数据以块大小作为传送单元在两层之间来回复制。注意：相邻层次之间块大小固定，但是其他层次对之间可以有不同的块大小，一般层次结构中较低层的设备倾向于使用较大的块。下图所示变为存储器层次结构中基本缓存原理的示意图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002113.png" alt="image-20201015230801213" /></p>
+<p>现代计算机系统中常用的缓存见下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Type</th>
+<th style="text-align:center">What cached</th>
+<th style="text-align:center">Where cached</th>
+<th style="text-align:center">Latency (cycles)</th>
+<th style="text-align:center">Managed by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">CPU registers</td>
+<td style="text-align:center">4-byte or 8-byte words</td>
+<td style="text-align:center">On-chip CPU registers</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">Compiler</td>
+</tr>
+<tr>
+<td style="text-align:center">TLB</td>
+<td style="text-align:center">Address translations</td>
+<td style="text-align:center">On-chip TLB</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">Hardware MMU</td>
+</tr>
+<tr>
+<td style="text-align:center">L1 cache</td>
+<td style="text-align:center">64-byte blocks</td>
+<td style="text-align:center">On-chip L1 cache</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">Hardware</td>
+</tr>
+<tr>
+<td style="text-align:center">L2 cache</td>
+<td style="text-align:center">64-byte blocks</td>
+<td style="text-align:center">On-chip L2 cache</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">Hardware</td>
+</tr>
+<tr>
+<td style="text-align:center">L3 cache</td>
+<td style="text-align:center">64-byte blocks</td>
+<td style="text-align:center">On-chip L3 cache</td>
+<td style="text-align:center">50</td>
+<td style="text-align:center">Hardware</td>
+</tr>
+<tr>
+<td style="text-align:center">Virtual memory</td>
+<td style="text-align:center">4-KB pages</td>
+<td style="text-align:center">Main memory</td>
+<td style="text-align:center">200</td>
+<td style="text-align:center">Hardware + OS</td>
+</tr>
+<tr>
+<td style="text-align:center">Buffer cache</td>
+<td style="text-align:center">Parts of files</td>
+<td style="text-align:center">Main memory</td>
+<td style="text-align:center">200</td>
+<td style="text-align:center">OS</td>
+</tr>
+<tr>
+<td style="text-align:center">Disk cache</td>
+<td style="text-align:center">Disk sectors</td>
+<td style="text-align:center">Disk controller</td>
+<td style="text-align:center">100,000</td>
+<td style="text-align:center">Controller firmware</td>
+</tr>
+<tr>
+<td style="text-align:center">Network cache</td>
+<td style="text-align:center">Parts of files</td>
+<td style="text-align:center">Local disk</td>
+<td style="text-align:center">10,000,000</td>
+<td style="text-align:center">NFS client</td>
+</tr>
+<tr>
+<td style="text-align:center">Browser cache</td>
+<td style="text-align:center">Web pages</td>
+<td style="text-align:center">Local disk</td>
+<td style="text-align:center">10,000,000</td>
+<td style="text-align:center">Web browser</td>
+</tr>
+<tr>
+<td style="text-align:center">Web cache</td>
+<td style="text-align:center">Web pages</td>
+<td style="text-align:center">Remote server disks</td>
+<td style="text-align:center">1,000,000,000</td>
+<td style="text-align:center">Web proxy server</td>
+</tr>
+</tbody>
+</table>
+<h3 id="缓存管理"><a class="markdownIt-Anchor" href="#缓存管理"></a> 缓存管理</h3>
+<p>在每一层上，某种形式的逻辑必须管理缓存。即某个东西要将缓存划分成块，在不同的层之间传递块，判定是否命中并处理。管理缓存的逻辑可以是硬件、软件，或是二者结合。</p>
+<h3 id="缓存读取"><a class="markdownIt-Anchor" href="#缓存读取"></a> 缓存读取</h3>
+<p>当程序需要第k+1层的某个数据d时，它首先在第k层的一个块中查找它。如果d刚好缓存在第k层中，程序直接从第k层中读取它，这要比从第k+1层中读取更快，这便称为<strong>缓存命中</strong>(Cache hit)；但如果d没有缓存在第k层时，这被称为<strong>缓存不命中</strong>(Cache miss)。</p>
+<p>当发生缓存不命中时，第k层的缓存便会从第k+1层中取出包含d的那个块，然后放到第k层中去。如果第k层的缓存已满，需要覆盖现存的一个块，这一过程被称为替换或驱逐这个块，被驱逐的块被称为牺牲块。在第k层缓存从第k+1层中取出目标块之后，程序就可以从第k层中读出d了。决定该替换哪个块是由缓存的替换策略来控制的，常用的替换策略为LRU(Least Recently Used)等。</p>
+<p>缓存不命中具有不同的种类：</p>
+<ul>
+<li>冷不命中：又叫强制性不命中，这是由于第k层的缓存为空而导致的。此时对任何数据对象的访问都不命中。冷不命中通常是短暂的事件，不会再反复访问存储器使得缓存暖身之后的稳定状态中出现</li>
+<li>冲突不命中：如果允许第k+1层的任何块可以放在第k层的任何块中，会使得定位的代价很高。因此硬件缓存通常使用较为严格的放置策略，将第k+1层的某个块限制放置在第k层块的一个小子集中。在这种情况下可能会出现这样的情况，第k+1层的块0、1、2、3被映射到第k层的块0，当程序循环请求访问块0、1、2、3时，对这几个块的每次引用都会不命中，即使第k层还有其他的空闲块。</li>
+<li>容量不命中：程序的一个循环阶段可能会反复访问同一个数组的元素，对应于存储系统中需要反复访问缓存块的某个相对稳定的集合，这个块的集合被称为这个阶段的工作集。当工作集的大小超过了缓存的大小时，缓存无法完整保存这个工作集，需要不断替换缓存块。</li>
+</ul>
+<h2 id="存储器山"><a class="markdownIt-Anchor" href="#存储器山"></a> 存储器山</h2>
+<p>一台计算机中的存储器层次结构对应于表明它存储器能力特色的<strong>存储器山</strong>，它是一个读带宽（又叫读吞吐量，反映程序从存储系统中读取数据的速率MB/s）的时间与空间局部性的二维函数。如下图所示为Intel Core i7系统的存储器山，其中Size代表工作集的大小，反映了时间局部性；Stride代表读取工作集时的步长，反映了空间局部性。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002127.png" alt="image-20201015221656233" /></p>
+<p>从中可以看出，存储器山的上升高度差别可以超过一个数量级。因此在写程序时，最好尽可能地使得程序运行在山峰处，即使得频繁使用的字从L1中取出（时间局部性），以及尽可能多的字从一个L1高速缓存行中访问到（空间局部性）</p>
+<h1 id="高速缓存存储器"><a class="markdownIt-Anchor" href="#高速缓存存储器"></a> 高速缓存存储器</h1>
+<h2 id="组织结构"><a class="markdownIt-Anchor" href="#组织结构"></a> 组织结构</h2>
+<p>设一个计算机系统中每个存储器的地址有<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span>位，形成了<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>M</mi><mo>=</mo><msup><mn>2</mn><mi>m</mi></msup></mrow><annotation encoding="application/x-tex">M=2^m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">m</span></span></span></span></span></span></span></span></span></span></span>个不同的地址。这样一个机器的高速缓存被组织成一个有<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo>=</mo><msup><mn>2</mn><mi>s</mi></msup></mrow><annotation encoding="application/x-tex">S=2^s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">s</span></span></span></span></span></span></span></span></span></span></span>个高速缓存组的数组，每一组包含<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span></span></span></span>个高速缓存行。每一行包含了一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>B</mi><mo>=</mo><msup><mn>2</mn><mi>b</mi></msup></mrow><annotation encoding="application/x-tex">B=2^b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.849108em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.849108em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">b</span></span></span></span></span></span></span></span></span></span></span>字节的数据块（因此术语行和块通常互换使用），一个有效位用于指明这个行是否包含有意义的信息，还有<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo>=</mo><mi>m</mi><mo>−</mo><mo stretchy="false">(</mo><mi>b</mi><mo>+</mo><mi>s</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">t=m-(b+s)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">t</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault">m</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">b</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">s</span><span class="mclose">)</span></span></span></span>个标记位用于标识存储在这个高速缓存行中的块。因此，对于一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span>位的地址，高速缓存的结构将它从高位到低位划分成了三个部分：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.61508em;vertical-align:0em;"></span><span class="mord mathdefault">t</span></span></span></span>个标记位，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>个组索引位和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">b</span></span></span></span>个块偏移位。如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002133.png" alt="image-20201017134957506" /></p>
+<p>一般一个高速缓存的结构可以被描述为一个元组<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>S</mi><mo separator="true">,</mo><mi>E</mi><mo separator="true">,</mo><mi>B</mi><mo separator="true">,</mo><mi>m</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(S,E,B,m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">m</span><span class="mclose">)</span></span></span></span>，高速缓存的大小（或容量<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span></span></span></span>）指的是所有块大小的和，不包括标记位和有效位，因此<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>C</mi><mo>=</mo><mi>S</mi><mo>×</mo><mi>E</mi><mo>×</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">C=S\times E\times B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span>。</p>
+<p>使用中间位来做索引的原因：如果高位用作索引，那么一些连续的内存块就会被映射到相同的高速缓存块中。考虑到程序的局部性，如果使用高位做索引，则很容易发生缓存的抖动（高速缓存反复加载和驱逐相同的高速缓存块的组）。使用中间位作为索引，能够将相同的块映射到不同的高速缓存行，从而充分利用程序的局部性。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002142.png" alt="image-20201017151022256" /></p>
+<h2 id="高速缓存的读写"><a class="markdownIt-Anchor" href="#高速缓存的读写"></a> 高速缓存的读写</h2>
+<h3 id="读操作"><a class="markdownIt-Anchor" href="#读操作"></a> 读操作</h3>
+<p>根据每个组的高速缓存行数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span></span></span></span>，高速缓存被分为不同的类型，它们读取数据的过程也有一些差别：</p>
+<ul>
+<li>
+<p>直接映射高速缓存：每个组只有1行（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">E=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>）</p>
+<p>高速缓存在处理请求时，首先从地址中抽取出<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>个组索引位，将其对应到高速缓存的某个组<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>，然后判断组<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>中的有效位是否被设置，并且标记位是否与地址中的标记位匹配。如果二者都满足，则说明缓存命中，根据地址中的块偏移便可在组<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>中找到该副本；反之则得到一个缓存不命中，接下来则会从存储器层次结构中的下一层取出被请求的块，然后用新的块替换组<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>中的内容。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002146.png" alt="image-20201017152711551" /></p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002152.png" alt="image-20201017152735534" /></p>
+</li>
+<li>
+<p>组相连高速缓存：一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>&lt;</mo><mi>E</mi><mo>&lt;</mo><mi>C</mi><mi mathvariant="normal">/</mi><mi>B</mi></mrow><annotation encoding="application/x-tex">1&lt;E&lt;C/B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68354em;vertical-align:-0.0391em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span>的高速缓存通常被称为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span></span></span></span>路组相连高速缓存</p>
+<p>相比于直接映射高速缓存，它的组选择与直接映射高速缓存一样，通过组索引位来标识组。但是在接下来的行匹配过程中，由于组内的任何一行都可以包含任何映射到这个组的数据块，因此需要搜索组中的每一行，检查其标记位和有效位是否匹配。如果缓存不命中，则需要按照一定的策略去替换，替换策略包括随机替换、最不常使用（Least Frequently Used，LFU）、最近最少使用（Least Recently Used，LRU）等。使用复杂策略需要额外的时间和硬件支持，但是在存储器结构的越下层，一次不命中的开销也越大，因此也更值得用更好的替换策略使得不命中更少。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002157.png" alt="image-20201017152543301" /></p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002203.png" alt="image-20201017152628107" /></p>
+</li>
+<li>
+<p>全相连高速缓存：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi><mo>=</mo><mi>C</mi><mi mathvariant="normal">/</mi><mi>B</mi></mrow><annotation encoding="application/x-tex">E=C/B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span>的高速缓存</p>
+<p>对于全相连高速缓存来说，地址中没有组索引位，地址只被划分为一个标记和一个块偏移。行匹配和字选择与组相连高速缓存也是一样的。由于高速缓存电路必须并行搜索许多相匹配的标记，因此构造一个又大又快的相连高速缓存的成本很高。全相连高速缓存通常只适合做小的高速缓存，如虚拟内存系统中的翻译备用缓冲器（TLB），用于缓存页表项。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002211.png" alt="image-20201017154820023" /></p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002216.png" alt="image-20201017154845327" /></p>
+</li>
+</ul>
+<h3 id="写操作"><a class="markdownIt-Anchor" href="#写操作"></a> 写操作</h3>
+<p>高速缓存关于写的情况比读操作复杂一些：</p>
+<p>首先的一个问题是，如果要写一个已经缓存了的字，在高速缓存更新了它的副本之后，如何更新存储器层次结构中低一层的副本。一个办法是直写，就是立即将缓存块更新过后的内容写回到紧接着的低一层中，这个办法虽然简单，但是每次写都会引起总线流量；另一个办法是写回，尽可能地推迟更新，只有当替换算法要驱逐这个更新过的块时再写入低一层，这样可以显著减少总线流量，但是需要为每一行维护一个额外的修改位，增加了复杂性。</p>
+<p>另一个问题是如何处理写不命中，一种方法是写分配，加载相应的低一层的块到高速缓存中，然后更新这个高速缓存块。写分配试图利用写的空间局部性，但是每一次不命中都会导致一个块从低一层传到高速缓存，写回高速缓存通常使用这种方法；另一种办法是非写分配，避开高速缓存直接将这个字写到低一层中。直写高速缓存通常使用这种方法。</p>
+<p>在写程序的时候，一般考虑一个使用写回和写分配的高速缓存模型，因为存储器层次结构中较低层的缓存更可能采用写回方式，而且写回写分配试图利用局部性。</p>
+<h2 id="真实的高速缓存层次结构"><a class="markdownIt-Anchor" href="#真实的高速缓存层次结构"></a> 真实的高速缓存层次结构</h2>
+<p>真实的高速缓存分为三种：只保存指令的高速缓存（i-cache）、只保存程序数据的高速缓存（d-cache）和既保存指令又保存数据的高速缓存（统一的高速缓存）。现代处理器包括独立的i-cache的d-cache，可以使得处理器同时读取指令和数据字，而且可以根据它们不同的访问模式来分别进行优化，这样避免了数据访问与指令访问形成冲突不命中，但是可能会引起容量不命中增加。</p>
+<p>下图所示为Intel Core i7处理器的高速缓存层次结构，其中所有的SRAM高速缓存存储器芯片都在CPU芯片上。CPU有四个核，所有的核共享一个L3统一的高速缓存，每个核有自己私有的L1 d-cache、L1 i-cache和L2统一的高速缓存：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002220.png" alt="image-20201017164627630" style="zoom:67%;" />
+<p>这些缓存的基本特性见下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Cache type</th>
+<th style="text-align:center">Access time (cycles)</th>
+<th style="text-align:center">Cache size ©</th>
+<th style="text-align:center">Assoc. (E)</th>
+<th style="text-align:center">Block size (B)</th>
+<th style="text-align:center">Sets (S)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">L1</td>
+<td style="text-align:center">i-cache</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">32 KB</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">64B</td>
+</tr>
+<tr>
+<td style="text-align:center">L1</td>
+<td style="text-align:center">d-cache</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">32 KB</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">64B</td>
+</tr>
+<tr>
+<td style="text-align:center">L2</td>
+<td style="text-align:center">unified cache</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">256 KB</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">64B</td>
+</tr>
+<tr>
+<td style="text-align:center">L3</td>
+<td style="text-align:center">unified cache</td>
+<td style="text-align:center">40–75</td>
+<td style="text-align:center">8 MB</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">64B</td>
+</tr>
+</tbody>
+</table>
+<h2 id="高速缓存参数的性能影响"><a class="markdownIt-Anchor" href="#高速缓存参数的性能影响"></a> 高速缓存参数的性能影响</h2>
+<p>衡量高速缓存的性能有如下几个指标：</p>
+<ul>
+<li>不命中率/命中率：在一个程序执行或一部分执行期间，内存引用不命中/命中的比率。</li>
+<li>命中时间：L从高速缓存传送一个字到CPU所需的时间，包括组选择、行确认和字选择的时间。对于L1高速缓存来说是几个时钟周期。</li>
+<li>不命中处罚：由于不命中所需要的额外的时间。L1不命中从L2得到服务的惩罚是数十个周期；从L3得到服务的惩罚是50周期；从主存得到服务的处罚是200周期。</li>
+</ul>
+<p>缓存参数对性能的影响有：</p>
+<ul>
+<li>高速缓存大小：较大的高速缓存可能会提高命中率；但是大存储器运行时间也更慢。因此L1高速缓存比L2小，L2高速缓存比L3小。</li>
+<li>块大小：较大的块可以充分利用程序中可能存在的空间局部性；但是块越大意味着高速缓存行数越少，会损害时间局部性，同时较大的块也需要更长的传送时间，不命中的处罚也越大。</li>
+<li>相连度：较高的相连度会降低出现抖动的可能性；但是较高的相连度也造成较高的成本，也会增加命中时间和不命中处罚。因此L1高速缓存相连度低（不命中处罚只是几个周期），而L3高速缓存的相连度大。</li>
+<li>写策略：直写高速缓存实现成本低，可以使用独立于高速缓存的写缓冲区来更新内存；写回高速缓存引起的传送较少，允许更多到内存的带宽用于执行DMA的I/O设备。而且越往层次结构下面走，传送时间增加，减少传送的数量也更加重要。因此越往下层越可能使用写回。</li>
+</ul>
+<h1 id="编写高速缓存友好的代码"><a class="markdownIt-Anchor" href="#编写高速缓存友好的代码"></a> 编写高速缓存友好的代码</h1>
+<h2 id="基本原则"><a class="markdownIt-Anchor" href="#基本原则"></a> 基本原则</h2>
+<ol>
+<li>将注意力集中在内循环上，并尽量减小每个循环内部的缓存不命中数量</li>
+<li>对局部变量的反复引用和步长较小的引用模式对高速缓存友好</li>
+</ol>
+<h2 id="示例"><a class="markdownIt-Anchor" href="#示例"></a> 示例</h2>
+<p>通过改变内循环的顺序来提高矩阵乘法的计算速度：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002227.png" alt="image-20201017181210149" /></p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201105002233.png" alt="image-20201017181232539" /></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/01/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" title="计算机组成原理：高速缓存">http://lyf35.github.io/2021/01/05/计算机组成原理-高速缓存/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> 计算机组成原理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/" rel="prev" title="密码学：哈希函数">
+      <i class="fa fa-chevron-left"></i> 密码学：哈希函数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" rel="next" title="计算机组成原理：计算机的硬件组成">
+      计算机组成原理：计算机的硬件组成 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">15:24</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '4a9afe0a3c1d42d034b75b41770bffc3',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
