@@ -181,7 +181,7 @@ body {
 body {
   background: var(--body-bg-color);
   color: var(--text-color);
-  font-family: Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: Helvetica, "Microsoft YaHei", "PingFang SC", sans-serif;
   font-size: 1em;
   line-height: 2;
   transition: all 0.2s ease-in-out;
@@ -192,28 +192,28 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: Helvetica, "Microsoft YaHei", "PingFang SC", sans-serif;
   font-weight: bold;
   line-height: 1.5;
   margin: 20px 0 15px;
 }
 h1 {
-  font-size: 1.5em;
-}
-h2 {
   font-size: 1.375em;
 }
-h3 {
+h2 {
   font-size: 1.25em;
 }
-h4 {
+h3 {
   font-size: 1.125em;
 }
-h5 {
+h4 {
   font-size: 1em;
 }
-h6 {
+h5 {
   font-size: 0.875em;
+}
+h6 {
+  font-size: 0.75em;
 }
 p {
   margin: 0 0 20px 0;
@@ -476,7 +476,7 @@ pre {
 }
 pre,
 code {
-  font-family: consolas, Menlo, monospace, "PingFang SC", "Microsoft YaHei";
+  font-family: consolas, Menlo, monospace, "Microsoft YaHei", "PingFang SC";
 }
 code {
   border-radius: 3px;
@@ -1190,7 +1190,7 @@ pre code {
 }
 .headband {
   background: #222;
-  height: 3px;
+  height: 0px;
 }
 @media (max-width: 991px) {
   .headband {
@@ -1250,8 +1250,8 @@ pre code {
   color: var(--brand-hover-color);
 }
 .site-title {
-  font-family: Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 1.375em;
+  font-family: Helvetica, "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 1.25em;
   font-weight: normal;
   margin: 0;
 }
@@ -1353,35 +1353,6 @@ pre code {
 }
 .use-motion .menu-item {
   visibility: hidden;
-}
-.book-mark-link {
-  border-bottom: none;
-  position: fixed;
-  top: -10px;
-  transition: top 0.3s;
-  right: 30px;
-}
-@media (max-width: 991px) {
-  .book-mark-link {
-    right: 20px;
-  }
-}
-@media (max-width: 991px) {
-  .book-mark-link {
-    display: none;
-  }
-}
-.book-mark-link::before {
-  color: #222;
-  font-size: 32px;
-  line-height: 1;
-  content: '\f02e';
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900;
-}
-.book-mark-link:hover,
-.book-mark-link-fixed {
-  top: -2px;
 }
 .github-corner :hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out;
@@ -1685,12 +1656,12 @@ pre code {
 }
 .site-state-item-count {
   display: block;
-  font-size: 1em;
+  font-size: 1.125em;
   font-weight: 600;
 }
 .site-state-item-name {
   color: #999;
-  font-size: 0.8125em;
+  font-size: 0.875em;
 }
 .footer {
   color: #999;
@@ -1907,12 +1878,12 @@ pre code {
   bottom: 0;
 }
 .post-body {
-  font-family: Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: Helvetica, "Microsoft YaHei", "PingFang SC", sans-serif;
   overflow-wrap: break-word;
 }
 @media (min-width: 1200px) {
   .post-body {
-    font-size: 1.125em;
+    font-size: 1em;
   }
 }
 .post-body .exturl .fa {
@@ -2223,7 +2194,7 @@ pre code {
 }
 .posts-expand .post-meta {
   color: #999;
-  font-family: Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: Helvetica, "Microsoft YaHei", "PingFang SC", sans-serif;
   font-size: 0.75em;
   margin-top: 3px;
 }
@@ -2310,7 +2281,7 @@ pre code {
 }
 .post-tags a {
   display: inline-block;
-  font-size: 0.8125em;
+  font-size: 0.875em;
 }
 .post-tags a:not(:last-child) {
   margin-right: 10px;
