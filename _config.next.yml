@@ -49,7 +49,7 @@ language_switcher: false
 
 footer:
   # Specify the date when the site was setup. If not defined, current year will be used.
-  #since: 2015
+  since: 2020
 
   # Icon between year and copyright info.
   icon:
@@ -378,7 +378,7 @@ reading_progress:
 
 # Bookmark Support
 bookmark:
-  enable: true
+  enable: false
   # Customize the color of the bookmark.
   color: "#222"
   # If auto, save the reading progress when closing the page or clicking the bookmark-icon.
@@ -466,7 +466,7 @@ google_site_verification:
 
 # Bing Webmaster tools verification.
 # See: https://www.bing.com/webmaster
-bing_site_verification: <meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />
+bing_site_verification: 
 
 # Yandex Webmaster tools verification.
 # See: https://webmaster.yandex.ru
@@ -474,7 +474,7 @@ yandex_site_verification:
 
 # Baidu Webmaster tools verification.
 # See: https://ziyuan.baidu.com/site
-baidu_site_verification: <meta name="baidu-site-verification" content="kewHZtFYQk" />
+baidu_site_verification: 
 
 # Enable baidu push so that the blog will push the url to baidu automatically which is very helpful for SEO.
 baidu_push: true
@@ -835,7 +835,7 @@ pace:
   # Themes list:
   # big-counter | bounce | barber-shop | center-atom | center-circle | center-radar | center-simple
   # corner-indicator | fill-left | flat-top | flash | loading-bar | mac-osx | material | minimal
-  theme: minimal
+  theme: flat-top
 
 # Canvas ribbon
 # For more information: https://github.com/hustcc/ribbon.js

@@ -75,7 +75,7 @@ get_font_family(config) {
 }
 
 // Font families.
-$font-family-chinese      = "PingFang SC", "Microsoft YaHei";
+$font-family-chinese      = "Microsoft YaHei", "PingFang SC";
 
 $font-family-base         = $font-family-chinese, sans-serif;
 $font-family-base         = get_font_family('global'), $font-family-chinese, sans-serif if get_font_family('global');
@@ -106,7 +106,7 @@ $font-size-largest        = 1.5em;
 
 // Headings font size
 $font-size-headings-step  = .125em;
-$font-size-headings-base  = (hexo-config('font.enable') and hexo-config('font.headings.size') is a 'unit') ? unit(hexo-config('font.headings.size'), em) : 1.625em;
+$font-size-headings-base  = (hexo-config('font.enable') and hexo-config('font.headings.size') is a 'unit') ? unit(hexo-config('font.headings.size'), em) : 1.5em;
 
 
 // Global line height
@@ -186,9 +186,9 @@ $pagination-active-border       = $grey-light;
 
 // Layout sizes
 // --------------------------------------------------
-$content-desktop                = 700px;
-$content-desktop-large          = 800px;
-$content-desktop-largest        = 900px;
+$content-desktop                = 800px;
+$content-desktop-large          = 900px;
+$content-desktop-largest        = 1000px;
 
 $content-desktop-padding        = 40px;
 $content-tablet-padding         = 10px;
@@ -197,7 +197,7 @@ $content-mobile-padding         = 8px;
 
 // Headband
 // --------------------------------------------------
-$headband-height                = 3px;
+$headband-height                = 0px;
 $headband-bg                    = $black-deep;
 
 
@@ -213,7 +213,7 @@ $brand-hover-color              = white;
 $brand-color-dark               = $grey-lighter;
 $brand-hover-color-dark         = $grey-lighter;
 
-$font-size-title                = (hexo-config('font.enable') and hexo-config('font.title.size') is a 'unit') ? unit(hexo-config('font.title.size'), em) : 1.375em;
+$font-size-title                = (hexo-config('font.enable') and hexo-config('font.title.size') is a 'unit') ? unit(hexo-config('font.title.size'), em) : 1.25em;
 $font-size-subtitle             = $font-size-smaller;
 $subtitle-color                 = $grey-dark;
 $site-subtitle-color            = $grey-dark;
