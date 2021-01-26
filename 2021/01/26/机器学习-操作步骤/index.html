@@ -36,8 +36,8 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210126232059.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210126232343.png">
-<meta property="article:published_time" content="2021-01-26T16:04:21.764Z">
-<meta property="article:modified_time" content="2021-01-26T16:04:21.764Z">
+<meta property="article:published_time" content="2021-01-26T16:16:32.973Z">
+<meta property="article:modified_time" content="2021-01-26T16:16:32.973Z">
 <meta property="article:author" content="Yufei Luo">
 <meta property="article:tag" content="机器学习">
 <meta name="twitter:card" content="summary">
@@ -329,7 +329,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-01-27 00:04:21" itemprop="dateCreated datePublished" datetime="2021-01-27T00:04:21+08:00">2021-01-27</time>
+              <time title="创建时间：2021-01-27 00:16:32" itemprop="dateCreated datePublished" datetime="2021-01-27T00:16:32+08:00">2021-01-27</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -797,19 +797,28 @@ s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class=
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">train_data,test_data,train_label,test_label=train_test_split(iris_data,iris_target,test_size=<span class="number">0.2</span>,random_state=<span class="number">1234</span>) </span><br></pre></td></tr></table></figure>
 <p>此外，下面这些类可以用来生成划分数据集的索引，对应于一些常用的划分数据集的方法：</p>
 <ul>
-<li>K折交叉验证：将全部训练集划分为K个不相交的子集</li>
+<li>K折交叉验证：将全部训练集划分为K个不相交的子集
+<ul>
 <li><code>KFold</code>：普通的K折划分</li>
 <li><code>GroupKFold</code>：需要传入一个额外的参数，代表每个样本所属的分组</li>
 <li><code>StratifiedKFold</code>：按照标签的类别比例进行划分，保证每个分组内每一类的比例相同</li>
-<li>留一法：</li>
+</ul>
+</li>
+<li>留一法：
+<ul>
 <li><code>LeaveOneOut</code>：留下一个样本作为测试样本，其余为训练样本</li>
 <li><code>LeavePOut</code>：留下P个样本作为测试样本，其余为训练样本</li>
 <li><code>LeaveOneGroupOut</code>：每个分组留下一个作为测试样本</li>
 <li><code>LeavePGroupsOut</code>：每个分组留下P个作为测试样本</li>
-<li>随机划分法：</li>
+</ul>
+</li>
+<li>随机划分法：
+<ul>
 <li><code>ShuffleSplit</code>：随机打乱之后再划分</li>
 <li><code>GroupShuffleSplit</code>：同样是随机打乱之后再划分，但是按照分组进行操作</li>
 <li><code>StratifiedShuffleSplit</code>：随机打乱并按照类别比例分层划分</li>
+</ul>
+</li>
 </ul>
 <p>生成索引之后，便可以使用这些索引来获得对应的训练集与测试集。上述这些类的使用方法比较相似，因此下面以<code>StratifiedShuffleSplit</code>为例来演示其用法：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> StratifiedShuffleSplit</span><br><span class="line">stratified_split=StratifiedShuffleSplit(n_splits=<span class="number">2</span>,test_size=<span class="number">0.2</span>,random_state=<span class="number">1234</span>) <span class="comment">#在StratifiedShuffleSplit类中，初始化参数n_splits代表生成多少组划分的索引，每一组的索引独立</span></span><br><span class="line"><span class="keyword">for</span> train_index,test_index <span class="keyword">in</span> stratified_split.split(iris_data,iris_target): <span class="comment">#因上面的n_splits=2，此处的for循环会进行两轮</span></span><br><span class="line">    print(train_index,test_index)</span><br><span class="line">    <span class="comment">#验证测试集与训练集中的类别比例是否相同</span></span><br><span class="line">    print(pd.Series(iris_target[train_index]).value_counts()) </span><br><span class="line">    print(pd.Series(iris_target[test_index]).value_counts())</span><br></pre></td></tr></table></figure>
@@ -1372,12 +1381,12 @@ Accuracy of logistic regression:
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E5%9F%BA%E4%BA%8E%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E7%9A%84%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96/" rel="prev" title="计算机组成原理-基于硬件原理的程序优化">
-      <i class="fa fa-chevron-left"></i> 计算机组成原理-基于硬件原理的程序优化
+    <a href="/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E7%BD%91%E7%BB%9C%E5%B1%82/" rel="prev" title="计算机网络-网络层">
+      <i class="fa fa-chevron-left"></i> 计算机网络-网络层
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/01/26/%E6%8A%80%E6%9C%AF%E4%B9%A6%E7%B1%8D%E4%B8%8E%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/" rel="next" title="技术书籍与资料整理">
-      技术书籍与资料整理 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/" rel="next" title="计算机网络-传输层">
+      计算机网络-传输层 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
