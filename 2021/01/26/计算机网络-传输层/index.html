@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="传输层服务  进程到进程通信 传输层位于应用层和网络层之间，它在两个应用层之间提供进程到进程的通信，两个进程分别位于本地和远程主机上。 注意：网络层负责的是计算机层次的通信（即主机到主机），但是网络层协议只是把报文传递到目的计算机。由于报文需要递交给正确的进程，而这一部分正是传输层负责的部分。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络-传输层">
+<meta property="og:url" content="http://lyf35.github.io/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="传输层服务  进程到进程通信 传输层位于应用层和网络层之间，它在两个应用层之间提供进程到进程的通信，两个进程分别位于本地和远程主机上。 注意：网络层负责的是计算机层次的通信（即主机到主机），但是网络层协议只是把报文传递到目的计算机。由于报文需要递交给正确的进程，而这一部分正是传输层负责的部分。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232153.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232200.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232216.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232232.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232343.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232350.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232356.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232405.png">
+<meta property="article:published_time" content="2021-01-26T16:04:21.768Z">
+<meta property="article:modified_time" content="2021-01-26T16:04:21.768Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232153.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机网络-传输层 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text"> 传输层服务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%B0%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1"><span class="nav-number">1.1.</span> <span class="nav-text"> 进程到进程通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BB%E5%9D%80%E7%AB%AF%E5%8F%A3%E5%8F%B7"><span class="nav-number">1.2.</span> <span class="nav-text"> 寻址：端口号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%81%E8%A3%85%E4%B8%8E%E8%A7%A3%E5%B0%81%E8%A3%85"><span class="nav-number">1.3.</span> <span class="nav-text"> 封装与解封装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E4%B8%8E%E5%A4%9A%E8%B7%AF%E5%88%86%E8%A7%A3"><span class="nav-number">1.4.</span> <span class="nav-text"> 多路复用与多路分解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-number">1.5.</span> <span class="nav-text"> 流量控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E6%88%96%E6%8B%89"><span class="nav-number">1.5.1.</span> <span class="nav-text"> 推或拉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text"> 传输层流量控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">1.5.3.</span> <span class="nav-text"> 缓冲区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E9%94%99%E6%8E%A7%E5%88%B6"><span class="nav-number">1.6.</span> <span class="nav-text"> 差错控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%8F%B7"><span class="nav-number">1.6.1.</span> <span class="nav-text"> 序号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E8%AE%A4"><span class="nav-number">1.6.2.</span> <span class="nav-text"> 确认</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E5%92%8C%E5%B7%AE%E9%94%99%E6%8E%A7%E5%88%B6%E7%9A%84%E7%BB%84%E5%90%88"><span class="nav-number">1.6.3.</span> <span class="nav-text"> 流量和差错控制的组合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="nav-number">1.7.</span> <span class="nav-text"> 拥塞控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E8%BF%9E%E6%8E%A5%E5%92%8C%E9%9D%A2%E5%90%91%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.8.</span> <span class="nav-text"> 无连接和面向连接服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.8.1.</span> <span class="nav-text"> 无连接服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.8.2.</span> <span class="nav-text"> 面向连接服务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#udp%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.</span> <span class="nav-text"> UDP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE%E6%8A%A5"><span class="nav-number">2.2.</span> <span class="nav-text"> 用户数据报</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#udp%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.3.</span> <span class="nav-text"> UDP服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%B0%E8%BF%9B%E7%A8%8B%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="nav-number">2.3.1.</span> <span class="nav-text"> 进程到进程的通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1-2"><span class="nav-number">2.3.2.</span> <span class="nav-text"> 无连接服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%A1%E9%AA%8C%E5%92%8C"><span class="nav-number">2.3.3.</span> <span class="nav-text"> 校验和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E8%A3%85%E5%92%8C%E8%A7%A3%E5%B0%81%E8%A3%85"><span class="nav-number">2.3.4.</span> <span class="nav-text"> 封装和解封装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E4%B8%8E%E5%A4%9A%E8%B7%AF%E5%88%86%E8%A7%A3-2"><span class="nav-number">2.3.5.</span> <span class="nav-text"> 多路复用与多路分解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#udp%E5%BA%94%E7%94%A8"><span class="nav-number">2.4.</span> <span class="nav-text"> UDP应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#udp%E7%89%B9%E6%80%A7"><span class="nav-number">2.4.1.</span> <span class="nav-text"> UDP特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B8%E5%9E%8B%E5%BA%94%E7%94%A8"><span class="nav-number">2.4.2.</span> <span class="nav-text"> 典型应用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tcp%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.</span> <span class="nav-text"> TCP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-number">3.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.2.</span> <span class="nav-text"> TCP服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%B0%E8%BF%9B%E7%A8%8B%E7%9A%84%E9%80%9A%E4%BF%A1-2"><span class="nav-number">3.2.1.</span> <span class="nav-text"> 进程到进程的通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E4%BC%A0%E9%80%92%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.2.2.</span> <span class="nav-text"> 流传递服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%8F%8C%E5%B7%A5%E9%80%9A%E4%BF%A1"><span class="nav-number">3.2.3.</span> <span class="nav-text"> 全双工通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%92%8C%E5%A4%9A%E8%B7%AF%E5%88%86%E8%A7%A3"><span class="nav-number">3.2.4.</span> <span class="nav-text"> 多路复用和多路分解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E8%BF%9E%E6%8E%A5%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.2.5.</span> <span class="nav-text"> 面向连接的服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.2.6.</span> <span class="nav-text"> 可靠的服务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E7%9A%84%E7%89%B9%E7%82%B9"><span class="nav-number">3.3.</span> <span class="nav-text"> TCP的特点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E5%8F%B7%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.3.1.</span> <span class="nav-text"> 序号系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E8%8A%82%E5%BA%8F%E5%8F%B7"><span class="nav-number">3.3.1.1.</span> <span class="nav-text"> 字节序号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%8F%E5%8F%B7-2"><span class="nav-number">3.3.1.2.</span> <span class="nav-text"> 序号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%AE%E8%AE%A4%E5%8F%B7"><span class="nav-number">3.3.1.3.</span> <span class="nav-text"> 确认号</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tcp%E5%88%86%E7%BB%84%E6%AE%B5"><span class="nav-number">3.3.2.</span> <span class="nav-text"> TCP分组—段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F"><span class="nav-number">3.3.2.1.</span> <span class="nav-text"> 格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%81%E8%A3%85"><span class="nav-number">3.3.2.2.</span> <span class="nav-text"> 封装</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.4.</span> <span class="nav-text"> TCP连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B"><span class="nav-number">3.4.1.</span> <span class="nav-text"> 连接建立</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">3.4.2.</span> <span class="nav-text"> 数据传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E7%BB%88%E6%AD%A2"><span class="nav-number">3.4.3.</span> <span class="nav-text"> 连接终止</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">3.4.3.1.</span> <span class="nav-text"> 三次挥手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%A6%E6%9C%89%E5%8D%8A%E5%85%B3%E9%97%AD%E9%80%89%E9%A1%B9%E7%9A%84%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">3.4.3.2.</span> <span class="nav-text"> 带有半关闭选项的四次挥手</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E9%87%8D%E7%BD%AE"><span class="nav-number">3.4.4.</span> <span class="nav-text"> 连接重置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E7%9A%84%E7%AA%97%E5%8F%A3"><span class="nav-number">3.5.</span> <span class="nav-text"> TCP的窗口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E7%AA%97%E5%8F%A3"><span class="nav-number">3.5.1.</span> <span class="nav-text"> 发送窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E7%AA%97%E5%8F%A3"><span class="nav-number">3.5.2.</span> <span class="nav-text"> 接收窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6-2"><span class="nav-number">3.5.3.</span> <span class="nav-text"> 流量控制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E9%94%99%E6%8E%A7%E5%88%B6-2"><span class="nav-number">3.6.</span> <span class="nav-text"> 差错控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%A1%E9%AA%8C%E5%92%8C-2"><span class="nav-number">3.6.1.</span> <span class="nav-text"> 校验和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E8%AE%A4-2"><span class="nav-number">3.6.2.</span> <span class="nav-text"> 确认</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E4%BC%A0"><span class="nav-number">3.6.3.</span> <span class="nav-text"> 重传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%B1%E5%BA%8F%E6%AE%B5"><span class="nav-number">3.6.4.</span> <span class="nav-text"> 失序段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6-2"><span class="nav-number">3.7.</span> <span class="nav-text"> 拥塞控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E7%AA%97%E5%8F%A3"><span class="nav-number">3.7.1.</span> <span class="nav-text"> 拥塞窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E6%A3%80%E6%B5%8B"><span class="nav-number">3.7.2.</span> <span class="nav-text"> 拥塞检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E7%AD%96%E7%95%A5"><span class="nav-number">3.7.3.</span> <span class="nav-text"> 拥塞策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%85%A2%E5%90%AF%E5%8A%A8"><span class="nav-number">3.7.3.1.</span> <span class="nav-text"> 慢启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E9%81%BF%E5%85%8D"><span class="nav-number">3.7.3.2.</span> <span class="nav-text"> 拥塞避免</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%81%A2%E5%A4%8D"><span class="nav-number">3.7.3.3.</span> <span class="nav-text"> 快速恢复</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E8%AE%A1%E6%97%B6%E5%99%A8"><span class="nav-number">3.8.</span> <span class="nav-text"> TCP计时器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E4%BC%A0%E8%AE%A1%E6%97%B6%E5%99%A8"><span class="nav-number">3.8.1.</span> <span class="nav-text"> 重传计时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%9A%E6%8C%81%E8%AE%A1%E6%97%B6%E5%99%A8"><span class="nav-number">3.8.2.</span> <span class="nav-text"> 坚持计时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%B4%BB%E8%AE%A1%E6%97%B6%E5%99%A8"><span class="nav-number">3.8.3.</span> <span class="nav-text"> 保活计时器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E7%AD%89%E5%BE%85%E8%AE%A1%E6%97%B6%E5%99%A8"><span class="nav-number">3.8.4.</span> <span class="nav-text"> 时间等待计时器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机网络-传输层
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-27 00:04:21" itemprop="dateCreated datePublished" datetime="2021-01-27T00:04:21+08:00">2021-01-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-传输层" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="传输层服务"><a class="markdownIt-Anchor" href="#传输层服务"></a> 传输层服务</h1>
+<h2 id="进程到进程通信"><a class="markdownIt-Anchor" href="#进程到进程通信"></a> 进程到进程通信</h2>
+<p>传输层位于应用层和网络层之间，它在两个应用层之间提供进程到进程的通信，两个进程分别位于本地和远程主机上。</p>
+<p>注意：网络层负责的是计算机层次的通信（即主机到主机），但是网络层协议只是把报文传递到目的计算机。由于报文需要递交给正确的进程，而这一部分正是传输层负责的部分。</p>
+<a id="more"></a>
+<h2 id="寻址端口号"><a class="markdownIt-Anchor" href="#寻址端口号"></a> 寻址：端口号</h2>
+<p>一个远程计算机在同一时间可以运行多个服务器程序。因此在通信过程中，我们需要定义本地主机、本地进程、远程主机和远程进程。本地主机和远程主机使用IP地址来定义，而本地进程和远程进程则是通过<strong>端口号</strong>来定义的。在TCP/IP协议簇中，端口号是0~65536之间的16位整数。</p>
+<p>客户程序一般使用临时端口号来定义它自己，临时表明这个端口号是短期的。为了客户-服务器程序可以正常工作，临时端口号推荐值为大于1023。</p>
+<p>对于服务器而言，TCP/IP协议使用全局端口号，它们被称为熟知端口号。但是这一条规则也有例外，例如一些客户端也可能被分配熟知端口号。</p>
+<p>ICANN将端口号编码划分为如下的三个范围：</p>
+<ul>
+<li>熟知端口：端口号范围0~1023，由ICANN分配和控制</li>
+<li>注册端口：端口号范围1024~49151，ICANN不分配也不控制，它们可在ICANN注册以防止重复</li>
+<li>动态端口：端口号范围49152~65535，这一范围内的端口号即不受控制也不需要注册，可以由任何进程使用。它们是临时或者私有端口号。</li>
+</ul>
+<p>一个IP地址和一个端口号结合起来被称为<strong>套接字地址</strong>，客户套接字地址唯一定义了客户进程，而服务器套接字地址唯一定义了服务器进程。</p>
+<h2 id="封装与解封装"><a class="markdownIt-Anchor" href="#封装与解封装"></a> 封装与解封装</h2>
+<p>为了将报文从一个进程发送到另一个进程，传输层协议负责封装和解封装报文。封装在发送端发生，当进程有报文要发送，它将报文与一组套接字地址和其他信息一起发送到传输层，这依赖于传输层协议。传输层接收这些数据并加入到传输层头部。</p>
+<p>解封装发生在接收端。当报文到达目的传输层，头部被丢弃，传输层将报文传递到应用层运行的进程。如果需要响应接收到的报文，发送方的套接字地址被发送到进程。</p>
+<h2 id="多路复用与多路分解"><a class="markdownIt-Anchor" href="#多路复用与多路分解"></a> 多路复用与多路分解</h2>
+<p><strong>多路复用</strong>指的是一个实体从一个以上的源接收到数据项，源端的传输层执行复用。例如一个用户将不同进程的请求发送到对应的服务器进程。</p>
+<p><strong>多路分解</strong>指的是一个实体将数据项传递到一个以上的源，目的端的传输层执行多路分解。例如一个服务器接收到应该分发给不同进程的请求。</p>
+<h2 id="流量控制"><a class="markdownIt-Anchor" href="#流量控制"></a> 流量控制</h2>
+<p>每当一个实体创建数据项并且有另一个实体消耗它们时，就存在生产速率和消费速率的平衡问题。流量控制主要是解决数据项的生产比消费快的问题。</p>
+<h3 id="推或拉"><a class="markdownIt-Anchor" href="#推或拉"></a> 推或拉</h3>
+<p>发送方生产数据项时，它无需事先获得消费者请求就发送，这种传递被称为推；如果生产者在消费者请求这些数据时才进行传送，这种传递被称为拉。</p>
+<p>当生产者<strong>推</strong>数据项时，消费者需要相反方向的流量控制，以此来防止丢弃这些数据项。因此消费者需要告诉生产者停止传递，并且当它再次准备好接受数据时通知生产者。当消费者拉数据项时则不需要流量控制。</p>
+<h3 id="传输层流量控制"><a class="markdownIt-Anchor" href="#传输层流量控制"></a> 传输层流量控制</h3>
+<p>传输层通信中，四个实体的关系如下：</p>
+<ul>
+<li>发送方的应用层是一个生产者，它生产报文块并推给传输层</li>
+<li>发送方传输层既是生产者又是消费者，它消费来自于应用层的报文块，同时有奖报文封装并传给接收方传输层</li>
+<li>接收方传输层既是生产者又是消费者，它消费从发送方接收来的分组，同时解封装报文并传给应用层</li>
+<li>接收方的应用层通常使用拉传递，传输层等待应用层进程请求报文，它是一个消费者</li>
+</ul>
+<p>因此，这一过程至少需要两种流量控制：从发送方传输层到发送方应用层的流量控制，以及接收方传输层到发送方传输层的流量控制。</p>
+<h3 id="缓冲区"><a class="markdownIt-Anchor" href="#缓冲区"></a> 缓冲区</h3>
+<p>流量控制通常使用缓冲区来实现，一个位于发送方传输层，另一个位于接收方传输层（也就是说缓冲区位于消费者处）。消费者向生产者发送信号从而进行流量控制通信，当缓冲区满的时候，通知生产者停止传输；当有空闲位置的时候，通知生产者可以再次传输。</p>
+<h2 id="差错控制"><a class="markdownIt-Anchor" href="#差错控制"></a> 差错控制</h2>
+<p>在因特网中，网络层是不可靠的，应用层的可靠性是通过传输层来实现的。传输层的差错控制通过负责以下几个方面来实现可靠性：</p>
+<ul>
+<li>发现并丢弃被破坏的分组</li>
+<li>记录丢失和丢弃的分组并重传</li>
+<li>识别重复分组并丢弃</li>
+<li>缓冲失序分组直到丢失的分组到达</li>
+</ul>
+<p>大多数情况下，接收方传输层管理差错控制，它通过告知发送方传输层存在问题来进行管理。</p>
+<h3 id="序号"><a class="markdownIt-Anchor" href="#序号"></a> 序号</h3>
+<p>可以在传输层分组中加入一个字段来保存分组的序号。当分组被破坏或者丢失，接收方传输层可以按照某种方式通知发送方传输层利用序号来重传分组；如果两个接收到的分组具有相同序号，接收方传输层可以发现重复分组；可以通过观察序号间隔来辨别失序分组。</p>
+<p>分组一般按序编号，假设分组头部允许序号最多为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span>比特位，那么所有的序号都是模<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mi>m</mi></msup></mrow><annotation encoding="application/x-tex">2^m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">m</span></span></span></span></span></span></span></span></span></span></span>的。</p>
+<h3 id="确认"><a class="markdownIt-Anchor" href="#确认"></a> 确认</h3>
+<p>接收方可以为每一组正确到达的分组发送一个确认（ACK）。当一个分组被发送，发送方就开启一个计时器，如果ACK在计时器超时之前没有到达，那么发送方就重新发送这个分组。重复的分组可以被接收方默默丢弃；失序的分组既可以被丢弃，也可以存储直到丢失的那个分组被传输过来。</p>
+<h3 id="流量和差错控制的组合"><a class="markdownIt-Anchor" href="#流量和差错控制的组合"></a> 流量和差错控制的组合</h3>
+<p>由于流量控制要求使用两个缓冲区，一个在发送端另一个在接收端；而差错控制也要求两端使用序号和确认号。因此如果我们使用两个带有序号的缓冲区，一个位于发送端，一个位于接收端，便可将流量控制与差错控制功能结合起来。</p>
+<p>在发送端，当分组准备发送时，我们使用下一个缓冲区空闲位置号码<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span>作为分组的序号；当分组被发送，一个分组的备份存储在位置<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">x</span></span></span></span>，直到与被发送分组相关的确认信息到达时，将这一位置清除出来。</p>
+<p>在接收端，当带有序号<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span>的分组到达时，它也被存储在缓冲区的位置<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span>上，直到应用层准备好接收它。此时发送一个确认表明分组<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span></span></span></span>到达。</p>
+<h2 id="拥塞控制"><a class="markdownIt-Anchor" href="#拥塞控制"></a> 拥塞控制</h2>
+<p>如果网络中的复杂大于网络的容量，那么网络就可能会发生拥塞。TCP协议提供了拥塞控制机制，它控制拥塞并将负载保持在容量以内。</p>
+<h2 id="无连接和面向连接服务"><a class="markdownIt-Anchor" href="#无连接和面向连接服务"></a> 无连接和面向连接服务</h2>
+<h3 id="无连接服务"><a class="markdownIt-Anchor" href="#无连接服务"></a> 无连接服务</h3>
+<p>在无连接服务中，源进程需要将报文分成传输层可接受大小的数据块，并把它们一个个地传递到传输层。传输层将每一个数据块看作彼此没有关系的单元，因此，它们可能会失序地传递给服务器进程。</p>
+<p>流量控制、差错控制以及拥塞控制都不能在无连接服务中有效实现。</p>
+<h3 id="面向连接服务"><a class="markdownIt-Anchor" href="#面向连接服务"></a> 面向连接服务</h3>
+<p>在面向连接的服务中，首先需要建立客户和服务器之间的逻辑连接。只有连接建立之后才能进行数据交换。在数据交换之后，连接需要拆除。</p>
+<p>在面向连接协议中，可以实现流量控制、差错控制以及拥塞控制。</p>
+<h1 id="udp协议"><a class="markdownIt-Anchor" href="#udp协议"></a> UDP协议</h1>
+<h2 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h2>
+<p>用户数据报协议（User Datagram Protocol, UDP）是无连接不可靠传输层协议。它不提供主机到主机通信，它除了提供进程到进程之间的通信之外没有给IP服务增加任何内容。此外它进行非常有限的差错检验。</p>
+<p>UDP是一个简单的协议，开销很小。如果一个进程想发送一个很短的报文，而且不在意可靠性，就可以使用UDP。使用UDP发送一个很短的报文，在发送方和接收方之间的交互要比使用TCP时少得多。</p>
+<h2 id="用户数据报"><a class="markdownIt-Anchor" href="#用户数据报"></a> 用户数据报</h2>
+<p>UDP分组被称为用户数据报，有8个字节的固定头部，这个头部由4个字段组成，每个字段2字节。头两个字段定义了源和目的端口号，第三个字段定义了用户数据报的总长，即头部加数据的长度。16位可以定义的总长度范围是0~65535，但是因为UDP数据报需要存储在总长度为65535的IP数据报中，因此总长度需要更小一些。最后一个字段可以携带可选校验和。一个UDP用户数据报的结构如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232153.png" alt="UDP数据报" /></p>
+<h2 id="udp服务"><a class="markdownIt-Anchor" href="#udp服务"></a> UDP服务</h2>
+<h3 id="进程到进程的通信"><a class="markdownIt-Anchor" href="#进程到进程的通信"></a> 进程到进程的通信</h3>
+<p>UDP使用套接字地址提供进程到进程的通信，这是IP地址与端口号的组合。</p>
+<h3 id="无连接服务-2"><a class="markdownIt-Anchor" href="#无连接服务-2"></a> 无连接服务</h3>
+<p>UDP提供无连接服务，这表示UDP发送出去的每一个用户数据报都是一个独立的数据报。即使这些数据报来自于相同的源进程并且发送到相同的目的进程，不同的数据报之间也没有关系。用户数据报不进行编号，此外也没有像TCP协议那样的连接建立和终止。</p>
+<p>无连接的一个结果就是使用UDP的进程不能向UDP发送数据流，并期望它将这个数据流分割成许多相关联的用户数据报。相反，每一个请求需要足够小以使其可以被装入用户数据报中，因此只有那些发送短报文的进程才应当使用UDP。</p>
+<p>UDP没有流量控制，因而也没有窗口机制。如果到来的报文太多时，接收方可能会溢出。因此，如果需要流量控制，这个服务应该由使用UDP的进程来提供。同时，UDP也不提供拥塞控制。UDP假设被发送的分组很小且零星，不会造成拥塞。但是UDP被用作音频和视频的交互实时传输时，这一假设可能不成立。</p>
+<h3 id="校验和"><a class="markdownIt-Anchor" href="#校验和"></a> 校验和</h3>
+<p>UDP没有差错控制机制，发送方不知道报文是丢失还是重传，仅仅提供了简单的校验和功能。因此如果需要差错控制需要由应用层提供。</p>
+<p>UDP的校验和是可选的，如果不计算校验和，则将校验和字段全部填充为0。如果计算校验和时恰巧校验和全部为0，则将它改为全1。这一方法不会产生混淆，因为校验和的值在正常情况下不会全为1。</p>
+<h3 id="封装和解封装"><a class="markdownIt-Anchor" href="#封装和解封装"></a> 封装和解封装</h3>
+<p>UDP协议提供了报文的封装和解封装功能。</p>
+<h3 id="多路复用与多路分解-2"><a class="markdownIt-Anchor" href="#多路复用与多路分解-2"></a> 多路复用与多路分解</h3>
+<p>在运行TCP/IP协议簇的主机上只有一个UDP，但可能有多个想使用UDP服务的进程。UDP使用多路复用和多路分解来处理这种情况。</p>
+<h2 id="udp应用"><a class="markdownIt-Anchor" href="#udp应用"></a> UDP应用</h2>
+<h3 id="udp特性"><a class="markdownIt-Anchor" href="#udp特性"></a> UDP特性</h3>
+<p>UDP连接具有的特性以及它们的优势和劣势如下：</p>
+<ul>
+<li>无连接服务：当客户需要向服务器发送短请求并接收短响应时，这一特性是优势，因为这种情况下建立和关闭连接的开销可能很可观。假设请求和响应各自可以填充进一个数据报时，TCP连接需要至少交换9个分组，而UDP最少只需要2个。同时，无连接服务提供了更小的延迟，如果延迟是应用的重要问题时选择UDP连接更可取。</li>
+<li>缺乏差错控制：TCP提供可靠服务，如果报文一部分丢失或被破坏则需要重传。这就意味着接收方传向应用层的不同报文间有不一致的延迟。对于一些应用来说，这一延迟可能至关重要。</li>
+<li>缺乏拥塞控制：在一些网络中可能出错的概率较大，如果使用TCP连接需要多次重发，这样便会促使拥塞的发生或者使得拥塞情况加重。因此，一些情况下，这一特性可以看作是优势。</li>
+</ul>
+<h3 id="典型应用"><a class="markdownIt-Anchor" href="#典型应用"></a> 典型应用</h3>
+<ul>
+<li>需要简单的请求-响应通信，而较少考虑流量控制和差错控制，例如DNS协议。如果需要传输成块数据的进程如FTP，则通常不适用UDP协议。</li>
+<li>适用于应用层实现了内部流量控制和差错控制机制的进程，如TFTP协议。</li>
+<li>对于多播来说UDP是一个合适的传输协议。</li>
+<li>UDP可用于管理进程，如SNMP协议。</li>
+<li>UDP可用于某些路由选择更新协议，如路由选择信息协议（RIP）。</li>
+<li>UDP通常用于交互实时应用，如Skype，这些应用无法忍受报文之间的不一致延迟。</li>
+</ul>
+<h1 id="tcp协议"><a class="markdownIt-Anchor" href="#tcp协议"></a> TCP协议</h1>
+<h2 id="概述-2"><a class="markdownIt-Anchor" href="#概述-2"></a> 概述</h2>
+<p>传输控制协议（Transmission Control Protocol, TCP）是一个面向连接可靠的协议。TCP显式定义了连接建立、数据传输以及连接拆除阶段来提供面向连接服务。</p>
+<h2 id="tcp服务"><a class="markdownIt-Anchor" href="#tcp服务"></a> TCP服务</h2>
+<h3 id="进程到进程的通信-2"><a class="markdownIt-Anchor" href="#进程到进程的通信-2"></a> 进程到进程的通信</h3>
+<p>与UDP一样，TCP通过使用端口号来提供进程到进程的通信</p>
+<h3 id="流传递服务"><a class="markdownIt-Anchor" href="#流传递服务"></a> 流传递服务</h3>
+<p>TCP是一个面向流的协议，它允许发送进程以字节流的形式传递数据，并且接收进程也以字节流的形式接收数据。TCP建立一种环境，在这种环境中，两个进程之间类似于有一条假想的“管道”连接，发送进程产生字节流并输入到管道，接收进程从管道中读出这些字节流。</p>
+<p>因为发送和接收进程可能以不同的速度写入和读出数据，所以TCP需要用于存储的缓冲区。缓冲区一般使用循环数组来实现。</p>
+<p>由于IP层作为TCP服务的提供者，它需要以分组的方式而不是字节流的方式发送数据。因此，在传输层，TCP将多个字节组合在一起成为一个分组，这个分组被称为段，同时给每个段添加头部，并将该段传递给IP层。</p>
+<p>上述这一系列流程可以用下图来表示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232200.png" alt="TCP缓冲区" /></p>
+<h3 id="全双工通信"><a class="markdownIt-Anchor" href="#全双工通信"></a> 全双工通信</h3>
+<p>TCP提供全双工服务，即数据可以在同一时间双向流动。每一个方向TCP都有发送和接收缓冲区，它们可以在双向发送和接收段。</p>
+<h3 id="多路复用和多路分解"><a class="markdownIt-Anchor" href="#多路复用和多路分解"></a> 多路复用和多路分解</h3>
+<p>TCP在发送端执行多路复用，在接收端执行多路分解。由于TCP是一个面向连接的协议，因此需要为每对进程建立连接。</p>
+<h3 id="面向连接的服务"><a class="markdownIt-Anchor" href="#面向连接的服务"></a> 面向连接的服务</h3>
+<p>TCP是一种面向连接的协议。位于站点A的一个进程和与站点B的另外一个进程想要进行数据的发送和接收时要经过如下三步：</p>
+<ol>
+<li>在两个TCP之间建立一个连接</li>
+<li>在两个方向交换数据</li>
+<li>连接终止</li>
+</ol>
+<p>上述建立的连接是一个逻辑连接，而不是一个物理连接。TCP建立一种面向字节流的环境，在这种环境中，TCP能承担按顺序传递这些字节到其他站点的服务。</p>
+<h3 id="可靠的服务"><a class="markdownIt-Anchor" href="#可靠的服务"></a> 可靠的服务</h3>
+<p>TCP是一种可靠的传输协议，它使用确认机制来检查数据是否安全和完整地到达。</p>
+<h2 id="tcp的特点"><a class="markdownIt-Anchor" href="#tcp的特点"></a> TCP的特点</h2>
+<h3 id="序号系统"><a class="markdownIt-Anchor" href="#序号系统"></a> 序号系统</h3>
+<h4 id="字节序号"><a class="markdownIt-Anchor" href="#字节序号"></a> 字节序号</h4>
+<p>TCP为在一个连接中传输的所有数据字节编号，在每个方向上的序号都是独立的。当TCP接收来自一个进程的数据字节时，TCP将它们存储在发送缓冲区中并给它们编号。在编码时，不必从0开始编码，TCP在0到<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mn>32</mn></msup><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2^{32}-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">3</span><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>之间生成一个随机数作为第一个字节的序号。这些字节序号被用于流量和差错控制。</p>
+<h4 id="序号-2"><a class="markdownIt-Anchor" href="#序号-2"></a> 序号</h4>
+<p>字节被编号之后，TCP对发送的每一个段也分配一个序号。第一个段的序号是初始随机生成的那个字节序号；其他段的序号是之前段的序号加上之前段携带的字节数。</p>
+<h4 id="确认号"><a class="markdownIt-Anchor" href="#确认号"></a> 确认号</h4>
+<p>TCP中的通信是全双工的，当建立一个连接时，双方同时都能发送和接收数据。因此，每一方会使用确认号来确认它已经收到的字节。确认号的值是该方向预期接收的下一个字节的序号，如果接收方安全并完整地接收到这一字节的序号，就会将它加1。</p>
+<h3 id="tcp分组段"><a class="markdownIt-Anchor" href="#tcp分组段"></a> TCP分组—段</h3>
+<h4 id="格式"><a class="markdownIt-Anchor" href="#格式"></a> 格式</h4>
+<p>在TCP中的分组被称为段，它包含20~60字节的头部，接着是来自应用程序的数据。如果没有选项，那么头部为20字节；如果有选项则最多是60字节。TCP的段格式如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232216.png" alt="TCP段结构" /></p>
+<p>一些头部字段的意义如下：</p>
+<ul>
+<li>源端口地址：一个16位字段，定义了在主机中发送该段的应用程序的端口号。</li>
+<li>目的端口地址：一个16位字段，定义了主机中接收该段的应用程序的端口号。</li>
+<li>序号：这个32位字段定义了一个数，分配给段中数据的第一个字节。这个序号告诉目的端，在这个序列中的哪一个字节是该段的第一个字节。在连接建立时，每一方都使用随机数产生器生成一个初始序号（Initial Sequence Number, ISN），通常每一个方向的ISN都不同。</li>
+<li>确认号：这个32位字段定义了段的接收方期待从对方接收的字节号。如果段的接收方成功地接收了对方发来的字节号x，确认号就被定义为x+1，确认和数据可以捎带一起发送。</li>
+<li>头部长度：这个4位字段指明了TCP头部中有多少个4字节长的字。由于头部长度可以在20~60字节之间，因此这个字段的值在5~15之间。</li>
+<li>控制：这个字段定义了6种不同的控制位或标记，在同一时间可以设置一位或多位。其中：
+<ul>
+<li>URG：紧急指针有效</li>
+<li>ACK：确认有效</li>
+<li>PSH：请求推送</li>
+<li>RST：连接复位</li>
+<li>SYN：同步序号</li>
+<li>FIN：终止连接</li>
+</ul>
+</li>
+<li>窗口大小：定义对方必须维持的窗口的大小（以字节为单位）。这个字段长度为16位，因此窗口的最大长度为65535字节。这个值通常称为接收窗口，它由接收方确定。</li>
+<li>校验和：TCP的校验和是强制的，它的计算与UDP相同。</li>
+<li>紧急指示符：这个16位字段只有当紧急标志置位时才有效，这个段包含了紧急数据。它定义了一个数，将此数加到序号上就可以得出此段数据部分中最后一个紧急字节。</li>
+<li>选项：在TCP头部可以有最多40字节的可选信息。</li>
+</ul>
+<h4 id="封装"><a class="markdownIt-Anchor" href="#封装"></a> 封装</h4>
+<p>一个TCP段封装了来自应用层的数据。TCP段被封装在IP数据报中，IP数据报被封装在数据链路层的帧中。</p>
+<h2 id="tcp连接"><a class="markdownIt-Anchor" href="#tcp连接"></a> TCP连接</h2>
+<h3 id="连接建立"><a class="markdownIt-Anchor" href="#连接建立"></a> 连接建立</h3>
+<p>在TCP中连接的建立被称为<strong>三次握手</strong>。我们假设客户应用程序想要与另一个服务器应用程序之间使用TCP作为传输层协议建立连接。</p>
+<p>这一过程从服务器开始，服务器程序会一直处于被动打开状态，准备接收从任何一个用户发过来的连接。当客户程序想要与某个特定服务器进行TCP连接时，它发出请求进行主动打开。接下来，TCP进行三次握手的过程来建立连接，这一过程如下：</p>
+<ol>
+<li>用户发送的第一个段是SYN段。这个段只有SYN标志被置位，它被用于序号同步。当数据传输开始时，用户随机选择一个数字作为初始序号ISN。SYN段不包含确认号，也没有定义窗口大小。需要注意的是，SYN段是一个控制段并且不携带数据，但是它需要消耗一个序号（因为它需要被确认），因此可以说SYN段携带了一个假想字节。</li>
+<li>服务器发送第二个段，即两个标志位SYN和ACK置位的段。这个段有两个目的：首先，它是另一方向通信的SYN段，服务器使用这个段来初始化序号，这个序号用于给从服务器发向客户的字节编号；同时，服务器也通过给ACK置位并展示下一个序号来确认接收到来自客户的SYN段。因为它包含确认，因此也需要定义接收窗口（即rwnd）给客户使用。同时，因为这个段也起到SYN段的作用，它需要被确认，因此它也占用一个序号。</li>
+<li>客户发送第三个段。这个段仅仅是一个ACK段。它使用ACK标志和确认序号字段来确认收到了第二个段。如果不携带数据，ACK段没有占用任何序号；也有一些实现允许第三个段在连接阶段从客户端携带第一块数据，这种情况下段消耗的序号与数据字节数相同。</li>
+</ol>
+<p>上述的过程可以用下图来表示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232232.png" alt="TCP三次握手" /></p>
+<p>在TCP中，连接建立的过程容易遭受到SYN泛洪攻击的严重安全问题。一个恶意攻击者将大量的SYN段发送到一个服务器，在数据报中通过伪装源IP地址假装这些SYN段来自于不同的客户端。此时，服务器发送SYN+ACK段给这些假客户，但是这些段都会丢失。服务器会等待第三段的握手过程，此时许多资源被占用但是没有被使用。如果在短时间内，SYN段的数量很大，服务器最终会因为耗尽资源而崩溃。一些TCP的实现拥有减轻SYN攻击影响的策略。</p>
+<h3 id="数据传输"><a class="markdownIt-Anchor" href="#数据传输"></a> 数据传输</h3>
+<p>连接建立之后，便可进行双向的数据传输，客户端与服务器双方都可以发生数据和确认。</p>
+<p>当两个应用程序进行交互式通信时，希望收到立即响应。此时，发送端的TCP需要设置推送位（PSH）来告诉接收端的TCP，这个段所包含的数据需要尽快传递给接收应用程序，而不需要等待更多数据的到来。此时，发送端的TCP也不会等待窗口被填满，它创建一个段就立即将其发送。</p>
+<p>如果一些情况下，应用程序需要发送紧急字节，需要另一端的应用以特殊方式对待。此时，应用程序会将URG标志置位。同时，紧急数据被放在段的开始，并使用紧急指针字段定义紧急数据的结束。而在其余部分，则可以存放来自于缓冲区的普通数据，这一部分数据是非紧急的。但是TCP的紧急数据并不意味着优先服务，仅仅是让接收端TCP通知应用程序紧急数据的开始和结束，留给应用程序决定如何处理紧急数据。</p>
+<h3 id="连接终止"><a class="markdownIt-Anchor" href="#连接终止"></a> 连接终止</h3>
+<p>交换数据双方的任意一方都可以关闭连接。连接终止的实现有两种方法：三次挥手和带有半关闭选项的四次挥手。</p>
+<h4 id="三次挥手"><a class="markdownIt-Anchor" href="#三次挥手"></a> 三次挥手</h4>
+<p>三次挥手断开连接的步骤如下：</p>
+<ol>
+<li>客户TCP发送一个FIN段，其中的FIN标志被置位。同时，FIN段可以包含客户要发送的最后数据块。如果它只是控制段，则只占有一个序号。</li>
+<li>服务器TCP接收到FIN段之后，通知进程并发送第二个FIN+ACK段，证明它接收到了来自客户端的FIN段，同时告诉客户端，服务器端的连接已关闭。这个段还可以包含来自服务器的最后数据块。如果不携带数据，则只占用一个序号。</li>
+<li>客户端的TCP发送最后一个ACK段，证明它接收到了服务器的FIN段。这个段包含确认号，它是来自服务器的FIN段的序号再加1。这个段不携带数据也不占用序号。</li>
+</ol>
+<p>这一过程可总结为下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232343.png" alt="TCP三次挥手" /></p>
+<h4 id="带有半关闭选项的四次挥手"><a class="markdownIt-Anchor" href="#带有半关闭选项的四次挥手"></a> 带有半关闭选项的四次挥手</h4>
+<p>在TCP中，一端可以在停止发送数据之后继续接收数据，这就是所谓的半关闭。虽然任意一端都可发出半关闭指令，但是通常情况下是由客户端发起。例如，当服务器在开始处理之前需要接收到所有的数据，此时就会出现半关闭。客户端发送全部数据之后，它在客户到服务器方向便可关闭连接；但是为了接收返回数据，服务器到客户的方向必须保持打开。此时的关闭过程为四次挥手，它的过程如下：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232350.png" alt="TCP四次挥手" /></p>
+<h3 id="连接重置"><a class="markdownIt-Anchor" href="#连接重置"></a> 连接重置</h3>
+<p>在一段的TCP可能会拒绝连接请求、终止已存在的连接、或是结束空闲连接。这些操作是通过RST标志完成的。</p>
+<h2 id="tcp的窗口"><a class="markdownIt-Anchor" href="#tcp的窗口"></a> TCP的窗口</h2>
+<p>TCP在每个方向的数据传输上使用两个窗口：发送和接收窗口，也就是说双向通信有四个窗口。</p>
+<h3 id="发送窗口"><a class="markdownIt-Anchor" href="#发送窗口"></a> 发送窗口</h3>
+<p>发送窗口是一个想象的盒子，它覆盖了处于运送途中的以及可以被发送的数据分组序号。在每个窗口位置，一些序号定义了已经被发送的分组，其他序号定义了可以被发送的分组。</p>
+<p>在任何时候，发送窗口将序号从左向右分成四部分：</p>
+<ol>
+<li>窗口左侧：已经确认的分组的序号，发送方可以丢弃掉这些分组</li>
+<li>未完成分组：发送方已经发送，但是状态未知的序号，发送方需要等待，从而确认这些分组是否已被接收还是丢失</li>
+<li>可发送分组：可以发送的分组的序号，但是相应的数据还没有从应用层接收到</li>
+<li>窗口右侧：直到窗口滑动之前都不能使用的序号</li>
+</ol>
+<p>在TCP中使用的发送窗口中，窗口的大小是字节的数量，控制窗口的变量是以字节为单位的。在某些实现中，TCP可以存储来自于进程的数据并且在之后发送它们。同时，TCP只使用一个计时器。计时器被用来实现分组的重发，在发送一个分组时需要打开计时器（如果已运行则不用再打开），当计时器终止时，发送方需要重发所有的未完成分组。</p>
+<p>TCP的发送窗口如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232356.png" alt="TCP发送窗口" /></p>
+<h3 id="接收窗口"><a class="markdownIt-Anchor" href="#接收窗口"></a> 接收窗口</h3>
+<p>接收窗口用于确保正确的分组数据被接收，并且确保正确的确认被发送。</p>
+<p>TCP允许接收进程以自己的速率拉取数据，因此接收方部分被分配缓冲区可以被已接收并且确认的字节所占据，但是它们正在等待被接收进程拉过去。因此，接收窗口的大小总是小于或等于缓冲区大小，它决定了接收窗口在被淹没之前可以从发送方接收的字节数量，又被称为rwnd。</p>
+<p>同时，TCP协议中的主要确认机制是累积确认，它声明了下一个预期接收字节。在TCP的新版本中也使用了选择性确认。</p>
+<p>TCP的接收窗口如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201201232405.png" alt="TCP接收窗口" /></p>
+<h3 id="流量控制-2"><a class="markdownIt-Anchor" href="#流量控制-2"></a> 流量控制</h3>
+<p>为了实现流量控制，TCP可以迫使发送方和接收方调整它们的窗口大小。当更多的数据从发送方到来时，接收方窗口关闭；当更多的数据被进程拉取后，它打开窗口。发送窗口的打开、关闭和收缩由接收方控制。</p>
+<h2 id="差错控制-2"><a class="markdownIt-Anchor" href="#差错控制-2"></a> 差错控制</h2>
+<p>TCP使用差错控制来提供可靠性，它包括用于检测并重发损坏段的机制、用于重发丢失段的机制、用于存储失序的段直到丢失段到达的机制、以及检测并丢弃重复段的机制。上述机制主要是通过使用校验和、确认和超时来完成的。</p>
+<h3 id="校验和-2"><a class="markdownIt-Anchor" href="#校验和-2"></a> 校验和</h3>
+<p>TCP的每个段都包括校验和字段，用于检查损坏的段。如果段被损坏，它将目的端TCP丢弃，因此发送端会认为其丢失而重发。</p>
+<h3 id="确认-2"><a class="markdownIt-Anchor" href="#确认-2"></a> 确认</h3>
+<p>TCP使用确认方法来证实收到了数据段，不携带数据但是占用序号额一些控制段也需要确认，但是ACK段因为不占用序号所以不需要确认。</p>
+<p>TCP的确认方式有两种，累积确认和选择性确认。累积确认指的是接收方通告下一个预期接收的字节，忽略所有的失序段。TCP头部的32位ACK字段用于累积确认，且只有当ACK标志为1时才有效。选择性确认（SACK）指的是向发送方报告额外信息，包括失序字节块和重复字节块。SACK以TCP头部末端选项的形式实现。</p>
+<p>接收方产生确认的规则有：</p>
+<ul>
+<li>终端A向终端B发送一个数据段时，必须包含一个确认，这个确认给出下一个期待接收的序号。这个规则降低了所需段的数量。</li>
+<li>如果只有一个未完成的有序段，接收方需要延迟发送ACK段。这一规则减少了ACK段。</li>
+<li>任何时候不能多于两个有序的未确认段存在。这样防止了不必要的重传，避免引起网络拥塞。</li>
+<li>当一个失序段到达，且序号大于预期，接收方立即发送一个ACK段，声明下一个预期段的序号。这使得丢失段可以快速重传。</li>
+<li>当一个丢失段到达，接收方发送一个ACK段，声明下一个预期序号。这通知接收方被报告丢失段已经到达。</li>
+<li>如果重复段到达，接收方丢弃段，但是立即发送一个确认指出下一个预期的有序段。这解决了当ACK段丢失时的一些问题。</li>
+</ul>
+<h3 id="重传"><a class="markdownIt-Anchor" href="#重传"></a> 重传</h3>
+<p>当一个段被发送，它会被储存在一个队列中直到被确认。当重传计时器超时或者当发送方接收到对队列中第一个段的三次重复ACK时，就重传这个段。</p>
+<p>发送方TCP为每个连接维护一个重传超时，当计时器到时即超时，TCP重发队列中具有最小序号的段并重启计时器。</p>
+<p>而三次重复ACK立即重发的规则，允许发送方不等待超时而重传，这加速了因特网中的服务。这一特性也被称为快速重传。</p>
+<h3 id="失序段"><a class="markdownIt-Anchor" href="#失序段"></a> 失序段</h3>
+<p>TCP不丢弃失序段，它们暂时存储这些失序段，并将其标记为失序段直到缺失的段到达。但是TCP会确保传递给进程的段是非失序的。</p>
+<h2 id="拥塞控制-2"><a class="markdownIt-Anchor" href="#拥塞控制-2"></a> 拥塞控制</h2>
+<h3 id="拥塞窗口"><a class="markdownIt-Anchor" href="#拥塞窗口"></a> 拥塞窗口</h3>
+<p>TCP使用称为拥塞窗口（cwnd）的变量来控制段的发送数量，这个变量的值由网络中的拥塞情况所控制。cwnd变量和rwnd变量一起定义了TCP中的发送窗口大小。cwnd与网络中间的拥塞相关，而rwnd与终端的拥塞相关，实际窗口的大小为二者中的最小值。</p>
+<h3 id="拥塞检测"><a class="markdownIt-Anchor" href="#拥塞检测"></a> 拥塞检测</h3>
+<p>TCP的发送方使用两个事件来作为网络中拥塞的标志：</p>
+<ul>
+<li>超时：如果一个TCP发送方在超时之前没有接收到对于某个段或者某些段的ACK，那么它就假设它们丢失，并且丢失是由于<em>严重拥塞</em>引起的。</li>
+<li>接收到三次重复ACK：当接收方发送三次重复ACK时，这意味着一个段丢失，说明网络此时处于<em>轻微拥塞</em>或者已经从拥塞中恢复。</li>
+</ul>
+<h3 id="拥塞策略"><a class="markdownIt-Anchor" href="#拥塞策略"></a> 拥塞策略</h3>
+<h4 id="慢启动"><a class="markdownIt-Anchor" href="#慢启动"></a> 慢启动</h4>
+<p>慢启动算法是基于拥塞窗口大小的思想，它以最大段长度（MSS）开始，但是每当一个确认到达时它只增加一个MSS。</p>
+<p>初始时cwnd=1，当一个ACK到达时，cwnd=cwnd+1。这一算法启动慢，但是它是以指数增长的。因此，它不能一直继续下去，存在一个停止该阶段的阈值，当窗口中的字节达到这个阈值时，慢启动停止且下一个阶段开始。</p>
+<h4 id="拥塞避免"><a class="markdownIt-Anchor" href="#拥塞避免"></a> 拥塞避免</h4>
+<p>由于慢启动算法使得拥塞窗口大小按照指数规律增大，因此为了在拥塞发生之前避免堵塞，TCP定义了另一个被称为拥塞避免的算法。</p>
+<p>在这个算法中，每次整个窗口的所有段都被确认之后，拥塞窗口才增加1。也就是说，此时如果有一个ACK到达，cwnd=cwnd+(1/cwnd)。此时，增长速率以每次往返时间为单位是线性的，因此这种方法比慢启动方法保守得多。</p>
+<h4 id="快速恢复"><a class="markdownIt-Anchor" href="#快速恢复"></a> 快速恢复</h4>
+<p>快速恢复算法在TCP中是可选的。它开始于三次重复ACK到达，这被解释为网络的轻微阻塞。这个算法也是加性增加的，在三次重复ACK触发使用这个算法之后（三次重复ACK通常会使得cwnd的值减小），当一个重复ACK到达时，cwnd=cwnd+(1/cwnd)。</p>
+<h2 id="tcp计时器"><a class="markdownIt-Anchor" href="#tcp计时器"></a> TCP计时器</h2>
+<h3 id="重传计时器"><a class="markdownIt-Anchor" href="#重传计时器"></a> 重传计时器</h3>
+<p>为了重传丢失的段，TCP在整个连接期间使用一种重传计时器来处理重传超时（RTO）。重传计时器的使用有如下规则：</p>
+<ul>
+<li>当TCP发送位于发送队列前端中的段时，它开启计时器</li>
+<li>当计时器到时，TCP重发队列前端的第一个段并且重启计时器</li>
+<li>当一个或者多个段被累积确认，一个或者多个段从队列中被清除，如果清除至队列为空，则停止计时器。而当队列不为空时重启计时器。</li>
+</ul>
+<p>RTO的计算依赖于RTT的计算，我们将每一个包从发出到接收的时间称为往返时间（Round-Trip Time, RTT）。RTO的计算公式为：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><mi>O</mi><mo>=</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>+</mo><mn>4</mn><mo>×</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">RTO=RTT_{S}+4\times RTT_{D}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub></mrow><annotation encoding="application/x-tex">RTT_S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>代表平滑RTT，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">RTT_D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>代表RTT偏差。将每一次测量的RTT记作<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，二者的值通过多次测量<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>并迭代计算而得。在第一次测量后，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>=</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_{S}=RTT_{M}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub><mo>=</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">RTT_{D}=RTT_{M}/2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord">2</span></span></span></span>；而在这之后每一次测量出新的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub></mrow><annotation encoding="application/x-tex">RTT_S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub></mrow><annotation encoding="application/x-tex">RTT_D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>通过下面两个式子更新：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="false">)</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>+</mo><mi>α</mi><mo>×</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub></mrow><annotation encoding="application/x-tex">RTT_{S}=(1-\alpha)RTT_{S}+\alpha \times RTT_{M}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.0037em;">α</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>β</mi><mo stretchy="false">)</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>D</mi></msub><mo>+</mo><mi>β</mi><mo>×</mo><mi mathvariant="normal">∣</mi><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>S</mi></msub><mo>−</mo><mi>R</mi><mi>T</mi><msub><mi>T</mi><mi>M</mi></msub><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">RTT_{D}=(1-\beta)RTT_{D}+\beta \times |RTT_{S}-RTT_{M}|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.05278em;">β</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span></span></span></span>。</p>
+<h3 id="坚持计时器"><a class="markdownIt-Anchor" href="#坚持计时器"></a> 坚持计时器</h3>
+<p>为了处理0窗口大小的通告，TCP需要使用坚持计时器。如果接收TCP声明了0窗口大小，那么发送TCP停止传输段，直到接收TCP发送一个ACK段声明非零的窗口大小。由于这个声明非0的ACK段可能会丢失，而且它不存在重传计时器，如果不使用坚持计数器就可能会因为双方TCP互相等待造成死锁。</p>
+<p>因此，当发送方TCP接收一个窗口大小为0的确认时，开启坚持计时器。当坚持计时器到时，发送方TCP发送一个特殊的探测段，这个段只包含一个字节的新数据，同时有一个序号，但是序号从来不被确认。探测报文引发接收方TCP重发确认。</p>
+<h3 id="保活计时器"><a class="markdownIt-Anchor" href="#保活计时器"></a> 保活计时器</h3>
+<p>保活计时器用于防止两个TCP之间的长期空闲连接。假设一个用户与服务器建立了连接，传输了一些数据并进入沉默状态，但是此时连接会永远保持打开。为了消除这种情况，每当服务器从客户收到一次数据就重置保活计时器。而当保活计时器超时之后，它发送一个探测段，如果多次发送探测段之后仍然无响应，那么服务器就认为用户出现故障，会终止连接。</p>
+<h3 id="时间等待计时器"><a class="markdownIt-Anchor" href="#时间等待计时器"></a> 时间等待计时器</h3>
+<p>时间等待（2MSL）计时器在连接终止期间使用。最大报文段寿命（Maximum Segment Lifetime, MSL）是任意报文在被丢弃之前在网络中的存在时间。当TCP执行主动关闭并发送最后一个ACK时，使用2MSL计时器，连接保持2MSL的时间，从而允许TCP重发最后一个ACK，以防ACK丢失。</p>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<ol>
+<li>计算机网络：自顶向下方法</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/" title="计算机网络-传输层">http://lyf35.github.io/2021/01/26/计算机网络-传输层/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" rel="prev" title="计算机组成原理-计算机的硬件组成">
+      <i class="fa fa-chevron-left"></i> 计算机组成原理-计算机的硬件组成
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/26/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" rel="next" title="计算机网络-数据链路层">
+      计算机网络-数据链路层 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">591k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">8:57</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '887ff408bbbc957e3e7907faf987c4a1',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
