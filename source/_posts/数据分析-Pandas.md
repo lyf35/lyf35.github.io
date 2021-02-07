@@ -67,7 +67,7 @@ states = ['California', 'Ohio', 'Oregon', 'Texas']
 
 
 ```python
-pd.Series(dict1) #可以传入一个dict来构造Series，map中每个元素的key作为index，并与每个元素的value相对应
+pd.Series(dict1) #可以传入一个dict来构造Series，map中每个元素的key作为index，并与每个元素的value相对应。dict的key部分可以为tuple，这样会生成一个多重index的Series
 ```
 
 
@@ -286,7 +286,7 @@ pd.DataFrame(data, columns=['year', 'state', 'debt'],index=['one', 'two', 'three
 
 ```python
 data2={'Nevada': {2001: 2.4, 2002: 2.9}, 'Ohio': {2000: 1.5, 2001: 1.7, 2003: 3.6}}
-pd.DataFrame(data2) #另一种构造DataFrame的方法，同样是传入一个dict，但是这个dict中的value也是一个dict，相当于一个两层嵌套的dict。外层dict中的key会被作为columns的名称，而内层dict的key则被作为index的名称。在最终得到的DataFrame中，index为所有内层dict中的key取并集。如果某个内层dict中，某些index对应的key-value不存在，那么在构造DataFrame时，对应的位置会被设为NaN。
+pd.DataFrame(data2) #另一种构造DataFrame的方法，同样是传入一个dict，但是这个dict中的value也是一个dict，相当于一个两层嵌套的dict。外层dict中的key会被作为columns的名称，而内层dict的key则被作为index的名称。在最终得到的DataFrame中，index为所有内层dict中的key取并集。如果某个内层dict中，某些index对应的key-value不存在，那么在构造DataFrame时，对应的位置会被设为NaN。在构造dict的时候，key部分可以为一个tuple，这样会自动构造为多重index的DataFrame
 ```
 
 
@@ -5647,11 +5647,33 @@ series_multiIndex.sum(level=1)
 
 
 
+如果要删除多重index中的某一层，可以调用`droplevel()`函数。
+
+```python
+series_multiIndex.droplevel(0)
+```
+
+```
+1    1.210290
+2    1.367135
+3   -0.072713
+1   -0.122782
+2   -0.359306
+3   -0.515809
+1    0.420951
+2   -0.667417
+2   -1.967170
+3    0.193437
+dtype: float64
+```
+
+
+
 对于DataFrame来说，index和columns都可以使用MultiIndex。下面为一些使用示例：
 
 
 ```python
- dataframe_multiIndex= pd.DataFrame(np.arange(12).reshape((4, 3)),index=[['a', 'a', 'b', 'b'], [1, 2, 1, 2]],columns=[['Ohio', 'Ohio', 'Colorado'],['Green', 'Red', 'Green']])
+dataframe_multiIndex= pd.DataFrame(np.arange(12).reshape((4, 3)),index=[['a', 'a', 'b', 'b'], [1, 2, 1, 2]],columns=[['Ohio', 'Ohio', 'Colorado'],['Green', 'Red', 'Green']])
 ```
 
 
