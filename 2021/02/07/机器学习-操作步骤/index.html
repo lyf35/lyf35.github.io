@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="概述 要构建一个完整的机器学习项目，一般可以按照如下步骤进行：  了解整个项目的概况，获取原始数据 对数据做特征工程 选择合适的机器学习方法，按所选择的策略对模型进行训练和优化 模型的部署、监控和维护  通常，第二步和第三步是重要且需要花费很多时间的步骤。同时这两步也相互依赖，需要根据数据固有的特点选择合适的机器学习模型，也需要根据所选择的机器学习模型来决定特征工程的具体操作。下面将对这两个比较">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习-操作步骤">
+<meta property="og:url" content="http://lyf35.github.io/2021/02/07/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="概述 要构建一个完整的机器学习项目，一般可以按照如下步骤进行：  了解整个项目的概况，获取原始数据 对数据做特征工程 选择合适的机器学习方法，按所选择的策略对模型进行训练和优化 模型的部署、监控和维护  通常，第二步和第三步是重要且需要花费很多时间的步骤。同时这两步也相互依赖，需要根据数据固有的特点选择合适的机器学习模型，也需要根据所选择的机器学习模型来决定特征工程的具体操作。下面将对这两个比较">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210126232059.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210126232343.png">
+<meta property="article:published_time" content="2021-02-07T14:07:43.781Z">
+<meta property="article:modified_time" content="2021-02-07T14:07:43.781Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210126232059.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/02/07/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>机器学习-操作步骤 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text"> 特征工程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text"> 什么是特征工程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.2.</span> <span class="nav-text"> 特征工程的步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%88%9D%E6%AD%A5%E5%88%86%E6%9E%90"><span class="nav-number">2.2.1.</span> <span class="nav-text"> 数据初步分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">2.2.2.</span> <span class="nav-text"> 数据预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E9%87%8F%E7%BA%B2%E5%8C%96"><span class="nav-number">2.2.2.1.</span> <span class="nav-text"> 无量纲化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">2.2.2.1.1.</span> <span class="nav-text"> 标准化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8C%BA%E9%97%B4%E7%BC%A9%E6%94%BE%E6%B3%95"><span class="nav-number">2.2.2.1.2.</span> <span class="nav-text"> 区间缩放法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BD%92%E4%B8%80%E5%8C%96"><span class="nav-number">2.2.2.1.3.</span> <span class="nav-text"> 归一化</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E9%87%8F%E7%89%B9%E5%BE%81%E4%BA%8C%E5%80%BC%E5%8C%96"><span class="nav-number">2.2.2.2.</span> <span class="nav-text"> 定量特征二值化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E6%80%A7%E7%89%B9%E5%BE%81%E7%BC%96%E7%A0%81"><span class="nav-number">2.2.2.3.</span> <span class="nav-text"> 定性特征编码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%8B%AC%E7%83%AD%E7%BC%96%E7%A0%81"><span class="nav-number">2.2.2.3.1.</span> <span class="nav-text"> 独热编码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9A%E6%80%A7%E7%89%B9%E5%BE%81%E6%95%B0%E5%80%BC%E5%8C%96"><span class="nav-number">2.2.2.3.2.</span> <span class="nav-text"> 定性特征数值化</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E5%A4%B1%E5%80%BC%E5%A4%84%E7%90%86"><span class="nav-number">2.2.2.4.</span> <span class="nav-text"> 缺失值处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%8F%98%E6%8D%A2"><span class="nav-number">2.2.2.5.</span> <span class="nav-text"> 数学变换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9"><span class="nav-number">2.2.3.</span> <span class="nav-text"> 特征选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E6%B3%95"><span class="nav-number">2.2.3.1.</span> <span class="nav-text"> 过滤法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E5%B7%AE%E9%80%89%E6%8B%A9%E6%B3%95"><span class="nav-number">2.2.3.1.1.</span> <span class="nav-text"> 方差选择法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E7%B3%BB%E6%95%B0%E6%B3%95"><span class="nav-number">2.2.3.1.2.</span> <span class="nav-text"> 相关系数法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%A1%E6%96%B9%E6%A3%80%E9%AA%8C"><span class="nav-number">2.2.3.1.3.</span> <span class="nav-text"> 卡方检验</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%85%E8%A3%85%E6%B3%95"><span class="nav-number">2.2.3.2.</span> <span class="nav-text"> 包装法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E7%89%B9%E5%BE%81%E6%B6%88%E9%99%A4%E6%B3%95"><span class="nav-number">2.2.3.2.1.</span> <span class="nav-text"> 递归特征消除法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E6%B3%95"><span class="nav-number">2.2.3.3.</span> <span class="nav-text"> 嵌入法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%83%A9%E7%BD%9A%E9%A1%B9%E7%9A%84%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9%E6%B3%95"><span class="nav-number">2.2.3.3.1.</span> <span class="nav-text"> 基于惩罚项的特征选择法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%A0%91%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9%E6%B3%95"><span class="nav-number">2.2.3.3.2.</span> <span class="nav-text"> 基于树模型的特征选择法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E7%BB%B4"><span class="nav-number">2.2.4.</span> <span class="nav-text"> 降维</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%B4%E5%BA%A6%E7%81%BE%E9%9A%BE"><span class="nav-number">2.2.4.1.</span> <span class="nav-text"> 维度灾难</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%E6%B3%95"><span class="nav-number">2.2.4.2.</span> <span class="nav-text"> 主成分分析法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.2.4.2.1.</span> <span class="nav-text"> 原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.4.2.2.</span> <span class="nav-text"> 实现</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90%E6%B3%95"><span class="nav-number">2.2.4.3.</span> <span class="nav-text"> 线性判别分析法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8E%9F%E7%90%86-2"><span class="nav-number">2.2.4.3.1.</span> <span class="nav-text"> 原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-2"><span class="nav-number">2.2.4.3.2.</span> <span class="nav-text"> 实现</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%93%8D%E4%BD%9C"><span class="nav-number">2.3.</span> <span class="nav-text"> 流水线操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E4%B8%8E%E8%AF%84%E4%BC%B0"><span class="nav-number">3.</span> <span class="nav-text"> 模型训练与评估</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%89%B2%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">3.1.</span> <span class="nav-text"> 分割数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E9%80%89%E6%8B%A9%E4%B8%8E%E8%AE%AD%E7%BB%83"><span class="nav-number">3.2.</span> <span class="nav-text"> 模型选择与训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0"><span class="nav-number">3.3.</span> <span class="nav-text"> 模型评估</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E4%BF%9D%E5%AD%98%E4%B8%8E%E5%8A%A0%E8%BD%BD"><span class="nav-number">3.4.</span> <span class="nav-text"> 模型保存与加载</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E6%A1%88%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text"> 实际案例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习-操作步骤
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/02/07/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4/" class="post-meta-item leancloud_visitors" data-flag-title="机器学习-操作步骤" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>30k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>28 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h1>
+<p>要构建一个完整的机器学习项目，一般可以按照如下步骤进行：</p>
+<ol>
+<li>了解整个项目的概况，获取原始数据</li>
+<li>对数据做特征工程</li>
+<li>选择合适的机器学习方法，按所选择的策略对模型进行训练和优化</li>
+<li>模型的部署、监控和维护</li>
+</ol>
+<p>通常，第二步和第三步是重要且需要花费很多时间的步骤。同时这两步也相互依赖，需要根据数据固有的特点选择合适的机器学习模型，也需要根据所选择的机器学习模型来决定特征工程的具体操作。下面将对这两个比较关键的步骤进行详细的说明。</p>
+<p><font color='red'><strong>注意</strong>：在本文使用到的数据中，每一行的数据代表一个样本，每一列的数据代表一个特征。它是使用Python做机器学习相关任务时，所遵守的一个约定俗成的规则。Scikit-learn、PyTorch、TensorFlow等机器学习与深度学习相关的函数库都是按照这一规则进行开发的。</font></p>
+<a id="more"></a>
+<h1 id="特征工程"><a class="markdownIt-Anchor" href="#特征工程"></a> 特征工程</h1>
+<h2 id="什么是特征工程"><a class="markdownIt-Anchor" href="#什么是特征工程"></a> 什么是特征工程</h2>
+<p>在机器学习任务中，数据和特征决定了机器学习的上限（例如偏差-方差分解中的噪声部分，噪声决定了机器学习任务的难度），而模型和算法只是逼近这个上限而已。而这里的数据便指的是经过特征工程得到的数据。</p>
+<p>特征工程指的是把原始数据转变为模型的训练数据的过程，它的目的是获取更好的数据特征，使得机器学习模型可以更好地逼近学习的上限。如果使用的模型是诸如线性回归、支持向量机、决策树等统计学习模型，特征工程的作用比模型的训练更加重要，甚至当特征工程做得很好时，使用简单的模型也可以取得不错的效果。当然，对于深度学习而言，由于神经网络自身具有强大的学习能力，可以自己从数据中学到某些“特征”（当然，这些“特征”的可解释性较差），对于特征工程的要求就要相对低很多。但是，这并不意味着深度学习对特征工程没有要求，通常仍需要对数据做一些预处理。</p>
+<p>特征工程属于一项偏实践性的工作，很难在各种机器学习的理论书籍上找到相关的介绍。本文介绍的属于一般性的常用步骤，在具体的任务中可能还需要根据任务需求或者是利用该任务相关的领域知识来帮助我们做特征工程。</p>
+<h2 id="特征工程的步骤"><a class="markdownIt-Anchor" href="#特征工程的步骤"></a> 特征工程的步骤</h2>
+<p>一个完整的特征工程通常需要先对数据的基本特点做一些了解，然后对数据做一些预处理。在此基础上，再进行特征选择与降维。</p>
+<p>在做特征工程时，经常使用到的Python函数库包括但不限于下面这些：</p>
+<ul>
+<li>NumPy和Pandas：二者搭配使用，处理表格相关的数据，<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNjaXB5Lm9yZy9kb2MvbnVtcHkv">https://docs.scipy.org/doc/numpy/<i class="fa fa-external-link-alt"></i></span> ，<span class="exturl" data-url="aHR0cDovL3BhbmRhcy5weWRhdGEub3JnL3BhbmRhcy1kb2NzL3N0YWJsZS8=">http://pandas.pydata.org/pandas-docs/stable/<i class="fa fa-external-link-alt"></i></span></li>
+<li>SciPy：科学计算相关工具，<span class="exturl" data-url="aHR0cHM6Ly93d3cuc2NpcHkub3JnL2RvY3MuaHRtbA==">https://www.scipy.org/docs.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>Matplotlib：用于数据的可视化分析，<span class="exturl" data-url="aHR0cHM6Ly9tYXRwbG90bGliLm9yZy9jb250ZW50cy5odG1s">https://matplotlib.org/contents.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>Scikit-learn：提供了一些数据预处理相关的操作，<span class="exturl" data-url="aHR0cHM6Ly9zY2lraXQtbGVhcm4ub3JnL3N0YWJsZS9pbmRleC5odG1s">https://scikit-learn.org/stable/index.html<i class="fa fa-external-link-alt"></i></span></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br></pre></td></tr></table></figure>
+<h3 id="数据初步分析"><a class="markdownIt-Anchor" href="#数据初步分析"></a> 数据初步分析</h3>
+<p>在我们做特征工程之前，通常需要首先对数据做一些初步分析，了解数据格式、数据内容、每个特征的数值分布情况等，从而帮助我们决定接下来如何对它们进行处理。</p>
+<p>这一部分没有固定的操作方法，需要根据数据自身的特点以及要研究的问题本身，做一些针对性的分析。在特征工程的最后一部分内容中，我们将以一个实际的例子，来说明拿到原始数据之后做一些初步分析的方法与思路。</p>
+<h3 id="数据预处理"><a class="markdownIt-Anchor" href="#数据预处理"></a> 数据预处理</h3>
+<p>在对原始数据有了一些初步的了解之后，接下来需要对数据做一些预处理。由于机器学习模型对于输入数据有一些要求，因此我们对数据的处理包括对数据的取值范围进行缩放、将字符串转换为数字、对类别型变量的编码等。</p>
+<p>需要说明的一点是，本部分内容涉及到的数据处理方法较为基础，主要用来处理表格类的数据。而实际上，许多机器学习模型，尤其是深度学习模型，可以用声音、图像、文本、视频等数据进行训练，它们的数据处理也有着各自的方法，不在本文的讨论范围之内。</p>
+<h4 id="无量纲化"><a class="markdownIt-Anchor" href="#无量纲化"></a> 无量纲化</h4>
+<p>无量纲化指的是使不同规格的数据转换到同一规格。例如一个特征的取值范围是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1000</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,1000]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mclose">]</span></span></span></span>，而另一个特征是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mo>−</mo><mn>10</mn><mo separator="true">,</mo><mn>10</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[-10,10]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord">1</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mclose">]</span></span></span></span>，无量纲化便是将它们的取值范围移动至同一数量级。</p>
+<p>对于树模型来说，这一操作不是必要的，因为树模型是一系列if-else的组合，在构建分支时数据的取值没有任何影响；但是对于那些需要使用数值计算进行优化的模型，例如线性回归、逻辑回归、神经网络这些需要用到梯度下降进行优化的模型，又或者是KNN、聚类这些需要计算点与点之间距离来进行优化的模型，这一步骤就尤其重要，因为数值的数量级对于模型优化方向、收敛速度，甚至是模型的最终效果都有着巨大的影响。</p>
+<p>下面介绍几种常见的数据无量纲化的方法。</p>
+<h5 id="标准化"><a class="markdownIt-Anchor" href="#标准化"></a> 标准化</h5>
+<p>假设原始数据为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="bold-italic">x</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{x}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.44444em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>X</mi><mo>ˉ</mo></mover></mrow><annotation encoding="application/x-tex">\bar{X}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">ˉ</span></span></span></span></span></span></span></span></span>为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="bold-italic">x</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{x}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.44444em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span></span></span></span>的均值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span>为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="bold-italic">x</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{x}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.44444em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span></span></span></span>的标准差，则标准化的计算公式为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi mathvariant="bold-italic">x</mi><mo mathvariant="normal">′</mo></msup><mo>=</mo><mfrac><mrow><mi mathvariant="bold-italic">x</mi><mo>−</mo><mover accent="true"><mi>X</mi><mo>ˉ</mo></mover></mrow><mi>S</mi></mfrac></mrow><annotation encoding="application/x-tex">\boldsymbol{x}&#x27;=\frac{\boldsymbol{x}-\bar{X}}{S}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.801892em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.801892em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.18311em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.49711em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">ˉ</span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>标准化操作的适用条件是原始数据大致服从正态分布，标准化可以将其转换为大致服从标准正态分布。如果原始数据不服从这一条件，则会影响数据的分布规律，进而影响最终的模型训练效果。</p>
+<p>Scikit-learn中提供了用来完成数据标准化的类<code>StandardScaler</code>，可以方便我们进行这一操作，下面为使用示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line">standardscale_data=np.random.uniform(low=<span class="number">-2.0</span>,high=<span class="number">3.0</span>,size=(<span class="number">10</span>,<span class="number">1</span>))</span><br><span class="line">standardscaler=StandardScaler()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">standardscale_data</span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 2.62752878],
+       [-0.62955258],
+       [ 0.06932906],
+       ...,
+       [ 2.59914143],
+       [ 0.61341229],
+       [ 1.34356686]])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">standardscaler.fit(standardscale_data) <span class="comment">#传入原始数据，从中自动学得平均值与标准差</span></span><br></pre></td></tr></table></figure>
+<pre><code>StandardScaler(copy=True, with_mean=True, with_std=True)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">standardscaler.transform(standardscale_data) <span class="comment">#按照学得的标准差对数据做标准化操作</span></span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 1.03975343],
+       [-1.118967  ],
+       [-0.65576394],
+       ...,
+       [ 1.02093894],
+       [-0.29515778],
+       [ 0.18877229]])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">standardscaler.fit_transform(standardscale_data) <span class="comment">#上述两步操作可以合在一起完成</span></span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 1.03975343],
+       [-1.118967  ],
+       [-0.65576394],
+       ...,
+       [ 1.02093894],
+       [-0.29515778],
+       [ 0.18877229]])
+</code></pre>
+<h5 id="区间缩放法"><a class="markdownIt-Anchor" href="#区间缩放法"></a> 区间缩放法</h5>
+<p>区间缩放法的思路有很多种，比较常见的一种是利用两个最值，将原始数据缩放至<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span>区间。使用公式可以表达为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi mathvariant="bold-italic">x</mi><mo mathvariant="normal">′</mo></msup><mo>=</mo><mfrac><mrow><mi mathvariant="bold-italic">x</mi><mo>−</mo><mi>min</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo></mrow><mrow><mi>max</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo><mo>−</mo><mi>min</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\boldsymbol{x}&#x27;=\frac{\boldsymbol{x}-\min (\boldsymbol{x})}{\max (\boldsymbol{x})-\min (\boldsymbol{x})}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.801892em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.801892em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.363em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop">max</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mop">min</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mop">min</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>同样，Sklearn中也为这一方法提供了<code>MinMaxScaler</code>类，方便完成这一操作。它的使用方法与<code>StandardScaler</code>类似。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler</span><br><span class="line">minmaxscale_data=np.random.uniform(low=<span class="number">-2.0</span>,high=<span class="number">3.0</span>,size=(<span class="number">10</span>,<span class="number">1</span>))</span><br><span class="line">minmaxscaler=MinMaxScaler()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">minmaxscale_data</span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 1.76246719],
+       [-0.99536845],
+       [ 0.29888608],
+       ...,
+       [ 0.50958026],
+       [ 0.35095473],
+       [-0.83496883]])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">minmaxscaler.fit_transform(minmaxscale_data)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[0.80278034],
+       [0.08353523],
+       [0.42107755],
+       ...,
+       [0.47602671],
+       [0.43465708],
+       [0.12536754]])
+</code></pre>
+<p>此外，区间缩放也可以对某个特征所有的值直接乘上或者除以一个相同的数字，从而改变它们的分布区间。</p>
+<p>需要注意的是，<code>StandardScaler</code>和<code>MinMaxScaler</code>都是<strong>按列方向</strong>进行计算的。</p>
+<h5 id="归一化"><a class="markdownIt-Anchor" href="#归一化"></a> 归一化</h5>
+<p>归一化是依照<strong>行方向</strong>处理数据的，它的目的在于样本向量在点乘运算或者是使用核函数计算相似性时，具有统一的标准。例如规则为L2的归一化公式如下：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi mathvariant="bold-italic">x</mi><mo mathvariant="normal">′</mo></msup><mo>=</mo><mfrac><mi mathvariant="bold-italic">x</mi><msqrt><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mi>n</mi></munderover><msubsup><mi>x</mi><mi>i</mi><mn>2</mn></msubsup></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\boldsymbol{x}&#x27;=\frac{\boldsymbol{x}}{\sqrt{\sum_{i=0}^{n}x_{i}^{2}}}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.801892em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.801892em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.2514399999999997em;vertical-align:-1.13em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.12144em;"><span style="top:-2.1727090000000002em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.937291em;"><span class="svg-align" style="top:-3.2em;"><span class="pstrut" style="height:3.2em;"></span><span class="mord" style="padding-left:1em;"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.804292em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7959080000000001em;"><span style="top:-2.4231360000000004em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span style="top:-3.0448000000000004em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.27686399999999994em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.897291em;"><span class="pstrut" style="height:3.2em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.28em;"><svg width='400em' height='1.28em' viewBox='0 0 400000 1296' preserveAspectRatio='xMinYMin slice'><path d='M263,681c0.7,0,18,39.7,52,119c34,79.3,68.167,
+158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120c340,-704.7,510.7,-1060.3,512,-1067
+c4.7,-7.3,11,-11,19,-11H40000v40H1012.3s-271.3,567,-271.3,567c-38.7,80.7,-84,
+175,-136,283c-52,108,-89.167,185.3,-111.5,232c-22.3,46.7,-33.8,70.3,-34.5,71
+c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1s-109,-253,-109,-253c-72.7,-168,-109.3,
+-252,-110,-252c-10.7,8,-22,16.7,-34,26c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26
+s76,-59,76,-59s76,-60,76,-60z M1001 80H40000v40H1012z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.302709em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.13em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>Sklearn中也为这一方法提供了<code>Normalizer</code>类，方便完成这一操作。默认条件下它使用L2范数，可以在初始化的时候传入参数对其进行修改。它的使用方法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> Normalizer</span><br><span class="line">normalize_data=np.random.uniform(<span class="number">-2.0</span>,<span class="number">2.0</span>,(<span class="number">3</span>,<span class="number">4</span>))</span><br><span class="line">normalizer=Normalizer()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">normalize_data</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-0.55817435,  1.08530818,  1.74512408, -1.46521987],
+       [ 1.26433631, -1.83118327, -0.78242779, -1.67931577],
+       [ 1.07275275,  1.4259531 , -0.80605024, -1.26041706]])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">normalizer.fit_transform(normalize_data)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-0.21593538,  0.41986241,  0.67511885, -0.56683508],
+       [ 0.43665162, -0.63241809, -0.27021953, -0.57996907],
+       [ 0.46068015,  0.61235759, -0.34614812, -0.54127023]])
+</code></pre>
+<h4 id="定量特征二值化"><a class="markdownIt-Anchor" href="#定量特征二值化"></a> 定量特征二值化</h4>
+<p>定量特征二值化的核心在于设定一个阈值，大于该阈值的赋值为1，小于等于该阈值的赋值为0，使用公式表达如下：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>x</mi><mo mathvariant="normal">′</mo></msup><mo>=</mo><mrow><mo fence="true">{</mo><mtable rowspacing="0.3599999999999999em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mn>1</mn><mo separator="true">,</mo><mi>x</mi><mo>&gt;</mo><mi>t</mi><mi>h</mi><mi>r</mi><mi>e</mi><mi>s</mi><mi>h</mi><mi>o</mi><mi>l</mi><mi>d</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mn>0</mn><mo separator="true">,</mo><mi>x</mi><mo>&lt;</mo><mi>t</mi><mi>h</mi><mi>r</mi><mi>e</mi><mi>s</mi><mi>h</mi><mi>o</mi><mi>l</mi><mi>d</mi></mrow></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">x&#x27;=
+\begin{cases}
+1,x&gt;threshold \\
+0,x&lt;threshold 
+\end{cases}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.801892em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.801892em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:3.0000299999999998em;vertical-align:-1.25003em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">{</span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">h</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">d</span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord mathdefault">h</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">d</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>Sklearn提供的<code>Binarizer</code>类可以使得这一操作变得简便，它的使用方法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> Binarizer</span><br><span class="line">binarize_data=np.random.uniform(<span class="number">-2.0</span>,<span class="number">2.0</span>,(<span class="number">2</span>,<span class="number">2</span>))</span><br><span class="line">binarizer=Binarizer(threshold=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binarize_data</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-0.53891812,  0.18869311],
+       [ 0.5408885 ,  0.56153303]])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binarizer.fit_transform(binarize_data)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[0., 0.],
+       [0., 0.]])
+</code></pre>
+<h4 id="定性特征编码"><a class="markdownIt-Anchor" href="#定性特征编码"></a> 定性特征编码</h4>
+<h5 id="独热编码"><a class="markdownIt-Anchor" href="#独热编码"></a> 独热编码</h5>
+<p>对于一些定性特征，我们可以将其转换为独热编码（也叫哑编码等名称）。也就是说，假如一个特征有A、B、C三种类别，我们就将其编码为3个特征，分别对应于A、B和C。当某条数据该特征的类别为A时，就将其编码为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>1</mn><mo separator="true">,</mo><mn>0</mn><mo separator="true">,</mo><mn>0</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[1,0,0]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mclose">]</span></span></span></span>，B和C就分别对应于<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo separator="true">,</mo><mn>0</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,1,0]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mclose">]</span></span></span></span>和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,0,1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span>。</p>
+<p>需要注意的是，这种方法不限制原始数据的类型，不仅仅是字符串型的数据，数值型的数据也可以转换为哑编码。</p>
+<p>Sklearn提供了<code>OneHotEncoder</code>类可以方便地完成上述的工作，它的使用方法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> OneHotEncoder</span><br><span class="line">onehotdata=np.array([[<span class="string">&#x27;C&#x27;</span>],[<span class="string">&#x27;B&#x27;</span>],[<span class="string">&#x27;A&#x27;</span>],[<span class="string">&#x27;C&#x27;</span>],[<span class="string">&#x27;B&#x27;</span>]])</span><br><span class="line">onehotencoder=OneHotEncoder(sparse=<span class="literal">False</span>) <span class="comment">#默认条件下使用稀疏矩阵的压缩表示法，可以传入sparse=False来生成完整的矩阵</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">onehotdata</span><br></pre></td></tr></table></figure>
+<pre><code>array([['C'],
+       ['B'],
+       ['A'],
+       ['C'],
+       ['B']], dtype='&lt;U1')
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">onehotencoder.fit_transform(onehotdata) <span class="comment">#在one-hot编码的时候会自动对类别型特征进行排序，然后按照排序后的顺序进行编码</span></span><br></pre></td></tr></table></figure>
+<pre><code>array([[0., 0., 1.],
+       [0., 1., 0.],
+       [1., 0., 0.],
+       [0., 0., 1.],
+       [0., 1., 0.]])
+</code></pre>
+<p><code>LabelBinarizer</code>类可以起到类似的作用，它会直接生成完整的稀疏矩阵：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> LabelBinarizer</span><br><span class="line">labelbinarizer=LabelBinarizer()</span><br><span class="line">labelbinarizer.fit_transform(onehotdata)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[0, 0, 1],
+       [0, 1, 0],
+       [1, 0, 0],
+       [0, 0, 1],
+       [0, 1, 0]])
+</code></pre>
+<h5 id="定性特征数值化"><a class="markdownIt-Anchor" href="#定性特征数值化"></a> 定性特征数值化</h5>
+<p>有时，我们想使用不同的数字来表示不同的字符串。Sklearn提供了<code>LabelEncoder</code>类来方便我们完成这种转换操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> LabelEncoder</span><br><span class="line">labeldata=np.array([[<span class="string">&#x27;C&#x27;</span>],[<span class="string">&#x27;B&#x27;</span>],[<span class="string">&#x27;A&#x27;</span>],[<span class="string">&#x27;C&#x27;</span>],[<span class="string">&#x27;B&#x27;</span>]])</span><br><span class="line">labelencoder=LabelEncoder()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">labelencoder.fit_transform(labeldata) <span class="comment">#在将字符串与数字对应起来的时候会自动对字符串进行排序，按照排序后的顺序转换</span></span><br></pre></td></tr></table></figure>
+<pre><code>array([2, 1, 0, 2, 1], dtype=int64)
+</code></pre>
+<h4 id="缺失值处理"><a class="markdownIt-Anchor" href="#缺失值处理"></a> 缺失值处理</h4>
+<p>对于缺失值处理的操作，可以使用Pandas提供的一些缺失值处理函数。同时，Sklearn也提供了<code>Imputer</code>类，可以用来对缺失值进行填充。它的用法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.impute <span class="keyword">import</span> SimpleImputer</span><br><span class="line">missing_data=np.array([[<span class="number">3.1</span>],[np.nan],[<span class="number">2.5</span>]])</span><br><span class="line">imputer=SimpleImputer()</span><br><span class="line">imputer.fit_transform(missing_data)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[3.1],
+       [2.8],
+       [2.5]])
+</code></pre>
+<h4 id="数学变换"><a class="markdownIt-Anchor" href="#数学变换"></a> 数学变换</h4>
+<p>有时我们需要对原始数据做一些数学变换，常见的有基于多项式、基于指数函数、基于对数函数的变换。下面的例子是用来进行多项式转换的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> PolynomialFeatures</span><br><span class="line">data_transform=np.random.randn(<span class="number">3</span>,<span class="number">1</span>)</span><br><span class="line">polyfeatures=PolynomialFeatures(degree=<span class="number">3</span>) <span class="comment">#degree代表多项式的度，即最高次项的次数，默认为2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data_transform</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-0.435727  ],
+       [-0.94479211],
+       [-0.16820776]])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">polyfeatures.fit_transform(data_transform)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 1.        , -0.435727  ,  0.18985802, -0.08272627],
+       [ 1.        , -0.94479211,  0.89263213, -0.8433518 ],
+       [ 1.        , -0.16820776,  0.02829385, -0.00475925]])
+</code></pre>
+<p>此外，sklearn也提供了一个<code>FunctionTransformer</code>类，可以传入任意函数完成数据的转换。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> FunctionTransformer</span><br><span class="line">func_trans=FunctionTransformer(np.exp) <span class="comment">#初始化时需要传入一个用于转换的函数</span></span><br><span class="line">func_trans.fit_transform(data_transform)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[0.64679427],
+       [0.38876038],
+       [0.84517822]])
+</code></pre>
+<p>同样，sklearn也支持自定义转换器类，需要继承<code>BaseEstimator</code>和<code>TransformerMixin</code>两个类，并在类中自己定义<code>fit</code>和<code>transform</code>两个函数。自定义转换类的使用方法与sklearn自带的转换器类使用方法相同。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.base <span class="keyword">import</span> BaseEstimator, TransformerMixin</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyOwnTransformer</span>(<span class="params">BaseEstimator,TransformerMixin</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self,data=None</span>):</span></span><br><span class="line">        self.data=data</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span>(<span class="params">self,x,y=None</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">transform</span>(<span class="params">self,x,y=None</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self</span><br></pre></td></tr></table></figure>
+<h3 id="特征选择"><a class="markdownIt-Anchor" href="#特征选择"></a> 特征选择</h3>
+<p>当数据预处理完成后，我们需要选择有意义的特征输入机器学习的算法和模型进行训练。通常来说，从两个方面考虑来选择特征：</p>
+<ol>
+<li>特征是否发散：如果一个特征不发散（方差接近于0），也就是说样本在这个特征上基本上没有差异，那么这个特征对于样本的区分并没有什么用。</li>
+<li>特征与目标的相关性：与目标相关性高的特征，应当优先选择。</li>
+</ol>
+<p>根据特征选择的形式，又可以将特征选择方法分为3种：</p>
+<ol>
+<li>过滤法：按照发散性或者相关性对各个特征进行评分，并设定阈值或者待选择阈值的个数，然后对特征评分排序并进行选择</li>
+<li>包装法：根据优化目标函数的表现，每次选择若干特征或者排除若干特征</li>
+<li>嵌入法：先使用某些模型进行训练，得到各个特征的权重系数，根据系数从大到小选择特征。</li>
+</ol>
+<p>在这一部分，我们使用Sklearn自带的鸢尾花（iris）数据集，对这些选择方法进行详细的讲解。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris</span><br><span class="line">orig_data=load_iris()</span><br><span class="line">iris_data=orig_data.data <span class="comment">#鸢尾花特征，包括花萼长度等4条属性</span></span><br><span class="line">iris_target=orig_data.target <span class="comment">#鸢尾花的类别</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iris_data</span><br></pre></td></tr></table></figure>
+<pre><code>array([[5.1, 3.5, 1.4, 0.2],
+       [4.9, 3. , 1.4, 0.2],
+       [4.7, 3.2, 1.3, 0.2],
+       ...,
+       [6.5, 3. , 5.2, 2. ],
+       [6.2, 3.4, 5.4, 2.3],
+       [5.9, 3. , 5.1, 1.8]])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iris_target</span><br></pre></td></tr></table></figure>
+<pre><code>array([0, 0, 0, ..., 2, 2, 2])
+</code></pre>
+<h4 id="过滤法"><a class="markdownIt-Anchor" href="#过滤法"></a> 过滤法</h4>
+<h5 id="方差选择法"><a class="markdownIt-Anchor" href="#方差选择法"></a> 方差选择法</h5>
+<p>方差选择法先计算各个特征的方差，然后根据阈值，选择方差大于阈值的特征。Sklearn自带的<code>VarianceThreshold</code>类可以自动完成这一操作，下面为使用示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> VarianceThreshold</span><br><span class="line">varianceselector=VarianceThreshold(threshold=<span class="number">0.6</span>)</span><br><span class="line">varianceselector.fit_transform(iris_data)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[5.1, 1.4],
+       [4.9, 1.4],
+       [4.7, 1.3],
+       ...,
+       [6.5, 5.2],
+       [6.2, 5.4],
+       [5.9, 5.1]])
+</code></pre>
+<h5 id="相关系数法"><a class="markdownIt-Anchor" href="#相关系数法"></a> 相关系数法</h5>
+<p>相关系数法先要计算各个特征对于目标值的Pearson相关系数，然后根据相关系数的大小选出排名前几位的特征。相关系数的计算公式为：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mo>=</mo><mfrac><mrow><mtext>cov</mtext><mo stretchy="false">(</mo><mi>X</mi><mo separator="true">,</mo><mi>Y</mi><mo stretchy="false">)</mo></mrow><msqrt><mrow><mtext>var</mtext><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>⋅</mo><mtext>var</mtext><mo stretchy="false">(</mo><mi>Y</mi><mo stretchy="false">)</mo></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">r=\frac{\text{cov}(X,Y)}{\sqrt{\text{var}(X)\cdot \text{var}(Y)}}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.557em;vertical-align:-1.13em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.175em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.935em;"><span class="svg-align" style="top:-3.2em;"><span class="pstrut" style="height:3.2em;"></span><span class="mord" style="padding-left:1em;"><span class="mord text"><span class="mord">var</span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord text"><span class="mord">var</span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mclose">)</span></span></span><span style="top:-2.8950000000000005em;"><span class="pstrut" style="height:3.2em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.28em;"><svg width='400em' height='1.28em' viewBox='0 0 400000 1296' preserveAspectRatio='xMinYMin slice'><path d='M263,681c0.7,0,18,39.7,52,119c34,79.3,68.167,
+158.7,102.5,238c34.3,79.3,51.8,119.3,52.5,120c340,-704.7,510.7,-1060.3,512,-1067
+c4.7,-7.3,11,-11,19,-11H40000v40H1012.3s-271.3,567,-271.3,567c-38.7,80.7,-84,
+175,-136,283c-52,108,-89.167,185.3,-111.5,232c-22.3,46.7,-33.8,70.3,-34.5,71
+c-4.7,4.7,-12.3,7,-23,7s-12,-1,-12,-1s-109,-253,-109,-253c-72.7,-168,-109.3,
+-252,-110,-252c-10.7,8,-22,16.7,-34,26c-22,17.3,-33.3,26,-34,26s-26,-26,-26,-26
+s76,-59,76,-59s76,-60,76,-60z M1001 80H40000v40H1012z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.30499999999999994em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">cov</span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.13em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>这一方法需要使用Sklearn自带的<code>SelectKBest</code>或者<code>SelectPercentile</code>，结合NumPy的<code>corrcoef</code>协方差计算函数，方法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> SelectKBest,SelectPercentile</span><br><span class="line">kbest=SelectKBest(<span class="keyword">lambda</span> x,y:np.abs(np.corrcoef(x,y,rowvar=<span class="literal">False</span>)[:<span class="number">-1</span>,<span class="number">-1</span>]),k=<span class="number">2</span>)</span><br><span class="line">percentile=SelectPercentile(<span class="keyword">lambda</span> x,y:np.abs(np.corrcoef(x,y,rowvar=<span class="literal">False</span>)[:<span class="number">-1</span>,<span class="number">-1</span>]),percentile=<span class="number">50</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">test=<span class="keyword">lambda</span> x,y:np.abs(np.corrcoef(x,y,rowvar=<span class="literal">False</span>)[:<span class="number">-1</span>,<span class="number">-1</span>])</span><br><span class="line">test(iris_data,iris_target)</span><br></pre></td></tr></table></figure>
+<pre><code>array([0.78256123, 0.42665756, 0.9490347 , 0.95654733])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kbest.fit_transform(iris_data,iris_target)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[1.4, 0.2],
+       [1.4, 0.2],
+       [1.3, 0.2],
+       ...,
+       [5.2, 2. ],
+       [5.4, 2.3],
+       [5.1, 1.8]])
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">percentile.fit_transform(iris_data,iris_target)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[1.4, 0.2],
+       [1.4, 0.2],
+       [1.3, 0.2],
+       ...,
+       [5.2, 2. ],
+       [5.4, 2.3],
+       [5.1, 1.8]])
+</code></pre>
+<h5 id="卡方检验"><a class="markdownIt-Anchor" href="#卡方检验"></a> 卡方检验</h5>
+<p>卡方分布（Chi-square distribution, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>-distribution）是概率统计中一种常用的概率分布。如果<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>个独立的随机变量<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>Z</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>Z</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>Z</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">Z_1,Z_2,\dots,Z_k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>符合标准正态分布<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">N(0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>，那么这<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>个随机变量的平方和<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>k</mi></msubsup><msubsup><mi>Z</mi><mi>i</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">X=\sum_{i=1}^{k}Z_{i}^{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.2887179999999998em;vertical-align:-0.29971000000000003em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9890079999999999em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-2.441336em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.258664em;"><span></span></span></span></span></span></span></span></span></span>服从自由度为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>的卡方分布，记作<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi><mo>∼</mo><msup><mi>χ</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X\sim \chi ^2(k)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mclose">)</span></span></span></span>。卡方分布的期望<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi><mo stretchy="false">(</mo><msup><mi>χ</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo>=</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">E(\chi ^2)=n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>，方差<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mo stretchy="false">(</mo><msup><mi>χ</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo>=</mo><mn>2</mn><mi>n</mi></mrow><annotation encoding="application/x-tex">D(\chi ^2)=2n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord mathdefault">n</span></span></span></span>。</p>
+<p>卡方检验是以卡方分布为基础的一种假设检验方法，主要用于分类变量。其基本思想是根据样本数据推断总体的分布与期望分布是否有显著性差异，或者推断两个分类变量是否相关或者独立。</p>
+<p>我们可以设原假设为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">H_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>：观察频数与期望频数没有差异，或者两个变量相互独立不相关。实际应用中，我们假设<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">H_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>成立，计算出<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>的值，它表示观察值与理论值之间的偏离程度。根据<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>分布、<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>统计量以及自由度，可以确定在<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">H_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>成立的情况下获得当前统计量以及更极端情况的概率<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span></span></span></span>。如果<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span></span></span></span>很小，说明观察值与理论值的偏离程度大，应该拒绝原假设，否则不能拒绝原假设。<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>的计算公式为：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>χ</mi><mn>2</mn></msup><mo>=</mo><mo>∑</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>A</mi><mo>−</mo><mi>T</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mi>T</mi></mfrac></mrow><annotation encoding="application/x-tex">\chi^2=\sum \frac{(A-T)^2}{T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">χ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.4539199999999999em;vertical-align:-0.345em;"></span><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.10892em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight">A</span><span class="mbin mtight">−</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913142857142857em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span></span></span></span>为实际值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span></span></span></span>为理论值。</p>
+<p>一般来说，卡方值越大，说明关联越强，特征越需要保留。使用Sklearn中的<code>SelectKBest</code>和<code>chi2</code>两个类，便可以结合卡方检验来选取特征，操作如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> SelectKBest,chi2</span><br><span class="line">chi2select=SelectKBest(chi2,k=<span class="number">2</span>)</span><br><span class="line">chi2select.fit_transform(iris_data,iris_target)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[1.4, 0.2],
+       [1.4, 0.2],
+       [1.3, 0.2],
+       ...,
+       [5.2, 2. ],
+       [5.4, 2.3],
+       [5.1, 1.8]])
+</code></pre>
+<h4 id="包装法"><a class="markdownIt-Anchor" href="#包装法"></a> 包装法</h4>
+<h5 id="递归特征消除法"><a class="markdownIt-Anchor" href="#递归特征消除法"></a> 递归特征消除法</h5>
+<p>递归特征消除法使用一个基模型来进行多轮训练，每轮训练之后消除若干权值系数的特征，再基于新的特征集进行下一轮训练。Sklearn提供了<code>RFE</code>类来完成这一操作，它的使用方法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> RFE</span><br><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"></span><br><span class="line">rfe_selector=RFE(LogisticRegression(),n_features_to_select=<span class="number">2</span>)</span><br><span class="line">rfe_selector.fit_transform(iris_data,iris_target)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[1.4, 0.2],
+       [1.4, 0.2],
+       [1.3, 0.2],
+       ...,
+       [5.2, 2. ],
+       [5.4, 2.3],
+       [5.1, 1.8]])
+</code></pre>
+<h4 id="嵌入法"><a class="markdownIt-Anchor" href="#嵌入法"></a> 嵌入法</h4>
+<h5 id="基于惩罚项的特征选择法"><a class="markdownIt-Anchor" href="#基于惩罚项的特征选择法"></a> 基于惩罚项的特征选择法</h5>
+<p>使用带有惩罚项的基模型，除了筛选出特征之外同时也进行了降维。下面的例子是使用<code>SelectFromModel</code>类结合带有L2惩罚项的逻辑回归模型来选择特征：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> SelectFromModel</span><br><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"></span><br><span class="line">model_selector_penal=SelectFromModel(LogisticRegression(penalty=<span class="string">&#x27;l2&#x27;</span>,C=<span class="number">0.1</span>))</span><br><span class="line">model_selector_penal.fit_transform(iris_data,iris_target)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[1.4, 0.2],
+       [1.4, 0.2],
+       [1.3, 0.2],
+       ...,
+       [5.2, 2. ],
+       [5.4, 2.3],
+       [5.1, 1.8]])
+</code></pre>
+<h5 id="基于树模型的特征选择法"><a class="markdownIt-Anchor" href="#基于树模型的特征选择法"></a> 基于树模型的特征选择法</h5>
+<p>树模型中的梯度提升树和随机森林等模型可以根据每个非叶结点上用于分支的特征以及它们的得分，来计算每个特征的重要性，因此这些模型也可以用于特征选择。使用<code>SelectFromModel</code>类结合随机森林模型选择特征的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> SelectFromModel</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier</span><br><span class="line"></span><br><span class="line">model_selector_tree=SelectFromModel(RandomForestClassifier())</span><br><span class="line">model_selector_tree.fit_transform(iris_data,iris_target)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[1.4, 0.2],
+       [1.4, 0.2],
+       [1.3, 0.2],
+       ...,
+       [5.2, 2. ],
+       [5.4, 2.3],
+       [5.1, 1.8]])
+</code></pre>
+<h3 id="降维"><a class="markdownIt-Anchor" href="#降维"></a> 降维</h3>
+<h4 id="维度灾难"><a class="markdownIt-Anchor" href="#维度灾难"></a> 维度灾难</h4>
+<p>在特征选择完成之后，可能特征矩阵仍然较大。这不仅会导致计算量大，训练时间长，而且更重要的是会造成计算上的“维度灾难”(The curse of dimensionality)。下面为两个维度灾难的例子。</p>
+<p>第一个例子与高维空间中的数据采样有关。为了简便，我们假设数据在一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span></span></span></span>维的单位长度超立方体中均匀分布。如果以某个点为中心，构造一个小的超立方体，要求其中包含的数据点占总数据的比例为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span></span></span></span>，那么这个超立方体的边长应当为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>e</mi><mi>p</mi></msub><mo stretchy="false">(</mo><mi>r</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>r</mi><mrow><mn>1</mn><mi mathvariant="normal">/</mi><mi>p</mi></mrow></msup></mrow><annotation encoding="application/x-tex">e_{p}(r)=r^{1/p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8879999999999999em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8879999999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">/</span><span class="mord mathdefault mtight">p</span></span></span></span></span></span></span></span></span></span></span></span>。当<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">p=10</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">0</span></span></span></span>时，如果取<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mo>=</mo><mn>0.01</mn></mrow><annotation encoding="application/x-tex">r=0.01</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">1</span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>e</mi><mn>10</mn></msub><mo stretchy="false">(</mo><mn>0.01</mn><mo stretchy="false">)</mo><mo>≈</mo><mn>0.63</mn></mrow><annotation encoding="application/x-tex">e_{10}(0.01)\approx 0.63</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">0</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">6</span><span class="mord">3</span></span></span></span>；而当<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">p=5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">5</span></span></span></span>时，同样取<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mo>=</mo><mn>0.01</mn></mrow><annotation encoding="application/x-tex">r=0.01</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">1</span></span></span></span>，此时<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>e</mi><mn>5</mn></msub><mo stretchy="false">(</mo><mn>0.01</mn><mo stretchy="false">)</mo><mo>≈</mo><mn>0.40</mn></mrow><annotation encoding="application/x-tex">e_{5}(0.01)\approx 0.40</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">5</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">4</span><span class="mord">0</span></span></span></span>。也就是说，在10维的超立方体中，当我们仅仅需要1%的数据时，就需要对每个特征覆盖63%的取值范围。而在5维的超立方体中，如果取1%的数据，我们只需要对每个特征覆盖40%的取值范围。</p>
+<p>另一个例子与高维空间中的距离计算有关。考虑一个单位长度超立方体的对角线长度，当维度<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">p=5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">5</span></span></span></span>时，这个距离是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msqrt><mn>5</mn></msqrt></mrow><annotation encoding="application/x-tex">\sqrt{5}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.13278em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.90722em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">5</span></span></span><span style="top:-2.86722em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width='400em' height='1.08em' viewBox='0 0 400000 1080' preserveAspectRatio='xMinYMin slice'><path d='M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.13278em;"><span></span></span></span></span></span></span></span></span>；而当维度<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">p=20</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">0</span></span></span></span>时，这个距离已经变成了<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><msqrt><mn>5</mn></msqrt></mrow><annotation encoding="application/x-tex">2\sqrt{5}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.13278em;"></span><span class="mord">2</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.90722em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">5</span></span></span><span style="top:-2.86722em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width='400em' height='1.08em' viewBox='0 0 400000 1080' preserveAspectRatio='xMinYMin slice'><path d='M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.13278em;"><span></span></span></span></span></span></span></span></span>。</p>
+<p>上面两个例子说明了，高维空间中的两个看似近邻的点，它们的实际距离可能已经不再“近邻”。或者说，高维空间中的数据会变得“稀疏”。因此，对于高维数据，我们仍需要采取一些办法来进行降维，从而减小维度过高造成的负面影响。</p>
+<h4 id="主成分分析法"><a class="markdownIt-Anchor" href="#主成分分析法"></a> 主成分分析法</h4>
+<h5 id="原理"><a class="markdownIt-Anchor" href="#原理"></a> 原理</h5>
+<p>主成分分析(Principle Components Analysis, PCA)属于无监督学习算法，它的想法是用一个<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span></span></span></span>维的数据去尽可能地近似表达原本<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>p</mi><mo>&gt;</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(p&gt;q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">p</span><span class="mopen">(</span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span>维的数据。</p>
+<p>PCA的主要思想是从最大方差的角度去考虑，它的出发点是在数据降维之后，能够在降维后的特征上保持尽可能大的方差。这样在降维后的数据上，能够使得数据点尽可能地分散。</p>
+<p>下图是PCA将原始数据从三维降到二维的示意图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210126232059.png" alt="PCA" /></p>
+<h5 id="实现"><a class="markdownIt-Anchor" href="#实现"></a> 实现</h5>
+<p>Sklearn中的<code>PCA</code>类可以方便地完成主成分分析的操作，它的使用示例如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line">pca=PCA(n_components=<span class="number">2</span>) <span class="comment">#n_components可以为整数，代表选择保留的主成分个数；也可以传入一个0-1之间的浮点数，表示所希望达到的方差贡献率，此时会自动选取特征值靠前的若干个主成分，直到方差贡献率刚好满足条件。</span></span><br><span class="line">pca.fit_transform(iris_data)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-2.68412563,  0.31939725],
+       [-2.71414169, -0.17700123],
+       [-2.88899057, -0.14494943],
+       ...,
+       [ 1.76434572,  0.07885885],
+       [ 1.90094161,  0.11662796],
+       [ 1.39018886, -0.28266094]])
+</code></pre>
+<p>当数据量或者是特征数目很大的时候，无论是对特征矩阵计算协方差还是做奇异值分解，所需的内存以及计算量都很大。为了解决这一问题，有两种办法。</p>
+<p>第一种办法是使用增量PCA的办法，这种办法允许我们将数据集分批输入，每次只输入一个小批量。这种办法对大型训练集很有用，而且可以用于在线学习的情景。Sklearn提供了<code>IncrementalPCA</code>类，用来做增量PCA，它的使用方法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> IncrementalPCA</span><br><span class="line">n_batches=<span class="number">20</span></span><br><span class="line">inc_pca=IncrementalPCA(n_components=<span class="number">2</span>)</span><br><span class="line"><span class="keyword">for</span> X_batch <span class="keyword">in</span> np.array_split(iris_data,n_batches):</span><br><span class="line">    inc_pca.partial_fit(X_batch)</span><br><span class="line">inc_pca.transform(X_batch)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 2.56282819,  0.28217892],
+       [ 2.41842883,  0.31240878],
+       [ 1.94423122,  0.18790271],
+       ...,
+       [ 1.76430561,  0.07992847],
+       [ 1.90016469,  0.12989783],
+       [ 1.38953673, -0.2751793 ]])
+</code></pre>
+<p>另一种计算PCA的方法为随机PCA。它是一种随机算法，可以快速地找到前若干个主成分的近似值。这种算法的时间复杂度与选取的主成分个数有关，而不是与特征个数有关。因此当选取的主成分个数远小于特征个数时，它比普通的PCA算法快得多。</p>
+<p>如果要使用随机PCA，则需要在<code>PCA</code>类初始化的时候传入参数<code>svd_solver='randomized'</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.decomposition <span class="keyword">import</span> PCA</span><br><span class="line">rnd_pca=PCA(n_components=<span class="number">2</span>,svd_solver=<span class="string">&#x27;randomized&#x27;</span>)</span><br><span class="line">rnd_pca.fit_transform(iris_data)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-2.68412563,  0.31939725],
+       [-2.71414169, -0.17700123],
+       [-2.88899057, -0.14494943],
+       ...,
+       [ 1.76434572,  0.07885885],
+       [ 1.90094161,  0.11662796],
+       [ 1.39018886, -0.28266094]])
+</code></pre>
+<h4 id="线性判别分析法"><a class="markdownIt-Anchor" href="#线性判别分析法"></a> 线性判别分析法</h4>
+<h5 id="原理-2"><a class="markdownIt-Anchor" href="#原理-2"></a> 原理</h5>
+<p>不同于PCA，线性判别分析(Linear Discrimination Analysis, LDA)是一种监督学习算法。它的基本思想是设法将训练样本投影到一条直线上，使得同类样本的投影点尽可能地接近、异类样例的投影点尽可能地远离。而在对新样本进行分类时，将其投影到同样的直线上，再根据投影点的位置来确定新样本的类别。下图为LDA在二维空间内的一个示例：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210126232343.png" alt="LDA" /></p>
+<h5 id="实现-2"><a class="markdownIt-Anchor" href="#实现-2"></a> 实现</h5>
+<p>Sklearn中提供了<code>LinearDiscriminantAnalysis</code>类，可以用来计算LDA，使用方法如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.discriminant_analysis <span class="keyword">import</span> LinearDiscriminantAnalysis</span><br><span class="line">lda=LinearDiscriminantAnalysis(n_components=<span class="number">2</span>)</span><br><span class="line">lda.fit_transform(iris_data,iris_target)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[-8.06179978,  0.30042062],
+       [-7.12868772, -0.78666043],
+       [-7.48982797, -0.26538449],
+       ...,
+       [ 4.9677409 ,  0.82114055],
+       [ 5.88614539,  2.34509051],
+       [ 4.68315426,  0.33203381]])
+</code></pre>
+<h2 id="流水线操作"><a class="markdownIt-Anchor" href="#流水线操作"></a> 流水线操作</h2>
+<p>由于特征工程通常需要包含很多步的操作，如果具有多份相同格式的数据需要使用相同的办法进行处理，便可以借助sklearn提供的流水线操作函数来方便操作。sklearn提供的<code>Pipeline</code>类可以定义一个流水线操作，初始化的时候需要传入一个list作为参数，其中的每个元素都是一个<code>(name, function)</code>的二元tuple。下面示例为一个生成多项式变量之后再标准化的流水线操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> Pipeline</span><br><span class="line">polynomial_feature_gen=Pipeline((</span><br><span class="line">    (<span class="string">&#x27;poly_features&#x27;</span>,PolynomialFeatures()),</span><br><span class="line">    (<span class="string">&#x27;scaler&#x27;</span>,StandardScaler()),</span><br><span class="line">))</span><br><span class="line">polynomial_feature_gen.fit_transform(iris_data)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[ 0.        , -0.90068117,  1.01900435, ..., -1.21241227,
+        -1.17404107, -1.08301943],
+       [ 0.        , -1.14301691, -0.13197948, ..., -1.21241227,
+        -1.17404107, -1.08301943],
+       [ 0.        , -1.38535265,  0.32841405, ..., -1.23386659,
+        -1.17829941, -1.08301943],
+       ...,
+       [ 0.        ,  0.79566902, -0.13197948, ...,  0.78045488,
+         0.98068362,  1.08791683],
+       [ 0.        ,  0.4321654 ,  0.78880759, ...,  0.94891095,
+         1.41077689,  1.79511576],
+       [ 0.        ,  0.06866179, -0.13197948, ...,  0.69861065,
+         0.72092432,  0.67127249]])
+</code></pre>
+<h1 id="模型训练与评估"><a class="markdownIt-Anchor" href="#模型训练与评估"></a> 模型训练与评估</h1>
+<p>在对数据做完特征工程之后，接下来需要选择合适的模型来进行训练，并评估模型的训练效果。对于监督学习来说，模型的训练效果可以定量地计算出来；而对于非监督学习的效果，通常需要人为地去评估。下面我们以监督学习为例，来介绍模型训练与评估的流程。</p>
+<p>下面的内容中，我们仍然以Sklearn中的iris数据集为例，来说明模型训练与评估的过程。需要注意的是，这一部分的目的主要是为了说明模型的训练过程，再加上iris数据集比较“干净”，因此略去了特征筛选的过程。但是在实际应用中，特征工程这一过程是必不可少的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris</span><br><span class="line">orig_data=load_iris()</span><br><span class="line">iris_data=orig_data.data <span class="comment">#鸢尾花特征，包括花萼长度等4条属性</span></span><br><span class="line">iris_target=orig_data.target <span class="comment">#鸢尾花的类别</span></span><br></pre></td></tr></table></figure>
+<h2 id="分割数据集"><a class="markdownIt-Anchor" href="#分割数据集"></a> 分割数据集</h2>
+<p>在训练模型之前，首先要对数据集进行分割。Sklearn提供了一些可以用来划分数据集的函数，它们使用起来非常方便。</p>
+<p><code>train_test_split</code>函数为基本的划分数据集的函数，它会使用一个随机数种子，将数据集打乱之后按照一定的比例划分为训练集和测试集两部分。这一函数可以传入多个要划分的数据，此时会使用一套相同的索引对数据集进行划分，但是要保证这些数据在维度0上的大小相同。函数的返回值为：数据1的训练集、数据1的测试集、数据2的训练集、数据2的测试集……。</p>
+<p>其中重要参数的含义如下：</p>
+<ul>
+<li>train_size：可以传入一个整数，代表训练集的大小；或者传入一个0-1的浮点数，代表训练集占数据集的百分比</li>
+<li>test_size：可以传入一个整数，代表测试集的大小；或者传入一个0-1的浮点数，代表测试集占数据集的百分比。需要注意的是，训练集+测试集必须要小于等于整个数据集的大小。二者可以同时传入；也可以只传入一个，另一个会根据传入的参数自动推断</li>
+<li>random_state：一个随机数种子，用于复现数据集的划分方式</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">train_data,test_data,train_label,test_label=train_test_split(iris_data,iris_target,test_size=<span class="number">0.2</span>,random_state=<span class="number">1234</span>) </span><br></pre></td></tr></table></figure>
+<p>此外，下面这些类可以用来生成划分数据集的索引，对应于一些常用的划分数据集的方法：</p>
+<ul>
+<li>K折交叉验证：将全部训练集划分为K个不相交的子集
+<ul>
+<li><code>KFold</code>：普通的K折划分</li>
+<li><code>GroupKFold</code>：需要传入一个额外的参数，代表每个样本所属的分组</li>
+<li><code>StratifiedKFold</code>：按照标签的类别比例进行划分，保证每个分组内每一类的比例相同</li>
+</ul>
+</li>
+<li>留一法：
+<ul>
+<li><code>LeaveOneOut</code>：留下一个样本作为测试样本，其余为训练样本</li>
+<li><code>LeavePOut</code>：留下P个样本作为测试样本，其余为训练样本</li>
+<li><code>LeaveOneGroupOut</code>：每个分组留下一个作为测试样本</li>
+<li><code>LeavePGroupsOut</code>：每个分组留下P个作为测试样本</li>
+</ul>
+</li>
+<li>随机划分法：
+<ul>
+<li><code>ShuffleSplit</code>：随机打乱之后再划分</li>
+<li><code>GroupShuffleSplit</code>：同样是随机打乱之后再划分，但是按照分组进行操作</li>
+<li><code>StratifiedShuffleSplit</code>：随机打乱并按照类别比例分层划分</li>
+</ul>
+</li>
+</ul>
+<p>生成索引之后，便可以使用这些索引来获得对应的训练集与测试集。上述这些类的使用方法比较相似，因此下面以<code>StratifiedShuffleSplit</code>为例来演示其用法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> StratifiedShuffleSplit</span><br><span class="line">stratified_split=StratifiedShuffleSplit(n_splits=<span class="number">2</span>,test_size=<span class="number">0.2</span>,random_state=<span class="number">1234</span>) <span class="comment">#在StratifiedShuffleSplit类中，初始化参数n_splits代表生成多少组划分的索引，每一组的索引独立</span></span><br><span class="line"><span class="keyword">for</span> train_index,test_index <span class="keyword">in</span> stratified_split.split(iris_data,iris_target): <span class="comment">#因上面的n_splits=2，此处的for循环会进行两轮</span></span><br><span class="line">    print(train_index,test_index)</span><br><span class="line">    <span class="comment">#验证测试集与训练集中的类别比例是否相同</span></span><br><span class="line">    print(pd.Series(iris_target[train_index]).value_counts()) </span><br><span class="line">    print(pd.Series(iris_target[test_index]).value_counts())</span><br></pre></td></tr></table></figure>
+<pre><code>[141 139  62 ...  39 106  51] [104  24  47 ... 112 126 119]
+2    40
+1    40
+0    40
+dtype: int64
+2    10
+1    10
+0    10
+dtype: int64
+[  2 127   8 ... 145  62  38] [138 126  52 ...  10  96 123]
+2    40
+1    40
+0    40
+dtype: int64
+2    10
+1    10
+0    10
+dtype: int64
+</code></pre>
+<p>我们使用上一步的分层划分结果，对接下来模型训练过程中使用的iris数据集进行分割：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">train_data=iris_data[train_index]</span><br><span class="line">train_label=iris_target[train_index]</span><br><span class="line">test_data=iris_data[test_index]</span><br><span class="line">test_label=iris_target[test_index]</span><br></pre></td></tr></table></figure>
+<h2 id="模型选择与训练"><a class="markdownIt-Anchor" href="#模型选择与训练"></a> 模型选择与训练</h2>
+<p>在模型的选择上，通常需要考虑很多因素，包括但不限于下面这些：</p>
+<ul>
+<li>原始数据的类型：不同的模型擅长处理不同类型的原始数据。例如，目前主流的用于处理图片数据的方法是使用卷积神经网络（CNN）；对于表格类的数据，通常需要根据特征是连续值还是离散值来判断，如果离散的特征较多，可以考虑朴素贝叶斯、决策树等模型，而连续型特征较多时则通常使用线性回归、逻辑回归等模型；此外，自然语言类或是时间序列数据可以考虑循环神经网络（RNN）模型，图结构模型可以考虑图神经网络（GNN）模型。</li>
+<li>模型部署环境：训练好的模型需要部署在什么样的环境也是选择模型的一个重要考量。如果需要将模型部署在嵌入式系统中时，就需要在保证模型预测效果的前提下，选择计算速度更快以及体积更小的模型；如果要使用神经网络模型，但是在部署环境中没有GPU的话，就需要控制神经网络的规模；等等。</li>
+<li>模型的可解释性：在某些场合中需要让训练出来的模型具有一定的可解释性，例如金融的风控系统、科学研究等领域。由于神经网络的可解释性较差，因此在需要模型具有可解释性的场合，就需要选择如线性回归、支持向量机、逻辑回归这样可解释性较好的模型。</li>
+<li>模型的使用场景：在一些情形如科学研究或者工程建模中，可能会要求训练好的模型可以求导，此时就无法使用类似于决策树这样，函数表达式为分段函数的模型。</li>
+</ul>
+<p>在iris数据集中，一共出现了3种类型的标签，因此我们要做的是一个多分类的任务。iris数据集的特征都是连续值，因此下面以决策树和支持向量机这两种模型为例，来说明模型的训练过程。需要说明的是，sklearn提供的模型默认支持多分类任务，不需要使用<code>sklearn.multiclass</code>中的类对其进行包装。</p>
+<p>在不同的机器学习模型中，通常都存在着不同的超参数。要调整这些超参数，可以使用网格搜索或随机搜索的方式。sklearn提供了<code>GridSearchCV</code>类和<code>RandomizedSearchCV</code>类，实现了通过K折交叉验证来寻找最优参数的方法。在寻找模型超参数的时候，可以使用它们来方便操作。在寻找超参数的时候，通常需要给出超参数的取值范围，这一范围的设定依赖于经验以及数据本身的一些特性。</p>
+<p>特别需要注意的是，在使用网格搜索或者是随机搜索的<code>fit</code>函数时，搜索结束之后会自动使用查找到的最优参数组合初始化一个新模型，再使用传入的所有训练集对这个新模型进行训练。也就是说，相当于是超参数搜索完成之后又自动完成了下面两个步骤：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x_classifier=XClassifier(**grid_search_X.best_params_) <span class="comment">#X代表模型名称</span></span><br><span class="line">x_classifier.fit(train_data,train_label)</span><br></pre></td></tr></table></figure>
+<p>如果不想自动完成这一步骤，需要在初始化<code>GridSearchCV</code>类和<code>RandomizedSearchCV</code>类的时候，传入<code>refit=False</code>（默认为True）。</p>
+<p>搜索完成之后，可以调用类的属性来查看结果，常用的有：</p>
+<ul>
+<li>best_score_：查看最高得分</li>
+<li>best_params_：查看搜索出来的最优参数</li>
+<li>best_estimator_：输出最优模型</li>
+<li>cv_results_：查看搜索的详细结果</li>
+</ul>
+<p>首先，我们构造一个决策树模型，使用网格搜索寻找合适的超参数并训练它：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> GridSearchCV</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"></span><br><span class="line">param_tree_classifier=&#123;</span><br><span class="line">    <span class="string">&#x27;max_depth&#x27;</span>:[<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>],</span><br><span class="line">    <span class="string">&#x27;min_samples_split&#x27;</span>:[<span class="number">2</span>,<span class="number">4</span>,<span class="number">8</span>],</span><br><span class="line">    <span class="string">&#x27;max_leaf_nodes&#x27;</span>:[<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>],</span><br><span class="line">    <span class="string">&#x27;min_samples_leaf&#x27;</span>:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">grid_search_tree=GridSearchCV(DecisionTreeClassifier(),param_tree_classifier,cv=<span class="number">5</span>,scoring=<span class="string">&#x27;precision_macro&#x27;</span>) <span class="comment">#第一个参数为一个模型的实体；第二个参数为一个dict，包含了要调整的参数名和取值；cv代表多少折交叉验证；scoring代表超参数选择时的评分标准，可以使用 sorted(sklearn.metrics.SCORERS.keys()) 查看所有可选的标准</span></span><br><span class="line">grid_search_tree.fit(train_data,train_label)</span><br></pre></td></tr></table></figure>
+<p>然后我们再构造用于多分类的支持向量机模型，这个示例中我们使用随机的参数搜索：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> RandomizedSearchCV</span><br><span class="line"><span class="keyword">from</span> sklearn.multiclass <span class="keyword">import</span> OneVsRestClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC</span><br><span class="line"></span><br><span class="line">params_svc=&#123;</span><br><span class="line">    <span class="string">&#x27;C&#x27;</span>:np.linspace(<span class="number">0</span>,<span class="number">10</span>,<span class="number">100</span>)</span><br><span class="line">&#125;</span><br><span class="line">rand_search_svc=RandomizedSearchCV(SVC(),params_svc,cv=<span class="number">5</span>,scoring=<span class="string">&#x27;precision_macro&#x27;</span>,n_iter=<span class="number">30</span>) <span class="comment">#随机搜索时可以传入n_iter参数限制搜索次数</span></span><br><span class="line">rand_search_svc.fit(train_data,train_label)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>备注1：sklearn中的模型分类</p>
+<p>下列为经常使用到的监督模型和非监督模型所包含在sklearn的模块：</p>
+<ul>
+<li><code>sklearn.cluster</code>：包括一些聚类模型</li>
+<li><code>sklearn.discriminant_analysis</code>：包括LDA等模型</li>
+<li><code>sklearn.ensemble</code>：包括Adaboost、GBDT、随机森林等融合模型</li>
+<li><code>sklearn.linear_model</code>：包括线性回归、逻辑回归等模型</li>
+<li><code>sklearn.naive_bayes</code>：包括朴素贝叶斯等模型</li>
+<li><code>sklearn.neighbors</code>：包括K近邻等模型</li>
+<li><code>sklearn.svm</code>：包括支持向量机模型</li>
+<li><code>sklearn.tree</code>：包括决策树模型</li>
+</ul>
+<p>备注2：一般来说，每一个监督学习的模型都有一个<code>fit()</code>和<code>predict()</code>函数。<code>fit</code>需要传入两个参数，一个代表训练集的特征矩阵，另一个代表训练集数据的标签；<code>predict</code>函数需要传入测试集的特征矩阵，模型会根据之前<code>fit</code>函数学习到的结果进行预测：</p>
+<p><code>***.fit(features, labels)</code></p>
+<p><code>***.predict(features)</code></p>
+<p>有些分类器可以给出不同的分类所对应的概率，使用<code>***.predict_proba(features)</code>即可</p>
+</blockquote>
+<h2 id="模型评估"><a class="markdownIt-Anchor" href="#模型评估"></a> 模型评估</h2>
+<p>在模型训练完成之后，需要将测试集的数据送到模型中，得到预测结果，然后可以使用真实值与预测值进行对比。sklearn的metrics模块提供了一些评价函数，方便我们计算一些评价指标。</p>
+<p>对于分类模型，常用的评价函数包括：</p>
+<ul>
+<li><code>log_loss</code> (限于输出概率值的分类模型)</li>
+<li><code>confusion_matrix</code></li>
+<li><code>precision_score</code>,<code>recall_score</code>,<code>f1_score</code></li>
+<li><code>precision_recall_curve</code>,<code>roc_auc_curve</code></li>
+<li><code>accuracy_score</code></li>
+</ul>
+<p>对于回归模型，常用的评价函数有：</p>
+<ul>
+<li><code>mean_squared_error</code></li>
+<li><code>mean_absolute_error</code></li>
+<li><code>hinge_loss</code></li>
+</ul>
+<p>这些函数的使用方法比较类似，都需要传入两个参数，一个代表预测值，另一个为真实值。下面我们使用之前训练好的决策树模型和支持向量机模型进行预测，然后再计算它们预测结果的准确率，并查看它们的混淆矩阵：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pred_svc=grid_search_tree.predict(test_data)</span><br><span class="line">pred_tree=rand_search_svc.predict(test_data)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line">print(<span class="string">&#x27;The accuracy of decision tree model: &#x27;</span>,accuracy_score(pred_tree,test_label))</span><br><span class="line">print(<span class="string">&#x27;The accuracy of support vector classifier model: &#x27;</span>,accuracy_score(pred_svc,test_label))</span><br></pre></td></tr></table></figure>
+<pre><code>The accuracy of decision tree model:  0.9
+The accuracy of support vector classifier model:  0.8666666666666667
+</code></pre>
+<p>接下来，我们计算它们的混淆矩阵，查看它们在对测试集进行分类时的具体表现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix</span><br><span class="line">confusion_matrix(pred_tree,test_label)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[10,  0,  0],
+       [ 0, 10,  3],
+       [ 0,  0,  7]], dtype=int64)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">confusion_matrix(pred_svc,test_label)</span><br></pre></td></tr></table></figure>
+<pre><code>array([[10,  0,  0],
+       [ 0,  9,  3],
+       [ 0,  1,  7]], dtype=int64)
+</code></pre>
+<p>需要说明的是，由于机器学习通常需要在许多操作中使用到随机数，比如划分数据集、集成模型的boostrap操作、神经网络模型的初始化参数、等等。因此，模型的预测效果具有一定的随机性。在实际应用中，经常需要使用不同的随机数种子多次重复上述过程，再对这些训练好的模型进行融合，从而获得最终的模型。</p>
+<h2 id="模型保存与加载"><a class="markdownIt-Anchor" href="#模型保存与加载"></a> 模型保存与加载</h2>
+<p>训练好的模型可以将其保存到本机上，并在下次使用的时候加载：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.externals <span class="keyword">import</span> joblib</span><br><span class="line">joblib.dump(rand_search_svc.best_estimator_,<span class="string">&#x27;svc_model.pkl&#x27;</span>) <span class="comment">#保存模型</span></span><br><span class="line">loaded_model=joblib.load(<span class="string">&#x27;svc_model.pkl&#x27;</span>) <span class="comment">#加载模型</span></span><br></pre></td></tr></table></figure>
+<h1 id="实际案例"><a class="markdownIt-Anchor" href="#实际案例"></a> 实际案例</h1>
+<p>在下面的内容中，我们将使用Kaggle数据竞赛平台上的Titanic数据集作为示例，来演示如何完成一个实际的机器学习项目。</p>
+<p>该数据集的下载地址为：<span class="exturl" data-url="aHR0cHM6Ly93d3cua2FnZ2xlLmNvbS9jL3RpdGFuaWM=">https://www.kaggle.com/c/titanic<i class="fa fa-external-link-alt"></i></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">train_data=pd.read_csv(<span class="string">&#x27;titanic/train.csv&#x27;</span>) <span class="comment">#训练集数据，包含标签</span></span><br><span class="line">test_data=pd.read_csv(<span class="string">&#x27;titanic/test.csv&#x27;</span>) <span class="comment">#测试集数据，不包含标签</span></span><br><span class="line">test_label=pd.read_csv(<span class="string">&#x27;titanic/titanic.csv&#x27;</span>) <span class="comment">#测试集数据的实际标签</span></span><br></pre></td></tr></table></figure>
+<p>首先，我们需要查看数据所包含的内容，从而对数据的概况做一些了解：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">train_data</span><br></pre></td></tr></table></figure>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th &#123;
+    vertical-align: top;
+&#125;
+
+.dataframe thead th &#123;
+    text-align: right;
+&#125;
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>886</th>
+      <td>887</td>
+      <td>0</td>
+      <td>2</td>
+      <td>Montvila, Rev. Juozas</td>
+      <td>male</td>
+      <td>27.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>211536</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>887</th>
+      <td>888</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Graham, Miss. Margaret Edith</td>
+      <td>female</td>
+      <td>19.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>112053</td>
+      <td>30.0000</td>
+      <td>B42</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>888</th>
+      <td>889</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Johnston, Miss. Catherine Helen "Carrie"</td>
+      <td>female</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>2</td>
+      <td>W./C. 6607</td>
+      <td>23.4500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>889</th>
+      <td>890</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Behr, Mr. Karl Howell</td>
+      <td>male</td>
+      <td>26.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>111369</td>
+      <td>30.0000</td>
+      <td>C148</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>890</th>
+      <td>891</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Dooley, Mr. Patrick</td>
+      <td>male</td>
+      <td>32.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>370376</td>
+      <td>7.7500</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+  </tbody>
+</table>
+<p>891 rows × 12 columns</p>
+</div>
+<p>同时，我们也需要查看训练集与测试集中的每一个特征是否含有缺失值，并根据这些特征中缺失值的个数、该列其他非缺失值的取值等信息，来决定如何处理缺失值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">train_data.count()</span><br></pre></td></tr></table></figure>
+<pre><code>PassengerId    891
+Survived       891
+Pclass         891
+Name           891
+Sex            891
+Age            714
+SibSp          891
+Parch          891
+Ticket         891
+Fare           891
+Cabin          204
+Embarked       889
+dtype: int64
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">test_data.count()</span><br></pre></td></tr></table></figure>
+<pre><code>PassengerId    418
+Pclass         418
+Name           418
+Sex            418
+Age            332
+SibSp          418
+Parch          418
+Ticket         418
+Fare           417
+Cabin           91
+Embarked       418
+dtype: int64
+</code></pre>
+<p>借助于竞赛主办方提供的原始数据描述，我们可以得到下面的特征处理初步思路：</p>
+<ul>
+<li>PassengerId：乘客的ID号码，对于构造模型没有帮助，可以直接删除。</li>
+<li>Survived：乘客是否存活，1代表存活，0代表未存活。它属于模型要预测的值，因此我们要构造的模型是一个二分类的模型。</li>
+<li>Pclass：乘客船票对应的席位等级，可以取1、2、3三个离散的整数值。</li>
+<li>Name：乘客的姓名，根据我们的常识它对于预测是否存活应该没有什么帮助，因此可以直接删除。</li>
+<li>Sex：乘客的性别，有male和female两种。由于机器学习模型无法将字符串作为模型输入直接进行计算，因此需要将这一项转换为数字类型。</li>
+<li>Age：乘客年龄，为一系列的离散值。在训练集与测试集中，这一特征的缺失值占了20%，但是由于这一特征应该属于比较重要的特征，不能直接删除，而是需要考虑如何处理；同时由于对这一特征的具体信息仍不够了解，无法得知后续的处理方法，还需要做一些深入的分析。</li>
+<li>SibSp：与乘客一同上船的兄弟姐妹/配偶数量，为一系列离散值。</li>
+<li>Parch：与乘客一同上船的父母/子女数量，为一系列离散值。</li>
+<li>Ticket：船票编号，每个乘客的船票编号应该是唯一的，它对构造模型也没有什么帮助，可以直接删除。</li>
+<li>Fare：船票价格，为一系列连续值。我们在测试集中看到Fare存在一个缺失值，比较稳妥的办法是取其它数据的平均值进行填充。</li>
+<li>Cabin：乘客所在的座位号，可以看到它是字母+数字的组合，并存在大量的空值。需要进一步研究以决定如何处理。</li>
+<li>Embarked：乘客在哪个港口上船，为C、Q、S三个字母中的一个。同Sex类似，需要转换为数字进行处理。但是注意到在训练集中，有两条数据的这一特征是缺失的，测试集中没有缺失这一特征的样本，因此我们可以直接删除训练集中的这两个样本。</li>
+</ul>
+<p>接下来，我们对其中一些特征进行进一步的分析。</p>
+<p>通过查看Age特征的一些统计量，我们发现训练集与测试集上它们的统计学特性差别不大。因此，比较好的填充方法是使用各自数据集的平均值进行填充。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">train_data[<span class="string">&#x27;Age&#x27;</span>].describe()</span><br></pre></td></tr></table></figure>
+<pre><code>count    714.000000
+mean      29.699118
+std       14.526497
+min        0.420000
+25%       20.125000
+50%       28.000000
+75%       38.000000
+max       80.000000
+Name: Age, dtype: float64
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">test_data[<span class="string">&#x27;Age&#x27;</span>].describe()</span><br></pre></td></tr></table></figure>
+<pre><code>count    332.000000
+mean      30.272590
+std       14.181209
+min        0.170000
+25%       21.000000
+50%       27.000000
+75%       39.000000
+max       76.000000
+Name: Age, dtype: float64
+</code></pre>
+<p>对于Cabin特征，我们先查看NaN值与非NaN值对于生还是否有影响，为此我们可以做一个交叉表来查看。交叉表的内容明显说明了Cabin值是否为NaN对于生还率有着巨大的影响，因此不能直接删除。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_nan</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">if</span> x <span class="keyword">is</span> np.NaN:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">pd.crosstab(train_data[<span class="string">&#x27;Cabin&#x27;</span>].apply(is_nan),train_data[<span class="string">&#x27;Survived&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th &#123;
+    vertical-align: top;
+&#125;
+
+.dataframe thead th &#123;
+    text-align: right;
+&#125;
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Survived</th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+    <tr>
+      <th>Cabin</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>False</th>
+      <td>68</td>
+      <td>136</td>
+    </tr>
+    <tr>
+      <th>True</th>
+      <td>481</td>
+      <td>206</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>由于Cabin特征为字母+数字的组合，我们推测字母应该对应船舱号，而数字对应座位号。我们去掉数字，查看字母部分与最终的生还是否有关。为此，我们需要做另外一个交叉表。从交叉表的内容可以看出，在训练集中不同的船舱号所对应的生还率有着比较明显的区别。</p>
+<p>考虑到船舱号的类别较多，如果使用树模型的话，不需要将船舱号进行独热编码，可以将船舱号中的字母部分取出，作为一个类别；但是如果不使用树模型的话，由于需要转换为独热编码，这样做则会导致维度过高，因此我们只考虑船舱号部分是否为NaN。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove_num</span>(<span class="params">x</span>):</span></span><br><span class="line">    <span class="keyword">if</span> x <span class="keyword">is</span> np.NaN:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;N&#x27;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> x[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">pd.crosstab(train_data[<span class="string">&#x27;Survived&#x27;</span>],train_data[<span class="string">&#x27;Cabin&#x27;</span>].map(remove_num))</span><br></pre></td></tr></table></figure>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th &#123;
+    vertical-align: top;
+&#125;
+
+.dataframe thead th &#123;
+    text-align: right;
+&#125;
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Cabin</th>
+      <th>A</th>
+      <th>B</th>
+      <th>C</th>
+      <th>D</th>
+      <th>E</th>
+      <th>F</th>
+      <th>G</th>
+      <th>N</th>
+      <th>T</th>
+    </tr>
+    <tr>
+      <th>Survived</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>8</td>
+      <td>12</td>
+      <td>24</td>
+      <td>8</td>
+      <td>8</td>
+      <td>5</td>
+      <td>2</td>
+      <td>481</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7</td>
+      <td>35</td>
+      <td>35</td>
+      <td>25</td>
+      <td>24</td>
+      <td>8</td>
+      <td>2</td>
+      <td>206</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>通过上述的分析，我们得到了数据处理的基本思路。接下来，我们准备分别训练以决策树和逻辑回归作为基础模型的两种bagging集成模型（即每个模型独立，模型最终输出取决于它们的平均输出），为此需要实现两种不同的处理方法。为了方便复用，将其定义为函数的形式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> LabelEncoder</span><br><span class="line"><span class="keyword">from</span> sklearn.impute <span class="keyword">import</span> SimpleImputer</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">random_forest_dataprocess</span>(<span class="params">data,is_training_data=True</span>):</span></span><br><span class="line">    data=data.drop([<span class="string">&#x27;PassengerId&#x27;</span>,<span class="string">&#x27;Name&#x27;</span>,<span class="string">&#x27;Ticket&#x27;</span>],axis=<span class="number">1</span>)</span><br><span class="line">    data[<span class="string">&#x27;Sex&#x27;</span>]=LabelEncoder().fit_transform(data[<span class="string">&#x27;Sex&#x27;</span>])</span><br><span class="line">    data[<span class="string">&#x27;Fare&#x27;</span>]=data[<span class="string">&#x27;Fare&#x27;</span>].fillna(data[<span class="string">&#x27;Fare&#x27;</span>].mean())</span><br><span class="line">    data[<span class="string">&#x27;Age&#x27;</span>]=data[<span class="string">&#x27;Age&#x27;</span>].fillna(data[<span class="string">&#x27;Age&#x27;</span>].mean())</span><br><span class="line">    data[<span class="string">&#x27;Cabin&#x27;</span>]=LabelEncoder().fit_transform(data[<span class="string">&#x27;Cabin&#x27;</span>].map(remove_num))</span><br><span class="line">    data=data.dropna(subset=[<span class="string">&#x27;Embarked&#x27;</span>])</span><br><span class="line">    data[<span class="string">&#x27;Embarked&#x27;</span>]=LabelEncoder().fit_transform(data[<span class="string">&#x27;Embarked&#x27;</span>])</span><br><span class="line">    <span class="keyword">if</span> is_training_data:</span><br><span class="line">        label=data[<span class="string">&#x27;Survived&#x27;</span>]</span><br><span class="line">        data=data.drop(<span class="string">&#x27;Survived&#x27;</span>,axis=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> data,label</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> data</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lr_dataprocess</span>(<span class="params">data,is_training_data=True</span>):</span></span><br><span class="line">    data=data.drop([<span class="string">&#x27;PassengerId&#x27;</span>,<span class="string">&#x27;Name&#x27;</span>,<span class="string">&#x27;Ticket&#x27;</span>],axis=<span class="number">1</span>)</span><br><span class="line">    data[<span class="string">&#x27;Cabin&#x27;</span>]=data[<span class="string">&#x27;Cabin&#x27;</span>].map(is_nan)</span><br><span class="line">    data[<span class="string">&#x27;Fare&#x27;</span>]=data[<span class="string">&#x27;Fare&#x27;</span>].fillna(data[<span class="string">&#x27;Fare&#x27;</span>].mean())</span><br><span class="line">    data[<span class="string">&#x27;Fare&#x27;</span>]=data[<span class="string">&#x27;Fare&#x27;</span>]/<span class="number">100</span></span><br><span class="line">    data[<span class="string">&#x27;Age&#x27;</span>]=data[<span class="string">&#x27;Age&#x27;</span>].fillna(data[<span class="string">&#x27;Age&#x27;</span>].mean())</span><br><span class="line">    data[<span class="string">&#x27;Age&#x27;</span>]=data[<span class="string">&#x27;Age&#x27;</span>]/<span class="number">100</span></span><br><span class="line">    data[<span class="string">&#x27;SibSp&#x27;</span>]=data[<span class="string">&#x27;SibSp&#x27;</span>]/<span class="number">10</span></span><br><span class="line">    data[<span class="string">&#x27;Parch&#x27;</span>]=data[<span class="string">&#x27;Parch&#x27;</span>]/<span class="number">10</span></span><br><span class="line">    data=data.dropna(subset=[<span class="string">&#x27;Embarked&#x27;</span>])</span><br><span class="line">    <span class="keyword">if</span> is_training_data:</span><br><span class="line">        label=data[<span class="string">&#x27;Survived&#x27;</span>]</span><br><span class="line">        data=data.drop(<span class="string">&#x27;Survived&#x27;</span>,axis=<span class="number">1</span>)</span><br><span class="line">    data=pd.get_dummies(data)</span><br><span class="line">    data=pd.get_dummies(data,columns=[<span class="string">&#x27;Pclass&#x27;</span>,<span class="string">&#x27;Cabin&#x27;</span>])</span><br><span class="line">    <span class="keyword">if</span> is_training_data:</span><br><span class="line">        <span class="keyword">return</span> data,label</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> data</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">train_data_tree,train_label=random_forest_dataprocess(train_data)</span><br><span class="line">test_data_tree=random_forest_dataprocess(test_data,is_training_data=<span class="literal">False</span>)</span><br><span class="line">train_data_lr,train_label=lr_dataprocess(train_data)</span><br><span class="line">test_data_lr=lr_dataprocess(test_data,is_training_data=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<p>在做完基本的数据预处理之后，用于随机森林模型的特征有8个，用于逻辑回归模型的特征有14个。用于随机森林模型的特征数量适中，但是用于逻辑回归特征的数量有些多，需要对其进行筛选。我们使用相关系数筛选的方法，筛选出相关系数排名前10位的特征：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_selection <span class="keyword">import</span> SelectKBest,SelectPercentile</span><br><span class="line">kbest_lr=SelectKBest(<span class="keyword">lambda</span> x,y:np.abs(np.corrcoef(x,y,rowvar=<span class="literal">False</span>)[:<span class="number">-1</span>,<span class="number">-1</span>]),k=<span class="number">10</span>)</span><br><span class="line">train_data_lr=kbest_lr.fit_transform(train_data_lr,train_label)</span><br><span class="line">test_data_lr=kbest_lr.transform(test_data_lr)</span><br></pre></td></tr></table></figure>
+<p>接下来，便可以构造模型进行训练。在训练过程中，我们使用网格搜索的方法来寻找最佳参数。由于网格搜索比较耗费时间，因此我们使用两种基础模型进行超参数优化，并基于搜索结果来构造集成模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> GridSearchCV</span><br><span class="line">param_tree_clf=&#123;</span><br><span class="line">    <span class="string">&#x27;max_depth&#x27;</span>:[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>],</span><br><span class="line">    <span class="string">&#x27;min_samples_split&#x27;</span>:[<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>,<span class="number">40</span>],</span><br><span class="line">    <span class="string">&#x27;max_leaf_nodes&#x27;</span>:[<span class="number">10</span>,<span class="number">15</span>,<span class="number">20</span>,<span class="number">30</span>],</span><br><span class="line">    <span class="string">&#x27;min_samples_leaf&#x27;</span>:[<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>]</span><br><span class="line">&#125;</span><br><span class="line">grid_search_tree=GridSearchCV(DecisionTreeClassifier(criterion=<span class="string">&#x27;entropy&#x27;</span>),param_tree_clf)</span><br><span class="line">grid_search_tree.fit(train_data_tree,train_label)</span><br><span class="line">rf_clf=RandomForestClassifier(criterion=<span class="string">&#x27;entropy&#x27;</span>,n_estimators=<span class="number">5000</span>,max_samples=<span class="number">500</span>,**grid_search_tree.best_params_)</span><br><span class="line">rf_clf.fit(train_data_tree,train_label)</span><br><span class="line">pred_rf=rf_clf.predict(test_data_tree)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> BaggingClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> GridSearchCV</span><br><span class="line">param_lr_clf=&#123;</span><br><span class="line">    <span class="string">&#x27;C&#x27;</span>:np.logspace(<span class="number">0</span>,<span class="number">10</span>,<span class="number">11</span>,base=<span class="number">2</span>)/<span class="number">100</span></span><br><span class="line">&#125;</span><br><span class="line">grid_search_lr=GridSearchCV(LogisticRegression(),param_lr_clf)</span><br><span class="line">grid_search_lr.fit(train_data_lr,train_label)</span><br><span class="line">lr_bag_clf=BaggingClassifier(LogisticRegression(**grid_search_lr.best_params_),n_estimators=<span class="number">5000</span>,max_samples=<span class="number">500</span>)</span><br><span class="line">lr_bag_clf.fit(train_data_lr,train_label)</span><br><span class="line">pred_lr=lr_bag_clf.predict(test_data_lr)</span><br></pre></td></tr></table></figure>
+<p>训练完成之后，接下来使用一些评价标准查看模型的预测结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix</span><br><span class="line">print(<span class="string">&#x27;Confusion matrix of random forest classifier:&#x27;</span>)</span><br><span class="line">print(confusion_matrix(pred_rf,test_label[<span class="string">&#x27;Survived&#x27;</span>]))</span><br><span class="line">print(<span class="string">&#x27;Confusion matrix of logistic regression:&#x27;</span>)</span><br><span class="line">print(confusion_matrix(pred_lr,test_label[<span class="string">&#x27;Survived&#x27;</span>]))</span><br></pre></td></tr></table></figure>
+<pre><code>Confusion matrix of random forest classifier:
+[[239  52]
+ [ 15 112]]
+Confusion matrix of logistic regression:
+[[244  76]
+ [ 10  88]]
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line">print(<span class="string">&#x27;Accuracy of random forest classifier:&#x27;</span>)</span><br><span class="line">print(accuracy_score(pred_rf,test_label[<span class="string">&#x27;Survived&#x27;</span>]))</span><br><span class="line">print(<span class="string">&#x27;Accuracy of logistic regression:&#x27;</span>)</span><br><span class="line">print(accuracy_score(pred_lr,test_label[<span class="string">&#x27;Survived&#x27;</span>]))</span><br></pre></td></tr></table></figure>
+<pre><code>Accuracy of random forest classifier:
+0.8397129186602871
+Accuracy of logistic regression:
+0.7942583732057417
+</code></pre>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<ol>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vd3hxdWFyZS9wLzU0ODQ2MzYuaHRtbA==">https://www.cnblogs.com/wxquare/p/5484636.html<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzI5MzE2MTQ5">https://www.zhihu.com/question/29316149<i class="fa fa-external-link-alt"></i></span></li>
+<li>Hands-on Machine Learning with Scikit-learn and TensorFlow</li>
+<li>The Elements of Statistical Learning</li>
+<li>机器学习，周志华</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vbm9sb25lbHkvcC83MDA3NDMyLmh0bWw=">https://www.cnblogs.com/nolonely/p/7007432.html<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/02/07/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4/" title="机器学习-操作步骤">http://lyf35.github.io/2021/02/07/机器学习-操作步骤/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/07/PKI%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/" rel="prev" title="PKI相关知识（摘录）">
+      <i class="fa fa-chevron-left"></i> PKI相关知识（摘录）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/07/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%B6%88%E6%81%AF%E9%AA%8C%E8%AF%81%E7%A0%81/" rel="next" title="密码学-消息验证码">
+      密码学-消息验证码 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">655k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">9:55</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '8d5b9f3a9c30d8f9f7bf05612cbe62c4',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
