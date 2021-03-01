@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="概述 Wireshark可以捕获网络数据包，并显示数据包的信息。但是需要注意的是，它只能查看数据包的内容，但是不能修改其内容，也不能发送数据包。 Wireshark抓包的原理是捕获机器上的某一块网卡的网络包，当机器上有多块网卡的时候，需要选择一个网卡。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络-Wireshark抓包">
+<meta property="og:url" content="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-Wireshark%E6%8A%93%E5%8C%85/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="概述 Wireshark可以捕获网络数据包，并显示数据包的信息。但是需要注意的是，它只能查看数据包的内容，但是不能修改其内容，也不能发送数据包。 Wireshark抓包的原理是捕获机器上的某一块网卡的网络包，当机器上有多块网卡的时候，需要选择一个网卡。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210129195433.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210129195443.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210129195323.PNG">
+<meta property="article:published_time" content="2021-03-01T14:54:14.513Z">
+<meta property="article:modified_time" content="2021-03-01T14:54:14.513Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210129195433.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-Wireshark%E6%8A%93%E5%8C%85/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机网络-Wireshark抓包 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text"> 基本操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B1%E8%AE%BF%E9%97%AE%E7%BD%91%E9%A1%B5"><span class="nav-number">3.</span> <span class="nav-text"> 实例1：访问网页</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B2ping%E5%91%BD%E4%BB%A4"><span class="nav-number">4.</span> <span class="nav-text"> 实例2：ping命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B3tracert%E5%91%BD%E4%BB%A4"><span class="nav-number">5.</span> <span class="nav-text"> 实例3：tracert命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-Wireshark%E6%8A%93%E5%8C%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机网络-Wireshark抓包
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-Wireshark%E6%8A%93%E5%8C%85/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-Wireshark抓包" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h1>
+<p>Wireshark可以捕获网络数据包，并显示数据包的信息。但是需要注意的是，它只能查看数据包的内容，但是不能修改其内容，也不能发送数据包。</p>
+<p>Wireshark抓包的原理是捕获机器上的某一块网卡的网络包，当机器上有多块网卡的时候，需要选择一个网卡。</p>
+<a id="more"></a>
+<h1 id="基本操作"><a class="markdownIt-Anchor" href="#基本操作"></a> 基本操作</h1>
+<p>在启动时，Wireshark会弹出一个选择网卡的界面：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210129195433.png" alt="image-20210112093808452" /></p>
+<p>双击选择要抓包的网卡，然后数据包采集的过程便会自动开始。抓包的界面如下。为保护隐私，隐去了一部分敏感信息。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210129195443.png" alt="Picture1" /></p>
+<p>我们可以看到，对于每个数据包，Wireshark都会自动将它们按照物理层、数据链路层、网络层、传输层和应用层的顺序进行解析。点开之后可以查看数据包每一层报文的表头及其内容，但是如果为TLS加密后的数据包，在经过解析之后只能看到被加密的内容，无法还原出原始数据。</p>
+<h1 id="实例1访问网页"><a class="markdownIt-Anchor" href="#实例1访问网页"></a> 实例1：访问网页</h1>
+<p>我们以访问www.github.com为例，抓取并分析这一过程中产生的数据包。其大致过程如下：</p>
+<ol>
+<li>
+<p>由于抓包的时候计算机可能会有各种不同的网络活动，因此在我们用浏览器访问www.github.com的这一过程中，同时也会抓取到与之无关的一些数据包。所以我们在过滤器一栏中输入DNS，先根据DNS协议进行筛选，找到www.github.com对应的ip地址：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210129195323.PNG" alt="Capture_dns" /></p>
+<p>从中可以看到，DNS协议找到了www.github.com对应的ip地址为13.229.188.59。从DNS协议的数据包中我们也可以看到，它使用的是UDP协议（计算机网络的基础知识）</p>
+</li>
+<li>
+<p>接下来，我们筛选包含这一ip地址的数据包，在过滤器一栏中输入ip.addr == 13.229.188.59，便可过滤出访问www.github.com相关的数据包。但是发现此时有两个不同的端口（本例为1038和1046）都与www.github.com建立了HTTPS连接（不知道是否为个例），所以我们再对端口进行过滤，方便分析，过滤语句为：ip.addr == 13.229.188.59 and tcp.port eq 1038</p>
+</li>
+<li>
+<p>此时便可以看到三次握手的过程（其中Seq和Ack字段为相对值，其原本的值是一个随机数）：</p>
+<p>TCP	74	1038 → 443 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 WS=256 SACK_PERM=1 TSval=4126304 TSecr=0</p>
+<p>TCP	74	443 → 1038 [SYN, ACK] Seq=0 Ack=1 Win=65535 Len=0 MSS=1410 SACK_PERM=1 TSval=2421957921 TSecr=4126304 WS=1024</p>
+<p>TCP	66	1038 → 443 [ACK] Seq=1 Ack=1 Win=131328 Len=0 TSval=4126734 TSecr=2421957921</p>
+</li>
+<li>
+<p>因为建立HTTPS连接，也可以看到TLS协议交换证书、协商密钥并建立安全连接的过程：</p>
+<p>TLSv1.2	259	Client Hello</p>
+<p>TLSv1.2	1464	Server Hello</p>
+<p>TCP	1464	443 → 1038 [ACK] Seq=1399 Ack=194 Win=67584 Len=1398 TSval=2421958344 TSecr=4126734 [TCP segment of a reassembled PDU]</p>
+<p>TLSv1.2	677	Certificate, Server Key Exchange, Server Hello Done</p>
+<p>TCP	66	1038 → 443 [ACK] Seq=194 Ack=3408 Win=131328 Len=0 TSval=4127177 TSecr=2421958344</p>
+<p>TLSv1.2	159	Client Key Exchange, Change Cipher Spec, Encrypted Handshake Message</p>
+<p>TCP	1464	1038 → 443 [ACK] Seq=287 Ack=3408 Win=131328 Len=1398 TSval=4127178 TSecr=2421958344 [TCP segment of a reassembled PDU]</p>
+<p>TLSv1.2	758	Application Data</p>
+<p>TLSv1.2	117	Change Cipher Spec, Encrypted Handshake Message</p>
+<p>TCP	66	1038 → 443 [ACK] Seq=2377 Ack=3459 Win=131328 Len=0 TSval=4127664 TSecr=2421958801</p>
+</li>
+<li>
+<p>之后，可以看到服务器端主动断开了连接：</p>
+<p>TCP	97	[TCP Retransmission] 443 → 1038 [FIN, PSH, ACK] Seq=50533 Ack=19038 Win=117760 Len=31 TSval=2422185452 TSecr=4353563<br />
+TCP	66	1038 → 443 [FIN, ACK] Seq=19069 Ack=50565 Win=130304 Len=0 TSval=4354286 TSecr=2422185452</p>
+</li>
+</ol>
+<h1 id="实例2ping命令"><a class="markdownIt-Anchor" href="#实例2ping命令"></a> 实例2：ping命令</h1>
+<p>在command框里面输入<code>www.baidu.com</code>，Wireshark中便会抓取到相关的信息。ping命令使用的是ICMP协议：</p>
+<p>ICMP	74	Echo (ping) request  id=0x0001, seq=2/512, ttl=128 (reply in 61)<br />
+ICMP	74	Echo (ping) reply    id=0x0001, seq=2/512, ttl=53 (request in 60)<br />
+ICMP	74	Echo (ping) request  id=0x0001, seq=3/768, ttl=128 (reply in 64)<br />
+ICMP	74	Echo (ping) reply    id=0x0001, seq=3/768, ttl=53 (request in 63)<br />
+ICMP	74	Echo (ping) request  id=0x0001, seq=4/1024, ttl=128 (reply in 71)<br />
+ICMP	74	Echo (ping) reply    id=0x0001, seq=4/1024, ttl=53 (request in 70)<br />
+ICMP	74	Echo (ping) request  id=0x0001, seq=5/1280, ttl=128 (reply in 73)<br />
+ICMP	74	Echo (ping) reply    id=0x0001, seq=5/1280, ttl=53 (request in 72)</p>
+<h1 id="实例3tracert命令"><a class="markdownIt-Anchor" href="#实例3tracert命令"></a> 实例3：tracert命令</h1>
+<p>C:\WINDOWS\system32&gt;tracert <span class="exturl" data-url="aHR0cDovL3d3dy5iYWlkdS5jb20=">www.baidu.com<i class="fa fa-external-link-alt"></i></span></p>
+<p>Tracing route to <span class="exturl" data-url="aHR0cDovL3d3dy5hLnNoaWZlbi5jb20=">www.a.shifen.com<i class="fa fa-external-link-alt"></i></span> [112.80.248.75]<br />
+over a maximum of 30 hops:</p>
+<p>1    11 ms     1 ms     1 ms  [*]<br />
+2     *        *        *     Request timed out.<br />
+3    84 ms   303 ms    34 ms  [10.215.12.209]<br />
+4     *        *        *     Request timed out.<br />
+5     *        *        *     Request timed out.<br />
+6   271 ms    35 ms    20 ms  58.247.221.25<br />
+7     *        *       68 ms  139.226.214.38<br />
+8    43 ms    49 ms    19 ms  139.226.210.85<br />
+9    51 ms    39 ms    28 ms  219.158.97.106<br />
+10    86 ms    38 ms    27 ms  221.6.1.254<br />
+11   102 ms    55 ms    35 ms  58.240.60.166<br />
+12     *        *        *     Request timed out.<br />
+13    93 ms    42 ms   123 ms  112.80.248.75</p>
+<p>Trace complete.</p>
+<p>在这一过程中，我们可以看到有ARP协议的数据包（为保护隐私略去了MAC地址和ip地址），去请求与自己直接相连的路由器的MAC地址：</p>
+<p>ARP	42	Who has 172.*? Tell 172.*<br />
+ARP	42	172.* is at *(MAC address)</p>
+<p>我们使用目的地址112.80.248.75进行过滤，可以得到一系列的ICMP ping请求数据包：</p>
+<p>ICMP	106	Echo (ping) request  id=0x0001, seq=75/19200, ttl=1 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=76/19456, ttl=1 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=77/19712, ttl=1 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=78/19968, ttl=2 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=79/20224, ttl=2 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=80/20480, ttl=2 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=81/20736, ttl=3 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=82/20992, ttl=3 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=83/21248, ttl=3 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=84/21504, ttl=4 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=85/21760, ttl=4 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=86/22016, ttl=4 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=87/22272, ttl=5 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=88/22528, ttl=5 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=89/22784, ttl=5 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=90/23040, ttl=6 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=91/23296, ttl=6 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=92/23552, ttl=6 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=93/23808, ttl=7 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=94/24064, ttl=7 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=95/24320, ttl=7 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=96/24576, ttl=8 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=97/24832, ttl=8 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=98/25088, ttl=8 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=99/25344, ttl=9 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=100/25600, ttl=9 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=101/25856, ttl=9 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=102/26112, ttl=10 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=103/26368, ttl=10 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=104/26624, ttl=10 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=105/26880, ttl=11 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=106/27136, ttl=11 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=107/27392, ttl=11 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=108/27648, ttl=12 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=109/27904, ttl=12 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=110/28160, ttl=12 (no response found!)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=111/28416, ttl=13 (reply in 303)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=112/28672, ttl=13 (reply in 305)<br />
+ICMP	106	Echo (ping) request  id=0x0001, seq=113/28928, ttl=13 (reply in 307)</p>
+<p>从中我们可以发现，这些ICMP数据包的ttl值在一直递增，这也正好符合tracert的工作原理。</p>
+<p>同时，我们也能收到一系列的ICMP响应数据包，只有来自于112.80.248.75的数据包内容为ping响应，来自其它中间地址的数据包，例如10.215.12.209，则内容全部为：</p>
+<p>ICMP	70	Time-to-live exceeded (Time to live exceeded in transit)</p>
+<blockquote>
+<p>附：tracert工作原理</p>
+<p>tracert 命令用 IP 生存时间 (TTL) 字段和 ICMP 错误消息来确定从一个主机到网络上其他主机的路由。</p>
+<p>首先，tracert送出一个TTL是1的ICMP ping请求数据包到目的地，当路径上的第一个路由器收到这个数据包时，它将TTL减1。此时，TTL变为0，所以该路由器会将此数据包丢掉，并送回一个「ICMP time exceeded」消息（包括发IP包的源地址，IP包的所有内容及路由器的IP地址），tracert 收到这个消息后，便知道这个路由器存在于这个路径上，接着tracert 再送出另一个TTL是2 的数据包，发现第2 个路由器… tracert 每次将送出的数据包的TTL 加1来发现另一个路由器，这个重复的动作一直持续到某个数据包 抵达目的地。当数据包到达目的地后，该主机则可以响应ICMP ping请求，并发送ICMP ping响应。</p>
+<p>tracert 有一个固定的时间等待响应(ICMP TTL到期消息)。如果这个时间过了，它将打印出一系列的*号表明：在这个路径上，这个设备不能在给定的时间内发出ICMP TTL到期消息的响应。然后，tracert给TTL记数器加1，继续进行。</p>
+</blockquote>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<ol>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMwMTM1MTgxL2FydGljbGUvZGV0YWlscy81MDk5MjE1MQ==">https://blog.csdn.net/qq_30135181/article/details/50992151<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vbXEwMDM2L3AvMTExODcxMzguaHRtbA==">https://www.cnblogs.com/mq0036/p/11187138.html<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-Wireshark%E6%8A%93%E5%8C%85/" title="计算机网络-Wireshark抓包">http://lyf35.github.io/2021/03/01/计算机网络-Wireshark抓包/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E7%89%A9%E7%90%86%E5%B1%82/" rel="prev" title="计算机网络-物理层">
+      <i class="fa fa-chevron-left"></i> 计算机网络-物理层
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/" rel="next" title="计算机网络-OSI七层模型">
+      计算机网络-OSI七层模型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">703k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">10:39</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'd654e990d4dd87d4ac6b7e9135002dfd',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

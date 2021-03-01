@@ -234,7 +234,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">45</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -297,7 +297,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%A0%B8%E6%96%B9%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -313,7 +313,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" class="post-title-link" itemprop="url">计算机组成原理-计算机的硬件组成</a>
+            <a href="/2021/03/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%A0%B8%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">机器学习-核方法</a>
         </h2>
 
         <div class="post-meta">
@@ -323,7 +323,321 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/03/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%A0%B8%E6%96%B9%E6%B3%95/" class="post-meta-item leancloud_visitors" data-flag-title="机器学习-核方法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="核函数"><a class="markdownIt-Anchor" href="#核函数"></a> 核函数</h1>
+<h2 id="定义"><a class="markdownIt-Anchor" href="#定义"></a> 定义</h2>
+<p>设<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="script">H</mi></mrow><annotation encoding="application/x-tex">\mathcal{H}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.00965em;">H</span></span></span></span></span>为特征空间（希尔伯特空间，更详细的解释可以阅读参考中2、3的内容），如果存在一个从输入空间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="script">X</mi></mrow><annotation encoding="application/x-tex">\mathcal{X}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.14643em;">X</span></span></span></span></span>到特征空间<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="script">H</mi></mrow><annotation encoding="application/x-tex">\mathcal{H}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.00965em;">H</span></span></span></span></span>的映射<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ϕ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo><mo>:</mo><mi mathvariant="script">X</mi><mo>→</mo><mi mathvariant="script">H</mi></mrow><annotation encoding="application/x-tex">\phi(\boldsymbol{x}):\mathcal{X}\rightarrow \mathcal{H}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.14643em;">X</span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.00965em;">H</span></span></span></span></span>，使得对于所有的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="bold-italic">x</mi><mo separator="true">,</mo><mi mathvariant="bold-italic">z</mi><mo>∈</mo><mi mathvariant="script">X</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{x},\boldsymbol{z}\in \mathcal{X}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.04213em;">z</span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.14643em;">X</span></span></span></span></span>，函数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>κ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo separator="true">,</mo><mi mathvariant="bold-italic">z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\kappa (\boldsymbol{x},\boldsymbol{z})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">κ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.04213em;">z</span></span></span><span class="mclose">)</span></span></span></span>满足条件：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>κ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo separator="true">,</mo><mi mathvariant="bold-italic">z</mi><mo stretchy="false">)</mo><mo>=</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo><mo>⋅</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\kappa(\boldsymbol{x},\boldsymbol{z})=\phi(\boldsymbol{x})\cdot \phi(\boldsymbol{z})
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">κ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.04213em;">z</span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.04213em;">z</span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>则称<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>κ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo separator="true">,</mo><mi mathvariant="bold-italic">z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\kappa (\boldsymbol{x},\boldsymbol{z})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">κ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.04213em;">z</span></span></span><span class="mclose">)</span></span></span></span>为<strong>核函数（Kernel Function）</strong>，其中<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ϕ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\phi(\boldsymbol{x})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">)</span></span></span></span>为<strong>映射函数</strong>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>ϕ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo stretchy="false">)</mo><mo>⋅</mo><mi>ϕ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\phi(\boldsymbol{x})\cdot \phi(\boldsymbol{z})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">ϕ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.04213em;">z</span></span></span><span class="mclose">)</span></span></span></span>代表两个向量之间的内积。核函数<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>κ</mi><mo stretchy="false">(</mo><mi mathvariant="bold-italic">x</mi><mo separator="true">,</mo><mi mathvariant="bold-italic">z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\kappa (\boldsymbol{x},\boldsymbol{z})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">κ</span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.04213em;">z</span></span></span><span class="mclose">)</span></span></span></span>为对称函数，交换<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="bold-italic">x</mi><mo separator="true">,</mo><mi mathvariant="bold-italic">z</mi></mrow><annotation encoding="application/x-tex">\boldsymbol{x},\boldsymbol{z}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.63888em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol">x</span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord"><span class="mord boldsymbol" style="margin-right:0.04213em;">z</span></span></span></span></span></span>的顺序不会影响计算结果。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/03/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%A0%B8%E6%96%B9%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/01/%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">网络爬虫-基础知识</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/" itemprop="url" rel="index"><span itemprop="name">网络爬虫</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/03/01/%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="网络爬虫-基础知识" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="html简介"><a class="markdownIt-Anchor" href="#html简介"></a> HTML简介</h1>
+<h2 id="什么是html"><a class="markdownIt-Anchor" href="#什么是html"></a> 什么是HTML</h2>
+<p>HTML 是用来描述网页的一种语言。</p>
+<ul>
+<li>HTML 指的是超文本标记语言: <strong>H</strong>yper<strong>T</strong>ext <strong>M</strong>arkup <strong>L</strong>anguage。它不是一种编程语言，而是一种<strong>标记</strong>语言，标记语言是一套<strong>标记标签</strong> (markup tag)</li>
+<li>HTML使用标记标签来描述网页</li>
+<li>HTML文档包含了HTML <strong>标签</strong>及<strong>文本</strong>内容，HTML文档也叫做 <strong>web 页面</strong></li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/03/01/%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" class="post-title-link" itemprop="url">深度学习-目标检测</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">计算机视觉</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/03/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" class="post-meta-item leancloud_visitors" data-flag-title="深度学习-目标检测" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h1>
+<p>计算机视觉中关于图像识别有四大类任务：</p>
+<ol>
+<li>分类-Classification：解决“是什么？”的问题，即给定一张图片或一段视频判断里面包含什么类别的目标。</li>
+<li>定位-Location：解决“在哪里？”的问题，即定位出这个目标的的位置。</li>
+<li>检测-Detection：解决“在哪里？是什么？”的问题，即定位出这个目标的位置并且知道目标物是什么。</li>
+<li>分割-Segmentation：分为实例的分割（Instance-level）和场景分割（Scene-level），解决“每一个像素属于哪个目标物或场景”的问题。</li>
+</ol>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214843.jpg" alt="img" /></p>
+<p>目标检测（Object Detection）的任务是找出图像中所有感兴趣的目标（物体），并确定它们的类别和位置。所以目标检测是一个分类、回归问题的叠加。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/03/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/" class="post-title-link" itemprop="url">计算机组成原理-数据的表示与运算</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -336,7 +650,105 @@
             </span>
 
           
-            <span id="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-计算机的硬件组成" title="阅读次数">
+            <span id="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-数据的表示与运算" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="数据的存储"><a class="markdownIt-Anchor" href="#数据的存储"></a> 数据的存储</h1>
+<h2 id="数据的字长"><a class="markdownIt-Anchor" href="#数据的字长"></a> 数据的字长</h2>
+<p>计算机中，数据存储与访问的最小单位是字节。一个字节对应于8个二进制比特。一个字节可以表示的范围从<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0000000</mn><msub><mn>0</mn><mn>2</mn></msub><mo>∼</mo><mn>1111111</mn><msub><mn>1</mn><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">00000000_2\sim 11111111_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.79444em;vertical-align:-0.15em;"></span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.79444em;vertical-align:-0.15em;"></span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，这相当于十进制数的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn><mo>∼</mo><mn>255</mn></mrow><annotation encoding="application/x-tex">0\sim255</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">5</span><span class="mord">5</span></span></span></span>，或是十六进制数的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>00</mn><mo>∼</mo><mi>F</mi><mi>F</mi></mrow><annotation encoding="application/x-tex">00\sim FF</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span></span></span></span>。</p>
+<p>每台计算机都有一个字长，对应于指针类型数据的大小。由于指针的值是一个虚拟地址，因此字长也决定了虚拟地址空间的大小。例如32位的字长所能表示的虚拟空间为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>4</mn><mo>×</mo><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">4\times 10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span>字节(约4GB)，而64位字长能表示的虚拟空间大小达<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1.84</mn><mo>×</mo><mn>1</mn><msup><mn>0</mn><mn>19</mn></msup></mrow><annotation encoding="application/x-tex">1.84\times 10^{19}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">.</span><span class="mord">8</span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span></span>字节。64位的计算机上可以运行64位的程序，同时也可以兼容32位程序，而32位的计算机上只能运行32位的程序。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" class="post-title-link" itemprop="url">计算机组成原理-计算机的硬件组成</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-计算机的硬件组成" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -373,7 +785,7 @@
 <p>另外，在现代处理器中，为了实现操作系统的虚拟内存功能，在CPU内部封装了一个内存管理单元（Memory Management Unit, MMU），用于实现虚拟地址和物理地址之间的相互转化。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/#more" rel="contents">
+              <a class="btn" href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -397,7 +809,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -413,7 +825,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-title-link" itemprop="url">计算机组成原理-高速缓存</a>
+            <a href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-title-link" itemprop="url">计算机组成原理-高速缓存</a>
         </h2>
 
         <div class="post-meta">
@@ -423,7 +835,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -436,7 +848,7 @@
             </span>
 
           
-            <span id="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-高速缓存" title="阅读次数">
+            <span id="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-高速缓存" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -474,7 +886,7 @@
 </ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/#more" rel="contents">
+              <a class="btn" href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -498,7 +910,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -514,7 +926,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/" class="post-title-link" itemprop="url">计算机网络-应用层</a>
+            <a href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/" class="post-title-link" itemprop="url">计算机网络-应用层</a>
         </h2>
 
         <div class="post-meta">
@@ -524,7 +936,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -537,7 +949,7 @@
             </span>
 
           
-            <span id="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-应用层" title="阅读次数">
+            <span id="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-应用层" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -577,7 +989,7 @@
 <p>这一体系结构对于服务器的性能要求较高。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/#more" rel="contents">
+              <a class="btn" href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -601,7 +1013,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -617,7 +1029,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" class="post-title-link" itemprop="url">计算机网络-数据链路层</a>
+            <a href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" class="post-title-link" itemprop="url">计算机网络-数据链路层</a>
         </h2>
 
         <div class="post-meta">
@@ -627,7 +1039,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -640,7 +1052,7 @@
             </span>
 
           
-            <span id="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-数据链路层" title="阅读次数">
+            <span id="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-数据链路层" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -677,7 +1089,7 @@
 <p>数据链路层通常被分为两个子层：数据链路控制和介质访问控制。数据链路控制子层处理点对点链路和广播链路的共有问题，而介质访问控制子层只处理广播链路的特定问题。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/#more" rel="contents">
+              <a class="btn" href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -701,7 +1113,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -717,7 +1129,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/" class="post-title-link" itemprop="url">计算机组成原理-程序的机器级表示</a>
+            <a href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/" class="post-title-link" itemprop="url">计算机网络-传输层</a>
         </h2>
 
         <div class="post-meta">
@@ -727,238 +1139,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index"><span itemprop="name">汇编语言</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-程序的机器级表示" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>17k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="寄存器"><a class="markdownIt-Anchor" href="#寄存器"></a> 寄存器</h1>
-<ul>
-<li>
-<p>通用寄存器：X64将x86的8个通用寄存器扩展为64位，并且增加8个新的64位寄存器。64位寄存器命名以“r”开始，例如：eax扩展为64位就是rax，8个新的64位寄存器命名为r8到r15。每个寄存器的低32位，16位，8位可以作为操作数直接寻址，这包括向esi这样的寄存器，以前他的低8位不可以直接寻址。下表说明了64位通用寄存器的低位部分在汇编语言中的命名。</p>
-<p>除了r8~r15这8个寄存器只能供64位程序使用外，其余8个可以只使用低32字节以兼容32位程序。</p>
-</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">64-bit register</th>
-<th style="text-align:center">Lower 32 bits</th>
-<th style="text-align:center">Lower 16 bits</th>
-<th style="text-align:center">Lower 8 bits</th>
-<th style="text-align:center">用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">rax</td>
-<td style="text-align:center">eax</td>
-<td style="text-align:center">ax</td>
-<td style="text-align:center">al</td>
-<td style="text-align:center">返回值</td>
-</tr>
-<tr>
-<td style="text-align:center">rbx</td>
-<td style="text-align:center">ebx</td>
-<td style="text-align:center">bx</td>
-<td style="text-align:center">bl</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">rcx</td>
-<td style="text-align:center">ecx</td>
-<td style="text-align:center">cx</td>
-<td style="text-align:center">cl</td>
-<td style="text-align:center">第4个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">rdx</td>
-<td style="text-align:center">edx</td>
-<td style="text-align:center">dx</td>
-<td style="text-align:center">dl</td>
-<td style="text-align:center">第3个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">rsi</td>
-<td style="text-align:center">esi</td>
-<td style="text-align:center">si</td>
-<td style="text-align:center">sil</td>
-<td style="text-align:center">第2个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">rdi</td>
-<td style="text-align:center">edi</td>
-<td style="text-align:center">di</td>
-<td style="text-align:center">dil</td>
-<td style="text-align:center">第1个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">rbp</td>
-<td style="text-align:center">ebp</td>
-<td style="text-align:center">bp</td>
-<td style="text-align:center">bpl</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">rsp</td>
-<td style="text-align:center">esp</td>
-<td style="text-align:center">sp</td>
-<td style="text-align:center">spl</td>
-<td style="text-align:center">栈指针</td>
-</tr>
-<tr>
-<td style="text-align:center">r8</td>
-<td style="text-align:center">r8d</td>
-<td style="text-align:center">r8w</td>
-<td style="text-align:center">r8b</td>
-<td style="text-align:center">第5个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">r9</td>
-<td style="text-align:center">r9d</td>
-<td style="text-align:center">r9w</td>
-<td style="text-align:center">r9b</td>
-<td style="text-align:center">第6个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">r10</td>
-<td style="text-align:center">r10d</td>
-<td style="text-align:center">r10w</td>
-<td style="text-align:center">r10b</td>
-<td style="text-align:center">调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r11</td>
-<td style="text-align:center">r11d</td>
-<td style="text-align:center">r11w</td>
-<td style="text-align:center">r11b</td>
-<td style="text-align:center">调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r12</td>
-<td style="text-align:center">r12d</td>
-<td style="text-align:center">r12w</td>
-<td style="text-align:center">r12b</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r13</td>
-<td style="text-align:center">r13d</td>
-<td style="text-align:center">r13w</td>
-<td style="text-align:center">r13b</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r14</td>
-<td style="text-align:center">r14d</td>
-<td style="text-align:center">r14w</td>
-<td style="text-align:center">r14b</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r15</td>
-<td style="text-align:center">r15d</td>
-<td style="text-align:center">r15w</td>
-<td style="text-align:center">r15b</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-</tbody>
-</table>
-<p>​		生成1字节和2字节数字的指令会保持剩下的字节不变；生成4字节数字的指令会把高位4个字节置为0。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/" class="post-title-link" itemprop="url">计算机网络-传输层</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -971,7 +1152,7 @@
             </span>
 
           
-            <span id="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-传输层" title="阅读次数">
+            <span id="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-传输层" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -1006,7 +1187,7 @@
 <p>注意：网络层负责的是计算机层次的通信（即主机到主机），但是网络层协议只是把报文传递到目的计算机。由于报文需要递交给正确的进程，而这一部分正是传输层负责的部分。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/#more" rel="contents">
+              <a class="btn" href="/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E4%BC%A0%E8%BE%93%E5%B1%82/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1030,7 +1211,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -1046,7 +1227,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/07/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/" class="post-title-link" itemprop="url">密码学-数字签名</a>
+            <a href="/2021/03/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">机器学习-概述</a>
         </h2>
 
         <div class="post-meta">
@@ -1056,7 +1237,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
+              <time title="创建时间：2021-03-01 22:54:14" itemprop="dateCreated datePublished" datetime="2021-03-01T22:54:14+08:00">2021-03-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1064,16 +1245,12 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/%E5%AF%86%E7%A0%81%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">密码学</span></a>
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
                 </span>
             </span>
 
           
-            <span id="/2021/02/07/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/" class="post-meta-item leancloud_visitors" data-flag-title="密码学-数字签名" title="阅读次数">
+            <span id="/2021/03/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="机器学习-概述" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -1085,14 +1262,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>24k</span>
+              <span>15k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>22 分钟</span>
+              <span>14 分钟</span>
             </span>
 
         </div>
@@ -1102,322 +1279,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="overview"><a class="markdownIt-Anchor" href="#overview"></a> Overview</h1>
-<h2 id="introduction"><a class="markdownIt-Anchor" href="#introduction"></a> Introduction</h2>
-<p>Signature schemes allow a signer <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> who has established a public key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">pk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> to “sign” a message using the associated private key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">sk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> in such a way that anyone who knows <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">pk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> (and knows that this public key was established by <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span>) can verify that the message originated from <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> and was not modified in transit. (Note that the owner of the public key behaves as the sender, which is in contrast to the public-key encryption)</p>
+          <h1 id="什么是机器学习"><a class="markdownIt-Anchor" href="#什么是机器学习"></a> 什么是机器学习</h1>
+<p>机器学习是近20多年兴起的一门多领域交叉学科，涉及概率论、统计学、逼近论、凸分析、算法复杂度理论等多门学科。机器学习理论主要是设计和分析一些让计算机可以自动“学习”的算法。机器学习算法是一类从数据中自动分析获得规律，并利用规律对未知数据进行预测的算法。因为学习算法中涉及了大量的统计学理论，机器学习与统计推断学联系尤为密切，也被称为<strong>统计学习</strong>。</p>
+<p>目前，机器学习技术已经渗透进各种不同的领域，例如手机上的垃圾短信过滤、淘宝主页上的商品推荐、银行的智能客服机器人、AlphaGo能够学会下围棋，等等。而且可以预见的是，随着芯片算力以及人类产生数据量的快速增长，这一技术在自动驾驶、生物医药、工业4.0等等领域将会得到更加广泛的应用。</p>
+<p>那么，究竟如何定义机器学习？关于机器学习的定义有多种不同的表达方法，比如：</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/07/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-title-link" itemprop="url">操作系统-CPU虚拟化</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/02/07/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-meta-item leancloud_visitors" data-flag-title="操作系统-CPU虚拟化" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>7.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>​</p>
-<h1 id="进程"><a class="markdownIt-Anchor" href="#进程"></a> 进程</h1>
-<h2 id="定义"><a class="markdownIt-Anchor" href="#定义"></a> 定义</h2>
-<p>进程（process）就是操作系统为正在运行的程序提供的抽象，一个进程就对应一个正在运行的程序。</p>
-<p>为了理解构成进程的是什么，我们需要理解它的机器状态，也就是程序在运行时可以读取或更新的内容。进程的机器状态包括了内存、寄存器和持久存储设备。</p>
-<h2 id="进程api"><a class="markdownIt-Anchor" href="#进程api"></a> 进程API</h2>
-<p>所有的操作系统都需要以某种形式提供如下进程的API：</p>
-<ul>
-<li>创建：操作系统必须包含一些创建新进程的方法。</li>
-<li>销毁：系统提供一个强制销毁进程的接口。</li>
-<li>等待：有时等待进程停止运行是有用的，因此提供了等待接口。</li>
-<li>其他控制：包括进程的暂停与恢复等。</li>
-<li>状态：获取有关进程的状态信息。</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-datetime/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/07/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-datetime/" class="post-title-link" itemprop="url">数据分析-datetime</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">数据分析</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/02/07/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-datetime/" class="post-meta-item leancloud_visitors" data-flag-title="数据分析-datetime" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="datetime数据类型"><a class="markdownIt-Anchor" href="#datetime数据类型"></a> datetime数据类型</h1>
-<h1 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h1>
-<p>python自带的datetime模块包含了一些处理时间的数据类型和函数。其中，datetime模块中包含的数据类型如下：</p>
-<ul>
-<li>date：存储由年、月、日组成的日期</li>
-<li>time：存储由小时、分钟、秒、微秒组成的时间</li>
-<li>datetime：同时存储date和time</li>
-<li>timedelta：表示两个datetime之间的差值</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-datetime/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/07/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-matplotlib/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/07/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-matplotlib/" class="post-title-link" itemprop="url">数据分析-matplotlib</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-07 22:07:43" itemprop="dateCreated datePublished" datetime="2021-02-07T22:07:43+08:00">2021-02-07</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" itemprop="url" rel="index"><span itemprop="name">数据分析</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2021/02/07/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-matplotlib/" class="post-meta-item leancloud_visitors" data-flag-title="数据分析-matplotlib" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>19k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>18 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h1>
-<h2 id="常用网址"><a class="markdownIt-Anchor" href="#常用网址"></a> 常用网址</h2>
-<p>官网主页：<span class="exturl" data-url="aHR0cHM6Ly9tYXRwbG90bGliLm9yZy9pbmRleC5odG1s">https://matplotlib.org/index.html<i class="fa fa-external-link-alt"></i></span> （文中一些函数的具体用法可以在这一页面内查找其详细用法）</p>
-<p>教程：<span class="exturl" data-url="aHR0cHM6Ly9tYXRwbG90bGliLm9yZy90dXRvcmlhbHMvaW5kZXguaHRtbA==">https://matplotlib.org/tutorials/index.html<i class="fa fa-external-link-alt"></i></span> （提供了一些常见图像的绘图示例）</p>
-<p>示例库：<span class="exturl" data-url="aHR0cHM6Ly9tYXRwbG90bGliLm9yZy9nYWxsZXJ5L2luZGV4Lmh0bWw=">https://matplotlib.org/gallery/index.html<i class="fa fa-external-link-alt"></i></span> （包含了更多种类的绘图示例）</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/07/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-matplotlib/#more" rel="contents">
+              <a class="btn" href="/2021/03/01/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1492,13 +1360,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">655k</span>
+    <span title="站点总字数">703k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">9:55</span>
+    <span title="站点阅读时长">10:39</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>
