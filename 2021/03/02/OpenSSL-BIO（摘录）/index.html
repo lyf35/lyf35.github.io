@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="注：本文内容摘录自参考部分的相关资料  简介 OpenSSL抽象I&#x2F;O(Basic I&#x2F;O abstraction，即BIO)是OpenSSL对于I&#x2F;O类型的抽象封装，包括内存、文件、日志、标准输入输出、socket、加解密、摘要和ssl通道等。OpenSSL BIO通过回调函数为用户隐藏了底层的实现细节，所有类型的BIO调用大体类似。BIO中的数据能从一个BIO传递给另一个BIO或是应用程序。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenSSL-BIO（摘录）">
+<meta property="og:url" content="http://lyf35.github.io/2021/03/02/OpenSSL-BIO%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="注：本文内容摘录自参考部分的相关资料  简介 OpenSSL抽象I&#x2F;O(Basic I&#x2F;O abstraction，即BIO)是OpenSSL对于I&#x2F;O类型的抽象封装，包括内存、文件、日志、标准输入输出、socket、加解密、摘要和ssl通道等。OpenSSL BIO通过回调函数为用户隐藏了底层的实现细节，所有类型的BIO调用大体类似。BIO中的数据能从一个BIO传递给另一个BIO或是应用程序。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdn.net/20170815180254544?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGlhbzIwMDgxMjI4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="article:published_time" content="2021-03-02T15:42:45.753Z">
+<meta property="article:modified_time" content="2021-03-02T15:42:45.753Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="信息安全">
+<meta property="article:tag" content="OpenSSL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20170815180254544?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGlhbzIwMDgxMjI4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/03/02/OpenSSL-BIO%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>OpenSSL-BIO（摘录） | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bio%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">2.</span> <span class="nav-text"> BIO结构体</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bio_method"><span class="nav-number">3.</span> <span class="nav-text"> BIO_METHOD</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bio%E7%9A%84%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text"> BIO的相关函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bio%E7%9A%84%E5%A3%B0%E6%98%8E%E4%B8%8E%E9%87%8A%E6%94%BE"><span class="nav-number">4.1.</span> <span class="nav-text"> BIO的声明与释放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bio%E7%9A%84%E6%8E%A7%E5%88%B6%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.</span> <span class="nav-text"> BIO的控制函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bio%E7%9A%84io%E6%93%8D%E4%BD%9C"><span class="nav-number">4.3.</span> <span class="nav-text"> BIO的I&#x2F;O操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bio%E5%AF%B9"><span class="nav-number">4.4.</span> <span class="nav-text"> BIO对</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bio%E9%93%BE%E6%93%8D%E4%BD%9C"><span class="nav-number">4.5.</span> <span class="nav-text"> BIO链操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bio%E5%88%86%E7%B1%BB"><span class="nav-number">5.</span> <span class="nav-text"> BIO分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#sourcesink%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.1.</span> <span class="nav-text"> Source&#x2F;Sink类型BIO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8C%87%E9%92%88%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.1.1.</span> <span class="nav-text"> 文件指针类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.1.2.</span> <span class="nav-text"> 文件描述符类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.1.3.</span> <span class="nav-text"> Socket类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#null%E5%9E%8Bbio"><span class="nav-number">5.1.4.</span> <span class="nav-text"> NULL型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.1.5.</span> <span class="nav-text"> 内存类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bio%E5%AF%B9-2"><span class="nav-number">5.1.6.</span> <span class="nav-text"> BIO对</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.1.7.</span> <span class="nav-text"> 连接类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E5%8F%97%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.1.8.</span> <span class="nav-text"> 接受类型BIO</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#filter%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.2.</span> <span class="nav-text"> Filter类型BIO</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#null%E5%9E%8B%E8%BF%87%E6%BB%A4bio"><span class="nav-number">5.2.1.</span> <span class="nav-text"> NULL型过滤BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.2.2.</span> <span class="nav-text"> 缓冲类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#base64%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.2.3.</span> <span class="nav-text"> Base64类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cipher%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.2.4.</span> <span class="nav-text"> Cipher类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#md%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.2.5.</span> <span class="nav-text"> MD类型BIO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ssl%E7%B1%BB%E5%9E%8Bbio"><span class="nav-number">5.2.6.</span> <span class="nav-text"> SSL类型BIO</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84%E5%BD%95"><span class="nav-number">6.</span> <span class="nav-text"> 附录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/03/02/OpenSSL-BIO%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenSSL-BIO（摘录）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-02 23:42:45" itemprop="dateCreated datePublished" datetime="2021-03-02T23:42:45+08:00">2021-03-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/OpenSSL/" itemprop="url" rel="index"><span itemprop="name">OpenSSL</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/OpenSSL/%E6%91%98%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">摘录</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/03/02/OpenSSL-BIO%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/" class="post-meta-item leancloud_visitors" data-flag-title="OpenSSL-BIO（摘录）" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>30k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>27 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>注：本文内容摘录自参考部分的相关资料</p>
+<h1 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h1>
+<p>OpenSSL抽象I/O(Basic I/O abstraction，即BIO)是OpenSSL对于I/O类型的抽象封装，包括内存、文件、日志、标准输入输出、socket、加解密、摘要和ssl通道等。OpenSSL BIO通过回调函数为用户隐藏了底层的实现细节，所有类型的BIO调用大体类似。BIO中的数据能从一个BIO传递给另一个BIO或是应用程序。</p>
+<p>BIO的详细介绍参见[2]</p>
+<a id="more"></a>
+<h1 id="bio结构体"><a class="markdownIt-Anchor" href="#bio结构体"></a> BIO结构体</h1>
+<p>BIO的结构体的定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">bio_st</span> <span class="title">BIO</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bio_st</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	BIO_METHOD *method; <span class="comment">//BIO方法结构，是决定BIO类型和行为的重要参数，各种BIO的不同之处主要也正在于此项。</span></span><br><span class="line">	<span class="comment">/* bio, mode, argp, argi, argl, ret */</span></span><br><span class="line">	<span class="keyword">long</span> (*callback)(struct bio_st *,<span class="keyword">int</span>,<span class="keyword">const</span> <span class="keyword">char</span> *,<span class="keyword">int</span>, <span class="keyword">long</span>, <span class="keyword">long</span>);</span><br><span class="line">	<span class="keyword">char</span> *cb_arg; <span class="comment">/* first argument for the callback */</span></span><br><span class="line">	<span class="keyword">int</span> init; <span class="comment">//具体句柄初始化标记，初始化之后为1</span></span><br><span class="line">	<span class="keyword">int</span> <span class="built_in">shutdown</span>; <span class="comment">//BIO关闭标记，当该值不为0时释放资源，数值修改可以通过控制函数来设置</span></span><br><span class="line">	<span class="keyword">int</span> flags; <span class="comment">//用于控制各个函数的行为</span></span><br><span class="line">	<span class="keyword">int</span> retry_reason; <span class="comment">//重试原因，主要用在socket和ssl BIO的异步阻塞</span></span><br><span class="line">	<span class="keyword">int</span> num; <span class="comment">//因具体BIO而异</span></span><br><span class="line">	<span class="keyword">void</span> *ptr; <span class="comment">//具体bio有不同含义。比如文件BIO中它用来存放文件句柄；mem bio中它用来存放内存地址；connect bio中它用来存放BIO_CONNECT数据，accept bio中它用来存放BIO_ACCEPT数据。</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">bio_st</span> *<span class="title">next_bio</span>;</span>	<span class="comment">/*下一个BIO地址，used by filter BIOs*/</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">bio_st</span> *<span class="title">prev_bio</span>;</span>	<span class="comment">/*上一个BIO地址，used by filter BIOs*/</span></span><br><span class="line">	<span class="keyword">int</span> references; <span class="comment">//被引用数量</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> num_read; <span class="comment">//已读入字节数</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> num_write; <span class="comment">//已写入字节数</span></span><br><span class="line">	CRYPTO_EX_DATA ex_data; <span class="comment">//存放额外数据</span></span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure>
+<p>在BIO的成员中，method是最关键的一个，它决定了BIO的类型。在定义一个新的BIO结构时，使用下面的函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BIO* <span class="title">BIO_new</span><span class="params">(BIO_METHOD *type)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>BIO_new函数除了给一些初始变量赋值之外，主要就是把type中的各个变量赋值给BIO结构中的method成员。一般type参数是通过一个返回值为BIO_METHOD类型的函数来提供的，这样的函数有：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 【source/sink型】</span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_s_accept</span><span class="params">()</span>   <span class="comment">//一个封装了类似TCP/IP socket Accept规则的接口，并且使TCP/IP操作对于BIO接口透明。</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_s_connect</span><span class="params">()</span>  <span class="comment">//一个封装了类似TCP/IP socket Connect规则的接口，并且使TCP/IP操作对于BIO接口透明</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_s_socket</span><span class="params">()</span>   <span class="comment">//封装了socket接口的BIO类型</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_s_bio</span><span class="params">()</span>      <span class="comment">//封装了一个BIO对，数据从其中一个BIO写入，从另外一个BIO读出</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_s_fd</span><span class="params">()</span>       <span class="comment">//是一个封装了文件描述符的BIO接口，提供类似文件读写操作的功能</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_s_file</span><span class="params">()</span>     <span class="comment">//封装了标准的文件接口的BIO，包括标准的输入输出设备如stdin等</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_s_mem</span><span class="params">()</span>      <span class="comment">//封装了内存操作的BIO接口，包括了对内存的读写操作</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_s_null</span><span class="params">()</span>     <span class="comment">//返回空的sink型BIO接口，写入这种接口的所有数据读被丢弃，读的时候总是返回EOF</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//【filter型】</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_f_base64</span><span class="params">()</span>   <span class="comment">//封装了base64编码方法的BIO,写的时候进行编码，读的时候解码 </span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_f_cipher</span><span class="params">()</span>   <span class="comment">//封装了加解密方法的BIO，写的时候加密，读的时候解密</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_f_md</span><span class="params">()</span>       <span class="comment">//封装了信息摘要方法的BIO，通过该接口读写的数据都是已经经过摘要的。</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_f_ssl</span><span class="params">()</span>      <span class="comment">//封装了openssl 的SSL协议的BIO类型，也就是为SSL协议增加了一些BIO操作方法。</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_f_null</span><span class="params">()</span>     <span class="comment">//一个不作任何事情的BIO，对它的操作都简单传到下一个BIO去了，相当于不存在。</span></span></span><br><span class="line"><span class="function">BIO_METHOD* <span class="title">BIO_f_buffer</span><span class="params">()</span>   <span class="comment">//封装了缓冲区操作的BIO，写入该接口的数据一般是准备传入下一个BIO接口的，从该接口读出的数据一般也是从另一个BIO传过来的。</span></span></span><br></pre></td></tr></table></figure>
+<h1 id="bio_method"><a class="markdownIt-Anchor" href="#bio_method"></a> BIO_METHOD</h1>
+<p>一个BIO_METHOD类型的结构体包含如下这些成员：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">bio_method_st</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">int</span> type; <span class="comment">//BIO类型，type取值对应的BIO_METHOD类型见附录</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> *name; <span class="comment">//BIO的名字</span></span><br><span class="line">	<span class="keyword">int</span> (*bwrite)(BIO *, <span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">int</span>); <span class="comment">//写操作回调函数</span></span><br><span class="line">	<span class="keyword">int</span> (*bread)(BIO *, <span class="keyword">char</span> *, <span class="keyword">int</span>); <span class="comment">//读操作回调函数</span></span><br><span class="line">	<span class="keyword">int</span> (*bputs)(BIO *, <span class="keyword">const</span> <span class="keyword">char</span> *); <span class="comment">//写入字符串回调函数</span></span><br><span class="line">	<span class="keyword">int</span> (*bgets)(BIO *, <span class="keyword">char</span> *, <span class="keyword">int</span>); <span class="comment">//读取字符串函数</span></span><br><span class="line">	<span class="keyword">long</span> (*ctrl)(BIO *, <span class="keyword">int</span>, <span class="keyword">long</span>, <span class="keyword">void</span> *); <span class="comment">//控制回调函数</span></span><br><span class="line">	<span class="keyword">int</span> (*)(BIO *); <span class="comment">//生成回调函数</span></span><br><span class="line">	<span class="keyword">int</span> (*destroy)(BIO *); <span class="comment">//销毁回调函数</span></span><br><span class="line">    <span class="keyword">long</span> (*callback_ctrl)(BIO *, <span class="keyword">int</span>, bio_info_cb *); <span class="comment">//控制回调函数，可以由调用者实现</span></span><br><span class="line">&#125; BIO_METHOD;</span><br></pre></td></tr></table></figure>
+<h1 id="bio的相关函数"><a class="markdownIt-Anchor" href="#bio的相关函数"></a> BIO的相关函数</h1>
+<h2 id="bio的声明与释放"><a class="markdownIt-Anchor" href="#bio的声明与释放"></a> BIO的声明与释放</h2>
+<p>下面是用于BIO分配和释放操作的一些基本操作系列函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO*  <span class="title">BIO_new</span><span class="params">(BIO_METHOD *type)</span></span>; <span class="comment">//调用BIO_set()函数创建一个新的BIO</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">BIO_set</span><span class="params">(BIO *a,BIO_METHOD *type)</span></span>; <span class="comment">//对一个已经创建好的BIO设置新的BIO类型，其实就是简单的对BIO的各个成员进行初始化，并将参数type赋值给该BIO</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">BIO_free</span><span class="params">(BIO *a)</span></span>; <span class="comment">//释放单个BIO占用的资源，成功返回1，失败返回0</span></span><br><span class="line"><span class="function"><span class="keyword">void</span>  <span class="title">BIO_vfree</span><span class="params">(BIO *a)</span></span>; <span class="comment">//功能与BIO_free完全相同，但是无返回值</span></span><br><span class="line"><span class="function"><span class="keyword">void</span>  <span class="title">BIO_free_all</span><span class="params">(BIO *a)</span></span>; <span class="comment">//释放一个BIO链，如果中间某个过程出错也不会停止释放过程</span></span><br></pre></td></tr></table></figure>
+<p>一些类型的BIO使用BIO_new()函数创建之后便可以直接使用，如memory类型的BIO；有些BIO在创建之后还需要做一些初始化工作，如文件BIO，一般也会提供一些这样的函数来创建和初始化它们。</p>
+<h2 id="bio的控制函数"><a class="markdownIt-Anchor" href="#bio的控制函数"></a> BIO的控制函数</h2>
+<p>BIO的控制函数较多，见附录。这些函数用于控制BIO的状态等。</p>
+<h2 id="bio的io操作"><a class="markdownIt-Anchor" href="#bio的io操作"></a> BIO的I/O操作</h2>
+<p>BIO的基本读写函数有四个：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;openss/bio.h&gt;</span></span></span><br><span class="line"><span class="comment">//以下四个函数，成功返回真正读出/写入的数据长度，失败返回0或-1，BIO未实现这一函数返回-2</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_read</span><span class="params">(BIO *b, <span class="keyword">void</span> *buf, <span class="keyword">int</span> len)</span></span>; <span class="comment">//从BIO接口中读取len字节数据到buf，</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_write</span><span class="params">(BIO *b, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">int</span> len)</span></span>; <span class="comment">//往BIO写入长度为len的数据</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_gets</span><span class="params">(BIO *b,<span class="keyword">char</span> *buf, <span class="keyword">int</span> <span class="built_in">size</span>)</span></span>; <span class="comment">//从BIO中读取一行长度最大为size的数据</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_puts</span><span class="params">(BIO *b,<span class="keyword">const</span> <span class="keyword">char</span> *buf)</span></span>; <span class="comment">//往BIO中写入一个以NULL为结束符的字符串</span></span><br></pre></td></tr></table></figure>
+<p>BIO也提供了一组出错原因的诊断函数，用于诊断为什么BIO在读写数据的时候不能读写数据：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_should_read(a)       ((a)-&gt;flags &amp; BIO_FLAGS_READ) <span class="comment">//如果导致IO失败的原因是BIO此时要读取数据，则返回true</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_should_write(a)      ((a)-&gt;flags &amp; BIO_FLAGS_WRITE) <span class="comment">//如果导致IO失败的原因是BIO此时要写数据，则返回true</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_should_io_special(a) ((a)-&gt;flags &amp; BIO_FLAGS_IO_SPECIAL) <span class="comment">//如果导致IO失败的原因是读写之外的原因则返回true</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_retry_type(a)        ((a)-&gt;flags &amp; BIO_FLAGS_RWS) </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_should_retry(a)      ((a)-&gt;flags &amp; BIO_FLAGS_SHOULD_RETRY) <span class="comment">//如果读写出错的情况是要求程序稍后重试，那么该函数返回true</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_FLAGS_READ 0x01</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_FLAGS_WRITE 0x02</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_FLAGS_IO_SPECIAL 0x04</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_FLAGS_RWS (BIO_FLAGS_READ|BIO_FLAGS_WRITE|BIO_FLAGS_IO_SPECIAL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_FLAGS_SHOULD_RETRY 0x08</span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO*    <span class="title">BIO_get_retry_BIO</span><span class="params">(BIO *bio, <span class="keyword">int</span> *reason)</span></span>; <span class="comment">//给出特殊情况错误的简短原因</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>     <span class="title">BIO_get_retry_reason</span><span class="params">(BIO *bio)</span></span>; <span class="comment">//返回失败的原因</span></span><br></pre></td></tr></table></figure>
+<h2 id="bio对"><a class="markdownIt-Anchor" href="#bio对"></a> BIO对</h2>
+<p>BIO对是BIO中专门创建的一对缓存BIO，创建BIO对的函数如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_new_bio_pair</span><span class="params">(BIO **bio1, <span class="keyword">size_t</span> writebuf1, BIO **bio2, <span class="keyword">size_t</span> writebuf2)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>函数调用成功之后返回1，此时bio1和bio2都变得有效；否则返回0，bio1和bio2被设为NULL。但是注意它们在不使用的时候必须分别释放，因为有些SSL函数会隐含调用BIO_free函数。</p>
+<p>当BIO对创建之后，它的两端都能作为数据缓冲的输入和输出，典型的应用为它一端和SSL的IO连接，另一端被应用控制。</p>
+<p>这两个BIO对的功能是完全对称的，它们的缓冲区大小由参数writebuf1和writebuf2决定，如果设为0则使用默认大小。注意这个函数不会检查bio1和bio2是否指向其他BIO，二者的值都会被重写，且不会调用BIO_free()函数。因此在使用之前必须自己保证这两个变量为空，否则会造成内存泄漏。</p>
+<p>因为BIO对只会简单的缓存数据，而不会直接涉及到连接，所以它看起来<strong>就像非阻塞型的接口</strong>，如果<strong>写缓存满了或读缓存空的时候，调用IO函数就会立刻返回</strong>。也就是说，应用程序必须自己对写缓存执行flush操作或对读缓存执行fill操作。</p>
+<h2 id="bio链操作"><a class="markdownIt-Anchor" href="#bio链操作"></a> BIO链操作</h2>
+<p>BIO结构其实是一个链式结构，在BIO链上添加或删除BIO的函数有：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BIO * <span class="title">BIO_push</span><span class="params">(BIO *b,BIO *append)</span></span>; <span class="comment">//把名为append的链附加到名为b的链上，返回b</span></span><br><span class="line"><span class="function">BIO * <span class="title">BIO_pop</span><span class="params">(BIO *b)</span></span>; <span class="comment">//把名为b的BIO从它所在的BIO链中移除，并返回下一个BIO。如果没有则返回NULL</span></span><br></pre></td></tr></table></figure>
+<p>如同链表一样，一个BIO链的第一个元素便代表了整个链。在构造完BIO链之后，从链中的第一个元素开始做写操作时，数据会经过BIO链上每一个元素的处理，然后将BIO链最后一个元素的输出写入到文件中。而对于读操作来说，则是从BIO链的最后一个元素开始，沿着相反的方向进行操作，最后读取BIO链的第一个元素的输出。</p>
+<p><img data-src="https://img-blog.csdn.net/20170815180254544?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbGlhbzIwMDgxMjI4/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述" /></p>
+<p>BIO链也提供了遍历与查找的函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BIO* <span class="title">BIO_find_type</span><span class="params">(BIO *b,<span class="keyword">int</span> bio_type)</span></span>; <span class="comment">//在BIO链中根据特定类型的bio_type进行搜索，起始位置为b，返回最先找到的那个BIO，如果未找到则返回null</span></span><br><span class="line"><span class="function">BIO* <span class="title">BIO_next</span><span class="params">(BIO *b)</span></span>; <span class="comment">//返回b所在BIO链中的下一个BIO</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_method_type(b) ((b)-&gt;method-&gt;type)</span></span><br></pre></td></tr></table></figure>
+<p>其中，bio_type的值定义见附录。</p>
+<h1 id="bio分类"><a class="markdownIt-Anchor" href="#bio分类"></a> BIO分类</h1>
+<h2 id="sourcesink类型bio"><a class="markdownIt-Anchor" href="#sourcesink类型bio"></a> Source/Sink类型BIO</h2>
+<h3 id="文件指针类型bio"><a class="markdownIt-Anchor" href="#文件指针类型bio"></a> 文件指针类型BIO</h3>
+<p>文件类型BIO的相关函数和定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;    </span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD*  <span class="title">BIO_s_file</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//返回文件BIO的BIO_METHOD定义</span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO* <span class="title">BIO_new_file</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *filename, <span class="keyword">const</span> <span class="keyword">char</span> *mode)</span></span>; <span class="comment">//从文件名新建BIO</span></span><br><span class="line"><span class="function">BIO* <span class="title">BIO_new_fp</span><span class="params">(FILE *stream, <span class="keyword">int</span> flags)</span></span>; <span class="comment">//从文件指针新建BIO</span></span><br><span class="line"></span><br><span class="line">BIO_set_fp(BIO *b,FILE *fp, <span class="keyword">int</span> flags);  <span class="comment">//将bio与文件指针绑定</span></span><br><span class="line">BIO_get_fp(BIO *b,FILE **fpp);           <span class="comment">//获取bio绑定的的文件指针</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_read_filename</span><span class="params">(BIO *b, <span class="keyword">char</span> *name)</span> <span class="comment">//设置BIO的读文件名</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_write_filename</span><span class="params">(BIO *b, <span class="keyword">char</span> *name)</span> <span class="comment">//设置BIO的写文件名</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_append_filename</span><span class="params">(BIO *b, <span class="keyword">char</span> *name)</span> <span class="comment">//设置BIO的附加文件名</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_rw_filename</span><span class="params">(BIO *b, <span class="keyword">char</span> *name)</span> <span class="comment">//设置BIO的读写文件名</span></span></span><br></pre></td></tr></table></figure>
+<p>file类型的BIO_METHOD结构体变量如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_filep =</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_FILE,</span><br><span class="line">     <span class="string">&quot;FILE pointer&quot;</span>,</span><br><span class="line">     file_write,</span><br><span class="line">     file_read,</span><br><span class="line">     file_puts,</span><br><span class="line">     file_gets,</span><br><span class="line">     file_ctrl,</span><br><span class="line">     file_new,</span><br><span class="line">     file_free,</span><br><span class="line">     <span class="literal">NULL</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在file类型中，使用前面介绍过的<strong>BIO_read和BIO_write</strong>对底层的file数据流进行读写操作，file类型BIO是支持<strong>BIO_gets和BIO_puts</strong>函数的。</p>
+<p><strong>BIO_flush</strong>函数在file类型BIO中只是简单调用了API函数fflush。</p>
+<p><strong>BIO_reset</strong>函数则将文件指针重新指向文件的开始位置，它调用fseek(stream,0,0) 函数实现该功能。</p>
+<p><strong>BIO_seek</strong>函数将文件指针位置至于所定义的位置ofs上（从文件开头开始计算的偏移ofs），它调用了文件的操作函数fseek(stream,ofs,0)，是一个宏定义形式的函数，需要注意的是，因为该函数调用了fseek函数，所以成功的时候返回0，失败的时候返回－1，这是跟标准BIO_seek函数定义不一样的，因为标准的定义是成功返回1，失败返回非正值。</p>
+<p><strong>BIO_eof</strong>调用了feof函数。 如果在BIO结构中<strong>设置了BIO_CLOSE</strong>的标志，则在BIO释放的时候会<strong>自动调用fclose函数</strong>。</p>
+<p><strong>BIO_tell</strong>返回位置指针的值。是一个宏定义函数。</p>
+<p>BIO文件类型操作的程序示例（省略了头文件等）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.最简单的实例程序</span></span><br><span class="line">BIO *bio_out;</span><br><span class="line">bio_out = BIO_new_fp(<span class="built_in">stdout</span>, BIO_NOCLOSE); </span><br><span class="line">BIO_printf(bio_out, <span class="string">&quot;Hello World\n&quot;</span>);</span><br><span class="line"><span class="comment">//  2.上述例子的另一种实现方法</span></span><br><span class="line">BIO *bio_out;</span><br><span class="line">bio_out = BIO_new(BIO_s_file());</span><br><span class="line"><span class="keyword">if</span>(bio_out == <span class="literal">NULL</span>) </span><br><span class="line">    <span class="comment">/*error handling*/</span></span><br><span class="line"><span class="keyword">if</span>(!BIO_set_fp(bio_out, <span class="built_in">stdout</span>, BIO_NOCLOSE)) </span><br><span class="line">    <span class="comment">/* 出错则将文件流定向到标准输出*/</span></span><br><span class="line">BIO_printf(bio_out, <span class="string">&quot;Hello World\n&quot;</span>);</span><br><span class="line"><span class="comment">//  3.写文件操作</span></span><br><span class="line">BIO *out;</span><br><span class="line">out = BIO_new_file(<span class="string">&quot;filename.txt&quot;</span>, <span class="string">&quot;w&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(!out) <span class="comment">/*出错*/</span></span><br><span class="line">BIO_printf(out, <span class="string">&quot;Hello World\n&quot;</span>);</span><br><span class="line">BIO_free(out);</span><br><span class="line"><span class="comment">//   4.上述例子的另一种实现方法</span></span><br><span class="line">BIO *out;</span><br><span class="line">out = BIO_new(BIO_s_file());</span><br><span class="line"><span class="keyword">if</span>(out == <span class="literal">NULL</span>) </span><br><span class="line">    <span class="comment">/* Error handling */</span></span><br><span class="line"><span class="keyword">if</span>(!BIO_write_filename(out, (<span class="keyword">void</span>*)<span class="string">&quot;filename.txt&quot;</span>)) </span><br><span class="line">    <span class="comment">/* Error handling */</span></span><br><span class="line">BIO_printf(out, <span class="string">&quot;Hello World\n&quot;</span>); <span class="comment">//此处换成BIO_read或BIO_gets可以实现读文件操作</span></span><br><span class="line">BIO_free(out);</span><br></pre></td></tr></table></figure>
+<h3 id="文件描述符类型bio"><a class="markdownIt-Anchor" href="#文件描述符类型bio"></a> 文件描述符类型BIO</h3>
+<p>文件描述符类型BIO是一个Source/Sink类型的BIO，定义了以下一些类型的函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;     </span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD * <span class="title">BIO_s_fd</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//返回一个文件描述符类型的BIO_METHOD结构</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_fd(b,fd,c) BIO_int_ctrl(b,BIO_C_SET_FD,c,fd) <span class="comment">//将BIO的底层文件描述符设置为fd</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_fd(b,c)    BIO_ctrl(b,BIO_C_GET_FD,0,(char *)c) <span class="comment">//返回相应的BIO底层文件描述符，存储在参数c中</span></span></span><br><span class="line"><span class="function">BIO*    <span class="title">BIO_new_fd</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> close_flag)</span></span>; <span class="comment">//创建并返回一个底层描述符为fd，关闭标志位close_flag的文件描述符类型的BIO</span></span><br></pre></td></tr></table></figure>
+<p>fd类型的BIO_METHOD结构体变量定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_fdp=</span><br><span class="line">&#123;</span><br><span class="line">         BIO_TYPE_FD,</span><br><span class="line">         <span class="string">&quot;file descriptor&quot;</span>,</span><br><span class="line">         fd_write,</span><br><span class="line">         fd_read,</span><br><span class="line">         fd_puts,</span><br><span class="line">         <span class="literal">NULL</span>, <span class="comment">/* fd_gets, 与file类型的BIO相比它没有实现gets方法*/</span> </span><br><span class="line">         fd_ctrl,</span><br><span class="line">         fd_new,</span><br><span class="line">         fd_free,</span><br><span class="line">         <span class="literal">NULL</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>BIO_read</strong>和<strong>BIO_write</strong>对底层的文件描述符结构进行读写操作。这两个函数的一些行为取决于他们所在的平台的文件描述符的读写函数的行为，如果底层的文件描述符是非阻塞型的，那么他们基本上是跟前面介绍过的BIO的IO操作函数一样的。</p>
+<p><strong>BIO_puts</strong>是支持的，但是<strong>BIO_gets</strong>在本类型描述符中是不支持的。</p>
+<p><strong>BIO_reset</strong>调用lseek(fd,0,0)函数，使文件指针指向开始的位置。调用成功返回0，失败返回－1。</p>
+<p><strong>BIO_seek</strong>调用了lseek(fd,ofs,0)函数，设置文件指针的位置到从文件头偏移ofs的位置，成功返回文件指针的位置，失败返回－1。</p>
+<p><strong>BIO_tell</strong>返回目前文件指针的位置，它其实调用了lseek(fd,0,1)函数，失败返回－1。 如果设置了关闭标志，那么当BIO被释放的时候底层的文件描述符就会被关闭。</p>
+<p>程序示例（省略了头文件和主函数部分）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">BIO *out;</span><br><span class="line">out = BIO_new_fd(fileno(<span class="built_in">stdout</span>), BIO_NOCLOSE);</span><br><span class="line">BIO_write(out, <span class="string">&quot;Hello World\n&quot;</span>, <span class="number">13</span>); </span><br><span class="line">BIO_free(out); </span><br></pre></td></tr></table></figure>
+<p>附：Linux系统的文件描述符介绍https://blog.csdn.net/cywosp/article/details/38965239</p>
+<h3 id="socket类型bio"><a class="markdownIt-Anchor" href="#socket类型bio"></a> Socket类型BIO</h3>
+<p>Socket类型的BIO是一种source/sink型BIO，封装了Socket的IO操作，它相关的一 些函数定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD*  <span class="title">BIO_s_socket</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_set_fd(b,fd,c)  BIO_int_ctrl(b,BIO_C_SET_FD,c,fd) <span class="comment">//将Socket描述符fd设置为BIO的底层IO结构，同时可以设置关闭标志c</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_get_fd(b,c)     BIO_ctrl(b,BIO_C_GET_FD,0,(char *)c) <span class="comment">//返回指定BIO的Socket描述符</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO*         <span class="title">BIO_new_socket</span><span class="params">(<span class="keyword">int</span> sock, <span class="keyword">int</span> close_flag)</span></span>; <span class="comment">//根据一个给定参数返回一个socket类型的BIO，成功则返回该BIO指针，失败返回NULL</span></span><br></pre></td></tr></table></figure>
+<p>Socket类型的BIO_METHOD结构定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_sockp=</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_SOCKET,</span><br><span class="line">     <span class="string">&quot;socket&quot;</span>,</span><br><span class="line">     sock_write,</span><br><span class="line">     sock_read,</span><br><span class="line">     sock_puts,</span><br><span class="line">     <span class="literal">NULL</span>, <span class="comment">/* sock_gets, 在Socket的BIO类型中不支持*/</span></span><br><span class="line">     sock_ctrl,</span><br><span class="line">     sock_new,</span><br><span class="line">     sock_free,</span><br><span class="line">     <span class="literal">NULL</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="null型bio"><a class="markdownIt-Anchor" href="#null型bio"></a> NULL型BIO</h3>
+<p>NULL类型的BIO是一个空的Source/Sink型BIO，写入这个BIO的数据都被丢掉，从这里执行读操作也总是返回EOF。其相关函数定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt; </span></span></span><br><span class="line">     　　</span><br><span class="line"><span class="function">BIO_METHOD * <span class="title">BIO_s_null</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>NULL类型的BIO_METHOD结构定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">static BIO_METHOD null_method&#x3D;</span><br><span class="line">&#123;</span><br><span class="line">        BIO_TYPE_NULL,</span><br><span class="line">    　　 &quot;NULL&quot;,</span><br><span class="line">    　　 null_write,</span><br><span class="line">    　　 null_read,</span><br><span class="line">    　　 null_puts,</span><br><span class="line">    　　 null_gets,</span><br><span class="line">    　　 null_ctrl,</span><br><span class="line">    　　 null_new,</span><br><span class="line">    　　 null_free,</span><br><span class="line">    　　 NULL,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>从结构上看，这个类型的BIO实现了不少的函数，但是，所有这些函数都只是简单返回0、1或者输入数据的长度，而不作任何事情。</p>
+<p>一般来说，在openssl里面，<strong>这种类型的BIO是置放在BIO链的末尾</strong>的，比如在应用程序中，如果你要将一些数据通过filter型的BIO  digest进行摘要算法，但不需要把它送往任何地方，又因为一个BIO链要求以source/sink型BIO开始或结束，所以这时候就可以在BIO链的末尾添加一个source/sink型的NUll类型BIO来实现这个功能。</p>
+<h3 id="内存类型bio"><a class="markdownIt-Anchor" href="#内存类型bio"></a> 内存类型BIO</h3>
+<p>内存型BIO是source/sink型BIO，它<strong>使用内存作为它的I/O</strong>。它定义的相关函数如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt; </span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD * <span class="title">BIO_s_mem</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">BIO_set_mem_eof_return(BIO *b,<span class="keyword">int</span> v) <span class="comment">//设置一个没有数据的内存型BIO的执行读动作的行为</span></span><br><span class="line"><span class="function"><span class="keyword">long</span>  <span class="title">BIO_get_mem_data</span><span class="params">(BIO *b, <span class="keyword">char</span> **pp)</span> <span class="comment">//将参数pp的指针指向内存型BIO的数据开始处</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">BIO_set_mem_buf</span><span class="params">(BIO *b,BUF_MEM *bm,<span class="keyword">int</span> c)</span> <span class="comment">//将参数bm代表的BUF_MEM结构作为该BIO的底层结构</span></span></span><br><span class="line"><span class="function"><span class="title">BIO_get_mem_ptr</span><span class="params">(BIO *b,BUF_MEM **pp)</span> <span class="comment">//将底层的BUF_MEM结构放在指针pp中</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">BIO *<span class="title">BIO_new_mem_buf</span><span class="params">(<span class="keyword">void</span> *buf, <span class="keyword">int</span> len)</span></span>; <span class="comment">//创建一个内存型BIO，其数据为buf里面长度为len的数据，如果参数len是－1，那么就默认buf是以null结束的，使用strlen计算长度。这时候BIO被设置为只读的，不能执行写操作。它用于数据需要存储在一块静态内存中并以BIO形式存在的时候。所需要的数据是直接从内存中读取的，而不是先要执行拷贝操作（读写方式的内存BIO就是要先拷贝），这也就要求这块内存是只读的，不能改变，一直维持到BIO被释放。</span></span><br></pre></td></tr></table></figure>
+<p>写进该类型BIO的数据被存储在BUF_MEM结构中，该结构被定义为适合存储数据的一种结构，其结构定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">buf_mem_st</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">     <span class="keyword">int</span> length； <span class="comment">/* current number of bytes */</span></span><br><span class="line">     <span class="keyword">char</span> *data;</span><br><span class="line">     <span class="keyword">int</span> <span class="built_in">max</span>; <span class="comment">/* size of buffer */</span></span><br><span class="line">&#125; BUF_MEM;</span><br></pre></td></tr></table></figure>
+<p>注意内存型BIO的内存是可以无限扩大的，也就是说无论写入多少数据都可以成功执行。一般任何写入内存型BIO的数据都可以被读出，除非该内存型BIO为只读类型。</p>
+<p>内存型的BIO_METHOD定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD mem_method=</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_MEM,</span><br><span class="line">     <span class="string">&quot;memory buffer&quot;</span>,</span><br><span class="line">     mem_write,</span><br><span class="line">     mem_read,</span><br><span class="line">     mem_puts,</span><br><span class="line">     mem_gets,</span><br><span class="line">     mem_ctrl,</span><br><span class="line">     mem_new,</span><br><span class="line">     mem_free,</span><br><span class="line">     <span class="literal">NULL</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>BIO_write和BIO_read</strong>函数是支持的。对内存型BIO执行写操作总是成功的，因为内存型BIO的内存能够无限扩大。<strong>任何一个对可读写的内存型BIO的</strong>读操作都会在使用内部拷贝操作从BIO里面删除该段数据，这样一来，如果BIO里面有大量的数据，而读的却只是很小的一些片断，那么会导致操作非常慢。<strong>使用只读的内存型BIO避免了这个问题</strong>。在使用的时候，如果内存型BIO必须使用可读写的，那么可以加一个Buffer型BIO到BIO链中，这可以使操作速度更快。</p>
+<p><strong>BIO_gets和BIO_puts</strong>操作在内存型BIO是支持的。</p>
+<p>如果设置了BIO_CLOSE标志，那么内存型BIO被释放的时候其底层的BUF_MEM型BIO也同时被释放。</p>
+<p><strong>BIO_reset</strong>函数被调用时，如果该BIO是可读写的，那么该BIO所有数据都会被清空；如果该BIO是只读的，那么该操作只会简单将指针指向原始位置，里面的数据可以再读。</p>
+<p><strong>BIO_eof</strong>返回true，表明只读时候BIO里面没有可读数据。</p>
+<p><strong>BIO_ctrl_pending</strong>返回目前BIO里面存储的数据的字节(byte)数。</p>
+<p>程序示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	BIO     *b=<span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">int</span>     len=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">char</span>    *out=<span class="literal">NULL</span>;</span><br><span class="line">	b=BIO_new(BIO_s_mem());</span><br><span class="line">	len=BIO_write(b,<span class="string">&quot;openssl&quot;</span>,<span class="number">4</span>); <span class="comment">//将4字节的数据写入b（即只写入了&quot;open&quot;），返回值为4</span></span><br><span class="line">	len=BIO_printf(b,<span class="string">&quot;%s&quot;</span>,<span class="string">&quot;Hello world!\n&quot;</span>); <span class="comment">//将字符串写入b</span></span><br><span class="line">	len=BIO_ctrl_pending(b); <span class="comment">//返回存储字节数</span></span><br><span class="line">	out=(<span class="keyword">char</span> *)OPENSSL_malloc(len);</span><br><span class="line">	len=BIO_read(b,out,len); <span class="comment">//从b的缓冲区中读取全部字符串</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>,out);<span class="comment">//使用printf可以将out中的内容打印出来</span></span><br><span class="line">	OPENSSL_free(out);</span><br><span class="line">	BIO_free(b);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="bio对-2"><a class="markdownIt-Anchor" href="#bio对-2"></a> BIO对</h3>
+<p>BIO对也是作为一种source/sink类型的BIO来处理的，也就是说，BIO里面还提供了一种专门的BIO_METHO方法来处理BIO对的各种操作。BIO对类型的BIO各种相关的函数定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt; </span></span></span><br><span class="line"><span class="function">BIO_METHOD *<span class="title">BIO_s_bio</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_make_bio_pair(b1,b2) (int)BIO_ctrl(b1,BIO_C_MAKE_BIO_PAIR,0,b2) <span class="comment">//将两个单独的BIO连接起来形成BIO对</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_destroy_bio_pair(b) (int)BIO_ctrl(b,BIO_C_DESTROY_BIO_PAIR,0,NULL) <span class="comment">//将两个连接起来的BIO对拆开，如果一个BIO对的任何一个被释放则自动执行该操作</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_shutdown_wr(b) (int)BIO_ctrl(b, BIO_C_SHUTDOWN_WR, 0, NULL) <span class="comment">//关闭BIO对中的其中一个BIO，在这之后，针对于该BIO的写操作返回错误，从另一个BIO读取数据的时候返回剩余有效数据或者EOF</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_write_buf_size(b,size) (int)BIO_ctrl(b,BIO_C_SET_WRITE_BUF_SIZE,size,NULL) <span class="comment">//设置BIO的缓冲区大小</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_write_buf_size(b,size) (size_t)BIO_ctrl(b,BIO_C_GET_WRITE_BUF_SIZE,size,NULL) <span class="comment">//返回写缓冲区的大小</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_new_bio_pair</span><span class="params">(BIO **bio1, <span class="keyword">size_t</span> writebuf1, BIO **bio2, <span class="keyword">size_t</span> writebuf2)</span></span>; <span class="comment">//其实是调用BIO_new,BIO_make_bio_pair和BIO_set_write_buf_size函数来创建一对BIO对</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_write_guarantee(b) (int)BIO_ctrl(b,BIO_C_GET_WRITE_GUARANTEE,0,NULL) <span class="comment">//返回当前能够写入BIO的数据的最大长度</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">BIO_ctrl_get_write_guarantee</span><span class="params">(BIO *b)</span></span>; <span class="comment">//返回当前能够写入BIO的数据的最大长度</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_read_request(b) (int)BIO_ctrl(b,BIO_C_GET_READ_REQUEST,0,NULL) <span class="comment">//返回要求发送的数据的长度</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">BIO_ctrl_get_read_request</span><span class="params">(BIO *b)</span></span>; <span class="comment">//返回要求发送的数据的长度</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_ctrl_reset_read_request</span><span class="params">(BIO *b)</span></span>; <span class="comment">//把BIO_get_read_request要返回值设置为0</span></span><br></pre></td></tr></table></figure>
+<p>所谓的BIO对只是将两个BIO的终端输出（BIO结构中参数peer的ptr成员）相互设置为对方，从而形成一种对称的结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bio1-&gt;peer-&gt;ptr&#x3D;bio2</span><br><span class="line">bio2-&gt;peer-&gt;ptr&#x3D;bio1</span><br></pre></td></tr></table></figure>
+<p>BIO对类型的BIO_METHOD定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_biop =</span><br><span class="line">&#123;       </span><br><span class="line">     BIO_TYPE_BIO,</span><br><span class="line">     <span class="string">&quot;BIO pair&quot;</span>,</span><br><span class="line">     bio_write,</span><br><span class="line">     bio_read,</span><br><span class="line">     bio_puts,</span><br><span class="line">     <span class="literal">NULL</span> <span class="comment">/* 没有定义 bio_gets */</span>,</span><br><span class="line">     bio_ctrl,</span><br><span class="line">     bio_new,</span><br><span class="line">     bio_free,</span><br><span class="line">     <span class="literal">NULL</span> <span class="comment">/* 没有定义 bio_callback_ctrl */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>因为没有提供内部数据结构的内存锁结构(lock)，所以，<strong>一般来说一个BIO对的两个BIO都必须在一个线程下使用</strong>。因为BIO链通常是以一个source/sink  BIO结束的，所以就可以实现应用程序通过控制BIO对的一个BIO从而控制整个BIO链的数据处理。其实，也就相当于BIO对给应用程序提供了一个处理整个BIO链的入口。BIO对的一个典型应用就是在应用程序里面控制TLS/SSL的I/O接口，一般来说，在应用程序想在TLS/SSL中使用非标准的传输方法或者不适合使用标准的socket方法的时候就可以采用这样的方法来实现。</p>
+<p>BIO对释放的时候，需要分别释放两个BIO，如果在使用BIO_free或者BIO_free_all释放了其中一个BIO的时候，另一个BIO就也必须要释放。</p>
+<p>当BIO对使用在双向应用程序的时候，如TLS/SSL，一定要对写缓冲区里面的数据执行flush操作。当然，也可以通过在BIO对中的另一个BIO调用BIO_pending函数，如果有数据在缓冲区中，那么就将它们读出并发送到底层的传输通道中去。为了使请求或BIO_should_read函数调用成功（为true），在执行任何正常的操作（如select）之前，都必须这样做才行。</p>
+<p><strong>BIO_read</strong>函数从缓冲BIO中读取数据，如果没有数据，则发出一个重试请求。</p>
+<p><strong>BIO_write</strong>函数往缓冲BIO中写入数据，如果缓冲区已满，则发出一个重试请求。</p>
+<p><strong>BIO_ctrl_pending和BIO_ctrl_wpending</strong>函数可以用来查看在读或写缓冲区里面有效的数据的数量。</p>
+<p><strong>BIO_reset</strong>函数将写缓冲区里面的数据清除。</p>
+<h3 id="连接类型bio"><a class="markdownIt-Anchor" href="#连接类型bio"></a> 连接类型BIO</h3>
+<p>该类型的BIO封装了socket的Connect方法，它使得编程的时候可以使用统一的BIO规则进行socket的connect连接的操作和数据的发送接受，而不用关心具体平台的Socket的connect方法的区别。其相关定义的一些函数如下(openssl\bio.h)：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BIO_METHOD * <span class="title">BIO_s_connect</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_set_conn_hostname(b,name)  BIO_ctrl(b,BIO_C_SET_CONNECT,0,(char *)name) <span class="comment">//使用字符串设置主机名，可以是IP地址或是网址等形式</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_set_conn_port(b,port)      BIO_ctrl(b,BIO_C_SET_CONNECT,1,(char *)port) <span class="comment">//设置主机端口号</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_set_conn_ip(b,ip)          BIO_ctrl(b,BIO_C_SET_CONNECT,2,(char *)ip) <span class="comment">//使用二进制模式设置ip</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_set_conn_int_port(b,port)  BIO_ctrl(b,BIO_C_SET_CONNECT,3,(char *)port) <span class="comment">//以整数形式设置主机端口号</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_get_conn_hostname(b)       BIO_ptr_ctrl(b,BIO_C_GET_CONNECT,0) <span class="comment">//返回连接类型BIO的主机名</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_get_conn_port(b)           BIO_ptr_ctrl(b,BIO_C_GET_CONNECT,1) <span class="comment">//返回字符串类型的端口信息</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_get_conn_ip(b,ip)          BIO_ptr_ctrl(b,BIO_C_SET_CONNECT,2) <span class="comment">//返回二进制形式的ip地址</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_get_conn_int_port(b,port)  BIO_int_ctrl(b,BIO_C_SET_CONNECT,3,port) <span class="comment">//返回整数形式端口号</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_set_nbio(b,n)              BIO_ctrl(b,BIO_C_SET_NBIO,(n),NULL) <span class="comment">//设置I/O的非阻塞标志</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>      BIO_do_connect(b)              BIO_do_handshake(b) <span class="comment">//进行连接操作，如果连接成功返回1，否则返回0或负值</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO *        <span class="title">BIO_new_connect</span><span class="params">(<span class="keyword">char</span> *str)</span> <span class="comment">//创建并返回一个连接类型的BIO，其实，它调用了BIO_s_connect、BIO_new和BIO_set_conn_hostname函数完成了整个操作。成功则返回一个BIO，否则返回NULL。</span></span></span><br></pre></td></tr></table></figure>
+<p>这种类型的BIO_METHOD结构定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">static BIO_METHOD methods_connectp&#x3D;</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_CONNECT,</span><br><span class="line">     &quot;socket connect&quot;,</span><br><span class="line">     conn_write,</span><br><span class="line">     conn_read,</span><br><span class="line">     conn_puts,</span><br><span class="line">     NULL, &#x2F;* connect_gets, *&#x2F;</span><br><span class="line">     conn_ctrl,</span><br><span class="line">     conn_new,</span><br><span class="line">     conn_free,</span><br><span class="line">     conn_callback_ctrl,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>BIO_read和BIO_write</strong>的操作调用底层的连接的IO操作来完成。如果在服务器地址和端口设置正确，但连接没有建立的时候调用读写操作函数，那么会先进行连接的建立操作，然后再进行读写操作。</p>
+<p><strong>BIO_puts</strong>操作是支持的，但是<strong>BIO_gets操作不支持</strong>，这在该类型BIO的BIO_METHOD结构定义中就可以看出来。</p>
+<p>如果<strong>关闭标志设置了，那么在BIO被释放的时候，任何活动的连接和socket都会被关闭</strong>。</p>
+<p><strong>BIO_reset</strong>方法被调用的时候，连接（connect）类型的BIO的任何活动连接都会被关闭，从而回到可以重新跟同样的主机建立连接的状态。</p>
+<p><strong>BIO_get_fd</strong>函数返回连接类型的BIO的底层socket，当参数c不是NULL的时候，就将该socket赋值给c，当然，socket也作为返回值。c参数应该为int*类型。如果BIO没有初始化，则返回－1。</p>
+<p>例：连接到本地Web服务器</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span>	<span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    BIO *cbio, *out;</span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    <span class="keyword">char</span> tmpbuf[<span class="number">1024</span>];</span><br><span class="line"></span><br><span class="line">    cbio = BIO_new_connect(<span class="string">&quot;localhost:http&quot;</span>);</span><br><span class="line">    out = BIO_new_fp(<span class="built_in">stdout</span>, BIO_NOCLOSE);</span><br><span class="line">    <span class="keyword">if</span>(BIO_do_connect(cbio) &lt;= <span class="number">0</span>) </span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;Error connecting to server\n&quot;</span>);</span><br><span class="line">    BIO_puts(cbio, <span class="string">&quot;GET / HTTP/1.0\n\n&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span>(;;) </span><br><span class="line">    &#123;</span><br><span class="line">           len = BIO_read(cbio, tmpbuf, <span class="number">1024</span>);</span><br><span class="line">           <span class="keyword">if</span>(len &lt;= <span class="number">0</span>) <span class="keyword">break</span>;</span><br><span class="line">           BIO_write(out, tmpbuf, len);</span><br><span class="line">    &#125;</span><br><span class="line">    BIO_free(cbio);</span><br><span class="line">    BIO_free(out);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="接受类型bio"><a class="markdownIt-Anchor" href="#接受类型bio"></a> 接受类型BIO</h3>
+<p>接受（accept）类型的BIO跟连接（connect）类型BIO是相对应的，它封装了Socket的accept方法及其相关的一些操作，使得能够对不同的平台使用同一的函数进行操作。其定义的相关函数如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;openssl&#x2F;bio.h&gt;</span><br><span class="line">BIO_METHOD * BIO_s_accept(void);  </span><br><span class="line"></span><br><span class="line">#define      BIO_set_accept_port(b,name) BIO_ctrl(b,BIO_C_SET_ACCEPT,0,(char*)name) &#x2F;&#x2F;使用字串名来设置接受端口，形式为&quot;host:port&quot;，这两部分可以为*，表示可以使用任意接口和端口</span><br><span class="line">#define      BIO_get_accept_port(b) BIO_ptr_ctrl(b,BIO_C_GET_ACCEPT,0)  </span><br><span class="line"></span><br><span class="line">BIO *        BIO_new_accept(char *host_port); &#x2F;&#x2F;该函数将BIO_new和BIO_set_accept_port函数放在一个函数里面调用，创建一个新的接受类型BIO</span><br><span class="line"></span><br><span class="line">#define      BIO_set_nbio_accept(b,n) BIO_ctrl(b,BIO_C_SET_ACCEPT,1,(n)?&quot;a&quot;:NULL) &#x2F;&#x2F;设置接受socket是否为阻塞模式，参数n为0为阻塞模式，1为非阻塞模式</span><br><span class="line">#define      BIO_set_accept_bios(b,bio) BIO_ctrl(b,BIO_C_SET_ACCEPT,2,(char *)bio) &#x2F;&#x2F;设置一个BIO链，当接受到一个连接之后，这个设置好的BIO链就会被附加到整个BIO链上。调用这一函数之后，只有在接受BIO被释放后链上的BIO才能自动释放</span><br><span class="line">#define      BIO_set_bind_mode(b,mode) BIO_ctrl(b,BIO_C_SET_BIND_MODE,mode,NULL) &#x2F;&#x2F;设置绑定模式</span><br><span class="line">#define      BIO_get_bind_mode(b,mode) BIO_ctrl(b,BIO_C_GET_BIND_MODE,0,NULL) &#x2F;&#x2F;获得绑定模式</span><br><span class="line">#define      BIO_BIND_NORMAL 0 &#x2F;&#x2F;默认绑定模式，那么另外一个socket就不能绑定到同一个端口</span><br><span class="line">#define      BIO_BIND_REUSEADDR_IF_UNUSED 1 &#x2F;&#x2F;绑定模式1，首先会尝试BIO_BIND_NORMAL的模式绑定到端口，如果失败了而且端口没有使用，那么就会使用BIO_BIND_REUSEADDR 模式绑定到端口</span><br><span class="line">#define      BIO_BIND_REUSEADDR 2 &#x2F;&#x2F;绑定模式2，另外的socket可以绑定到同一个端口</span><br><span class="line">#define      BIO_do_accept(b) BIO_do_handshake(b) 当它在接受（accept）BIO设置好之后第一被调用的时候，它会创建一个接受socket并把它跟地址绑定；第二次被调用的时候，它会等待连接的到来</span><br></pre></td></tr></table></figure>
+<p>接受类型BIO的BIO_METHOD结构定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_acceptp=</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_ACCEPT,</span><br><span class="line">     <span class="string">&quot;socket accept&quot;</span>,</span><br><span class="line">     acpt_write,</span><br><span class="line">     acpt_read,</span><br><span class="line">     acpt_puts,</span><br><span class="line">     <span class="literal">NULL</span>, <span class="comment">/* connect_gets, */</span></span><br><span class="line">     acpt_ctrl,</span><br><span class="line">     acpt_new,</span><br><span class="line">     acpt_free,</span><br><span class="line">     <span class="literal">NULL</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这一类型的BIO对各种平台的TCP/IP的accept做了封装，所以在使用的时候就可以同一的使用BIO的规则进行操作，而不用担心因为不同的平台带来程序改写或增加移植的工作量。</p>
+<p><strong>BIO_read和BIO_write</strong>函数操作调用了底层平台连接的I/O相关操作，如果这时候没有连接建立，端口设置正确，那么该BIO就会等待连接的建立。事实上，当一个连接建立的时候，一个新的socket类型BIO就会被创建并附加到BIO链中，形成accept-&gt;socket的BIO结构，所以这时候对初始化了的接受socket进行IO操作就会导致它处于等待连接建立的状态。当一个接受类型的BIO在BIO链的末尾的时候，在处理I/O调用之前它会先等待一个连接的建立；如果不是在末尾，那么它简单的把I/O调用传到下一个BIO。</p>
+<p>如果接受（accept）类型BIO的<strong>关闭标志设置</strong>了，那么当BIO被释放的时候，该BIO链上任何活动的连接和socket都会被关闭。</p>
+<p><strong>BIO_get_fd和BIO_set_fd</strong>可以用来取得和设置该连接的socket描述符。</p>
+<h2 id="filter类型bio"><a class="markdownIt-Anchor" href="#filter类型bio"></a> Filter类型BIO</h2>
+<h3 id="null型过滤bio"><a class="markdownIt-Anchor" href="#null型过滤bio"></a> NULL型过滤BIO</h3>
+<p>NULL型的filterBIO的定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD * <span class="title">BIO_f_null</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>该函数返回一个NULL型的过滤BIO_METHOD结构，NULL过滤型BIO是一个不作任何事情的BIO。针对该类型BIO的任何调用都会被简单传递中BIO链中的下一个BIO中去，也就相当于该BIO是不存在的一样。</p>
+<h3 id="缓冲类型bio"><a class="markdownIt-Anchor" href="#缓冲类型bio"></a> 缓冲类型BIO</h3>
+<p>缓冲类型BIO的相关定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_buffer_num_lines(b)         BIO_ctrl(b,BIO_C_GET_BUFF_NUM_LINES,0,NULL) <span class="comment">//返回缓冲区中目前数据的行数</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_read_buffer_size(b,size)    BIO_int_ctrl(b,BIO_C_SET_BUFF_SIZE,size,0) <span class="comment">//设置读缓冲区大小</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_write_buffer_size(b,size)   BIO_int_ctrl(b,BIO_C_SET_BUFF_SIZE,size,1) <span class="comment">//设置写缓冲区大小</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_buffer_size(b,size)         BIO_ctrl(b,BIO_C_SET_BUFF_SIZE,size,NULL) <span class="comment">//设置读写缓冲区大小</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_buffer_read_data(b,buf,num) BIO_ctrl(b,BIO_C_SET_BUFF_READ_DATA,num,buf) <span class="comment">//清空缓冲区原有的数据</span></span></span><br></pre></td></tr></table></figure>
+<p>buffer类型的BIO_METHOD结构定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">static BIO_METHOD methods_buffer&#x3D;</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_BUFFER,</span><br><span class="line">     &quot;buffer&quot;,</span><br><span class="line">     buffer_write,</span><br><span class="line">     buffer_read,</span><br><span class="line">     buffer_puts,</span><br><span class="line">     buffer_gets,</span><br><span class="line">     buffer_ctrl,</span><br><span class="line">     buffer_new,</span><br><span class="line">     buffer_free,</span><br><span class="line">     buffer_callback_ctrl,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>由结构定义可见，<strong>该类型BIO支持所有BIO的I/O函数</strong>。</p>
+<p>写入缓冲(buffer)BIO的数据存储在缓冲区里面，定期写入到BIO链的下一个BIO中。事实上，<strong>只有缓冲区已满或者调用了BIO_flush函数时</strong>，数据才会写入下面的BIO，所以，当任何存储在缓冲区的数据需要写入的时候（如在使用BIO_pop函数从BIO链中删除一个buffer类型BIO之前），<strong>必须使用BIO_flush函数</strong>，如果BIO链的末尾是一个非阻塞型的BIO，有时候调用BIO_flush可能出现失败，需要重试的情况。</p>
+<p>从该类型BIO读取数据时，数据从下一个BIO填充到该BIO内部缓冲区中，然后再读出来。该类型BIO支持BIO_gets和BIO_puts方法，事实上，BIO_gets函数是通过在下一个BIO的BIO_read函数来实现的，所以，如果一个BIO不支持BIO_gets方法（如SSL类型的BIO），可以通过预先附加一个buffer类型BIO来实现BIO_gets的功能。</p>
+<p><strong>BIO_reset</strong>被调用的时候，该类型BIO里面的所有数据都会被清空。</p>
+<h3 id="base64类型bio"><a class="markdownIt-Anchor" href="#base64类型bio"></a> Base64类型BIO</h3>
+<p>Base64类型的BIO定义在evp目录下。当往该BIO写入数据时，数据被Base64编码，当从该BIO读数据时，数据被Base64解码。该BIO不支持BIO_gets和BIO_puts的功能。它的定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/evp.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD * <span class="title">BIO_f_base64</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>Base64类型的BIO_METHOD结构定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_b64=</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_BASE64,</span><br><span class="line">     <span class="string">&quot;base64 encoding&quot;</span>,</span><br><span class="line">     b64_write,</span><br><span class="line">     b64_read,</span><br><span class="line">     <span class="literal">NULL</span>, <span class="comment">/* b64_puts, */</span></span><br><span class="line">     <span class="literal">NULL</span>, <span class="comment">/* b64_gets, */</span></span><br><span class="line">     b64_ctrl,</span><br><span class="line">     b64_new,</span><br><span class="line">     b64_free,</span><br><span class="line">     b64_callback_ctrl,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>BIO_set_flags函数可以用来设置标记BIO_FLAGS_BASE64_NO_NL，该标记设置后，将把所有数据编码成为一行。由于base64编码本身格式的原因，不能准确可靠的决定编码后的数据块的结束位置，使用的时候需要注意数据的长度问题。</p>
+<p>程序示例：将字符串进行编码并将编码后的数据输出到标准输出设备</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BIO *bio, *b64;</span><br><span class="line"><span class="keyword">char</span> message[] = <span class="string">&quot;Hello World \n&quot;</span>;</span><br><span class="line">b64 = BIO_new(BIO_f_base64());</span><br><span class="line">bio = BIO_new_fp(<span class="built_in">stdout</span>, BIO_NOCLOSE);</span><br><span class="line">bio = BIO_push(b64, bio);</span><br><span class="line">BIO_write(bio, message, <span class="built_in">strlen</span>(message));</span><br><span class="line">BIO_flush(bio);</span><br><span class="line">BIO_free_all(bio);</span><br></pre></td></tr></table></figure>
+<h3 id="cipher类型bio"><a class="markdownIt-Anchor" href="#cipher类型bio"></a> Cipher类型BIO</h3>
+<p>该类型的BIO将<strong>写入该BIO的数据加密，从该BIO读数据时数据被解密</strong>，它事实上封装了EVP_CipherInit、EVP_CipherUpdate、EVP_CipherFinal三种方法。它不支持BIO_puts和BIO_gets的方法，如果要使用这两个方法，可以通过在前面附加一个buffer类型的BIO来实现。它的定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/evp.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD * <span class="title">BIO_f_cipher</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//返回cipher类型的BIO_METHOD</span></span><br><span class="line"><span class="function"><span class="keyword">void</span>         <span class="title">BIO_set_cipher</span><span class="params">(BIO *b,<span class="keyword">const</span> EVP_CIPHER *cipher,<span class="keyword">unsigned</span> <span class="keyword">char</span> *key, <span class="keyword">unsigned</span> <span class="keyword">char</span> *iv, <span class="keyword">int</span> enc)</span></span>; <span class="comment">//设置BIO的加密算法，key为加密密钥，iv为初始化的IV，enc=1为加密，enc=0为解密</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span>          <span class="title">BIO_get_cipher_status</span><span class="params">(BIO *b)</span> <span class="comment">//检测解密是否成功执行</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span>          <span class="title">BIO_get_cipher_ctx</span><span class="params">(BIO *b, EVP_CIPHER_CTX **pctx)</span> <span class="comment">//返回BIO的内部加密体制</span></span></span><br></pre></td></tr></table></figure>
+<p>cipher类型的BIO_METHOD结构如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_enc=</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_CIPHER,</span><br><span class="line">     <span class="string">&quot;cipher&quot;</span>,</span><br><span class="line">     enc_write,</span><br><span class="line">     enc_read,</span><br><span class="line">     <span class="literal">NULL</span>, <span class="comment">/* enc_puts, */</span></span><br><span class="line">     <span class="literal">NULL</span>, <span class="comment">/* enc_gets, */</span></span><br><span class="line">     enc_ctrl,</span><br><span class="line">     enc_new,</span><br><span class="line">     enc_free,</span><br><span class="line">     enc_callback_ctrl,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>跟base64型BIO相似，当调用<strong>BIO_flush函数</strong>时，表明所有数据都已经通过该类型BIO加密了，用来将最后的一段数据通过该BIO进行加密。在进行加密的时候，<strong>必须调用BIO_flush</strong>函数来把最后的数据通过BIO进行加密，否则最后的数据会在解密的时候出现失败的情况。当从一个加密类型的BIO读取数据时，当读到最后一段数据时，会通过检测EOF自动检测到数据结束标志并自动将这段数据解密。</p>
+<h3 id="md类型bio"><a class="markdownIt-Anchor" href="#md类型bio"></a> MD类型BIO</h3>
+<p>MD类型BIO对通过它的任何数据都进行摘要操作（message digest），事实上，该类型BIO封装了EVP_DigestInit、EVP_DigestUpdate和EVP_DigestFinal三个函数的功能和行为。该类型BIO是完全对称的，也就是说，不管是读数据（BIO_read）还是写数据（BIO_write），都进行相同的摘要操作。</p>
+<p>MD类型BIO的定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/evp.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD * <span class="title">BIO_f_md</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_set_md</span><span class="params">(BIO *b,EVP_MD *md)</span></span>; <span class="comment">//用参数md设置给定的BIO摘要算法。该函数必须在执行读写操作前调用，用于初始化一个摘要类型的BIO，调用成功返回1，失败返回0</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_get_md</span><span class="params">(BIO *b,EVP_MD **mdp)</span></span>; <span class="comment">//返回BIO摘要方法的指针到mdp参数里面。调用成功返回1，否则返回0。</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BIO_get_md_ctx</span><span class="params">(BIO *b,EVP_MD_CTX **mdcp)</span></span>; <span class="comment">//返回摘要BIO的方法结构到mdcp参数里面</span></span><br></pre></td></tr></table></figure>
+<p>MD类型的BIO_METHOD结构如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_md=</span><br><span class="line">&#123;</span><br><span class="line">     BIO_TYPE_MD,<span class="string">&quot;message digest&quot;</span>,</span><br><span class="line">     md_write,</span><br><span class="line">     md_read,</span><br><span class="line">     <span class="literal">NULL</span>, <span class="comment">/* md_puts, */</span></span><br><span class="line">     md_gets,</span><br><span class="line">     md_ctrl,</span><br><span class="line">     md_new,</span><br><span class="line">     md_free,</span><br><span class="line">     md_callback_ctrl,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>BIO_gets</strong>函数执行的时候，如果给定的size参数足够大，可以完成摘要（digest）计算，那么就会返回摘要值。BIO_puts函数是不支持的，如果需要支持该函数，可以在前面附加一个buffer类型的BIO。<br />
+<strong>BIO_reset</strong>函数重新初始化一个摘要类型的BIO，事实上，它是简单重新调用了EVP_DigestInit函数进行初始化。<br />
+注意，在从一个摘要BIO里面读取完摘要信息之后，在重新使用该BIO之前，<strong>必须</strong>调用BIO_reset或BIO_set_md重新初始化该BIO才行。</p>
+<p>示例：从标准输入流中读取数据然后输出数据摘要</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/evp.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        BIO *bio,*mdtmp;</span><br><span class="line">        <span class="keyword">char</span> buf[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> rdlen;</span><br><span class="line"></span><br><span class="line">		bio=BIO_new_fp(<span class="built_in">stdin</span>,BIO_NOCLOSE);</span><br><span class="line">        mdtmp=BIO_new(BIO_f_md());</span><br><span class="line">        BIO_set_md(mdtmp,EVP_sha1());</span><br><span class="line"></span><br><span class="line">        bio=BIO_push(mdtmp,bio);</span><br><span class="line">        mdtmp=BIO_new(BIO_f_md());</span><br><span class="line">        BIO_set_md(mdtmp,EVP_md5());</span><br><span class="line">        bio=BIO_push(mdtmp,bio);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">                rdlen=BIO_read(bio,buf,<span class="keyword">sizeof</span>(buf));</span><br><span class="line">        &#125;<span class="keyword">while</span>(rdlen&gt;<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">                EVP_MD* md;</span><br><span class="line">                mdtmp=BIO_find_type(mdtmp,BIO_TYPE_MD);</span><br><span class="line">                <span class="keyword">if</span>(!mdtmp)</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                BIO_get_md(mdtmp,&amp;md);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>,OBJ_nid2sn(EVP_MD_type(md)));</span><br><span class="line">                <span class="keyword">int</span> mdlen=BIO_gets(mdtmp,buf,EVP_MAX_MD_SIZE);</span><br><span class="line">                <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;mdlen;i++)</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">&quot;:%02X&quot;</span>,buf[i]);</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">                mdtmp=BIO_next(mdtmp);</span><br><span class="line">        &#125;<span class="keyword">while</span>(mdtmp);</span><br><span class="line">        BIO_free_all(bio);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ssl类型bio"><a class="markdownIt-Anchor" href="#ssl类型bio"></a> SSL类型BIO</h3>
+<p>SSL类型BIO封装了openssl里面的ssl规则和函数，相当于提供了一个使用SSL很好的有效工具。它的定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openss/ssl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO_METHOD *<span class="title">BIO_f_ssl</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_ssl(b,ssl,c)       BIO_ctrl(b,BIO_C_SET_SSL,c,(char *)ssl) <span class="comment">//设置ssl类型BIO的内部ssl指针指向ssl</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_ssl(b,sslp)        BIO_ctrl(b,BIO_C_GET_SSL,0,(char *)sslp) <span class="comment">//返回ssl类型BIO内部的ssl结构指针，得到该指针后可以用标志的ssl函数对它进行操作</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_ssl_mode(b,client) BIO_ctrl(b,BIO_C_SSL_MODE,client,NULL) <span class="comment">//设置ssl的工作模式，参数client为1代表客户端模式，client为0代表服务器模式</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_ssl_renegotiate_bytes(b,num) BIO_ctrl(b,BIO_C_SET_SSL_RENEGOTIATE_BYTES,num,NULL); <span class="comment">//设置重新进行session协商的读写数据的长度为num</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_ssl_renegotiate_timeout(b,seconds) </span></span><br><span class="line">BIO_ctrl(b,BIO_C_SET_SSL_RENEGOTIATE_TIMEOUT,seconds,<span class="literal">NULL</span>); <span class="comment">//设置重新进行session协商的时间</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_num_renegotiates(b) BIO_ctrl(b,BIO_C_SET_SSL_NUM_RENEGOTIATES,0,NULL); <span class="comment">//返回ssl连接在因为字节限制或时间限制导致session重新协商之前总共读写的数据长度</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BIO*    <span class="title">BIO_new_ssl</span><span class="params">(SSL_CTX *ctx,<span class="keyword">int</span> client)</span></span>; <span class="comment">//使用ctx参数所代表的SSL_CTX结构创建一个SSL类型的BIO，如果client不为0则使用客户端模式</span></span><br><span class="line"><span class="function">BIO*    <span class="title">BIO_new_ssl_connect</span><span class="params">(SSL_CTX *ctx)</span></span>; <span class="comment">//创建一个包含ssl类型BIO的新BIO链，并在后面附加了一个连接类型的BIO</span></span><br><span class="line"><span class="function">BIO*    <span class="title">BIO_new_buffer_ssl_connect</span><span class="params">(SSL_CTX *ctx)</span></span>; <span class="comment">//创建一个包含buffer型的BIO，一个SSL类型的BIO和一个连接类型的BIO</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>     <span class="title">BIO_ssl_copy_session_id</span><span class="params">(BIO *to,BIO *from)</span></span>; <span class="comment">//将BIO链from的SSL Session ID拷贝到BIO链to中</span></span><br><span class="line"><span class="function"><span class="keyword">void</span>    <span class="title">BIO_ssl_shutdown</span><span class="params">(BIO *bio)</span></span>; <span class="comment">//关闭一个BIO链中的ssl连接</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_do_handshake(b) BIO_ctrl(b,BIO_C_DO_STATE_MACHINE,0,NULL) <span class="comment">//在相关的BIO上启动SSL握手过程并建立SSL连接。连接成功建立返回1，否则返回0或负值</span></span></span><br></pre></td></tr></table></figure>
+<p>SSL类型的BIO_METHOD结构如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> BIO_METHOD methods_sslp=</span><br><span class="line">&#123;</span><br><span class="line">    BIO_TYPE_SSL,<span class="string">&quot;ssl&quot;</span>,</span><br><span class="line">    ssl_write,</span><br><span class="line">    ssl_read,</span><br><span class="line">    ssl_puts,</span><br><span class="line">    <span class="literal">NULL</span>, <span class="comment">/* ssl_gets, */</span></span><br><span class="line">    ssl_ctrl,</span><br><span class="line">    ssl_new,</span><br><span class="line">    ssl_free,</span><br><span class="line">    ssl_callback_ctrl,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>BIO_read和BIO_write</strong>函数调用的时候，SSL类型的BIO会使用SSL协议进行底层的I/O操作。如果此时SSL连接并没有建立，那么就会在调用第一个IO函数的时候先进行连接的建立。</p>
+<p>如果使用<strong>BIO_push</strong>将一个BIO附加到一个SSL类型的BIO上，那么SSL类型的BIO读写数据的时候，它会被自动调用。</p>
+<p><strong>BIO_reset</strong>调用的时候，会调用SSL_shutdown函数关闭目前所有处于连接状态的SSL，然后再对下一个BIO调用BIO_reset，这功能一般就是将底层的传输连接断开。调用完成之后，SSL类型的BIO就处于初始的接受或连接状态。</p>
+<p>如果<strong>设置了BIO关闭标志</strong>，那么SSL类型BIO释放的时候，内部的SSL结构也会被SSL_free函数释放。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;openssl/ssl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        BIO *sbio,*out;</span><br><span class="line">        <span class="keyword">int</span> len;</span><br><span class="line">        <span class="keyword">char</span> tmpbuf[<span class="number">1024</span>];</span><br><span class="line">        SSL_CTX* ctx;</span><br><span class="line">        SSL* ssl;</span><br><span class="line"></span><br><span class="line">        SSLeay_add_ssl_algorithms();</span><br><span class="line">        OpenSSL_add_all_algorithms();</span><br><span class="line">        ctx=SSL_CTX_new(SSLv23_client_method());</span><br><span class="line">        sbio=BIO_new_ssl_connect(ctx);</span><br><span class="line">        BIO_get_ssl(sbio,&amp;ssl);</span><br><span class="line">        <span class="keyword">if</span>(!ssl)</span><br><span class="line">        &#123;</span><br><span class="line">                <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">&quot;Cannot locate SSL pointer\n&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        SSL_set_mode(ssl,SSL_MODE_AUTO_RETRY);</span><br><span class="line">        BIO_set_conn_hostname(sbio,<span class="string">&quot;mybank.icbc.com.cn:https&quot;</span>); <span class="comment">//这里可以改</span></span><br><span class="line">        out=BIO_new_fp(<span class="built_in">stdout</span>,BIO_NOCLOSE);</span><br><span class="line">        BIO_printf(out,<span class="string">&quot;Connecting......\n&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span>(BIO_do_connect(sbio)&lt;=<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">                <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">&quot;Error connecting to server\n&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(BIO_do_handshake(sbio)&lt;=<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">                <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">&quot;Error establishing SSL connection\n&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        BIO_puts(sbio,<span class="string">&quot;GET/HTTP/1.0\n&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span>(;;)</span><br><span class="line">        &#123;</span><br><span class="line">                len=BIO_read(sbio,tmpbuf,<span class="number">1024</span>);</span><br><span class="line">                <span class="keyword">if</span>(len&lt;=<span class="number">0</span>) <span class="keyword">break</span>;</span><br><span class="line">                BIO_write(out,tmpbuf,len);</span><br><span class="line">        &#125;</span><br><span class="line">        BIO_free_all(sbio);</span><br><span class="line">        BIO_free(out);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="附录"><a class="markdownIt-Anchor" href="#附录"></a> 附录</h1>
+<p>不同的BIO_METHOD对应的type取值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#define BIO_TYPE_NONE 0</span><br><span class="line">#define BIO_TYPE_MEM (1|0x0400)</span><br><span class="line">#define BIO_TYPE_FILE (2|0x0400)</span><br><span class="line">#define BIO_TYPE_FD (4|0x0400|0x0100)</span><br><span class="line">#define BIO_TYPE_SOCKET (5|0x0400|0x0100)</span><br><span class="line">#define BIO_TYPE_NULL (6|0x0400)</span><br><span class="line">#define BIO_TYPE_SSL (7|0x0200)</span><br><span class="line">#define BIO_TYPE_MD (8|0x0200)</span><br><span class="line">#define BIO_TYPE_BUFFER (9|0x0200)</span><br><span class="line">#define BIO_TYPE_CIPHER (10|0x0200)</span><br><span class="line">#define BIO_TYPE_BASE64 (11|0x0200)</span><br><span class="line">#define BIO_TYPE_CONNECT (12|0x0400|0x0100)</span><br><span class="line">#define BIO_TYPE_ACCEPT (13|0x0400|0x0100)</span><br><span class="line">#define BIO_TYPE_PROXY_CLIENT (14|0x0200)</span><br><span class="line">#define BIO_TYPE_PROXY_SERVER (15|0x0200)</span><br><span class="line">#define BIO_TYPE_NBIO_TEST (16|0x0200)</span><br><span class="line">#define BIO_TYPE_NULL_FILTER (17|0x0200)</span><br><span class="line">#define BIO_TYPE_BER (18|0x0200)</span><br><span class="line">#define BIO_TYPE_BIO (19|0x0400)</span><br><span class="line">#define BIO_TYPE_DESCRIPTOR 0x0100</span><br><span class="line">#define BIO_TYPE_FILTER 0x0200</span><br><span class="line">#define BIO_TYPE_SOURCE_SINK 0x0400</span><br></pre></td></tr></table></figure>
+<p>BIO的控制函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;openssl/bio.h&gt;</span></span></span><br><span class="line"><span class="comment">//最底层BIO控制函数，支持不同的命令输入从而产生不同的功能，一般无需调用</span></span><br><span class="line"><span class="function"><span class="keyword">long</span>   <span class="title">BIO_ctrl</span><span class="params">(BIO *bp,<span class="keyword">int</span> cmd,<span class="keyword">long</span> larg,<span class="keyword">void</span> *parg)</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">//上层BIO控制函数</span></span><br><span class="line"><span class="function"><span class="keyword">char</span>*  <span class="title">BIO_ptr_ctrl</span><span class="params">(BIO *bp,<span class="keyword">int</span> cmd,<span class="keyword">long</span> larg)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">long</span>   <span class="title">BIO_int_ctrl</span><span class="params">(BIO *bp,<span class="keyword">int</span> cmd,<span class="keyword">long</span> larg,<span class="keyword">int</span> iarg)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//最上层BIO控制函数</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_reset</span><span class="params">(BIO *b)</span></span>; <span class="comment">//将BIO状态初始化</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_seek</span><span class="params">(BIO *b, <span class="keyword">int</span> ofs)</span></span>; <span class="comment">//将文件相关的BIO的文件指针设置到距离开始位置ofs字节的位置上</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_tell</span><span class="params">(BIO *b)</span></span>; <span class="comment">//返回文件相关BIO的当前文件指针位置</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_flush</span><span class="params">(BIO *b)</span></span>; <span class="comment">//将BIO内部缓冲区的数据写出</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_eof</span><span class="params">(BIO *b)</span></span>; <span class="comment">//如果BIO读取到EOF返回1，否则返回0</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_set_close</span><span class="params">(BIO *b,<span class="keyword">long</span> flag)</span></span>; <span class="comment">//设置BIO的关闭标志</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_get_close</span><span class="params">(BIO *b)</span></span>; <span class="comment">//读取BIO的关闭标志</span></span><br><span class="line"><span class="comment">//下面四个函数都用于得到BIO中读缓存或写缓存中字符的数目</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_pending</span><span class="params">(BIO *b)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">int</span>    <span class="title">BIO_wpending</span><span class="params">(BIO *b)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">BIO_ctrl_pending</span><span class="params">(BIO *b)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">BIO_ctrl_wpending</span><span class="params">(BIO *b)</span></span>;  </span><br><span class="line"></span><br><span class="line"><span class="comment">//最上层BIO控制函数的宏定义方式</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_reset(b)       (int)BIO_ctrl(b,BIO_CTRL_RESET,0,NULL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_seek(b,ofs)    (int)BIO_ctrl(b,BIO_C_FILE_SEEK,ofs,NULL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_tell(b)        (int)BIO_ctrl(b,BIO_C_FILE_TELL,0,NULL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_flush(b)       (int)BIO_ctrl(b,BIO_CTRL_FLUSH,0,NULL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_eof(b)         (int)BIO_ctrl(b,BIO_CTRL_EOF,0,NULL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_close(b,c) (int)BIO_ctrl(b,BIO_CTRL_SET_CLOSE,(c),NULL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_close(b)   (int)BIO_ctrl(b,BIO_CTRL_GET_CLOSE,0,NULL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_pending(b)     (int)BIO_ctrl(b,BIO_CTRL_PENDING,0,NULL)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_wpending(b)    (int)BIO_ctrl(b,BIO_CTRL_WPENDING,0,NULL)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//最底层BIO回调函数控制函数，一般不需要调用。</span></span><br><span class="line"><span class="function"><span class="keyword">long</span>   <span class="title">BIO_callback_ctrl</span><span class="params">(BIO *b, <span class="keyword">int</span> cmd, <span class="keyword">void</span> (*fp)(struct bio_st *, <span class="keyword">int</span>, <span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">long</span>, <span class="keyword">long</span>))</span></span>;</span><br><span class="line"><span class="comment">//上层BIO回调函数控制函数</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_callback(b,cb)      ((b)-&gt;callback=(cb)) <span class="comment">//设置callback函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_callback(b)         ((b)-&gt;callback) <span class="comment">//返回callback函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_set_callback_arg(b,arg) ((b)-&gt;cb_arg=(char *)(arg)) <span class="comment">//设置callback函数的参数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BIO_get_callback_arg(b)     ((b)-&gt;cb_arg) <span class="comment">//得到callback函数的参数</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//其中，callback函数本身的声明在BIO结构体中。callback函数非常重要，许多控制功能需要用它来协助完成</span></span><br><span class="line"><span class="comment">/*函数参数的解释：</span></span><br><span class="line"><span class="comment">	b：callback函数对应的BIO</span></span><br><span class="line"><span class="comment">	oper：设置BIO将要执行的操作</span></span><br><span class="line"><span class="comment">	argp，argi，argl：根据oper定义操作的不同而不同，是相应操作中要使用到的参数</span></span><br><span class="line"><span class="comment">	retvalue：默认的callback函数返回值*/</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="title">callback</span><span class="params">(BIO *b, <span class="keyword">int</span> oper, <span class="keyword">const</span> <span class="keyword">char</span> *argp,<span class="keyword">int</span> argi, <span class="keyword">long</span> argl, <span class="keyword">long</span> retvalue)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//此外，还有一个用于调试目的的函数，其声明如下：</span></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">BIO_debug_callback</span><span class="params">(BIO *bio,<span class="keyword">int</span> cmd,<span class="keyword">const</span> <span class="keyword">char</span> *argp,<span class="keyword">int</span> argi,<span class="keyword">long</span> argl,<span class="keyword">long</span> ret)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>bio_type的定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#define BIO_TYPE_NONE 0</span><br><span class="line">#define BIO_TYPE_MEM (1|0x0400)</span><br><span class="line">#define BIO_TYPE_FILE (2|0x0400)</span><br><span class="line">#define BIO_TYPE_FD (4|0x0400|0x0100)</span><br><span class="line">#define BIO_TYPE_SOCKET (5|0x0400|0x0100)</span><br><span class="line">#define BIO_TYPE_NULL (6|0x0400)</span><br><span class="line">#define BIO_TYPE_SSL (7|0x0200)</span><br><span class="line">#define BIO_TYPE_MD (8|0x0200)</span><br><span class="line">#define BIO_TYPE_BUFFER (9|0x0200)</span><br><span class="line">#define BIO_TYPE_CIPHER (10|0x0200)</span><br><span class="line">#define BIO_TYPE_BASE64 (11|0x0200)</span><br><span class="line">#define BIO_TYPE_CONNECT (12|0x0400|0x0100)</span><br><span class="line">#define BIO_TYPE_ACCEPT (13|0x0400|0x0100)</span><br><span class="line">#define BIO_TYPE_PROXY_CLIENT (14|0x0200)</span><br><span class="line">#define BIO_TYPE_PROXY_SERVER (15|0x0200)</span><br><span class="line">#define BIO_TYPE_NBIO_TEST (16|0x0200)</span><br><span class="line">#define BIO_TYPE_NULL_FILTER (17|0x0200)</span><br><span class="line">#define BIO_TYPE_BER (18|0x0200)</span><br><span class="line">#define BIO_TYPE_BIO (19|0x0400)</span><br><span class="line"></span><br><span class="line">#define BIO_TYPE_DESCRIPTOR 0x0100</span><br><span class="line">#define BIO_TYPE_FILTER 0x0200</span><br><span class="line">#define BIO_TYPE_SOURCE_SINK 0x0400</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<p>[1] OpenSSL编程 赵春平</p>
+<p>[2] <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpYW8yMDA4MTIyOC9hcnRpY2xlL2RldGFpbHMvNzcxOTM3Mjkv">https://blog.csdn.net/liao20081228/article/details/77193729/<i class="fa fa-external-link-alt"></i></span></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/03/02/OpenSSL-BIO%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/" title="OpenSSL-BIO（摘录）">http://lyf35.github.io/2021/03/02/OpenSSL-BIO（摘录）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" rel="tag"><i class="fa fa-tag"></i> 信息安全</a>
+              <a href="/tags/OpenSSL/" rel="tag"><i class="fa fa-tag"></i> OpenSSL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/02/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="prev" title="密码学-基础知识">
+      <i class="fa fa-chevron-left"></i> 密码学-基础知识
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/02/OpenSSL-EVP%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/" rel="next" title="OpenSSL-EVP（摘录）">
+      OpenSSL-EVP（摘录） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">702k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">10:38</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '04d66e017215883513f958e4f413e38b',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
