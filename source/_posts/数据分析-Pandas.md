@@ -3655,6 +3655,8 @@ dataframe_nan
   </tbody>
 </table>
 </div>
+要判断某个位置是否是NaN，可以使用`isnull()`函数，这一函数返回一个bool类型的Series或者DataFrame，指示每个位置上是否为NaN。
+
 
 
 `dropna()`函数可以将丢失的数据删除掉。对于Series来说，丢失的数据会被直接删除掉；而对于DataFrame来说，默认操作是只要一行内有一个NaN就把这一行全部删除。下面是一些程序示例：
@@ -8319,4 +8321,4 @@ pd.crosstab([dataframe_pivottable['smoker'],dataframe_pivottable['time']],datafr
 
 # 参考
 
-1. Python for Data Analysis, 2nd Edition.
+1. Python for Data Analysis, 2nd Edition
