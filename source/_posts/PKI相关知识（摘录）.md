@@ -534,9 +534,3 @@ X.509 introduced the concept of extensions. This is the latest version and was i
 
 - Certificate Policies: The CA can include the policies based on which the certificates are issued. These policies indicate the usability of a certificate under different conditions. An associated object identifier that is referred to as policy OID identifies each policy. Policy mapping is used in situations when more than one CA exists in a hierarchy. In order for the policy of one CA to be recognized by the entity of another CA, the policy of the first CA should be mapped with the policy of the second CA. The policy mapping extension facilitates the inclusion of policy mapping information.
 - Certification Path Constraint: The Certification Path Constraint extension was introduced to restrict the certification path in a trust model. A constraint is a kind of condition applied as a restriction to the certification path. To understand certification path constraint better, lets analyze the following example.
-
-
-
-# Reference
-
-1. Public Key Infrastructure: Implementation and Design

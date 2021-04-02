@@ -1202,6 +1202,12 @@ np.dot(test_linalg1,test_linalg2) #计算矩阵乘法，注意两个矩阵的大
 
 
 
+在NumPy中还有一个功能与`np.dot`相似的函数：`np.matmul`。当array为二维时，它与`np.dot`的计算结果相同。但是在多维的情况下，`matmul`会将array看作是多个二维数组的堆叠，在计算时取两个array的最后两个维度，按照矩阵乘法的规则来计算。而`dot`则是按照如下规则来计算：dot(a, b)[i,j,k,m] = sum(a[i,j,:] * b[k,:,m])。
+
+例如一个array的维度为(9,5,7,4)，另一个为(9,5,4,3)，那么使用`matmul`得到的结果是维度为(9,5,7,3)的数组，而使用`dot`得到的则是(9,5,7,9,5,3)。
+
+
+
 
 ```python
 test_linalg1.dot(test_linalg2) #与上面的语句等价

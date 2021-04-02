@@ -1110,7 +1110,6 @@ bio_type的定义：
 
 # 参考
 
-[1] OpenSSL编程 赵春平
-
-[2] https://blog.csdn.net/liao20081228/article/details/77193729/
+1. OpenSSL编程 赵春平
+2. https://blog.csdn.net/liao20081228/article/details/77193729/
 

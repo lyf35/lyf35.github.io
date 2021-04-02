@@ -11,11 +11,11 @@ sharing: True
 
 ## 常用网址
 
-官网主页：https://matplotlib.org/index.html （文中一些函数的具体用法可以在这一页面内查找其详细用法）
+官网主页：https://matplotlib.org/stable/index.html （文中一些函数的具体用法可以在这一页面内查找其详细用法）
 
-教程：https://matplotlib.org/tutorials/index.html （提供了一些常见图像的绘图示例）
+教程：https://matplotlib.org/stable/tutorials/index.html（提供了一些常见图像的绘图示例）
 
-示例库：https://matplotlib.org/gallery/index.html （包含了更多种类的绘图示例）
+示例库：https://matplotlib.org/stable/gallery/index.html （包含了更多种类的绘图示例）
 
 <!--more-->
 
@@ -70,11 +70,11 @@ ax1=axes[0][1] #可以通过索引来获得其中一个坐标系
 
 在上图中，我们可以看到子图的一些内容有重叠，这是因为默认情况下`constrained_layout`参数为`False`。因此绘图时不会自动对图像的元素进行位置和大小的调整，从而导致子图的一些元素放置在了subplot之外。
 
-如果要避免这一现象，可以在创建subplot的时候传入`constrained_layout=True`，这样便会自动对图像元素进行调整，从而保证图像内容可以全部处于subplot之内。更加详细的说明参考https://matplotlib.org/tutorials/intermediate/constrainedlayout_guide.html#sphx-glr-tutorials-intermediate-constrainedlayout-guide-py
+如果要避免这一现象，可以在创建subplot的时候传入`constrained_layout=True`，这样便会自动对图像元素进行调整，从而保证图像内容可以全部处于subplot之内。更加详细的说明参考https://matplotlib.org/stable/tutorials/intermediate/constrainedlayout_guide.html
 
 当然，也可以直接通过`plt.rcParams['figure.constrained_layout.use'] = True`这一语句完成全局设置，这样的话之后创建的每一幅图都会自动调整图像布局。
 
-另外一种类似的用法叫做Tight Layout：https://matplotlib.org/tutorials/intermediate/tight_layout_guide.html#sphx-glr-tutorials-intermediate-tight-layout-guide-py 。但是这种用法相比于Constrained Layout更容易出错，不推荐使用。
+另外一种类似的用法叫做Tight Layout：https://matplotlib.org/stable/tutorials/intermediate/tight_layout_guide.html 。但是这种用法相比于Constrained Layout更容易出错，不推荐使用。
 
 
 ```python
@@ -89,7 +89,7 @@ fig, axes=plt.subplots(2,3,constrained_layout=True)
 ```python
 #方法2：将figure和axes的创建分开
 #figure更细致的划分需要用到GridSpec，参考https://matplotlib.org/tutorials/intermediate/gridspec.html#sphx-glr-tutorials-intermediate-gridspec-py
-fig=plt.figure(num=1,figsize=(4,4)) #相当于创建一张白纸
+fig=plt.figure(num=1,figsize=(4,4)) #相当于创建一张白纸，figsize参数可以设置整张图片的大小
 ax1=fig.add_subplot(221) #前两个数字代表分成m*n的小块，第三个数字代表axes在第几个小块中绘制
 ax2=fig.add_subplot(222) 
 ax3=fig.add_subplot(111) #后添加的axes会覆盖之前已经添加的axes，不受之前add_subplot()函数的影响
@@ -161,7 +161,7 @@ ax.set(**props)
 
 图像美化的方法有两种：一种是调用`plt.style.use()`，使用官方预定义的格式；另外一种方法是通过`matplotlib.rcParams`自定义。
 
-方法一：通过`rcParams`手动设置。一些参数的含义可以查看https://matplotlib.org/tutorials/introductory/customizing.html#matplotlibrc-sample
+方法一：通过`rcParams`手动设置。一些参数的含义可以查看https://matplotlib.org/stable/tutorials/introductory/customizing.html
 
 
 ```python
@@ -190,7 +190,7 @@ matplotlib.rc_file_defaults() #还原为本次导入matplotlib时的默认设置
 #matplotlib.rcdefaults() #还原为matplotlib的默认绘图设置，类似于恢复出厂设置
 ```
 
-方法二：使用预定义格式。预定义格式的效果图可以参考https://matplotlib.org/gallery/style_sheets/style_sheets_reference.html#sphx-glr-gallery-style-sheets-style-sheets-reference-py
+方法二：使用预定义格式。预定义格式的效果图可以参考https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html
 
 
 ```python
@@ -225,7 +225,7 @@ fig.savefig('sales.png', transparent=False, dpi=80, bbox_inches="tight")
 
 ### 色彩表示
 
-在绘图或者是添加文字时，可以加入`color=`参数，来表明文字/散点/曲线等的颜色。颜色的定义方法有很多，包括但不限于：
+在使用绘图、添加文字等函数时，可以加入`color=`参数，来表明文字/散点/曲线等的颜色。颜色的定义方法有很多，包括但不限于：
 
 - 传入一个表示RGB或者RGBA的tuple，其中的每个元素为0到1中间的浮点数，例如[0.2,0.5,0.6,0.9]
 - 传入一个表示RGB或者RGBA的十六进制格式字符串，例如'#aabbccdd'
@@ -233,9 +233,9 @@ fig.savefig('sales.png', transparent=False, dpi=80, bbox_inches="tight")
 
 更多的颜色表示方法可参考：
 
-https://matplotlib.org/tutorials/colors/colors.html#sphx-glr-tutorials-colors-colors-py 
+如何自己设定颜色：https://matplotlib.org/stable/tutorials/colors/colors.html
 
-https://matplotlib.org/gallery/color/named_colors.html#sphx-glr-gallery-color-named-colors-py
+一些预置的颜色：https://matplotlib.org/stable/gallery/color/named_colors.html
 
 
 ```python
@@ -268,34 +268,36 @@ ax.tick_params(labelcolor='tab:orange')
 
 在绘制一些图像如轮廓图、流形图等的时候，需要传入`cmap`参数，即使用一个colormap。colormap有一些系统定义好的，也可以自己定义。详细的用法可参考：
 
-https://matplotlib.org/tutorials/colors/colorbar_only.html#sphx-glr-tutorials-colors-colorbar-only-py
+colormap的简介：https://matplotlib.org/stable/tutorials/colors/colorbar_only.html
 
-https://matplotlib.org/tutorials/colors/colormap-manipulation.html#sphx-glr-tutorials-colors-colormap-manipulation-py
+如何自己构造colormap：https://matplotlib.org/stable/tutorials/colors/colormap-manipulation.html，https://matplotlib.org/gallery/color/custom_cmap.html#sphx-glr-gallery-color-custom-cmap-py
 
-https://matplotlib.org/tutorials/colors/colormapnorms.html#sphx-glr-tutorials-colors-colormapnorms-py
+colormap的刻度调整：https://matplotlib.org/stable/tutorials/colors/colormapnorms.html
 
-https://matplotlib.org/tutorials/colors/colormaps.html#sphx-glr-tutorials-colors-colormaps-py
-
-https://matplotlib.org/gallery/color/custom_cmap.html#sphx-glr-gallery-color-custom-cmap-py
+预设的colormap：https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
 ### 色彩循环
 
 如果在一幅图里面同时绘制多条曲线或者多种散点，同时绘图时又没有手动指定颜色的话，那么系统会使用默认的色彩循环方式，将它们区分开来。如果要对这些设置进行调整，可以参考：
 
-https://matplotlib.org/gallery/color/color_cycle_default.html#sphx-glr-gallery-color-color-cycle-default-py
+https://matplotlib.org/stable/gallery/color/color_cycle_default.html
 
-https://matplotlib.org/tutorials/intermediate/color_cycle.html#sphx-glr-tutorials-intermediate-color-cycle-py
+https://matplotlib.org/stable/tutorials/intermediate/color_cycle.html
 
 
-## 线形
+## 线形与线宽
 
-在绘制曲线的时候，可以使用`linestyle`参数设置不同的线型，这些不同的线形可以参考：https://matplotlib.org/gallery/lines_bars_and_markers/linestyles.html#sphx-glr-gallery-lines-bars-and-markers-linestyles-py
+在绘制曲线的时候，可以使用`linestyle`参数设置不同的线型，这些不同的线形可以参考：https://matplotlib.org/stable/gallery/lines_bars_and_markers/linestyles.html
 
 对于四种比较常见的线形，专门设置了比较简便的表示方法：'-'表示直线，'.'表示点，'--'表示虚线，'-.'表示点划线
 
+如果要调整线宽，可以通过`linewidth`来改变线宽，它的值是一个浮点数。
+
+默认情况下，在使用点绘制曲线的时候，在曲线上是不显示原始点的，如果要显示，则需要传入`marker`参数设置点的标记格式。
+
 ## 标记
 
-在绘制点的时候（例如散点图），可以使用`marker`参数设置不同的标记形状。标记形状可以自己定义，也可以使用系统自带的一些标记，可参考https://matplotlib.org/gallery/lines_bars_and_markers/marker_reference.html#sphx-glr-gallery-lines-bars-and-markers-marker-reference-py
+在绘制点的时候（例如散点图），可以使用`marker`参数设置不同的标记形状。标记形状可以自己定义，也可以使用系统自带的一些标记，可参考https://matplotlib.org/stable/gallery/lines_bars_and_markers/marker_reference.html
 
 对于标记来说，它们的大小、颜色、填充方式等信息可以自己设置，可以通过参数`markersize`, `markerfacecolor`, `markeredgecolor`, `fillstyle`, `markerfacecoloralt`等进行调整。
 
@@ -303,9 +305,9 @@ https://matplotlib.org/tutorials/intermediate/color_cycle.html#sphx-glr-tutorial
 
 在图中插入的图注、坐标轴、文本、标题等都属于文本。这些文本的颜色、字体、大小等信息都可以调整。关于文本内容的详细设置可以参考：
 
-- 不同种类的文本：https://matplotlib.org/tutorials/text/text_intro.html#sphx-glr-tutorials-text-text-intro-py
-- 文本格式设置：https://matplotlib.org/tutorials/text/text_props.html#sphx-glr-tutorials-text-text-props-py
-- Tex写数学表达式：https://matplotlib.org/tutorials/text/mathtext.html#sphx-glr-tutorials-text-mathtext-py
+- 不同种类的文本：https://matplotlib.org/stable/tutorials/text/text_intro.html
+- 文本格式设置：https://matplotlib.org/stable/tutorials/text/text_props.html
+- Tex写数学表达式：https://matplotlib.org/stable/tutorials/text/mathtext.html
 
 
 ```python
@@ -346,7 +348,7 @@ ax.annotate('annotate', xy=(2, 1), xytext=(3, 4),
 
 # 绘图示例
 
-下面这些绘图的代码示例来自于官方教程，包含了一些比较常见的绘图操作。在https://matplotlib.org/gallery/index.html#color-examples 中可以找到更多更全的绘图示例。
+下面这些绘图的代码示例来自于官方教程，包含了一些比较常见的绘图操作。在https://matplotlib.org/stable/gallery/index.html中可以找到更多更全的绘图示例。
 
 ## 曲线图
 
