@@ -285,9 +285,12 @@ cudaError_t cudaMemcpy(void *dst,const void * src,size_t count,enum cudaMemcpyKi
 
 对于二维或者三维数组而言，它们的内存分配可以使用`cudaMemcpy2D()`和`cudaMemcpy3D()`这两个函数。
 
-而对于
+而全局变量的内存传输则需要使用如下两个函数：
 
-
+```cpp
+cudaError_t cudaMemcpyToSymbol(void *dst,const void * src,size_t count); //从CPU内存传输数据到GPU内存
+cudaError_t cudaMemcpyFromSymbol(void *dst,const void * src,size_t count); //从GPU内存传输数据到CPU内存
+```
 
 ### 固定内存
 
