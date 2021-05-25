@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="CUDA硬件知识  CPU和GPU的区别  架构：CPU被设计用来执行少量比较复杂的任务，GPU被设计用来执行大量比较简单的任务；CPU的设计主要针对于大量离散而不相关的任务，GPU的设计主要是针对于可以分解成大量的小块且可以独立运行的问题。 支持线程的方式：CPU的每个核只有少量的寄存器；GPU的每个核有多个寄存器组。 处理器数量：CPU的核数较少，而GPU具有大量的流处理器。 失速状态的处理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CUDA编程">
+<meta property="og:url" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/CUDA%E7%BC%96%E7%A8%8B.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="CUDA硬件知识  CPU和GPU的区别  架构：CPU被设计用来执行少量比较复杂的任务，GPU被设计用来执行大量比较简单的任务；CPU的设计主要针对于大量离散而不相关的任务，GPU的设计主要是针对于可以分解成大量的小块且可以独立运行的问题。 支持线程的方式：CPU的每个核只有少量的寄存器；GPU的每个核有多个寄存器组。 处理器数量：CPU的核数较少，而GPU具有大量的流处理器。 失速状态的处理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210506213653.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210510194519.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210506233827.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210511211248.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210511204743.png">
+<meta property="article:published_time" content="2021-05-25T14:43:46.956Z">
+<meta property="article:modified_time" content="2021-05-25T14:43:46.956Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="CUDA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210506213653.jpeg">
+
+<link rel="canonical" href="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/CUDA%E7%BC%96%E7%A8%8B">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CUDA编程 | Yufei Luo's Blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cuda%E7%A1%AC%E4%BB%B6%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text"> CUDA硬件知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu%E5%92%8Cgpu%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.</span> <span class="nav-text"> CPU和GPU的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text"> 硬件组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text"> CUDA线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BB%B4%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text"> 多维结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">1.3.2.</span> <span class="nav-text"> 线程调度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda%E5%86%85%E5%AD%98%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.4.</span> <span class="nav-text"> CUDA内存层次结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">1.4.2.</span> <span class="nav-text"> 寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%86%85%E5%AD%98"><span class="nav-number">1.4.3.</span> <span class="nav-text"> 本地内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">1.4.4.</span> <span class="nav-text"> 共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E5%86%85%E5%AD%98"><span class="nav-number">1.4.5.</span> <span class="nav-text"> 常量内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%86%85%E5%AD%98"><span class="nav-number">1.4.6.</span> <span class="nav-text"> 全局内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%B9%E7%90%86%E5%86%85%E5%AD%98"><span class="nav-number">1.4.7.</span> <span class="nav-text"> 纹理内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">1.4.8.</span> <span class="nav-text"> 缓存</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cuda%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="nav-number">2.</span> <span class="nav-text"> CUDA编程基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.1.</span> <span class="nav-text"> 简单示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B%E9%99%90%E5%AE%9A%E7%AC%A6"><span class="nav-number">2.2.</span> <span class="nav-text"> 函数类型限定符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%BB%BA%E5%8F%98%E9%87%8F"><span class="nav-number">2.3.</span> <span class="nav-text"> 内建变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">2.4.</span> <span class="nav-text"> 内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8"><span class="nav-number">2.4.1.</span> <span class="nav-text"> 变量的内存使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%92%8C%E9%87%8A%E6%94%BE"><span class="nav-number">2.4.2.</span> <span class="nav-text"> 内存分配和释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BC%A0%E8%BE%93"><span class="nav-number">2.4.3.</span> <span class="nav-text"> 内存传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E5%86%85%E5%AD%98"><span class="nav-number">2.4.4.</span> <span class="nav-text"> 固定内存</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+  
+  
+
+        <div class="content page posts-expand">
+          
+
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">CUDA编程
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="cuda硬件知识"><a class="markdownIt-Anchor" href="#cuda硬件知识"></a> CUDA硬件知识</h1>
+<h2 id="cpu和gpu的区别"><a class="markdownIt-Anchor" href="#cpu和gpu的区别"></a> CPU和GPU的区别</h2>
+<ul>
+<li>架构：CPU被设计用来执行少量比较复杂的任务，GPU被设计用来执行大量比较简单的任务；CPU的设计主要针对于大量离散而不相关的任务，GPU的设计主要是针对于可以分解成大量的小块且可以独立运行的问题。</li>
+<li>支持线程的方式：CPU的每个核只有少量的寄存器；GPU的每个核有多个寄存器组。</li>
+<li>处理器数量：CPU的核数较少，而GPU具有大量的流处理器。</li>
+<li>失速状态的处理：CPU的调度策略是基于时间分片，而GPU的调度策略是使用工作池来保证一直有事可做。</li>
+<li>任务执行模式：CPU会将一个单独的指令流分配到CPU核心，而GPU是将同一条指令送到N个逻辑执行单元。</li>
+</ul>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210506213653.jpeg" alt="img" /></p>
+<a id="more"></a>
+<h2 id="硬件组成"><a class="markdownIt-Anchor" href="#硬件组成"></a> 硬件组成</h2>
+<p>一个GPU是由大量的流处理器簇（Stream Multiprocessor, SM）组成的，同时包含有全局的L2缓存、显存与显存控制器、负责线程块分配的Giga Thread Engine等单元。</p>
+<p>SM的结构与GPU的架构有关。例如NVIDIA Pascal架构中的一个SM的结构如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210510194519.png" alt="流多处理器" /></p>
+<p>虽然不同GPU架构中的SM结构不同，但是它们所具有的组成模块基本相同。每个SM包含很多个CUDA Core（又叫流处理器，Streaming Processor，SP）。流处理器是最基本的处理单元，一个SP就对应于一个线程。同时也包含了线程束调度器、寄存器、指令缓存、L1缓存、共享内存、指令分发器等模块。</p>
+<h2 id="cuda线程"><a class="markdownIt-Anchor" href="#cuda线程"></a> CUDA线程</h2>
+<h3 id="多维结构"><a class="markdownIt-Anchor" href="#多维结构"></a> 多维结构</h3>
+<p>从逻辑角度来说，CUDA中的线程是多维的，它以线程网格的方式组织，每个线程网格中包含有若干个线程块，而一个线程块又可以包含多个线程。其中，网格和线程块都可以是一维、二维或者三维。对应于硬件关系，一个Grid被分配到设备上运行，一个Block被分配到SM上运行，而一个线程被分配到SP上运行。</p>
+<p>同一线程块中的众多线程拥有相同的指令地址，不仅能够并行执行，而且能够通过共享存储器（Shared memory）和栅栏（barrier）实现块内通信。这样，同一网格内的不同块之间存在不需要通信的粗粒度并行，而一个块内的线程之间又形成了允许通信的细粒度并行。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210506233827.png" alt="img" /></p>
+<p>在使用上述的多维结构时，每个线程块内的线程具有唯一的编号<code>threadIdx</code>，网格中的每个线程块也有一个唯一的编号<code>blockIdx</code>。相应地，也有<code>blockDim</code>和<code>gridDim</code>两个属性来表示线程块和线程网格的尺寸。它们都可能是一个三维的编号，具有<code>x</code>,<code>y</code>,<code>z</code>三个属性，它们按照从里到外的顺序存储，即<code>t[z][y][x]</code>。因此，一个三维的Grid中，一个线程的地址可以用如下方式计算：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> threadId_3D = threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.x*blockDim.y; <span class="comment">//一个Block内的线程id</span></span><br><span class="line"><span class="keyword">int</span> blockId_3D = blockIdx.x + blockIdx.y*gridDim.x + blockIdx.z*gridDim.x*gridDim.y; <span class="comment">//一个Grid内的Block id</span></span><br><span class="line"><span class="keyword">int</span> i = threadId_3D + (blockDim.x*blockDim.y*blockDim.z)*blockId_3D; <span class="comment">//blockId前面所有block的线程数+当前block Id内的偏移</span></span><br></pre></td></tr></table></figure>
+<h3 id="线程调度"><a class="markdownIt-Anchor" href="#线程调度"></a> 线程调度</h3>
+<p>线程束是SM的基本调度和执行单元，每个线程束中的线程会同时执行。在一个线程束中，所有的线程按照单指令多线程（SIMT）方式执行；即，所有线程都执行相同的指令，每个线程在私有数据上进行操作。</p>
+<p>一个线程块便是多个线程束的集合，一个线程块会被分配到某一个SM上执行。由于一个SM可以容纳的线程数有上限（这个上限主要与底层硬件的计算能力有关），因此线程块的大小不能无限大；而当一个线程块的线程数小于SM可容纳的最大线程数时，一个SM也可以同时容纳并处理多个线程块。需要注意的是，SM一次可以调度处理的线程束数量以及可以容纳的线程块数量都有上限。</p>
+<p>在实际工程中，线程块的大小需要设置为适中的值。如果太大，则可能会导致一个线程块内的很多线程束都在等待某一个较慢的线程束执行完毕；而如果太小，则会在所有资源被充分利用之前，硬件达到每个SM的线程块数量的上限，从而造成计算资源的闲置。通常来说，线程束的大小为32，因此线程块的大小最好被设置为32的倍数（通常使用128或者256，这样大小适中，同时使得块的数量多于SM的数量，具有足够的并行度）。</p>
+<h2 id="cuda内存层次结构"><a class="markdownIt-Anchor" href="#cuda内存层次结构"></a> CUDA内存层次结构</h2>
+<h3 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h3>
+<p>从硬件角度，CUDA的内存结构如下图所示：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210511211248.jpeg" alt="在这里插入图片描述" style="zoom: 33%;" />
+<p>其中每个SM包含了寄存器、本地内存、L1缓存和共享内存（二者共享一块片上内存）；而所有的SM又共享L2缓存、全局内存、常量内存和纹理内存。</p>
+<p>从线程使用内存的角度出发，CUDA的内存层次结构也可以表示为下图：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210511204743.png" alt="内存结构" style="zoom: 33%;" />
+<p>也就是说，每个线程具有自己独享的寄存器和本地内存，共享内存供一个线程块内的所有线程分享；而全局内存、常量内存和纹理内存为不同线程块内的所有线程共同使用。</p>
+<p>对于上述这些不同的内存种类，它们的特性可以总结为下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">存储器</th>
+<th style="text-align:center">位置</th>
+<th style="text-align:center">拥有缓存</th>
+<th style="text-align:center">访问权限</th>
+<th style="text-align:center">变量生存周期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">register</td>
+<td style="text-align:center">GPU片内</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">Device可读/写</td>
+<td style="text-align:center">与thread相同</td>
+</tr>
+<tr>
+<td style="text-align:center">Local memory</td>
+<td style="text-align:center">板载显存</td>
+<td style="text-align:center">无</td>
+<td style="text-align:center">Device可读/写</td>
+<td style="text-align:center">与thread相同</td>
+</tr>
+<tr>
+<td style="text-align:center">Shared memory</td>
+<td style="text-align:center">GPU片内</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">Device可读/写</td>
+<td style="text-align:center">与block相同</td>
+</tr>
+<tr>
+<td style="text-align:center">Constant memory</td>
+<td style="text-align:center">板载显存</td>
+<td style="text-align:center">有</td>
+<td style="text-align:center">Device可读，host要读写</td>
+<td style="text-align:center">可在程序中保持</td>
+</tr>
+<tr>
+<td style="text-align:center">Texture memory</td>
+<td style="text-align:center">板载显存</td>
+<td style="text-align:center">有</td>
+<td style="text-align:center">Device可读，host要读写</td>
+<td style="text-align:center">可在程序中保持</td>
+</tr>
+<tr>
+<td style="text-align:center">Global memory</td>
+<td style="text-align:center">板载显存</td>
+<td style="text-align:center">无</td>
+<td style="text-align:center">Device可读/写, host可读/写</td>
+<td style="text-align:center">可在程序中保持</td>
+</tr>
+<tr>
+<td style="text-align:center">Host memory</td>
+<td style="text-align:center">Host内存</td>
+<td style="text-align:center">无</td>
+<td style="text-align:center">host可读/写</td>
+<td style="text-align:center">可在程序中保持</td>
+</tr>
+<tr>
+<td style="text-align:center">Pinned memory</td>
+<td style="text-align:center">Host内存</td>
+<td style="text-align:center">无</td>
+<td style="text-align:center">host可读/写</td>
+<td style="text-align:center">可在程序中保持</td>
+</tr>
+</tbody>
+</table>
+<h3 id="寄存器"><a class="markdownIt-Anchor" href="#寄存器"></a> 寄存器</h3>
+<p>核函数中声明的一个没有其他修饰符的自变量，通常存储在寄存器中；在核函数声明的数组中，如果用于引用该数组的索引是常量且能在编译时确定，那么该数组也存储在寄存器中。寄存器变量对于每个线程来说都是私有的，一个核函数通常使用寄存器来保存需要频繁访问的线程私有变量。寄存器变量与核函数的生命周期相同，一旦核函数执行完毕，就 不能对寄存器变量进行访问了。</p>
+<p>如果一个核函数使用了超过硬件限制数量的寄存器，则会用本地内存替代多占用的寄存器。 nvcc编译器使用启发式策略来最小化寄存 器的使用，以避免寄存器溢出。</p>
+<h3 id="本地内存"><a class="markdownIt-Anchor" href="#本地内存"></a> 本地内存</h3>
+<p>核函数中符合存储在寄存器中但不能进入被该核函数分配的寄存器空间中的变量将溢出到本地内存中。编译器可能存放到本地内存中的变量有：</p>
+<ul>
+<li>在编译时使用未知索引引用的本地数组</li>
+<li>可能会占用大量寄存器空间的较大本地结构体或数组</li>
+<li>任何不满足核函数寄存器限定条件的变量</li>
+</ul>
+<p>本地内存中的变量本质上与全局内存在同一块存储区域，都位于板载显存。因此本地内存访问的特点是高延迟和低带宽。</p>
+<h3 id="共享内存"><a class="markdownIt-Anchor" href="#共享内存"></a> 共享内存</h3>
+<p>在核函数中使用<code>__shared__</code>修饰符修饰的变量存放在共享内存中。因为共享内存是片上内存，所以与本地内存或全局内存相比，它具有更高的带宽和更低的延迟。它的使用类似于CPU一级缓存，但它是可编程的。</p>
+<p>共享内存是线程之间相互通信的基本方式，生命周期伴随着整个线程块。当一个线程块执行结束后，其分配的共享内存将被释放并重新分配给其他线程块。访问共享内存必须同步使用<code>void __syncthreads()</code>函数来进行线程同步。</p>
+<h3 id="常量内存"><a class="markdownIt-Anchor" href="#常量内存"></a> 常量内存</h3>
+<p>使用<code>__constant__</code>修饰的常量会被存放在常量内存中。常量变量必须在全局空间内和所有核函数之外进行声明。对于所有计算能力的设备， 都只可以声明64KB的常量内存。常量内存是静态声明的，并对同一编译单元中的所有核函数可见。常量内存的一次读取会广播给所有线程束内的线程，因此当线程束中所有线程都从相同的地址取数据时，常量内存表现较好。</p>
+<h3 id="全局内存"><a class="markdownIt-Anchor" href="#全局内存"></a> 全局内存</h3>
+<p>使用修饰符号<code>__device__</code>的变量会被存放在全局内存中，这个变量应该在所有函数外定义，必须对使用这个变量的host端和device端函数都可见才能成功编译。全局内存是GPU中最大、延迟最高并且最常使用的内存。因为全局内存的性质，当有多个核函数同时执行的时候，如果使用到了同一全局变量，应注意内存竞争。</p>
+<p>CPU、GPU都可以对全局内存进行读写访问。host端（CPU）使用<code>cudaMalloc</code>分配全局内存，<code>cudaFree</code>释放全局内存，并由<code>cudaMemcpy</code>进行主机端与设备端的数据传输。</p>
+<h3 id="纹理内存"><a class="markdownIt-Anchor" href="#纹理内存"></a> 纹理内存</h3>
+<p>纹理内存驻留在设备内存中，并在每个SM的只读缓存中缓存，以某种形式访问的时候可以提升性能。由于纹理内存的使用比较特殊，因此只需要在应用程序真正需要的时候再去关注其使用方法。</p>
+<h3 id="缓存"><a class="markdownIt-Anchor" href="#缓存"></a> 缓存</h3>
+<p>GPU缓存不可编程，其行为在出厂时已经设定好。GPU上有4种缓存：</p>
+<ol>
+<li>一级缓存</li>
+<li>二级缓存</li>
+<li>只读常量缓存</li>
+<li>只读纹理缓存</li>
+</ol>
+<p>每个SM都有一个一级缓存，所有SM公用一个二级缓存。一级二级缓存的作用都是被用来存储本地内存和全局内存中的数据，也包括寄存器溢出的部分。</p>
+<h1 id="cuda编程基础"><a class="markdownIt-Anchor" href="#cuda编程基础"></a> CUDA编程基础</h1>
+<h2 id="简单示例"><a class="markdownIt-Anchor" href="#简单示例"></a> 简单示例</h2>
+<p>下面为一个简单的CUDA程序示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cuda_runtime.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//Device code</span></span><br><span class="line"><span class="function">__global__ <span class="keyword">void</span> <span class="title">VecAdd</span><span class="params">(<span class="keyword">float</span>* A, <span class="keyword">float</span>* B, <span class="keyword">float</span>* C, <span class="keyword">int</span> N)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = blockDim.x * blockIdx.x + threadIdx.x;</span><br><span class="line">        <span class="keyword">if</span>(i &lt; N)</span><br><span class="line">        &#123;</span><br><span class="line">                C[i] = A[i] + B[i];</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Host code</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> N = <span class="number">1024</span>;</span><br><span class="line">        <span class="keyword">size_t</span> size = N * <span class="keyword">sizeof</span>(<span class="keyword">float</span>);</span><br><span class="line">        <span class="keyword">float</span>* h_A = (<span class="keyword">float</span>*) <span class="built_in">malloc</span>(size);</span><br><span class="line">        <span class="keyword">float</span>* h_B = (<span class="keyword">float</span>*) <span class="built_in">malloc</span>(size);</span><br><span class="line">        <span class="keyword">float</span>* h_C = (<span class="keyword">float</span>*) <span class="built_in">malloc</span>(size);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span> ; i &lt; N ; i++)</span><br><span class="line">        &#123;</span><br><span class="line">                h_A[i] = i / <span class="number">2.0</span>;</span><br><span class="line">                h_B[i] = i / <span class="number">3.0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">float</span>* d_A;</span><br><span class="line">        <span class="keyword">float</span>* d_B;</span><br><span class="line">        <span class="keyword">float</span>* d_C;</span><br><span class="line">        </span><br><span class="line">        cudaMalloc(&amp;d_A, size);</span><br><span class="line">        cudaMalloc(&amp;d_B, size);</span><br><span class="line">        cudaMalloc(&amp;d_C, size);</span><br><span class="line"></span><br><span class="line">        cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);</span><br><span class="line">        cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> threadsPerBlock = <span class="number">256</span>;</span><br><span class="line">        <span class="keyword">int</span> blocksPerGrid = (N + threadsPerBlock - <span class="number">1</span>) / threadsPerBlock;</span><br><span class="line">        VecAdd&lt;&lt;&lt;blocksPerGrid, threadsPerBlock&gt;&gt;&gt;(d_A, d_B, d_C, N);</span><br><span class="line"></span><br><span class="line">        cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);</span><br><span class="line"></span><br><span class="line">        cudaFree(d_A);</span><br><span class="line">        cudaFree(d_B);</span><br><span class="line">        cudaFree(d_C);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">free</span>(h_A);</span><br><span class="line">        <span class="built_in">free</span>(h_B);</span><br><span class="line">        <span class="built_in">free</span>(h_C);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面这个程序中，带有前缀<code>__global__</code>的函数表示一个CUDA的内核函数，这一函数会在GPU内执行，但是需要由CPU调用。而在CPU执行的主函数中，如果要使用GPU进行计算，则首先要分配GPU内存并将变量复制过去，然后调用CUDA的内核函数进行计算。在计算时，需要为内核函数设定block、grid的大小，以及每个grid中的线程数量。</p>
+<h2 id="函数类型限定符"><a class="markdownIt-Anchor" href="#函数类型限定符"></a> 函数类型限定符</h2>
+<p>在CUDA中，共分为三种函数类型限定符，需要作为前缀加在函数定义之前：</p>
+<ol>
+<li>
+<p><code>__host__</code>：表示函数在CPU上调用，在CPU上执行，如果不加任何函数前缀的时候，就默认使用这种方式。CUDA支持<code>__host__</code>与<code>__device__</code>关键词联用，表示函数同时为主机和设备编译</p>
+</li>
+<li>
+<p><code>__device__</code>：表示函数从GPU上调用，在GPU上执行。这样的函数只能被<code>__global__</code>或者<code>__device__</code>修饰的函数调用</p>
+</li>
+<li>
+<p><code>__global__</code>：表示函数在CPU上调用，在GPU上执行，也就是所谓的内核函数。内核函数只能被CPU调用，需要注意它并不是一个完整的程序，只是一个数据并行的步骤，其指令流由多个线程执行</p>
+<p>任何内核函数在执行的时候，都需要使用<code>&lt;&lt;&lt;Dg, Db, Ns, s&gt;&gt;&gt;</code>形式的表达式传递内核函数的执行配置参数。四个执行配置参数的含义为：<code>Dg</code>是一个<code>dim3</code>类型的变量，指明网格的维度和大小，<code>Dg.x*Dg.y*Dg.z</code>等于启动的块数量；<code>Db</code>是一个<code>dim3</code>类型的变量，用于声明块大小，<code>Db.x*Db.y*Db.z</code>等于每个块内的线程数量；<code>Ns</code>是一个<code>size_t</code>类型的变量，声明动态分配的共享存储器大小，默认为0；<code>s</code>的类型为<code>cudaStream_t</code>，用来声明执行的流，默认为0</p>
+</li>
+</ol>
+<h2 id="内建变量"><a class="markdownIt-Anchor" href="#内建变量"></a> 内建变量</h2>
+<p>CUDA为运行在GPU上的函数提自动生成了如下的内建变量，可以在函数运行时获得网格和块的尺寸，以及线程索引等信息：</p>
+<ul>
+<li><code>gridDim</code>：是一个包含三个元素<code>x,y,z</code>的结构体，分别表示网格在<code>x,y,z</code>三个方向上的尺寸，也就是<code>x,y,z</code>三个方向上有多少个块</li>
+<li><code>blockIdx</code>：是一个包含三个元素<code>x,y,z</code>的结构体，分别表示当前块在<code>x,y,z</code>三个方向上的索引</li>
+<li><code>blockDim</code>：是一个包含三个元素<code>x,y,z</code>的结构体，分别表示当前块在<code>x,y,z</code>三个方向上的尺寸，也就是<code>x,y,z</code>三个方向上有多少个线程</li>
+<li><code>threadIdx</code>：是一个包含三个元素<code>x,y,z</code>的结构体，分别表示当前线程在<code>x,y,z</code>三个方向上的索引</li>
+<li><code>warpSize</code>：表示线程束的大小，这个值通常是32</li>
+</ul>
+<h2 id="内存管理"><a class="markdownIt-Anchor" href="#内存管理"></a> 内存管理</h2>
+<h3 id="变量的内存使用"><a class="markdownIt-Anchor" href="#变量的内存使用"></a> 变量的内存使用</h3>
+<p>对于CUDA中不同方式的变量声明及其使用的存储器，可以总结为下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">修饰符</th>
+<th style="text-align:center">变量名称</th>
+<th style="text-align:center">存储器</th>
+<th style="text-align:center">作用域</th>
+<th style="text-align:center">生命周期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">float var</td>
+<td style="text-align:center">寄存器</td>
+<td style="text-align:center">线程</td>
+<td style="text-align:center">线程</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">float var[100]</td>
+<td style="text-align:center">本地</td>
+<td style="text-align:center">线程</td>
+<td style="text-align:center">线程</td>
+</tr>
+<tr>
+<td style="text-align:center">__shared__</td>
+<td style="text-align:center">float var*</td>
+<td style="text-align:center">共享</td>
+<td style="text-align:center">块</td>
+<td style="text-align:center">块</td>
+</tr>
+<tr>
+<td style="text-align:center">__device__</td>
+<td style="text-align:center">float var*</td>
+<td style="text-align:center">全局</td>
+<td style="text-align:center">全局</td>
+<td style="text-align:center">应用程序</td>
+</tr>
+<tr>
+<td style="text-align:center">__constant__</td>
+<td style="text-align:center">float var*</td>
+<td style="text-align:center">常量</td>
+<td style="text-align:center">全局</td>
+<td style="text-align:center">应用程序</td>
+</tr>
+</tbody>
+</table>
+<p>其中共享内存、全局内存和常量内存的使用可以通过在声明变量的时候使用修饰符，显式地将变量存储在修饰符所对应的存储器上。而寄存器和本地内存的使用则无法手动设定，在Kernel函数中定义的变量以及较小的定长数组都可以存放在寄存器中，而当寄存器的使用到达上限之后，则会将数据放在本地内存当中去。</p>
+<h3 id="内存分配和释放"><a class="markdownIt-Anchor" href="#内存分配和释放"></a> 内存分配和释放</h3>
+<p>动态内存的分配和释放主要是使用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaMalloc</span><span class="params">(<span class="keyword">void</span> ** devPtr,<span class="keyword">size_t</span> count)</span></span></span><br></pre></td></tr></table></figure>
+<p>需要注意的是，这一函数的第一个参数是一个二重指针。二重指针<code>devptr</code>存储在CPU内存中，指向一个GPU内存的地址；而解掉一重指针后的一重指针<code>*devptr</code>则是被存储在GPU内存中，它存储的是GPU中所分配内存空间的首地址。也就是说，二重指针的作用相当于完成了CPU到GPU的映射。使用这一方式分配得到的内存空间属于</p>
+<p>如果是为二维或者三维数组分配内存，建议使用<code>cudaMallocPitch()</code>和<code>cudaMalloc3D()</code>这两个函数。这两个函数会自动对内存进行填充，从而实现数据对齐，以提高计算效率。</p>
+<p>当分配完地址后，可以使用下面函数对GPU内存进行初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaMemset</span><span class="params">(<span class="keyword">void</span> * devPtr,<span class="keyword">int</span> value,<span class="keyword">size_t</span> count)</span></span></span><br></pre></td></tr></table></figure>
+<p>它的用法和<code>memset</code>类似，但是需要注意的是，指针指向的内存空间必须在GPU上。</p>
+<p>当分配的GPU动态内存不需要继续使用时，使用下面语句便可以将其所占的内存空间释放掉：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaFree</span><span class="params">(<span class="keyword">void</span> * devPtr)</span></span></span><br></pre></td></tr></table></figure>
+<p>注意这个参数一定是<code>cudaMalloc</code>类的函数（还有其他分配函数）所分配的空间。如果输入非法的指针参数，则会返回 <code>cudaErrorInvalidDevicePointer</code>错误；如果重复释放一个空间，也会报错。</p>
+<h3 id="内存传输"><a class="markdownIt-Anchor" href="#内存传输"></a> 内存传输</h3>
+<p>对于动态分配的内存空间（即<code>cudaMalloc</code>函数所分配的空间），数据传输可以使用如下函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaMemcpy</span><span class="params">(<span class="keyword">void</span> *dst,<span class="keyword">const</span> <span class="keyword">void</span> * src,<span class="keyword">size_t</span> count,<span class="keyword">enum</span> cudaMemcpyKind kind)</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，第一个参数为目标地址，第二个参数为原始地址，第三个参数为拷贝的内存大小，最后一个参数为传输类型。CUDA的内存传输类型共分为以下四种：</p>
+<ul>
+<li>cudaMemcpyHostToHost</li>
+<li>cudaMemcpyHostToDevice</li>
+<li>cudaMemcpyDeviceToHost</li>
+<li>cudaMemcpyDeviceToDevice</li>
+</ul>
+<p>对于二维或者三维数组而言，它们的内存分配可以使用<code>cudaMemcpy2D()</code>和<code>cudaMemcpy3D()</code>这两个函数。</p>
+<p>而全局变量的内存传输则需要使用如下两个函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaMemcpyToSymbol</span><span class="params">(<span class="keyword">void</span> *dst,<span class="keyword">const</span> <span class="keyword">void</span> * src,<span class="keyword">size_t</span> count)</span></span>; <span class="comment">//从CPU内存传输数据到GPU内存</span></span><br><span class="line"><span class="function">cudaError_t <span class="title">cudaMemcpyFromSymbol</span><span class="params">(<span class="keyword">void</span> *dst,<span class="keyword">const</span> <span class="keyword">void</span> * src,<span class="keyword">size_t</span> count)</span></span>; <span class="comment">//从GPU内存传输数据到CPU内存</span></span><br></pre></td></tr></table></figure>
+<h3 id="固定内存"><a class="markdownIt-Anchor" href="#固定内存"></a> 固定内存</h3>
+<p>由于主机内存采用分页式管理，应用只能看到虚拟的内存地址，而操作系统可能随时更换物理地址的页（从原始地址复制到另一个地址）。从主机传输到设备上的时候，如果此时发生了页面移动，对于传输操作来说是致命的，所以在数据传输之前，CUDA驱动会锁定页面，或者直接分配固定的主机内存，将主机源数据复制到固定内存上，然后从固定内存传输数据到设备上。</p>
+<p>下面函数用来分配固定内存：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaMallocHost</span><span class="params">(<span class="keyword">void</span> ** devPtr,<span class="keyword">size_t</span> count)</span></span></span><br></pre></td></tr></table></figure>
+<p>这一函数分配count字节的固定内存，这些内存是页面锁定的，可以直接传输到GPU设备端，这样使得传输带宽变得高很多。</p>
+<p>如果要释放固定的主机内存，可以使用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaFreeHost</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span></span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<ol>
+<li>CUDA并行程序设计：GPU编程指南</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzE5OTAzMzQ0">https://www.zhihu.com/question/19903344<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm52aWRpYS5jb20vY3VkYS9jdWRhLWMtcHJvZ3JhbW1pbmctZ3VpZGUvaW5kZXguaHRtbA==">https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vdGltbGx5L3AvMTE0NzE1MDcuaHRtbA==">深入GPU硬件架构及运行机制 - 0向往0 - 博客园 (cnblogs.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC81Mzc2MzI4NQ==">GPU中的几个基本概念 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3h1a2FuZzk1L2FydGljbGUvZGV0YWlscy8xMDI4NTU3NTA=">cuda 学习之内存层次结构_xukang95的博客-CSDN博客<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9mYWNlMmFpLmNvbS9DVURBLUYtNC0xLSVFNSU4NiU4NSVFNSVBRCU5OCVFNiVBOCVBMSVFNSU5RSU4QiVFNiVBNiU4MiVFOCVCRiVCMC8=">【CUDA 基础】4.1 内存模型概述 | 谭升的博客 (face2ai.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8zNjAwMzI5NjQ=">CUDA编程笔记——chapter4 CUDA全局内存 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3RhbmdiZW5qdW4vYXJ0aWNsZS9kZXRhaWxzLzc3OTg4ODg1">CUDA修饰符，运算符＜＜＜＞＞＞及变量的介绍_tangbenjun的博客-CSDN博客<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vdGliZXRhbm1hc3RpZmYvcC80NzEyNjE4Lmh0bWw=">CUDA中修饰符的解释 - 袁军峰 - 博客园 (cnblogs.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzI2MDI1NC9hcnRpY2xlL2RldGFpbHMvMTA0MTYyMjA3">关于cudaMalloc内存分配以及二重指针_fishming的blog-CSDN博客<i class="fa fa-external-link-alt"></i></span></li>
+<li></li>
+</ol>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">916k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">13:53</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '44e49d446f5868eb8196cf4a3c891420',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="简介  结点和链路 通常习惯上，网络通信中涉及的两个端主机和路由器被视为结点，而它们之间的网络被视为链路。数据链路层控制了如何使用两个结点之间的传输介质。 链路分为点对点链路和广播链路。在点对点链路中，链路专供给两个设备使用；在广播链路中，链路在几对设备之间共享。  两个子层 数据链路层通常被分为两个子层：数据链路控制和介质访问控制。数据链路控制子层处理点对点链路和广播链路的共有问题，而介质访问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络-数据链路层">
+<meta property="og:url" content="http://lyf35.github.io/2021/05/25/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="简介  结点和链路 通常习惯上，网络通信中涉及的两个端主机和路由器被视为结点，而它们之间的网络被视为链路。数据链路层控制了如何使用两个结点之间的传输介质。 链路分为点对点链路和广播链路。在点对点链路中，链路专供给两个设备使用；在广播链路中，链路在几对设备之间共享。  两个子层 数据链路层通常被分为两个子层：数据链路控制和介质访问控制。数据链路控制子层处理点对点链路和广播链路的共有问题，而介质访问">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201227131831.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201227131854.png">
+<meta property="article:published_time" content="2021-05-25T14:43:46.956Z">
+<meta property="article:modified_time" content="2021-05-25T14:43:46.956Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201227131831.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/05/25/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机网络-数据链路层 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text"> 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E7%82%B9%E5%92%8C%E9%93%BE%E8%B7%AF"><span class="nav-number">1.1.</span> <span class="nav-text"> 结点和链路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%AD%90%E5%B1%82"><span class="nav-number">1.2.</span> <span class="nav-text"> 两个子层</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E6%8E%A7%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text"> 数据链路控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%90%E5%B8%A7"><span class="nav-number">2.1.</span> <span class="nav-text"> 成帧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A7%E9%95%BF%E5%BA%A6"><span class="nav-number">2.1.2.</span> <span class="nav-text"> 帧长度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AD%97%E7%AC%A6%E6%88%90%E5%B8%A7"><span class="nav-number">2.1.2.1.</span> <span class="nav-text"> 面向字符成帧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E4%BD%8D%E6%88%90%E5%B8%A7"><span class="nav-number">2.1.2.2.</span> <span class="nav-text"> 面向位成帧</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E4%B8%8E%E5%B7%AE%E9%94%99%E6%8E%A7%E5%88%B6"><span class="nav-number">2.2.</span> <span class="nav-text"> 流量控制与差错控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E5%92%8C%E7%BA%A0%E9%94%99"><span class="nav-number">2.3.</span> <span class="nav-text"> 差错检测和纠错</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B-2"><span class="nav-number">2.3.1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%AE%E9%94%99%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.3.2.</span> <span class="nav-text"> 差错类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E9%94%99%E5%92%8C%E7%BA%A0%E9%94%99"><span class="nav-number">2.3.3.</span> <span class="nav-text"> 检错和纠错</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%97%E4%BD%99"><span class="nav-number">2.3.3.1.</span> <span class="nav-text"> 冗余</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81"><span class="nav-number">2.3.3.2.</span> <span class="nav-text"> 编码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dlc%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.4.</span> <span class="nav-text"> DLC协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#hdlc"><span class="nav-number">2.4.1.</span> <span class="nav-text"> HDLC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%B9%E5%88%B0%E7%82%B9%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.4.2.</span> <span class="nav-text"> 点到点协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.4.2.1.</span> <span class="nav-text"> 服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%88%90%E5%B8%A7-2"><span class="nav-number">2.4.2.2.</span> <span class="nav-text"> 成帧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E9%98%B6%E6%AE%B5"><span class="nav-number">2.4.2.3.</span> <span class="nav-text"> 转换阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">2.4.2.4.</span> <span class="nav-text"> 多路复用</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.</span> <span class="nav-text"> 多路访问协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE"><span class="nav-number">3.1.</span> <span class="nav-text"> 随机访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">3.1.1.</span> <span class="nav-text"> 定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#aloha"><span class="nav-number">3.1.2.</span> <span class="nav-text"> ALOHA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%BD%E6%B3%A2%E4%BE%A6%E5%90%AC%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE"><span class="nav-number">3.1.3.</span> <span class="nav-text"> 载波侦听多路访问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%97%E6%8E%A7%E8%AE%BF%E9%97%AE"><span class="nav-number">3.2.</span> <span class="nav-text"> 受控访问</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E5%B1%82%E5%AF%BB%E5%9D%80"><span class="nav-number">4.</span> <span class="nav-text"> 链路层寻址</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mac%E5%9C%B0%E5%9D%80"><span class="nav-number">4.1.</span> <span class="nav-text"> MAC地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E8%A7%A3%E6%9E%90%E5%8D%8F%E8%AE%AE"><span class="nav-number">4.2.</span> <span class="nav-text"> 地址解析协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-number">4.2.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E6%A0%BC%E5%BC%8F"><span class="nav-number">4.2.2.</span> <span class="nav-text"> 分组格式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%8D%8F%E8%AE%AE"><span class="nav-number">5.</span> <span class="nav-text"> 以太网协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E4%BB%A5%E5%A4%AA%E7%BD%9110mbps"><span class="nav-number">5.1.</span> <span class="nav-text"> 标准以太网（10MBps）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A7%E6%A0%BC%E5%BC%8F"><span class="nav-number">5.1.1.</span> <span class="nav-text"> 帧格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%92%8C%E4%B8%8D%E5%8F%AF%E9%9D%A0%E6%9C%8D%E5%8A%A1"><span class="nav-number">5.1.2.</span> <span class="nav-text"> 无连接服务和不可靠服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BB%E5%9D%80"><span class="nav-number">5.1.3.</span> <span class="nav-text"> 寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%92%AD-%E5%A4%9A%E6%92%AD%E5%92%8C%E5%B9%BF%E6%92%AD"><span class="nav-number">5.1.4.</span> <span class="nav-text"> 单播、多播和广播</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.1.5.</span> <span class="nav-text"> 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E4%BB%A5%E5%A4%AA%E7%BD%91100mbps"><span class="nav-number">5.2.</span> <span class="nav-text"> 快速以太网（100MBps）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E6%96%B9%E6%B3%95"><span class="nav-number">5.2.1.</span> <span class="nav-text"> 访问方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%8D%8F%E5%95%86"><span class="nav-number">5.2.2.</span> <span class="nav-text"> 自动协商</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-2"><span class="nav-number">5.2.3.</span> <span class="nav-text"> 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%83%E5%85%86%E4%BB%A5%E5%A4%AA%E7%BD%91"><span class="nav-number">5.3.</span> <span class="nav-text"> 千兆以太网</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10%E5%8D%83%E5%85%86%E4%BB%A5%E5%A4%AA%E7%BD%91"><span class="nav-number">5.4.</span> <span class="nav-text"> 10千兆以太网</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%B1%80%E5%9F%9F%E7%BD%91"><span class="nav-number">5.5.</span> <span class="nav-text"> 虚拟局域网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B-3"><span class="nav-number">5.5.1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E5%91%98"><span class="nav-number">5.5.2.</span> <span class="nav-text"> 成员</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">5.5.3.</span> <span class="nav-text"> 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E6%9C%BA%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">5.5.4.</span> <span class="nav-text"> 交换机间通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8A%BF"><span class="nav-number">5.5.5.</span> <span class="nav-text"> 优势</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%9C%89%E7%BA%BF%E7%BD%91%E7%BB%9C"><span class="nav-number">6.</span> <span class="nav-text"> 其他有线网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%B9%E5%AF%B9%E7%82%B9%E7%BD%91%E7%BB%9C"><span class="nav-number">6.1.</span> <span class="nav-text"> 点对点网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%A8%E5%8F%B7"><span class="nav-number">6.1.1.</span> <span class="nav-text"> 拨号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E7%94%A8%E6%88%B7%E7%BA%BF%E8%B7%AF"><span class="nav-number">6.1.2.</span> <span class="nav-text"> 数字用户线路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%BC%86"><span class="nav-number">6.1.3.</span> <span class="nav-text"> 电缆</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E6%9C%89%E7%BA%BF%E7%BD%91%E7%BB%9C"><span class="nav-number">6.1.3.1.</span> <span class="nav-text"> 传统有线网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E5%85%89%E7%BA%A4%E5%90%8C%E8%BD%B4%E7%BD%91%E7%BB%9C"><span class="nav-number">6.1.3.2.</span> <span class="nav-text"> 混合光纤同轴网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E4%BA%8E%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E7%9A%84%E6%9C%89%E7%BA%BF%E7%94%B5%E8%A7%86"><span class="nav-number">6.1.3.3.</span> <span class="nav-text"> 用于数据传输的有线电视</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E5%85%89%E7%BA%A4%E7%BD%91%E7%BB%9Csonet"><span class="nav-number">6.2.</span> <span class="nav-text"> 同步光纤网络（SONET）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">6.2.1.</span> <span class="nav-text"> 体系结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sonet%E5%B8%A7"><span class="nav-number">6.2.2.</span> <span class="nav-text"> SONET帧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sts%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">6.2.3.</span> <span class="nav-text"> STS多路复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sonet%E7%BD%91%E7%BB%9C"><span class="nav-number">6.2.4.</span> <span class="nav-text"> SONET网络</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E7%BD%91%E7%BB%9C"><span class="nav-number">6.3.</span> <span class="nav-text"> 交换网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-3"><span class="nav-number">6.3.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84-2"><span class="nav-number">6.3.2.</span> <span class="nav-text"> 体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E8%BF%9E%E6%8E%A5"><span class="nav-number">6.3.2.1.</span> <span class="nav-text"> 虚拟连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">6.3.2.2.</span> <span class="nav-text"> 层次结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E4%B8%8E%E9%87%8A%E6%94%BE"><span class="nav-number">6.3.3.</span> <span class="nav-text"> 连接建立与释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2"><span class="nav-number">6.3.4.</span> <span class="nav-text"> 交换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E8%AE%BE%E5%A4%87"><span class="nav-number">7.</span> <span class="nav-text"> 连接设备</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E7%BB%A7%E5%99%A8%E6%88%96%E9%9B%86%E7%BA%BF%E5%99%A8"><span class="nav-number">7.1.</span> <span class="nav-text"> 中继器或集线器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E5%B1%82%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="nav-number">7.2.</span> <span class="nav-text"> 链路层交换机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8"><span class="nav-number">7.3.</span> <span class="nav-text"> 路由器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%93%E5%BC%80%E7%BD%91%E9%A1%B5%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">8.</span> <span class="nav-text"> 打开网页时发生了什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">9.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">一个材料专业毕业的野生程序员的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/05/25/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="一个材料专业毕业的野生程序员的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机网络-数据链路层
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-25 22:43:46" itemprop="dateCreated datePublished" datetime="2021-05-25T22:43:46+08:00">2021-05-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/05/25/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" class="post-meta-item leancloud_visitors" data-flag-title="计算机网络-数据链路层" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h1>
+<h2 id="结点和链路"><a class="markdownIt-Anchor" href="#结点和链路"></a> 结点和链路</h2>
+<p>通常习惯上，网络通信中涉及的两个端主机和路由器被视为结点，而它们之间的网络被视为链路。数据链路层控制了如何使用两个结点之间的传输介质。</p>
+<p>链路分为点对点链路和广播链路。在点对点链路中，链路专供给两个设备使用；在广播链路中，链路在几对设备之间共享。</p>
+<h2 id="两个子层"><a class="markdownIt-Anchor" href="#两个子层"></a> 两个子层</h2>
+<p>数据链路层通常被分为两个子层：数据链路控制和介质访问控制。数据链路控制子层处理点对点链路和广播链路的共有问题，而介质访问控制子层只处理广播链路的特定问题。</p>
+<a id="more"></a>
+<h1 id="数据链路控制"><a class="markdownIt-Anchor" href="#数据链路控制"></a> 数据链路控制</h1>
+<h2 id="成帧"><a class="markdownIt-Anchor" href="#成帧"></a> 成帧</h2>
+<h3 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h3>
+<p>在数据链路层中，通过添加发送方和接收方的地址，成帧将源端到目的端的报文分离开来。目的地址定义了分组去向，发送地址帮助接收方确认接收。</p>
+<p>虽然整个报文能够打包为一个帧，但是通常不这样做。这是因为如果帧比较大时，流量控制和差错控制变得非常低效，同时一个小的差错将会要求整个帧的重传。</p>
+<h3 id="帧长度"><a class="markdownIt-Anchor" href="#帧长度"></a> 帧长度</h3>
+<h4 id="面向字符成帧"><a class="markdownIt-Anchor" href="#面向字符成帧"></a> 面向字符成帧</h4>
+<p>在面向字符（或面向字节）成帧中，传输的数据来自于如ASCII编码系统的8位字符。头部通常携带源地址和目的地址以及其它的控制信息，而尾部携带差错检测冗余位，它也是8的倍数。同时为了将帧与帧之间分离，需要在帧的开始和结尾处各添加一个8位的标记，标记由与协议相关的特殊字符组合而成。</p>
+<p>面向字符协议中的帧大致结构如下：</p>
+<p>|标记|头部|……来自上层的数据……|尾部|标记|</p>
+<p>有可能出现标记也是上层数据中的一部分这种情况，为了解决这一问题，使用了字节填充策略。如果数据中存在与标记相同模式的字符，那么一个特定的字符将会被添加到这个字符的前面，这个字符被称为转义字符。如果数据中包含转义字符本身，同样也在转义字符前面再加上一个转义字符表明它后面的转义字符是数据的一部分。</p>
+<h4 id="面向位成帧"><a class="markdownIt-Anchor" href="#面向位成帧"></a> 面向位成帧</h4>
+<p>在面向位成帧中，一个帧的数据段是一个位序列。在这种模式下，大部分协议使用8位模式标记01111110作为分界符。此时帧的大致结构如下：</p>
+<p>| 01111110（标记） | 头部 | ……来自上层的数据…… | 尾部 | 01111110（标记） |</p>
+<p>如果这个标记模式在数据中出现，我们使用位填充的方法来使得这一段数据与标记区别开。在位填充中，当遇到1个0和连续的5个1时，便添加一个额外的0，这个额外的填充最终会被接收方移除。</p>
+<h2 id="流量控制与差错控制"><a class="markdownIt-Anchor" href="#流量控制与差错控制"></a> 流量控制与差错控制</h2>
+<p>数据链路层也提供了流量控制的功能，它的流量控制方法与传输层思想相同。但是数据链路层的流量控制是结点到结点的，而不是像传输层那样端到端的。</p>
+<p>在数据链路层中，差错控制指的是差错检测和重传的方法。数据链路层中的差错控制是结点到结点的，在交换中的任意时刻检测到差错就要重传出错的帧。</p>
+<h2 id="差错检测和纠错"><a class="markdownIt-Anchor" href="#差错检测和纠错"></a> 差错检测和纠错</h2>
+<h3 id="简介-2"><a class="markdownIt-Anchor" href="#简介-2"></a> 简介</h3>
+<p>在数据链路层，如果两个结点之间的一个帧被破坏，就需要纠正这个差错帧。大多数链路层协议只是简单丢弃这个帧，让上层协议处理帧的重传。但是一些无线协议试图去纠正这个被破坏的帧。</p>
+<h3 id="差错类型"><a class="markdownIt-Anchor" href="#差错类型"></a> 差错类型</h3>
+<p>当数据从一个点流到另一个点时，由于干扰的存在，可能对数据造成不可预测的变化。单个位差错指的是在给定的数据单元中，只有一个位从0变成1或者从1变成0；而突发性差错指的是2个或者更多的位发生了翻转。突发性差错比起单个位差错更容易发生。</p>
+<h3 id="检错和纠错"><a class="markdownIt-Anchor" href="#检错和纠错"></a> 检错和纠错</h3>
+<h4 id="冗余"><a class="markdownIt-Anchor" href="#冗余"></a> 冗余</h4>
+<p>检错或者纠错的核心概念是冗余。为了能够检测或者纠正，除了发送数据以外，还需要发送一些额外的位。这些冗余位由发送方添加，由接收方移除，冗余位允许接收方检测或者纠正被破坏的位。</p>
+<h4 id="编码"><a class="markdownIt-Anchor" href="#编码"></a> 编码</h4>
+<p>冗余是通过各种编码方案来实现的。发送方通过某种方法建立冗余位与真实数据之间的某种关系，以此来增加冗余位。接收方检测这两者之间的关系来检错。编码方案分为块编码和卷积编码两大类。</p>
+<p>在块编码中，报文被分成多块，每块k位被称为数据字。我们为每一块增加r个冗余位，使得长度n=k+r。这样形成的n位块称为代码字。</p>
+<p>几乎所有的块编码都属于线性块编码的子集，常用的一些编码方式有奇偶校验编码、循环编码等。</p>
+<h2 id="dlc协议"><a class="markdownIt-Anchor" href="#dlc协议"></a> DLC协议</h2>
+<h3 id="hdlc"><a class="markdownIt-Anchor" href="#hdlc"></a> HDLC</h3>
+<p>高级数据链路控制（High-level Data Link Control, HDLC）是一种面向位的协议，它用于点到点和多点链路的通信。</p>
+<p>HDLC提供了两种通用的传输模式：正常响应模式和异步平衡模式。在正常响应模式中，只有一个主站和多个从站，主站可以发送指令，从站只能响应命令。正常响应模式可以在点到点和多点链路中使用。而在异步平衡模式中，链路是点到点的，每个站点可以行使主站和从站的功能。</p>
+<p>为了支持不同的模式及其对应的选项，HDLC定义了三种不同类型的帧，每一种类型的帧为不同类型的报文传输充当信封的角色。它们的作用如下：</p>
+<ul>
+<li>信息帧：传输用户数据和与用户数据相关的控制信息</li>
+<li>管理帧：传输控制信息</li>
+<li>无编号帧：管理链路本身</li>
+</ul>
+<h3 id="点到点协议"><a class="markdownIt-Anchor" href="#点到点协议"></a> 点到点协议</h3>
+<h4 id="服务"><a class="markdownIt-Anchor" href="#服务"></a> 服务</h4>
+<p>点到点协议（Point-to-Point Protocol, PPP）是点到点访问最通用的协议之一。家庭网络用户与因特网服务提供商服务器的连接就是通过PPP协议完成的。</p>
+<p>PPP定义了在设备之间交换的帧的格式，也定义了两条设备之间如何协商链路的建立和数据的转发。同时，PPP提供了简单的机制用于差错控制。但是PPP不提供流量控制。</p>
+<h4 id="成帧-2"><a class="markdownIt-Anchor" href="#成帧-2"></a> 成帧</h4>
+<p>PPP使用面向字符的帧。一个PPP帧的格式如下：</p>
+<p>|标记|地址|控制|协议|负载|帧校验序列|标记|</p>
+<p>其中每个字段（域）的用途如下：</p>
+<ul>
+<li>标记：使用01111110作为开始和结束的标记</li>
+<li>地址：是一个常量，设置为11111111</li>
+<li>控制：常量值00000011</li>
+<li>协议：定义了数据域中要包含的内容，属于用户数据或者其他信息</li>
+<li>负载：包含用户数据或者其他信息。负载的默认最大值为1500字节，但是可以通过协商改变。负载需要使用字节填充。由于PPP帧没有定义负载长度，因此如果复杂长度小于最大值时需要使用数据填补</li>
+<li>帧校验序列：简单的2字节或者4字节的标准CRC</li>
+</ul>
+<h4 id="转换阶段"><a class="markdownIt-Anchor" href="#转换阶段"></a> 转换阶段</h4>
+<p>下图为PPP连接阶段的状态转换图，该转换图从闲置状态开始：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201227131831.png" alt="PPP协议转换图" /></p>
+<h4 id="多路复用"><a class="markdownIt-Anchor" href="#多路复用"></a> 多路复用</h4>
+<p>虽然PPP属于链路层协议，但是PPP使用另一组协议来建立链路，认证双方身份，并承载网络层数据。这其中使用到了三组协议：链路控制协议（LCP）、2个认证协议（AP）、几个网络控制协议（NCP）。任意时刻，一个PPP分组可以在负载中同时包含来自于这些协议中的数据。</p>
+<p>链路控制协议负责建立、维护、配置和终止链路。它也提供了协商机制以在两个终端之间设置选项。在链路建立之前，链路的两个终端必须就选项达成一致。</p>
+<p>认证协议中包括口令认证协议（PAP）和查询握手认证协议（CHAP）。这两个协议是在认证阶段使用，用于确认用户身份。</p>
+<p>由于PPP是多网络层协议，它可以承载来自因特网定义的协议中的网络层数据。因此PPP为每一个网络层协议定义了一个特定的网络控制协议，例如因特网协议控制协议（IPCP）用来配置IP数据分组的链路等。NCP协议中的一个完成网络配置后，用户可以交换来自网络层的数据分组。注意不同的网络层具有不同的协议域。</p>
+<h1 id="多路访问协议"><a class="markdownIt-Anchor" href="#多路访问协议"></a> 多路访问协议</h1>
+<h2 id="随机访问"><a class="markdownIt-Anchor" href="#随机访问"></a> 随机访问</h2>
+<h3 id="定义"><a class="markdownIt-Anchor" href="#定义"></a> 定义</h3>
+<p>在随机访问中，没有站点优于其他站点，也没有站点能控制其他站点。每一次有数据要发送的站点使用由协议定义的程序来决定是否要发送，该决定依赖于介质的状态。</p>
+<h3 id="aloha"><a class="markdownIt-Anchor" href="#aloha"></a> ALOHA</h3>
+<p>在ALOHA协议中，一个站点只要有帧要发送，它就发送该帧。但是因为只有一条通道共享，来自于不同站点的帧就有可能冲突碰撞。当一个站点发送一个帧时，它期望接收方发送一个确认，如果超时后确认还未到达则会重发。</p>
+<h3 id="载波侦听多路访问"><a class="markdownIt-Anchor" href="#载波侦听多路访问"></a> 载波侦听多路访问</h3>
+<p>载波侦听多路访问（Carrier Sense Multiple Access, CSMA）技术要求每一个站点在发送之前要检测介质状态，这样便会一定程度上降低冲突概率，但是因为广播延迟的存在并不能完全消除冲突。</p>
+<p>CSMA方法本身没有规定冲突之后的处理程序。带有冲突检测的载波监听多路访问（CSMA/CD）提出了处理冲突的算法。在这种方法中，站点在发送帧之后监视介质来查看传输是否成功。如果成功则完成发送，如果不成功则说明存在冲突，需要重新发送此帧。</p>
+<p>CSMA方法的变种是带有冲突避免的载波侦听多路访问（CSMA/CA），它在无限局域网中使用。</p>
+<h2 id="受控访问"><a class="markdownIt-Anchor" href="#受控访问"></a> 受控访问</h2>
+<p>在受控访问中，站点之间相互协商以确认哪个站点有权发送帧。受控访问的方法有三种：</p>
+<ul>
+<li>预约：站点在发送数据之前要预约。时间被分为时隙，每个子时隙属于一个站点，当一个站点要发送数据帧时就在自己的子时隙中预约。已经预约的站点在预约帧之后发送数据帧。</li>
+<li>轮询：一个设备做主站，其他设备做从站，所有的数据交换必须经过主站设备。主站设备总是会话的发起者，它使用轮询与选择来预防冲突。</li>
+<li>令牌传递：网络中的站点组织为一个逻辑环，每个站点都有一个前驱与后继。一个称为令牌的特殊信息分组在环中循环，拥有令牌的站点有权力访问通道和发送数据。当站点要发送数据时，它等到从前驱获取令牌，然后它持有令牌发送数据，直到数据发送完成之后将令牌传给后继。</li>
+<li>通道化：不同的站点之间可以通过时间、频率或者编码共享链路的可用带宽。这些方法通常在无线网络中使用。</li>
+</ul>
+<h1 id="链路层寻址"><a class="markdownIt-Anchor" href="#链路层寻址"></a> 链路层寻址</h1>
+<h2 id="mac地址"><a class="markdownIt-Anchor" href="#mac地址"></a> MAC地址</h2>
+<p>在无连接的传输过程中，来自于同一个源主机到达同一个目的主机的数据报可能会经过不同的路径，源端IP地址和目的端IP地址定义了两个终端，但是没有定义数据报应该走哪条链路。而且，IP地址也是可以改变的。因此在无连接的互联网络中，需要使用到两个结点的链路层地址，也被称为MAC地址。</p>
+<p>在最通用的局域网、以太网中，链路层地址是48位，它用由冒号分开的12个十六进制数字来表示。</p>
+<h2 id="地址解析协议"><a class="markdownIt-Anchor" href="#地址解析协议"></a> 地址解析协议</h2>
+<h3 id="概述-2"><a class="markdownIt-Anchor" href="#概述-2"></a> 概述</h3>
+<p>地址解析协议（Address Resolution Protocol, ARP）是定义在<em>网络层</em>的辅助协议，它接收来自于IP协议的IP地址，将其映射为对应的链路层地址，并将其传给数据链路层。</p>
+<p>如果一台主机或者路由器需要查询在网络中另一台主机或者路由器的链路层地址时，它就发送一个ARP请求分组。该分组包含发送方的链路层地址、发送方IP地址和接收方IP地址。该查询使用链路层广播地址在链路上广播查询。</p>
+<p>网络中的每一台主机或者路由器接收和处理ARP请求分组，但是只有预定的接收方识别它的IP地址，并发回一个ARP响应分组。这一分组包含接收方IP地址和链路层地址，使用单播方式直接发给发送请求分组的结点。</p>
+<h3 id="分组格式"><a class="markdownIt-Anchor" href="#分组格式"></a> 分组格式</h3>
+<p>下图所示为ARP分组的格式：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201227131854.png" alt="ARP报文格式" /></p>
+<p>其中硬件类型域定义了链路层协议类型；协议类型域定义了网络层协议；源硬件地址和源协议地址域为可变长度，它们定义了发送方的链路层地址和网络地址。目的硬件地址和目的协议地址定义了接收方的链路层地址和网络层地址。ARP分组直接封装为一个数据链路层帧。</p>
+<h1 id="以太网协议"><a class="markdownIt-Anchor" href="#以太网协议"></a> 以太网协议</h1>
+<h2 id="标准以太网10mbps"><a class="markdownIt-Anchor" href="#标准以太网10mbps"></a> 标准以太网（10MBps）</h2>
+<h3 id="帧格式"><a class="markdownIt-Anchor" href="#帧格式"></a> 帧格式</h3>
+<p>以太网帧包括7个域，如下所示：</p>
+<p>|前导符|SFD|目的地址|源地址|类型|数据和填充|CRC</p>
+<p>这些域的作用如下：</p>
+<ul>
+<li>前导符：包含7个字节，其中0和1交替出现，以此通知接收系统有帧到来，并使其同步它的时钟。该前导符实际上是在物理层添加，并非帧的一部分。</li>
+<li>起始帧分界符（SFD）：固定为10101011，表示帧的开始，它也是物理层添加的。</li>
+<li>目的地址：6个字节，包含目的站点或者接收分组站点的链路层地址。</li>
+<li>源地址：6个字节，包含分组发送方的链路层地址。</li>
+<li>类型：2字节，定义了帧中封装分组所属的上层协议。</li>
+<li>数据：运载来自于上层协议封装的数据。最小长度46字节，最大1500字节，如果上层数据多于1500字节则需要分段并封装为多个帧，如果小于46字节则需要用0来填充。</li>
+<li>CRC：4个字节，包含差错检测信息，由地址、类型和数据域计算而来。</li>
+</ul>
+<h3 id="无连接服务和不可靠服务"><a class="markdownIt-Anchor" href="#无连接服务和不可靠服务"></a> 无连接服务和不可靠服务</h3>
+<p>以太网提供无连接服务，因此发送的每一个帧都是独立的。它没有连接建立和连接终止阶段，需要发生帧时就直接发送。因为使用以太网服务的IP地址也是无连接的，因此它也无法知道发生丢帧。丢帧的发现与补救措施来自于上层协议。</p>
+<h3 id="寻址"><a class="markdownIt-Anchor" href="#寻址"></a> 寻址</h3>
+<p>以太网的每个站点都有自己的网络接口卡，它安装在站点内部，提供给站点链路层地址。以太网地址为6字节。</p>
+<p>地址的传输是从左向右一个接一个字节地传输。但是对于每个字节，先发送最低有效位，最后发送最高有效位。这意味着接收方定义单播或者多播地址的位首先到达。</p>
+<h3 id="单播-多播和广播"><a class="markdownIt-Anchor" href="#单播-多播和广播"></a> 单播、多播和广播</h3>
+<p>源地址总是单播地址，帧只来自于一个站点。但是目的地址可以是单播、多播或者广播的。如果目的地址第一个字节的最低有效位是0地址为单播，如果为1则为多播；如果48位全是1则为广播。</p>
+<p>标准以太网的传输总是广播的，无论目的地址如何。对于实际的单播、多播和广播传输，它们的区别在于帧被保留和被丢弃的方式。单播传输中，只有接收方会保留并处理该帧，其他的丢弃该帧；多播传输中，只有组中的成员站点会保留并处理该帧；再广播传输中，所有的站点都会保留并处理该帧。</p>
+<h3 id="实现"><a class="markdownIt-Anchor" href="#实现"></a> 实现</h3>
+<p>标准以太网使用数字信号，位转换为数字信号直接发送到线路上，编码的实现为Manchester编码。使用的介质可以是光缆或者无屏蔽双绞线。</p>
+<h2 id="快速以太网100mbps"><a class="markdownIt-Anchor" href="#快速以太网100mbps"></a> 快速以太网（100MBps）</h2>
+<h3 id="访问方法"><a class="markdownIt-Anchor" href="#访问方法"></a> 访问方法</h3>
+<p>相比于标准以太网，快速以太网的访问方法需要在以下两种方案中选择一个：</p>
+<ul>
+<li>完全放弃总线拓扑，使用被动集线器和星状拓扑。此时如果要保留帧最小长度，那么网络的最大长度将会缩短。这种方法保留了与标准以太网的兼容性。</li>
+<li>使用带有缓存的链路层交换机来存储帧以及到每个主机的全双工连接，使得传输介质对于每台主机来说是私有的。</li>
+</ul>
+<h3 id="自动协商"><a class="markdownIt-Anchor" href="#自动协商"></a> 自动协商</h3>
+<p>自动协商功能允许一个站点或是集线器有一定的能力范围，两台设备可以协商它们的运行模式或者传输速率。这种设计使得互不相容的设备可以相互连接。</p>
+<h3 id="实现-2"><a class="markdownIt-Anchor" href="#实现-2"></a> 实现</h3>
+<p>快速以太网在物理层的实现方式可以是两线或是四线的。两线的实现可以是屏蔽双绞线或者光纤，而四线实现则只为非屏蔽双绞线设计。</p>
+<h2 id="千兆以太网"><a class="markdownIt-Anchor" href="#千兆以太网"></a> 千兆以太网</h2>
+<p>几乎所有的千兆以太网在介质访问方面都使用了全双工方法。在全双工模式中，有一个中央交换机与所有的计算机或者其他交换机相连。在这种输入模式中，对于每一个输入端口，每一个交换机都有缓冲区，数据在传输之前就存储在缓冲区中。</p>
+<p>通过使用这种方式，就不会有冲突的发生，因此电缆的最大长度由电缆中的信号衰减决定。</p>
+<h2 id="10千兆以太网"><a class="markdownIt-Anchor" href="#10千兆以太网"></a> 10千兆以太网</h2>
+<p>10千兆以太网的设计目标是提升数据速率到10GBps，同时保持相同的帧大小和帧格式，允许局域网、城域网和广域网的互联。这样的速率只有光纤可以达到。</p>
+<h2 id="虚拟局域网"><a class="markdownIt-Anchor" href="#虚拟局域网"></a> 虚拟局域网</h2>
+<h3 id="简介-3"><a class="markdownIt-Anchor" href="#简介-3"></a> 简介</h3>
+<p>虚拟本地局域网（Virtual Local Area Network, VLAN）是由软件配置的本地局域网，而不是物理连接的。CS、魔兽等游戏的网络对战平台使用的便是这一技术。</p>
+<p>一个VLAN定义了广播域，它将属于一个或多个物理局域网的站点分为了多个广播域，处在一个VLAN中的站点可以彼此通信。</p>
+<h3 id="成员"><a class="markdownIt-Anchor" href="#成员"></a> 成员</h3>
+<p>VLAN对不同站点分组可以使用的特征包括：交换机接口号、MAC地址、IP地址、多播IP地址，以及以上这些特征的组合。</p>
+<h3 id="配置"><a class="markdownIt-Anchor" href="#配置"></a> 配置</h3>
+<p>站点的配置方式分为三种：</p>
+<ul>
+<li>手动：网络管理员在设置时使用VLAN软件手动将站点分配至不同的VLAN。VLAN之间的迁移也是手动完成的。</li>
+<li>自动：站点使用配置好的标准自动地与一个VLAN连接或者断开。</li>
+<li>半自动：通常手动完成初始化工作，自动完成迁移工作。</li>
+</ul>
+<h3 id="交换机间通信"><a class="markdownIt-Anchor" href="#交换机间通信"></a> 交换机间通信</h3>
+<p>每一个交换机必须知道哪个站点属于哪个VLAN，以及连接到其他交换机的站点的成员。有三种方法可以完成这一工作：</p>
+<ul>
+<li>表维护：当一个站点向它的组成员发送广播帧时，交换机在表里创建一个实体，记录站点成员。同时交换机彼此之间发送表，并定期更新。</li>
+<li>帧标记：当帧在交换机间移动时，额外的头部增加到MAC帧来定义目的VLAN。接收交换机使用帧标记来决定要接收广播信息的VLAN。</li>
+<li>时分多路复用：交换机中的连接分时段使用通道。接收交换机通过检查帧到达的通道来决定目的VLAN。</li>
+</ul>
+<h3 id="优势"><a class="markdownIt-Anchor" href="#优势"></a> 优势</h3>
+<ul>
+<li>降低费用和节省时间，增加了网络连接的灵活性</li>
+<li>创建虚拟工作组</li>
+<li>安全</li>
+</ul>
+<h1 id="其他有线网络"><a class="markdownIt-Anchor" href="#其他有线网络"></a> 其他有线网络</h1>
+<h2 id="点对点网络"><a class="markdownIt-Anchor" href="#点对点网络"></a> 点对点网络</h2>
+<h3 id="拨号"><a class="markdownIt-Anchor" href="#拨号"></a> 拨号</h3>
+<p>拨号网络使用电话网络提供的服务来传输数据。由于电话网络是数字线路，而用户接入电话网络的那部分是模拟线路，因此需要使用到调制解调器。同时当电话线路用于因特网接入时，不能同时用于音频通信。</p>
+<p>调制解调器（modem）由信号调制器和信号解调器组成，调制器由数字数据创建模拟信号，而解调器把调制信号恢复为数字数据。</p>
+<p>在上传过程中，模拟信号在进入高速数字电话网络之前必须被取样，量化噪声被引入信号之中，导致速率降低。在下载过程中没有采样发生，该信号不受量化噪声的影响。</p>
+<h3 id="数字用户线路"><a class="markdownIt-Anchor" href="#数字用户线路"></a> 数字用户线路</h3>
+<p>数字用户线路（DSL）通过已经存在的电话线路来支持高速数字通信。DSL其实是一组技术，每一种的第一个字母都不同。其中最常用的是ADSL（非对称DSL）。</p>
+<p>ADSL是通过将整个可用带宽分成一个音频通道，一个上行通道和一个下行通道来实现声音和数据的同时传输，同时相比于拨号连接速度也有了很大提升。在用户端，需要使用一个过滤器将声音和数据分开，同时数据端也需要使用调制解调器。</p>
+<h3 id="电缆"><a class="markdownIt-Anchor" href="#电缆"></a> 电缆</h3>
+<h4 id="传统有线网络"><a class="markdownIt-Anchor" href="#传统有线网络"></a> 传统有线网络</h4>
+<p>传统有线网络主要用来传输电视信号，这种网络使用端到端的同轴电缆。有线电视办公室接收广播站的视频信号，并将其提供给同轴电缆。由于距离变长信号开始变弱，因此网络中间会有很多放大器。当信号到达分离器之后，由分接电缆将信号发送到用户住所。</p>
+<h4 id="混合光纤同轴网络"><a class="markdownIt-Anchor" href="#混合光纤同轴网络"></a> 混合光纤同轴网络</h4>
+<p>该网络将光纤与同轴电缆相结合。从有线电视办公室到光纤结点的传输介质为光纤，而从光纤结点到用户的传输介质仍然是同轴电缆。通过使用这种方式，电缆网络变为双向。</p>
+<h4 id="用于数据传输的有线电视"><a class="markdownIt-Anchor" href="#用于数据传输的有线电视"></a> 用于数据传输的有线电视</h4>
+<p>为了提供因特网接入服务，有线电视公司将带宽分为三个波段：视频、上行数据和下行数据。但是上行流波段和下行流波段需要由用户共享，因此如果有多个用户同时使用，就需要使用分时共享的方法。</p>
+<p>有线网络要用于数据传输需要在用户侧使用有线调制解调器，服务器处使用有线调制解调器传输系统。用户侧的有线调制解调器与ADSL的调制解调器类似，将信号中的数据部分与视频部分分离。</p>
+<h2 id="同步光纤网络sonet"><a class="markdownIt-Anchor" href="#同步光纤网络sonet"></a> 同步光纤网络（SONET）</h2>
+<h3 id="体系结构"><a class="markdownIt-Anchor" href="#体系结构"></a> 体系结构</h3>
+<p>SONET标准包括四个功能层：光子层、段层、线路层和路径层。其中光子层对应于物理层，另外三层对应于数据链路层。它们的作用如下：</p>
+<ul>
+<li>路径层：将信号从光信源发送到光信宿。一条路径指的是两个STS多路复用器之间的部分。在源端需要将信号从电形式转变为光形式，再与其它信号复用在一起；而在目的端，接收到的帧被多路分解，单个光信号在转换为电形式。</li>
+<li>线路层：负责通过物理线路的信号移动。一条线路对应的是两个复用器之间的部分。分插复用器允许信号的插入和抽出。</li>
+<li>段层：负责信号通过物理段的移动，它处理成帧、串扰和差错控制。一个段对应于两个相邻设备之间的连接。再生器相当于一个中继器，使用它可以扩展链路的长度。</li>
+<li>光子层：包括光纤通道、接收器敏感度、多路复用功能等的物理规范。</li>
+</ul>
+<h3 id="sonet帧"><a class="markdownIt-Anchor" href="#sonet帧"></a> SONET帧</h3>
+<p>每一个同步传输信号STS-n由8000个帧组成，每一个帧是一个9行，90*n列的二维矩阵。SONET的帧以每秒8000个的固定速率传输。对于每一个帧，都自左向右，自上而下的传输字节；对于每个字节，从高位到低位传输位。</p>
+<h3 id="sts多路复用"><a class="markdownIt-Anchor" href="#sts多路复用"></a> STS多路复用</h3>
+<p>在SONET中，较低速率的帧会同步地时分复用至一个更高速率的帧中。例如三个STS-1信号可以组合成一个STS-3，四个STS-3又可以组合成一个STS-12，等等。</p>
+<p>几路STS-1信号复用是在STS多路复用器完成的，STS-n信号的分解是在STS多路分解器完成的。在二者之间使用的分插复用器，可以使用一个信号来代替另一个。</p>
+<h3 id="sonet网络"><a class="markdownIt-Anchor" href="#sonet网络"></a> SONET网络</h3>
+<p>SONET网络可以大致分为线状网络、环状网络和网状网络。SONET网络常被用作高速骨干网。</p>
+<h2 id="交换网络"><a class="markdownIt-Anchor" href="#交换网络"></a> 交换网络</h2>
+<h3 id="概述-3"><a class="markdownIt-Anchor" href="#概述-3"></a> 概述</h3>
+<p>异步传输模式（ATM）是交换广域网，它基于信元中继协议。ATM和SONET的结合允许全世界网络的高速互联。ATM使用统计时分多路复用来处理来自于不同信道的信元。</p>
+<h3 id="体系结构-2"><a class="markdownIt-Anchor" href="#体系结构-2"></a> 体系结构</h3>
+<h4 id="虚拟连接"><a class="markdownIt-Anchor" href="#虚拟连接"></a> 虚拟连接</h4>
+<p>ATM是一个信元交换网络，用户设备称为端点，它们通过用户到网络接口连接到网络内部交换机，而交换机通过网络到网络接口互联。</p>
+<p>在两个端点之间的连接是通过传输路径、虚拟路径和虚电路完成的。传输路径是一个端点和一台交换机或者两台交换机之间的物理连接；一个传输路径划分为几个虚拟路径，一个虚拟路径提供两个交换机之间的一条连接或者一组连接；而一个虚拟路径又包括了多条虚电路，属于同一报文的所有信元沿着同一条虚电路传输，并且保持它们的原始次序直到到达目的地。</p>
+<p>在虚电路网络中，虚连接的标识是通过使用虚路径标识符（VPI）和虚电路标识符（VCI）来完成的。VPI定义了特定的虚路径，而VCI定义了虚路径中特定的虚电路。</p>
+<p>ATM网络中基本数据单元称为信元，它只有53字节长，5个字节为头部，48个字节携带有效负载。头部中的大部分被VPI和VCI占用。</p>
+<h4 id="层次结构"><a class="markdownIt-Anchor" href="#层次结构"></a> 层次结构</h4>
+<p>ATM标准定义了三层，自顶向下依次是应用适配层、ATM层和物理层。端点使用所有的三层，而交换机使用两个底层。这三层的作用如下：</p>
+<ul>
+<li>应用适配层：接收任意类型的负载，同时完成数据的分割与重组工作。</li>
+<li>ATM层：提供路由、通信量管理、交换和多路复用服务。</li>
+<li>物理层：ATM信元可以被任意物理层载体运载。</li>
+</ul>
+<h3 id="连接建立与释放"><a class="markdownIt-Anchor" href="#连接建立与释放"></a> 连接建立与释放</h3>
+<p>ATM中的连接包括两类：</p>
+<ul>
+<li>永久虚电路连接（PVC）：网络提供商在两个端点之间建立。VPI和VCI为永久连接而定义，它们的值输入到每一个交换机的表中。</li>
+<li>交换虚电路连接（SVC）：每当一个端点想要和另一个端点连接时，就需要建立一条新的虚电路。这一工作需要网络层地址和另一个协议的帮助下完成。</li>
+</ul>
+<h3 id="交换"><a class="markdownIt-Anchor" href="#交换"></a> 交换</h3>
+<p>ATM使用交换机将信元从源端点路由到目的端点。交换机通过使用VPI和VCI来路由信元。交换机有一个交换表，表的每一行存储六项信息：到达接口号、输入VPI、输入VCI、输出接口号、输出VPI和输出VCI。</p>
+<h1 id="连接设备"><a class="markdownIt-Anchor" href="#连接设备"></a> 连接设备</h1>
+<h2 id="中继器或集线器"><a class="markdownIt-Anchor" href="#中继器或集线器"></a> 中继器或集线器</h2>
+<p>中继器是只工作在物理层的设备，它接收信号，当信号变得很弱或是被破坏之前，重新生成以及重新定时原始位模式，然后发送新生成的信号。通过使用中继器可以克服同轴电缆长度的限制。</p>
+<p>在以太网的星状拓扑结构中，中继器是多端口设备，被称为集线器，可以作为连接点提供服务，同时具有中继器的功能。集线器没有过滤能力，分组从所有的输出端口中转发。</p>
+<h2 id="链路层交换机"><a class="markdownIt-Anchor" href="#链路层交换机"></a> 链路层交换机</h2>
+<p>链路层交换机运行在物理层和数据链路层。它重新生成接收到的信号，同时具有过滤能力，可以检查帧的目的地址，决定从哪个端口发送。</p>
+<p>一个透明交换机是与其连接的站点完全意识不到其存在的交换机，它需要满足三个标准：</p>
+<ul>
+<li>必须可以正确转发帧</li>
+<li>通过学习网络中帧的传输，自动建立转发表</li>
+<li>避免系统的内循环</li>
+</ul>
+<h2 id="路由器"><a class="markdownIt-Anchor" href="#路由器"></a> 路由器</h2>
+<p>路由器是三层设备，工作在物理层、数据链路层和网络层。路由器是网络互联设备，它将独立的网络连接以形成互联网络。</p>
+<p>路由器与中继器和交换机的不同点是：</p>
+<ul>
+<li>路由器每个端口都有一个物理地址和一个逻辑地址</li>
+<li>路由器只对分组中链路层目的地址和分组到达接口地址向匹配的分组起作用</li>
+<li>路由器转发分组时，它改变分组的链路层地址</li>
+</ul>
+<h1 id="打开网页时发生了什么"><a class="markdownIt-Anchor" href="#打开网页时发生了什么"></a> 打开网页时发生了什么</h1>
+<p>作为总结，这一部分叙述了在浏览器打开一个网页时所涉及到的计算机网络的相关知识。当我们在浏览器中输入一个域名（<span class="exturl" data-url="aHR0cDovL3huLS13d3ctZW84ZS5iYWlkdS5jb20=">如www.baidu.com<i class="fa fa-external-link-alt"></i></span>）时，计算机网络中要完成下面这些事情：</p>
+<p>第一阶段—获取自己的IP地址：</p>
+<ol>
+<li>在开始时，计算机还无法知道自己的IP地址。因此计算机的操作系统需要广播一个DHCP请求，来获取自己的IP地址。这一请求在传输层使用UDP协议封装，网络层使用IP协议封装。因为此时无法知道自己的IP地址，数据报的源地址设为0.0.0.0，同时为了将此数据报进行广播，目的地址设为255.255.255.255。</li>
+<li>DHCP数据报在接下来被数据链路层封装，源MAC地址为计算机自己的MAC地址，同时为了广播，目的MAC地址为FF:FF:FF:FF:FF:FF。</li>
+<li>这一数据报被送到与电脑相连的交换机上，然后交换机将这一报文通过其所有的输出端口进行广播。</li>
+<li>通过路由器对DHCP报文的转发，DHCP服务器收到这一报文，并层层解封获取到DHCP请求信息。</li>
+<li>DHCP服务器生成响应报文，其中包含了分配的IP地址等信息。这一信息也是通过UDP协议传输，并使用IP协议进行封装。在数据链路层的封装中，源MAC地址为DHCP服务器的MAC地址，而目的MAC地址为计算机的MAC地址。</li>
+<li>DHCP响应报文被通过单播的形式传回给电脑，由于交换机与路由器的自学习特性，它会自动找到传回路径。</li>
+<li>计算机收到DHCP服务器发来的响应报文，通过层层解封获得自己的IP地址。计算机通过这一报文中的内容设置自己的网络参数，并给DHCP服务器发送一个确认使用此IP的报文。</li>
+</ol>
+<p>第二阶段—获得网关路由器的MAC地址：</p>
+<ol start="8">
+<li>当在浏览器中敲入域名地址时，计算机会生成一个DNS请求报文，其中包含了要查询的域名地址。DNS请求报文使用UDP协议进行传输，IP协议在封装时，将源地址设置为自己的IP地址，目的地址为DNS服务器的地址（由DHCP服务器提供）。</li>
+<li>数据链路层的DNS报文要发给自己的路由器网关。在封装DNS报文时，它并不知道路由器网关的MAC地址。因此它需要先使用ARP协议发送一个广播报文来查询。</li>
+<li>计算机发送一个ARP请求报文，IP报文的源地址为自己的IP地址，目的地址为路由器的IP地址。数据链路层上，目的MAC地址被设置为FF:FF:FF:FF:FF:FF来表示这个报文要广播。</li>
+<li>网关路由器接收到报文，然后给计算机发送一个ARP响应报文，其中包含了自己的MAC地址。</li>
+<li>计算机接收到响应报文，获得网关路由器的MAC地址。在此之后，计算机便可以将DNS报文填充完整，然后发送给网关路由器。</li>
+</ol>
+<p>第三阶段—与DNS服务器通信：</p>
+<ol start="13">
+<li>网关路由器收到DNS请求报文，然后它通过查看自己的转发表，将报文转发到下一跳路由器上。不断重复此过程，最终报文到达DNS服务器。路由器的转发表是通过RIP、OSPF或IS-IS这些域内路由选择协议与BGP这一域间路由选择协议生成的。</li>
+<li>DNS服务器从DNS请求报文中获得要查找的域名（<span class="exturl" data-url="aHR0cDovL3huLS13d3ctZW84ZS5iYWlkdS5jb20=">如www.baidu.com<i class="fa fa-external-link-alt"></i></span>），并从自己的数据库中找到与www.baidu.com对应的IP地址。然后DNS服务器生成DNS响应报文，将信息发送给计算机。</li>
+<li>计算机接收到DNS响应报文，获得了域名所对应的IP地址。接下来便可以访问网页。</li>
+</ol>
+<p>第四阶段—访问网址：</p>
+<ol start="16">
+<li>由于网页访问的HTTP协议是建立在TCP协议上的，而TCP协议又是一个面向连接的服务。因此，计算机首先向www.baidu.com发送一个TCP SYN请求，源地址为计算机的IP地址，目的地址为www.baidu.com对应的IP地址。在这一过程中，路由器同样需要使用BGP协议来建立到www.baidu.com的路由转发表。</li>
+<li>TCP SYN请求通过路由器转发最终到达www.baidu.com对应的服务器。服务器接收到这一请求，然后发送一个TCP SYNACK消息，目的地址为我们的计算机。这一报文需要先转发到与服务器相连的路由器上，并一步步转发到我们的计算机上。</li>
+<li>我们的计算机接收到这一回复报文，TCP的状态变为连接态。</li>
+<li>计算机发送HTTP <span class="exturl" data-url="aHR0cDovL3huLS1HRVR3d3cta3cxbnkzMGpweHkuYmFpZHUuY29t">GET请求给www.baidu.com<i class="fa fa-external-link-alt"></i></span>，这一请求被封装到TCP报文中，并发给服务器。</li>
+<li>服务器接收到我们的HTTP GET报文，然后发送相应的HTTP response报文给我们的计算机，报文中包含了网页的内容信息。</li>
+<li>计算机接收到HTTP response报文，然后浏览器对报文内容进行解析，并将其显示出来。</li>
+</ol>
+<h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
+<ol>
+<li>计算机网络：自顶向下方法</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/05/25/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" title="计算机网络-数据链路层">http://lyf35.github.io/2021/05/25/计算机网络-数据链路层/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/25/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="prev" title="机器学习-线性模型与线性回归">
+      <i class="fa fa-chevron-left"></i> 机器学习-线性模型与线性回归
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/25/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E5%BA%94%E7%94%A8%E5%B1%82/" rel="next" title="计算机网络-应用层">
+      计算机网络-应用层 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">916k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">13:53</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'c0ef9afcfa939efc22ae5d503671863e',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
