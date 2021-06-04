@@ -1,11 +1,12 @@
 ---
-title: PKI相关知识（摘录）
+title: 信息安全-PKI相关知识（摘录）
 tags: 
 - 信息安全
 - PKI
-categories: [信息安全, PKI, 摘录]
+categories: [理论知识, 信息安全]
 sharing: True
-
+date: 2020-12-02 14:01:15
+updated: 2021-01-06 16:57:36
 ---
 
 注：本文内容摘录自Public Key Infrastructure: Implementation and Design一书。

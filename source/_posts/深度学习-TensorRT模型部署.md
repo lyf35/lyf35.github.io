@@ -2,8 +2,10 @@
 title: 深度学习-TensorRT模型部署
 tags: 
 - 深度学习
-categories: [深度学习]
+categories: [工程实践, 深度学习]
 sharing: True
+date: 2021-03-18 20:46:09
+updated: 2021-05-09 23:29:07
 ---
 
 # 概述

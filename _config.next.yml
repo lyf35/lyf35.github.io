@@ -117,6 +117,11 @@ menu:
   about: about || fa fa-user
   tags: tags || fa fa-tags
   categories: categories || fa fa-th
+  计算机基础: tags/计算机基础 || fa fa-tags 
+  机器学习: tags/机器学习 || fa fa-tags
+  深度学习: tags/深度学习 || fa fa-tags
+  工程实践: categories/工程实践 || fa fa-tags
+  
   archives: archives || fa fa-archive
   #schedule: /schedule/ || fa fa-calendar
   #sitemap: /sitemap.xml || fa fa-sitemap

@@ -1,9 +1,11 @@
 ---
-title: Makefile的写法
+title: Linux-Makefile的写法
 tags: 
 - Linux
-categories: [Linux]
+categories: [工程实践, Linux]
 sharing: True
+date: 2021-05-14 23:01:51
+updated: 2021-05-15 19:56:53
 ---
 
 # make
@@ -313,7 +315,7 @@ makefile提供了一些内置函数，详情可参考：https://www.gnu.org/soft
 
 - 目录选项：
   - `-L` ：表示要链接的库所在的目录。例如 -L.  表示要链接的库在当前目录， `-L/usr/lib` 表示要连接的库在/usr/lib下。系统会自动搜索目录/usr/lib，可以不用指明。
-  - `-l` ：表示需要链接库的名称，注意不是库文件名称，比如库文件为 libtest.so，那么库名称为test，编译参数需要写为`-Itest`
+  - `-l` ：表示需要链接库的名称，注意不是库文件名称，比如库文件为 libtest.so，那么库名称为test，编译参数需要写为`-ltest`
   - `-I `：指定头文件的所在的目录，可以使用相对路径。代码中包含的头文件便会在这一目录中寻找。
   - `-i`：指定程序中所使用的头文件，功能相当于在代码中使用#include
 

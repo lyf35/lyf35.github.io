@@ -5,7 +5,7 @@
 # Site
 title: Yufei Luo's Blog
 subtitle: But I was so much older then, I am younger than that now.
-description: 一个材料专业毕业的野生程序员的个人博客
+description: 哪怕什么真理无穷，进一寸有进一寸的欢喜
 keywords: 个人博客
 author: Yufei Luo
 language: zh-CN
@@ -63,6 +63,7 @@ prismjs:
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
   path: ''
+  #path: /default_index/ #A null filepath, for using self-defined homepage. The file 'index.md' should in the /source/ path
   per_page: 10
   order_by: -date
 

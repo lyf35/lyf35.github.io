@@ -3,7 +3,9 @@ title: 机器学习-K近邻算法
 tags: 
 - 机器学习
 - 监督学习
-categories: [机器学习, 监督学习]
+categories: [理论知识, 机器学习]
+date: 2021-03-10 22:27:05
+updated: 2021-04-02 8:28:42
 sharing: True
 ---
 

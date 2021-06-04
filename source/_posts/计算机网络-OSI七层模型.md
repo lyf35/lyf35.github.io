@@ -1,10 +1,12 @@
 ---
 title: 计算机网络-OSI七层模型
-categories: [计算机网络]
+categories: [理论知识, 计算机网络]
 tags: 
 - 计算机网络
+- 计算机基础
 sharing: True
-typora-copy-images-to: ..\images\blog-figures
+date: 2020-11-27 20:27:19
+updated: 2021-01-06 22:12:40
 ---
 
 # OSI七层模型

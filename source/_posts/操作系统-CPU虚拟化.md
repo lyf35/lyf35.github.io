@@ -2,7 +2,10 @@
 title: 操作系统-CPU虚拟化
 tags: 
 - 操作系统
-categories: [操作系统]
+- 计算机基础
+categories: [理论知识, 操作系统]
+date: 2020‎-‎10‎-18‎ ‏‎0:18:19
+updated: 2020‎-10‎-25‎ ‏‎23:30:52
 sharing: True
 ---
 

@@ -2,8 +2,10 @@
 title: 数据分析-Pandas
 tags: 
 - 数据分析
-categories: [数据分析]
+categories: [工程实践, 数据分析]
 sharing: True
+date: 2020-12-18 22:26:46
+updated: 2021-01-03 20:43:56
 ---
 
 # 简介

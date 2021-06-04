@@ -1,10 +1,11 @@
 ---
-title: Docker相关知识（摘录）
+title: Docker-原理与使用（摘录）
 tags: 
 - Docker
-categories: [Docker, 摘录]
+categories: [工程实践, Docker]
 sharing: True
-
+date: 2021-01-04 14:03:25
+updated: 2021-01-04 17:22:53
 ---
 
 注：本文内容是从参考部分摘录而来。

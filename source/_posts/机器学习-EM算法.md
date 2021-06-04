@@ -2,7 +2,9 @@
 title: 机器学习-EM算法
 tags: 
 - 机器学习
-categories: [机器学习]
+categories: [理论知识, 机器学习]
+date: 2020-11-15 23:09:52
+updated: 2021-04-02 08:10:22
 sharing: True
 ---
 
