@@ -268,7 +268,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -400,7 +400,7 @@
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
+              <span>14 分钟</span>
             </span>
 
         </div>
@@ -462,6 +462,7 @@
 <h3 id="万能近似定理"><a class="markdownIt-Anchor" href="#万能近似定理"></a> 万能近似定理</h3>
 <p>万能近似定理（universal approximation theorem）表明，一个前馈神经网络如果具有线性输出层和至少一层具有任何一种“挤压”性质的激活函数（例如sigmoid激活函数）的隐藏层，只要给予网络足够数量的隐藏单元，它能以任意的精度来近似任何从一个有限维空间到另一个有限维空间的Borel可测函数，前馈网络的导数也可以任意好地来近似函数的导数（Borel可测的概念较为复杂，我们只需要知道定义在<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi mathvariant="double-struck">R</mi><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">\R^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord"><span class="mord mathbb">R</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span>的有界闭集上的任意连续函数是Borel可测的，因此可以用神经网络来近似）。万能近似定理也已经被证明对于更广泛类别的激活函数也是适用的，其中就包括常用的整流线性单元。</p>
 <p>万能近似定理意味着，无论我们试图学习什么函数，一定存在一个大的MLP能够表示这个函数。然而，我们不能保证训练算法能够学得这个函数；即使MLP能够表示该函数，学习也可能因不同的原因而失败，比如优化算法很难找到期望函数的参数值，也或者是训练算法由于过拟合而选择了错误的函数。</p>
+<p>从经验上来讲，通常更深的模型在广泛的任务中能够取得更好的泛化效果。因此通常倾向于将网络的层数设计的深一些，而不是把每一层的神经元个数设计的多一些。</p>
 <h1 id="模型训练-反向传播"><a class="markdownIt-Anchor" href="#模型训练-反向传播"></a> 模型训练-反向传播</h1>
 <h2 id="原理"><a class="markdownIt-Anchor" href="#原理"></a> 原理</h2>
 <p>反向传播算法是将来自于损失函数的信息通过网络向后流动，以便<strong>计算梯度</strong>，从而进一步使用基于梯度的优化算法对模型参数进行优化。需要明确的是，反向传播算法仅仅是一种计算梯度的方法，不能将其误解为多层神经网络的整个学习算法。此外，反向传播算法其实是一种计算复合函数导数的算法，可以适用于计算任何函数的梯度。如果将复合函数的计算过程看作一个计算图，我们在计算输出值的导数时，需要使用链式法则进行计算，而使用链式法则进行一步步计算的过程其实便相当于是在计算图中做反向传播的过程。</p>
@@ -658,8 +659,8 @@ s76,-59,76,-59s76,-60,76,-60z M1001 80H40000v40H1012z'/></svg></span></span></sp
       <i class="fa fa-chevron-left"></i> 计算机网络-物理层
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/12/18/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-Pandas/" rel="next" title="数据分析-Pandas">
-      数据分析-Pandas <i class="fa fa-chevron-right"></i>
+    <a href="/2020/12/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" rel="next" title="操作系统-进程与线程">
+      操作系统-进程与线程 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -719,13 +720,13 @@ s76,-59,76,-59s76,-60,76,-60z M1001 80H40000v40H1012z'/></svg></span></span></sp
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">962k</span>
+    <span title="站点总字数">990k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">14:35</span>
+    <span title="站点阅读时长">15:01</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>

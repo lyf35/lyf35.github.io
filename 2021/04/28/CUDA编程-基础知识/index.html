@@ -39,12 +39,19 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210506213653.jpeg">
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210510194519.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210506233827.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616205539.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210511211248.jpeg">
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210511204743.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616230152.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616230242.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616225434.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210617210140.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210617212516.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616205548.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210531214456.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210531215525.png">
 <meta property="article:published_time" content="2021-04-28T13:54:32.000Z">
-<meta property="article:modified_time" content="2021-06-06T11:18:20.000Z">
+<meta property="article:modified_time" content="2021-06-17T14:28:20.000Z">
 <meta property="article:author" content="Yufei Luo">
 <meta property="article:tag" content="并行计算">
 <meta property="article:tag" content="CUDA">
@@ -252,7 +259,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cuda%E7%A1%AC%E4%BB%B6%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text"> CUDA硬件知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu%E5%92%8Cgpu%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.</span> <span class="nav-text"> CPU和GPU的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text"> 硬件组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text"> CUDA线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BB%B4%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text"> 多维结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">1.3.2.</span> <span class="nav-text"> 线程调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%94%AF%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.3.3.</span> <span class="nav-text"> 分支与线程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cuda%E5%86%85%E5%AD%98%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.4.</span> <span class="nav-text"> CUDA内存层次结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">1.4.2.</span> <span class="nav-text"> 寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%86%85%E5%AD%98"><span class="nav-number">1.4.3.</span> <span class="nav-text"> 本地内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">1.4.4.</span> <span class="nav-text"> 共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E5%86%85%E5%AD%98"><span class="nav-number">1.4.5.</span> <span class="nav-text"> 常量内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%86%85%E5%AD%98"><span class="nav-number">1.4.6.</span> <span class="nav-text"> 全局内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%B9%E7%90%86%E5%86%85%E5%AD%98"><span class="nav-number">1.4.7.</span> <span class="nav-text"> 纹理内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">1.4.8.</span> <span class="nav-text"> 缓存</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cuda%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="nav-number">2.</span> <span class="nav-text"> CUDA编程基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.1.</span> <span class="nav-text"> 简单示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text"> 核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B%E9%99%90%E5%AE%9A%E7%AC%A6"><span class="nav-number">2.2.1.</span> <span class="nav-text"> 函数类型限定符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0"><span class="nav-number">2.2.2.</span> <span class="nav-text"> 函数参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%BB%BA%E5%8F%98%E9%87%8F"><span class="nav-number">2.2.3.</span> <span class="nav-text"> 内建变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text"> 内存管理与使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8"><span class="nav-number">2.3.1.</span> <span class="nav-text"> 变量的内存使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%92%8C%E9%87%8A%E6%94%BE"><span class="nav-number">2.3.2.</span> <span class="nav-text"> 内存分配和释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BC%A0%E8%BE%93"><span class="nav-number">2.3.3.</span> <span class="nav-text"> 内存传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E5%86%85%E5%AD%98"><span class="nav-number">2.3.4.</span> <span class="nav-text"> 固定内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98-2"><span class="nav-number">2.3.5.</span> <span class="nav-text"> 共享内存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C"><span class="nav-number">2.4.</span> <span class="nav-text"> 异步并发执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">2.4.1.</span> <span class="nav-text"> 支持的操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cuda%E6%B5%81"><span class="nav-number">2.4.2.</span> <span class="nav-text"> CUDA流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">2.4.3.</span> <span class="nav-text"> 事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E5%90%8C%E6%AD%A5%E4%B8%8E%E9%9A%90%E5%BC%8F%E5%90%8C%E6%AD%A5"><span class="nav-number">2.4.4.</span> <span class="nav-text"> 显式同步与隐式同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cuda%E5%9B%BE"><span class="nav-number">2.4.5.</span> <span class="nav-text"> CUDA图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.4.5.1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%BB%93%E6%9E%84"><span class="nav-number">2.4.5.2.</span> <span class="nav-text"> 图结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">2.4.5.3.</span> <span class="nav-text"> 图的创建</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-number">2.5.</span> <span class="nav-text"> 原子操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text"> 程序优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%AD%96%E7%95%A5"><span class="nav-number">3.1.</span> <span class="nav-text"> 基本策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%8C%96%E8%B5%84%E6%BA%90%E5%88%A9%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text"> 最大化资源利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8"><span class="nav-number">3.3.</span> <span class="nav-text"> 优化内存使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">3.3.1.</span> <span class="nav-text"> 使用共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E4%B8%8E%E8%AE%BE%E5%A4%87%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">3.3.2.</span> <span class="nav-text"> 主机与设备的数据传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90"><span class="nav-number">3.3.3.</span> <span class="nav-text"> 内存对齐</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8C%87%E4%BB%A4"><span class="nav-number">3.4.</span> <span class="nav-text"> 优化指令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E5%BA%93"><span class="nav-number">4.</span> <span class="nav-text"> 扩展库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cuda%E7%A1%AC%E4%BB%B6%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text"> CUDA硬件知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu%E5%92%8Cgpu%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.</span> <span class="nav-text"> CPU和GPU的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text"> 硬件组成</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cuda%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text"> CUDA线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%BB%B4%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text"> 多维结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">2.2.</span> <span class="nav-text"> 线程调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%94%AF%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text"> 分支与线程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cuda%E5%86%85%E5%AD%98"><span class="nav-number">3.</span> <span class="nav-text"> CUDA内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text"> 层次结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">3.1.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">3.1.2.</span> <span class="nav-text"> 寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%86%85%E5%AD%98"><span class="nav-number">3.1.3.</span> <span class="nav-text"> 本地内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">3.1.4.</span> <span class="nav-text"> 共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E5%86%85%E5%AD%98"><span class="nav-number">3.1.5.</span> <span class="nav-text"> 常量内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%86%85%E5%AD%98"><span class="nav-number">3.1.6.</span> <span class="nav-text"> 全局内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%B9%E7%90%86%E5%86%85%E5%AD%98"><span class="nav-number">3.1.7.</span> <span class="nav-text"> 纹理内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">3.1.8.</span> <span class="nav-text"> 缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE"><span class="nav-number">3.2.</span> <span class="nav-text"> 全局内存访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90"><span class="nav-number">3.2.1.</span> <span class="nav-text"> 内存对齐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">3.2.2.</span> <span class="nav-text"> 结构体</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E8%AE%BF%E9%97%AE"><span class="nav-number">3.3.</span> <span class="nav-text"> 共享内存访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bank%E5%8F%8A%E5%85%B6%E5%9C%B0%E5%9D%80%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.3.1.</span> <span class="nav-text"> Bank及其地址模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bank%E5%86%B2%E7%AA%81"><span class="nav-number">3.3.2.</span> <span class="nav-text"> Bank冲突</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cuda%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="nav-number">4.</span> <span class="nav-text"> CUDA编程基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.1.</span> <span class="nav-text"> 简单示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.</span> <span class="nav-text"> 核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B%E9%99%90%E5%AE%9A%E7%AC%A6"><span class="nav-number">4.2.1.</span> <span class="nav-text"> 函数类型限定符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0"><span class="nav-number">4.2.2.</span> <span class="nav-text"> 函数参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%BB%BA%E5%8F%98%E9%87%8F"><span class="nav-number">4.2.3.</span> <span class="nav-text"> 内建变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">4.3.</span> <span class="nav-text"> 内存管理与使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8"><span class="nav-number">4.3.1.</span> <span class="nav-text"> 变量的内存使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%92%8C%E9%87%8A%E6%94%BE"><span class="nav-number">4.3.2.</span> <span class="nav-text"> 内存分配和释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BC%A0%E8%BE%93"><span class="nav-number">4.3.3.</span> <span class="nav-text"> 内存传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E5%86%85%E5%AD%98"><span class="nav-number">4.3.4.</span> <span class="nav-text"> 固定内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98-2"><span class="nav-number">4.3.5.</span> <span class="nav-text"> 共享内存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91%E6%89%A7%E8%A1%8C"><span class="nav-number">4.4.</span> <span class="nav-text"> 异步并发执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">4.4.1.</span> <span class="nav-text"> 支持的操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cuda%E6%B5%81"><span class="nav-number">4.4.2.</span> <span class="nav-text"> CUDA流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6"><span class="nav-number">4.4.3.</span> <span class="nav-text"> 事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E5%90%8C%E6%AD%A5%E4%B8%8E%E9%9A%90%E5%BC%8F%E5%90%8C%E6%AD%A5"><span class="nav-number">4.4.4.</span> <span class="nav-text"> 显式同步与隐式同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cuda%E5%9B%BE"><span class="nav-number">4.4.5.</span> <span class="nav-text"> CUDA图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">4.4.5.1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%BB%93%E6%9E%84"><span class="nav-number">4.4.5.2.</span> <span class="nav-text"> 图结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">4.4.5.3.</span> <span class="nav-text"> 图的创建</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-number">4.5.</span> <span class="nav-text"> 原子操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text"> 程序优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%AD%96%E7%95%A5"><span class="nav-number">5.1.</span> <span class="nav-text"> 基本策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%8C%96%E8%B5%84%E6%BA%90%E5%88%A9%E7%94%A8"><span class="nav-number">5.2.</span> <span class="nav-text"> 最大化资源利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8"><span class="nav-number">5.3.</span> <span class="nav-text"> 优化内存使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-number">5.3.1.</span> <span class="nav-text"> 使用共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E4%B8%8E%E8%AE%BE%E5%A4%87%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="nav-number">5.3.2.</span> <span class="nav-text"> 主机与设备的数据传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90-2"><span class="nav-number">5.3.3.</span> <span class="nav-text"> 内存对齐</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8C%87%E4%BB%A4"><span class="nav-number">5.4.</span> <span class="nav-text"> 优化指令</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E5%BA%93"><span class="nav-number">6.</span> <span class="nav-text"> 扩展库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text"> 参考</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -268,7 +275,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -364,7 +371,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-06 19:18:20" itemprop="dateModified" datetime="2021-06-06T19:18:20+08:00">2021-06-06</time>
+                <time title="修改时间：2021-06-17 22:28:20" itemprop="dateModified" datetime="2021-06-17T22:28:20+08:00">2021-06-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -393,14 +400,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>16k</span>
+              <span>19k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
+              <span>17 分钟</span>
             </span>
 
         </div>
@@ -424,27 +431,30 @@
 <h2 id="硬件组成"><a class="markdownIt-Anchor" href="#硬件组成"></a> 硬件组成</h2>
 <p>一个GPU是由大量的流处理器簇（Stream Multiprocessor, SM）组成的，同时包含有全局的L2缓存、显存与显存控制器、负责线程块分配的Giga Thread Engine等单元。</p>
 <p>SM的结构与GPU的架构有关。例如NVIDIA Pascal架构中的一个SM的结构如下图所示：</p>
-<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210510194519.png" alt="流多处理器" /></p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210510194519.png" alt="流多处理器" style="zoom:67%;" />
 <p>虽然不同GPU架构中的SM结构不同，但是它们所具有的组成模块基本相同。每个SM包含很多个CUDA Core（又叫流处理器，Streaming Processor，SP）。流处理器是最基本的处理单元，一个SP就对应于一个线程。同时也包含了线程束调度器、寄存器、指令缓存、L1缓存、共享内存、指令分发器等模块。</p>
-<h2 id="cuda线程"><a class="markdownIt-Anchor" href="#cuda线程"></a> CUDA线程</h2>
-<h3 id="多维结构"><a class="markdownIt-Anchor" href="#多维结构"></a> 多维结构</h3>
-<p>从逻辑角度来说，CUDA中的线程是多维的，它以线程网格的方式组织，每个线程网格中包含有若干个线程块，而一个线程块又可以包含多个线程。其中，网格和线程块都可以是一维、二维或者三维。对应于硬件关系，一个Grid被分配到设备上运行，一个Block被分配到SM上运行，而一个线程被分配到SP上运行。</p>
-<p>同一线程块中的众多线程拥有相同的指令地址，不仅能够并行执行，而且能够通过共享存储器（Shared memory）和栅栏（barrier）实现块内通信。这样，同一网格内的不同块之间存在不需要通信的粗粒度并行，而一个块内的线程之间又形成了允许通信的细粒度并行。</p>
+<h1 id="cuda线程"><a class="markdownIt-Anchor" href="#cuda线程"></a> CUDA线程</h1>
+<h2 id="多维结构"><a class="markdownIt-Anchor" href="#多维结构"></a> 多维结构</h2>
+<p>从逻辑角度来说，CUDA中的线程是多维的，它以线程网格的方式组织，每个线程网格中包含有若干个线程块，而一个线程块又可以包含多个线程。其中，网格和线程块都可以是一维、二维或者三维。如下图所示：</p>
 <p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210506233827.png" alt="img" /></p>
+<p>对应于硬件，一个Grid被分配到设备上运行，一个Block被分配到SM上运行，而一个线程被分配到SP上运行。它们的关系可以表示为下图：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616205539.png" alt="image-20210616202028995" style="zoom: 33%;" />
+<p>同一线程块中的众多线程拥有相同的指令地址，不仅能够并行执行，而且能够通过共享存储器（Shared memory）和栅栏（barrier）实现块内通信。这样，同一网格内的不同块之间存在不需要通信的粗粒度并行，而一个块内的线程之间又形成了允许通信的细粒度并行。</p>
 <p>在使用上述的多维结构时，每个线程块内的线程具有唯一的编号<code>threadIdx</code>，网格中的每个线程块也有一个唯一的编号<code>blockIdx</code>。相应地，也有<code>blockDim</code>和<code>gridDim</code>两个属性来表示线程块和线程网格的尺寸。它们都可能是一个三维的编号，具有<code>x</code>,<code>y</code>,<code>z</code>三个属性，它们按照从里到外的顺序存储，即<code>t[z][y][x]</code>。因此，一个三维的Grid中，一个线程的地址可以用如下方式计算：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> threadId_3D = threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.x*blockDim.y; <span class="comment">//一个Block内的线程id</span></span><br><span class="line"><span class="keyword">int</span> blockId_3D = blockIdx.x + blockIdx.y*gridDim.x + blockIdx.z*gridDim.x*gridDim.y; <span class="comment">//一个Grid内的Block id</span></span><br><span class="line"><span class="keyword">int</span> i = threadId_3D + (blockDim.x*blockDim.y*blockDim.z)*blockId_3D; <span class="comment">//blockId前面所有block的线程数+当前block Id内的偏移</span></span><br></pre></td></tr></table></figure>
-<h3 id="线程调度"><a class="markdownIt-Anchor" href="#线程调度"></a> 线程调度</h3>
-<p>线程束是SM的基本调度和执行单元，每个线程束中的线程会同时执行。在一个线程束中，所有的线程按照单指令多线程（SIMT）方式执行；即，所有线程都执行相同的指令，每个线程在私有数据上进行操作。</p>
+<h2 id="线程调度"><a class="markdownIt-Anchor" href="#线程调度"></a> 线程调度</h2>
+<p><strong>线程束</strong>是SM的基本调度和执行单元，每个线程束中的线程会同时执行。在一个线程束中，所有的线程按照单指令多线程（SIMT）方式执行；即，所有线程都执行相同的指令，每个线程在私有数据上进行操作。</p>
 <p>一个线程块便是多个线程束的集合，一个线程块会被分配到某一个SM上执行。由于一个SM可以容纳的线程数有上限（这个上限主要与底层硬件的计算能力有关），因此线程块的大小不能无限大；而当一个线程块的线程数小于SM可容纳的最大线程数时，一个SM也可以同时容纳并处理多个线程块。需要注意的是，SM一次可以调度处理的线程束数量有上限，可以容纳的线程块数量与线程数量也都有上限。</p>
 <p>在实际工程中，线程块的大小需要设置为适中的值。SM可容纳的线程束有限，如果线程块太大则会导致一些线程束需要排队等待，导致一个线程块内的很多线程束都在等待某些较慢的线程束执行完毕；而如果太小，则会在所有资源被充分利用之前，硬件达到每个SM的线程块数量的上限，从而造成计算资源的闲置。通常来说，线程束的大小为32，因此线程块的大小最好被设置为32的倍数（通常使用128或者256，这样大小适中，同时使得块的数量多于SM的数量，具有足够的并行度）。</p>
-<h3 id="分支与线程"><a class="markdownIt-Anchor" href="#分支与线程"></a> 分支与线程</h3>
+<h2 id="分支与线程"><a class="markdownIt-Anchor" href="#分支与线程"></a> 分支与线程</h2>
 <p>我们以如下的代码为例，说明GPU对于分支的处理方式：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__global__ <span class="title">demo_function</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(condition)</span><br><span class="line">    &#123;</span><br><span class="line">        action_a();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        action_b();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>GPU在执行上述代码时，首先会将不满足分支条件<code>condition</code>的线程设置为未激活，剩余处于激活状态的线程执行<code>action_a()</code>；之后，将满足分支条件<code>condition</code>的线程设置为未激活，剩余处于激活状态的线程执行<code>action_b()</code>。最后，所有的线程聚合，继续向下执行。</p>
 <p>由于硬件每次只能为一个线程束获取一条指令，因此在执行分支的两步操作中，每一次都会有一部分线程被阻塞，另一部分线程处于工作状态，这样使得硬件的利用率无法达到100%。</p>
-<p>实质上，在指令执行层，硬件的调度是基于半个线程束，而不是整个线程束。因此，如果能将半个线程束中的连续线程划分到同一个分支，这样硬件就可以同时执行分支结构中两个不同条件的分支块。就例如下面的代码段：</p>
+<p>实质上，在指令执行层，硬件的调度是基于半个线程束，而不是整个线程束。因此，如果能将线程束中一半的连续线程划分到同一个分支，这样硬件就可以同时执行分支结构中两个不同条件的分支块。就例如下面的代码段：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__global__ <span class="title">demo_function</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>((threadIdx.x % <span class="number">32</span>) &lt; <span class="number">16</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        action_a();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        action_b();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="cuda内存层次结构"><a class="markdownIt-Anchor" href="#cuda内存层次结构"></a> CUDA内存层次结构</h2>
+<h1 id="cuda内存"><a class="markdownIt-Anchor" href="#cuda内存"></a> CUDA内存</h1>
+<h2 id="层次结构"><a class="markdownIt-Anchor" href="#层次结构"></a> 层次结构</h2>
 <h3 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h3>
 <p>从硬件角度，CUDA的内存结构如下图所示：</p>
 <img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210511211248.jpeg" alt="在这里插入图片描述" style="zoom: 33%;" />
@@ -536,6 +546,7 @@
 <h3 id="共享内存"><a class="markdownIt-Anchor" href="#共享内存"></a> 共享内存</h3>
 <p>在核函数中使用<code>__shared__</code>修饰符修饰的变量存放在共享内存中。因为共享内存是片上内存，所以与本地内存或全局内存相比，它具有更高的带宽和更低的延迟。它的使用类似于CPU一级缓存，但它是可编程的，也就是说可以把它当成用户手动管理的缓存来使用。</p>
 <p>共享内存是线程之间相互通信的基本方式，生命周期伴随着整个线程块。当一个线程块执行结束后，其分配的共享内存将被释放并重新分配给其他线程块。访问共享内存必须同步使用<code>void __syncthreads()</code>函数来进行线程同步。</p>
+<p>每一个SM都有一块片上内存，供L1缓存和共享内存同时使用。在需要的情况下，可以通过使用<code>cudaDeviceSetCacheConfig()</code>函数来调整二者各自分配的大小。具体的用法可参考<span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm52aWRpYS5jb20vY3VkYS9jdWRhLXJ1bnRpbWUtYXBpL2dyb3VwX19DVURBUlRfX0RFVklDRS5odG1sI2dyb3VwX19DVURBUlRfX0RFVklDRV8xZzZjOWNjNzhjYTgwNDkwMzg2Y2Y1OTNiNGJhYTM1YTE1">CUDA Runtime API :: CUDA Toolkit Documentation (nvidia.com)<i class="fa fa-external-link-alt"></i></span></p>
 <h3 id="常量内存"><a class="markdownIt-Anchor" href="#常量内存"></a> 常量内存</h3>
 <p>使用<code>__constant__</code>修饰的常量会被存放在常量内存中。常量变量必须在全局空间内和所有核函数之外进行声明。对于所有计算能力的设备， 都只可以声明64KB的常量内存。常量内存是静态声明的，并对同一编译单元中的所有核函数可见。常量内存的一次读取会广播给所有线程束内的线程，因此当线程束中所有线程都从相同的地址取数据时，常量内存表现较好。</p>
 <h3 id="全局内存"><a class="markdownIt-Anchor" href="#全局内存"></a> 全局内存</h3>
@@ -552,6 +563,29 @@
 <li>只读纹理缓存</li>
 </ol>
 <p>每个SM都有一个一级缓存，所有SM公用一个二级缓存。一级二级缓存的作用都是被用来存储本地内存和全局内存中的数据，也包括寄存器溢出的部分。</p>
+<h2 id="全局内存访问"><a class="markdownIt-Anchor" href="#全局内存访问"></a> 全局内存访问</h2>
+<h3 id="内存对齐"><a class="markdownIt-Anchor" href="#内存对齐"></a> 内存对齐</h3>
+<p>CUDA的内存传输可能会同时使用L1与L2缓存，也可能只使用L2缓存。如果只使用L2缓存，那么内存传输以32个字节为单位；而如果使用了L1缓存，则内存传输以128字节为单位。L1缓存的每一行为128字节，对应于设备内存中某个对齐的128字节的分块。</p>
+<p>针对于缓存的特性，在使用设备内存时有如下两个优化的方向：一是在内存交换时尽量做到内存对齐，即内存交换操作的内存起始地址是32或128的偶数倍；二是在内存交换时尽量以合并的方式进行，即一个线程束内的32个线程访问一段连续的内存块。通过这两种优化，使得内存的带宽可以被充分利用。</p>
+<p>上述内容也可以总结为如下两幅示意图。内存的访问最好以下图的方式进行：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616230152.png" alt="image-20210616230145256" style="zoom: 67%;" />
+<p>尽量避免下图所示的内存访问方式：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616230242.png" alt="image-20210616230237050" style="zoom:67%;" />
+<h3 id="结构体"><a class="markdownIt-Anchor" href="#结构体"></a> 结构体</h3>
+<p>在使用结构体时，数据的组成方式有两种：一种是结构体构成的数组（Array of Strucrures），另一种是多个数组构成一个结构体（Structure of Arrays）。对于这两种不同的方式，数据在内存中的排布方式如下图所示：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616225434.png" alt="image-20210616225426286" style="zoom: 80%;" />
+<p>通常情况下，使用SoA方式的内存访问效率会更高一些，因为这样访问的是内存中的连续区域。但是这一点并不绝对，需要根据具体应用而定。</p>
+<h2 id="共享内存访问"><a class="markdownIt-Anchor" href="#共享内存访问"></a> 共享内存访问</h2>
+<h3 id="bank及其地址模式"><a class="markdownIt-Anchor" href="#bank及其地址模式"></a> Bank及其地址模式</h3>
+<p>为了取得高带宽，共享内存被划分为32个大小相等的内存模组，被称为存储体（Bank），而数据便被存储在不同的Bank中。对于一个线程束中的32个线程，它们可以同时访问不同的Bank，从而提高共享内存的读写速度。</p>
+<p>一个Bank有两种不同的地址模式：32位模式或者64位模式，对应于4字节或者8字节的字段大小。我们以4字节的数据为例，在32位模式下，Bank的索引与共享内存的地址映射关系如下图所示：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210617210140.png" alt="image-20210617210130805" style="zoom: 50%;" />
+<p>而在64位模式下，二者的映射关系如下图：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210617212516.png" alt="image-20210617212511616" style="zoom:50%;" />
+<h3 id="bank冲突"><a class="markdownIt-Anchor" href="#bank冲突"></a> Bank冲突</h3>
+<p>如果一个线程束内有多个线程要同时访问同一个Bank内的不同字段时，便会引起Bank冲突。以上面两幅图为例，如果有两个线程要同时访问索引为1和65的内存地址时，便会出现冲突。</p>
+<p>需要注意的是，如果多个线程同时访问同一个Bank内的同一字段时，由于这一字段的数据可以通过广播的方式给到每个请求的线程上，因此不会造成冲突。仍以上面两幅图为例，如果有两个线程同时访问索引为1的内存地址，便不会形成冲突。此外，在64位模式下，如果两个线程同时访问索引为1和33的内存地址，也不会形成冲突，但是在32位模式下便会造成冲突。</p>
+<p>在上面两幅图所示的情形中，如果不得不让多个线程同时访问同一个Bank中的不同字段，例如四个线程要同时访问共享内存的0,64,128,196这四个地址（它们都在Bank0），则可以使用空白填充的办法来避免Bank冲突。比如我们在数组的每32个元素之后添加一个空白元素，这样便可以将这四个地址放到不同的Bank中，从而避免了冲突。</p>
 <h1 id="cuda编程基础"><a class="markdownIt-Anchor" href="#cuda编程基础"></a> CUDA编程基础</h1>
 <h2 id="简单示例"><a class="markdownIt-Anchor" href="#简单示例"></a> 简单示例</h2>
 <p>下面为一个简单的CUDA程序示例：</p>
@@ -570,8 +604,8 @@
 <ul>
 <li><code>Dg</code>是一个<code>dim3</code>类型的变量，指明网格的维度和大小，<code>Dg.x*Dg.y*Dg.z</code>等于启动的块数量</li>
 <li><code>Db</code>是一个<code>dim3</code>类型的变量，用于声明块大小，<code>Db.x*Db.y*Db.z</code>等于每个块内的线程数量</li>
-<li><code>Ns</code>是一个<code>size_t</code>类型的变量，声明动态分配的共享存储器大小，默认为0</li>
-<li><code>s</code>的类型为<code>cudaStream_t</code>，用来声明执行的流，默认为0</li>
+<li><code>Ns</code>是一个<code>size_t</code>类型的变量，声明动态分配的共享内存大小，默认为0。此时在内核函数中，共享内存的声明为如下格式：<code>extern __shared__ int Array[]</code></li>
+<li><code>s</code>的类型为<code>cudaStream_t</code>，用来声明执行该核函数的CUDA流，默认为0，代表使用默认流</li>
 </ul>
 <h3 id="内建变量"><a class="markdownIt-Anchor" href="#内建变量"></a> 内建变量</h3>
 <p>CUDA为运行在GPU上的核函数自动生成了如下的内建变量，可以在函数运行时获得网格和块的尺寸，以及线程索引等信息：</p>
@@ -650,20 +684,39 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaMemcpy</span><span class="params">(<span class="keyword">void</span> *dst,<span class="keyword">const</span> <span class="keyword">void</span> * src,<span class="keyword">size_t</span> count,<span class="keyword">enum</span> cudaMemcpyKind kind)</span></span></span><br></pre></td></tr></table></figure>
 <p>其中，第一个参数为目标地址，第二个参数为原始地址，第三个参数为拷贝的内存大小，最后一个参数为传输类型。CUDA的内存传输类型共分为以下四种：</p>
 <ul>
-<li>cudaMemcpyHostToHost</li>
-<li>cudaMemcpyHostToDevice</li>
-<li>cudaMemcpyDeviceToHost</li>
-<li>cudaMemcpyDeviceToDevice</li>
+<li><code>cudaMemcpyHostToHost</code></li>
+<li><code>cudaMemcpyHostToDevice</code></li>
+<li><code>cudaMemcpyDeviceToHost</code></li>
+<li><code>cudaMemcpyDeviceToDevice</code></li>
 </ul>
 <p>对于二维或者三维数组而言，它们的内存分配可以使用<code>cudaMemcpy2D()</code>和<code>cudaMemcpy3D()</code>这两个函数。</p>
 <p>而全局变量（带有<code>__device__</code>或者<code>__constant__</code>修饰符）的内存传输则需要使用如下两个函数：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaMemcpyToSymbol</span><span class="params">(<span class="keyword">void</span> *dst,<span class="keyword">const</span> <span class="keyword">void</span> * src,<span class="keyword">size_t</span> count)</span></span>; <span class="comment">//从CPU内存传输数据到GPU内存</span></span><br><span class="line"><span class="function">cudaError_t <span class="title">cudaMemcpyFromSymbol</span><span class="params">(<span class="keyword">void</span> *dst,<span class="keyword">const</span> <span class="keyword">void</span> * src,<span class="keyword">size_t</span> count)</span></span>; <span class="comment">//从GPU内存传输数据到CPU内存</span></span><br></pre></td></tr></table></figure>
 <h3 id="固定内存"><a class="markdownIt-Anchor" href="#固定内存"></a> 固定内存</h3>
-<p>由于主机内存采用分页式管理，应用只能看到虚拟的内存地址，而操作系统可能随时更换物理地址的页（从原始地址复制到另一个地址）。从主机传输到设备上的时候，如果此时发生了页面移动，对于传输操作来说是致命的，所以在数据传输之前，CUDA驱动会锁定页面，或者直接分配固定的主机内存，将主机源数据复制到固定内存上，然后从固定内存传输数据到设备上。</p>
+<p>由于主机内存采用分页式管理，应用只能看到虚拟的内存地址，而操作系统可能随时更换物理地址的页（从原始地址复制到另一个地址）。从主机传输到设备上的时候，如果此时发生了页面移动，对于传输操作来说是致命的。所以在数据传输之前，CUDA会锁定页面，或者直接分配固定的主机内存，将主机源数据复制到固定内存上，然后从固定内存传输数据到设备上。因此固定内存又叫锁页内存。而CUDA提供了直接分配固定内存的函数，通过直接使用固定内存，便可加快主机到设备端的内存传输速度。如下图所示：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210616205548.png" alt="image-20210616205523050" style="zoom:67%;" />
 <p>下面函数用来分配固定内存：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaMallocHost</span><span class="params">(<span class="keyword">void</span> ** devPtr,<span class="keyword">size_t</span> count)</span></span></span><br></pre></td></tr></table></figure>
-<p>这一函数分配count字节的固定内存，这些内存是页面锁定的，可以直接传输到GPU设备端，这样使得传输带宽变得高很多。</p>
-<p>如果要释放固定的主机内存，可以使用下面的函数：</p>
+<p>这一函数分配<code>count</code>字节的固定内存，这些内存是页面锁定的，可以直接传输到GPU设备端，这样使得传输带宽变得高很多。</p>
+<p>也可以使用下面的函数来分配固定内存：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaHostAlloc</span><span class="params">(<span class="keyword">void</span> **pHost, <span class="keyword">size_t</span> count, <span class="keyword">unsigned</span> <span class="keyword">int</span> flags)</span></span></span><br></pre></td></tr></table></figure>
+<p>其中<code>flags</code>参数支持的四种设置如下：</p>
+<ul>
+<li><code>cudaHostAllocDefault</code>：函数功能与<code>cudaMallocHost</code>等价。</li>
+<li><code>cudaHostAllocPortable</code>：所返回的内存空间可以被系统中的所有设备使用。</li>
+<li><code>cudaHostAllocWriteCombined</code>：将固定内存声明为写联合内存，这类内存不使用缓存，此外在传输数据时也可以通过PCIE总线，因此写入较快但是读取较慢。适用于主机端写入，设备端读取的情况。</li>
+<li><code>cudaHostAllocMapped</code>：将所分配的内存空间映射到设备端的地址空间上，也就是零复制内存。</li>
+</ul>
+<blockquote>
+<p>备注—零复制内存：</p>
+<p>通常来说，主机端无法直接访问设备端的内存，同样设备端也无法直接访问主机端的内存。但是零复制内存例外，它属于主机端的固定内存，其地址被映射到设备端的地址空间上，可以同时被主机端和设备端访问（也就是说，零复制指的是无需显式的复制过程）。在使用零复制内存时，主机端和设备端不能同时进行操作，否则将会导致未知的结果。</p>
+<p>通过使用零复制内存，可以在设备内存不足时使用主机内存，同时避免了主机和设备之间的显式数据传输。由于隐式复制是异步的，可以与计算并行，因此也隐藏了内存传输的延时。</p>
+<p>在使用零复制内存时需要检查设备是否支持：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cudaDeviceProp device_prop</span><br><span class="line">cudaGetDeviceProperties(&amp;device_prop, device_num);</span><br><span class="line">zero_copy_supported = device_prop.canMapHostMemory;</span><br></pre></td></tr></table></figure>
+<p>对于零复制内存，设备端和主机端各自有一个地址，主机端地址在分配的时候被保存在<code>pHost</code>参数中，设备端地址可以使用如下函数获取：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaHostGetDevicePointer</span> <span class="params">( <span class="keyword">void</span>** pDevice, <span class="keyword">void</span>* pHost, <span class="keyword">unsigned</span> <span class="keyword">int</span> flags )</span></span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>如果要释放固定内存，可以使用下面的函数：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cudaError_t <span class="title">cudaFreeHost</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span></span><br></pre></td></tr></table></figure>
 <h3 id="共享内存-2"><a class="markdownIt-Anchor" href="#共享内存-2"></a> 共享内存</h3>
 <p>在核函数中，使用<code>__shared__</code>修饰符修饰的变量会被存放在共享内存中。共享内存具有更高的带宽和更低的延迟。共享内存可以当成用户手动管理的缓存来使用，合理地使用共享内存可以提高程序的执行速度。</p>
@@ -787,13 +840,14 @@
 <li>将许多小规模的数据传输组合为一个大批量的数据传输</li>
 <li>使用锁页内存</li>
 </ul>
-<h3 id="内存对齐"><a class="markdownIt-Anchor" href="#内存对齐"></a> 内存对齐</h3>
+<h3 id="内存对齐-2"><a class="markdownIt-Anchor" href="#内存对齐-2"></a> 内存对齐</h3>
 <p>在分配及使用内存时，尽可能地让内存的大小满足内存对齐的要求，这样可以加快指令执行速度。对于二维和三维数组来说，可以在分配内存的时候使用二维和三维的内存分配函数，函数会自动对内存进行填充，从而使其满足内存对齐的要求。</p>
 <h2 id="优化指令"><a class="markdownIt-Anchor" href="#优化指令"></a> 优化指令</h2>
 <p>可以从如下一些方面去做指令上的优化：</p>
 <ul>
 <li>算数操作：如果一些算数操作有CUDA内置函数已经实现过，则优先使用函数操作进行计算，例如单精度除法运算等；在运算精度允许的条件下，尽可能使用单精度浮点数；等等。对于CUDA的内置数学函数，可以参考https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#mathematical-functions-appendix。而对于矩阵运算而言，则可以使用cuBLAS库中的函数。</li>
 <li>条件语句：如果判断条件与线程ID有关，则最好是将条件语句改写为若干条顺序执行的指令。否则将会导致同一线程束内出现分支，导致线程束内执行的总指令数增加。</li>
+<li>循环语句：通过使用循环展开，可以加速循环体的执行速度。可以通过在for循环语句的前面加<code>#pragma unroll Num</code>来简单实现（<code>Num</code>指的是循环展开数，可以设置为任意正整数）</li>
 <li>同步操作：同步操作<code>__syncthreads()</code>会强制一些多处理器处于不工作状态，同时在一个时钟周期内也需要做若干指令操作，在设计程序时需要考虑这一点。</li>
 </ul>
 <h1 id="扩展库"><a class="markdownIt-Anchor" href="#扩展库"></a> 扩展库</h1>
@@ -807,6 +861,8 @@
 <h1 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h1>
 <ol>
 <li>CUDA并行程序设计：GPU编程指南</li>
+<li>Professional CUDA C Programming</li>
+<li></li>
 <li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzE5OTAzMzQ0">https://www.zhihu.com/question/19903344<i class="fa fa-external-link-alt"></i></span></li>
 <li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLm52aWRpYS5jb20vY3VkYS9jdWRhLWMtcHJvZ3JhbW1pbmctZ3VpZGUvaW5kZXguaHRtbA==">https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html<i class="fa fa-external-link-alt"></i></span></li>
 <li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vdGltbGx5L3AvMTE0NzE1MDcuaHRtbA==">深入GPU硬件架构及运行机制 - 0向往0 - 博客园 (cnblogs.com)<i class="fa fa-external-link-alt"></i></span></li>
@@ -923,13 +979,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">962k</span>
+    <span title="站点总字数">990k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">14:35</span>
+    <span title="站点阅读时长">15:01</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>
