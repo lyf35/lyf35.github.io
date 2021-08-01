@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="内存映射  概述 内存映射分为文件映射和匿名映射。文件映射将一个文件的一部分直接映射到调用进程的虚拟内存中。一旦一个文件被映射之后，就可以通过在相应的内存区域中操作字节来访问文件内容。映射的分页会在需要的时候从文件中（自动）加载。这种映射也被称为基于文件的映射或内存映射文件。而对于匿名映射来说，一个匿名映射没有对应的文件。相反，这种映射的分页会被初始化为 0。 一个进程映射中的内存可以与其他进程">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Yufei Luo&#39;s Blog">
+<meta property="og:url" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="内存映射  概述 内存映射分为文件映射和匿名映射。文件映射将一个文件的一部分直接映射到调用进程的虚拟内存中。一旦一个文件被映射之后，就可以通过在相应的内存区域中操作字节来访问文件内容。映射的分页会在需要的时候从文件中（自动）加载。这种映射也被称为基于文件的映射或内存映射文件。而对于匿名映射来说，一个匿名映射没有对应的文件。相反，这种映射的分页会被初始化为 0。 一个进程映射中的内存可以与其他进程">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-01T14:38:05.197Z">
+<meta property="article:modified_time" content="2021-08-01T14:38:05.197Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="个人博客">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | Yufei Luo's Blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84"><span class="nav-number">1.</span> <span class="nav-text"> 内存映射</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%98%A0%E5%B0%84"><span class="nav-number">1.2.</span> <span class="nav-text"> 创建映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%99%A4%E6%98%A0%E5%B0%84"><span class="nav-number">1.3.</span> <span class="nav-text"> 解除映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%98%A0%E5%B0%84"><span class="nav-number">1.4.</span> <span class="nav-text"> 文件映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BF%E5%90%8D%E6%98%A0%E5%B0%84"><span class="nav-number">1.5.</span> <span class="nav-text"> 匿名映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E6%98%A0%E5%B0%84%E5%8C%BA%E5%9F%9F"><span class="nav-number">1.6.</span> <span class="nav-text"> 同步映射区域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E6%98%A0%E5%B0%84"><span class="nav-number">1.7.</span> <span class="nav-text"> 重新映射</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text"> 虚拟内存操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E5%86%85%E5%AD%98%E4%BF%9D%E6%8A%A4"><span class="nav-number">2.1.</span> <span class="nav-text"> 改变内存保护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%94%81"><span class="nav-number">2.2.</span> <span class="nav-text"> 内存锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E5%86%85%E5%AD%98%E9%A9%BB%E7%95%99%E6%80%A7"><span class="nav-number">2.3.</span> <span class="nav-text"> 确定内存驻留性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E5%90%8E%E7%BB%AD%E7%9A%84%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.4.</span> <span class="nav-text"> 建议后续的内存使用模式</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+  
+  
+
+        <div class="content page posts-expand">
+          
+
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta">
+  
+  <ul class="breadcrumb">
+          
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">未完成的技术文档</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/">LINUX</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/">LINUX</a></li>
+            <li>内存映射与虚拟内存</li>
+          
+  </ul>
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="内存映射"><a class="markdownIt-Anchor" href="#内存映射"></a> 内存映射</h1>
+<h2 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h2>
+<p>内存映射分为文件映射和匿名映射。文件映射将一个文件的一部分直接映射到调用进程的虚拟内存中。一旦一个文件被映射之后，就可以通过在相应的内存区域中操作字节来访问文件内容。映射的分页会在需要的时候从文件中（自动）加载。这种映射也被称为基于文件的映射或内存映射文件。而对于匿名映射来说，一个匿名映射没有对应的文件。相反，这种映射的分页会被初始化为 0。</p>
+<p>一个进程映射中的内存可以与其他进程中的映射共享（即各个进程的页表条目指向RAM中的相同分页）。当两个或更多个进程共享相同分页时，每个进程都有可能会看到其他进程对分页内容做出的变更，这取决于映射是私有的还是共享的。对于私有映射来说，在映射内容上发生的变更对其它进程不可见；而对于共享映射来说，在映射内容上发生的变更对所有共享同一个映射的其他进程都可见。</p>
+<p>这两种映射特性组成了四种不同的内存映射：</p>
+<ul>
+<li>私有文件映射：映射的内容被初始化为一个文件区域中的内容。这种映射的主要用途是使用一个文件的内容来初始化一块内存区域，例如根据二进制可执行文件的相应部分来初始化一个进程的文本和数据段。</li>
+<li>私有匿名映射：每次调用<code>mmap()</code>创建一个私有匿名映射时都会产生一个新映射，该映射与同一（或不同）进程创建的其他匿名映射是不同的，它们不会共享物理分页。</li>
+<li>共享文件映射：所有映射一个文件的同一区域的进程会共享同样的内存物理分页，这些分页的内容将被初始化为该文件区域。对映射内容的修改将直接在文件中进行。这种映射方式允许内存映射I/O，同时允许无关进程共享一块内容以便进行进程间通信。</li>
+<li>共享匿名映射：每次调用<code>mmap()</code>创建一个共享匿名映射时都会产生一个新的、与任何其他映射不共享分页的新映射。映射的分页不会被写时复制，并且一个进程对映射内容所做出的变更会对其他进程可见。共享匿名映射允许以一种类似于System V 共享内存段的方式来进行IPC，但仅限于相关进程之间。</li>
+</ul>
+<h2 id="创建映射"><a class="markdownIt-Anchor" href="#创建映射"></a> 创建映射</h2>
+<p><code>mmap()</code>系统调用在调用进程的虚拟地址空间中创建一个新的映射：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">mmap</span><span class="params">(<span class="keyword">void</span>* addr, <span class="keyword">size_t</span> length, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, <span class="keyword">int</span> fd, <span class="keyword">off_t</span> offset)</span></span>; <span class="comment">//成功则返回内存映射的起始地址，失败返回MAP_FAILED</span></span><br></pre></td></tr></table></figure>
+<p><code>addr</code>参数指定了映射被放置的虚拟地址，可以指定为NULL使内核为映射选择一个合适的地址。<code>length</code>参数指定了映射的字节数，会被向上提升为分页大小的整数倍。<code>prot</code>为一个位掩码，取值可以为PROT_NONE，或者PROT_READ、PROT_WRITE和PROT_EXEC的组合。<code>flags</code>参数是一个控制映射操作各个方面选项的位掩码，可以为MAP_PRIVATE和MAP_SHARED之一，也可以同时用或操作包含其它值，如MAP_ANONYMOUS、MAP_FIXED、MAP_LOCKED等。<code>fd</code>和<code>offset</code>用于文件映射，<code>fd</code>参数为被映射文件的文件描述符，<code>offset</code>参数指定映射在文件中的起点，必须是系统分页大小的倍数。</p>
+<h2 id="解除映射"><a class="markdownIt-Anchor" href="#解除映射"></a> 解除映射</h2>
+<p><code>munmap()</code>系统调用执行的是与<code>mmap()</code>相反的操作，即从调用进程的虚拟地址空间中删除一个映射：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">munmap</span><span class="params">(<span class="keyword">void</span>* addr, <span class="keyword">size_t</span> length)</span></span>; <span class="comment">//成功返回0，失败返回-1</span></span><br></pre></td></tr></table></figure>
+<p><code>addr</code>参数是待解除映射的地址范围的起始地址，它必须与一个分页边界对齐。<code>length</code>是一个非负整数，它指定了待解除映射区域的大小。在解除映射时，可以解除整个映射，也可以解除一个映射中的一部分。</p>
+<p>当一个进程终止或执行了一个<code>exec()</code>之后进程中所有的映射会自动被解除。</p>
+<h2 id="文件映射"><a class="markdownIt-Anchor" href="#文件映射"></a> 文件映射</h2>
+<p>要创建一个文件映射需要执行下面的步骤。</p>
+<ol>
+<li>获取文件的一个描述符，通常通过调用<code>open()</code>来完成。</li>
+<li>将文件描述符作为 <code>fd</code>参数传入<code>mmap()</code>调用。</li>
+</ol>
+<p>执行上述步骤之后，<code>mmap()</code>会将打开的文件的内容映射到调用进程的地址空间中。一旦<code>mmap()</code>被调用之后，就能够关闭文件描述符，而不会对映射产生任何影响。</p>
+<h2 id="匿名映射"><a class="markdownIt-Anchor" href="#匿名映射"></a> 匿名映射</h2>
+<p>在Linux中，使用<code>mmap()</code>创建匿名映射有两种办法。一种是在<code>flags</code>指定MAP_ANONYMOUS 并将<code>fd</code>设置为-1，另一种是打开<code>/dev/zero</code>设备文件，并将得到的文件描述符传递给<code>mmap()</code>。此时，得到的映射中的字节会被初始化为0，offset 参数会被忽略。</p>
+<h2 id="同步映射区域"><a class="markdownIt-Anchor" href="#同步映射区域"></a> 同步映射区域</h2>
+<p>内核会自动将发生在MAP_SHARED映射内容上的变更写入到底层文件中，但在默认情况下，内核不保证这种同步操作会在何时发生。<code>msync()</code>系统调用让应用程序能够显式地控制何时完成共享映射与映射文件之间的同步：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">msync</span><span class="params">(<span class="keyword">void</span>* addr, <span class="keyword">size_t</span> length, <span class="keyword">int</span> flags)</span></span>; <span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p><code>addr</code>和<code>length</code>参数指定了需同步的内存区域的起始地址和大小。在<code>addr</code>中指定的地址必须是分页对齐的，<code>length</code>会被向上舍入到系统分页大小的下一个整数倍。<code>flags</code>参数可以为MS_SYNC（会阻塞直到内存区域中所有被修改过的分页被写入到硬盘为止）、MS_ASYNC（内存区域仅与内核高速缓冲区同步）和MS_INVALIDATE（使映射数据的缓存副本失效）其中之一。</p>
+<h2 id="重新映射"><a class="markdownIt-Anchor" href="#重新映射"></a> 重新映射</h2>
+<p>Linux提供了<code>mremap()</code>系统调用，使得映射的位置和大小可以被改变：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">mremap</span><span class="params">(<span class="keyword">void</span>* old_address, <span class="keyword">size_t</span> old_size, <span class="keyword">size_t</span> new_size, <span class="keyword">int</span> flags, ……)</span> <span class="comment">//成功则返回新映射地址的起始处，失败返回MAP_FAILED</span></span></span><br></pre></td></tr></table></figure>
+<p><code>old_address</code>和<code>old_size</code>参数指定了需扩展或收缩的既有映射的位置和大小。在<code>old_address</code>中指定的地址必须是分页对齐的，并且通常是一个由之前的<code>mmap()</code>调用返回的值。映射预期的新大小会通过<code>new_size</code>参数指定。在<code>old_size</code>和<code>new_size</code>中指定的值都会被向上舍入到系统分页大小的下一个整数倍。</p>
+<p>在执行重映射的过程中内核可能会为映射在进程的虚拟地址空间中重新指定一个位置，而是否允许这种行为则是由<code>flags</code>参数来控制的。它是一个位掩码，其值要么是0，要么为MREMAP_MAYMOVE或者MREMAP_MAYMOVE|MREMAP_FIXED（此时需要额外传入一个参数<code>void* new_address</code>，将映射迁移至这个指定地址）</p>
+<h1 id="虚拟内存操作"><a class="markdownIt-Anchor" href="#虚拟内存操作"></a> 虚拟内存操作</h1>
+<h2 id="改变内存保护"><a class="markdownIt-Anchor" href="#改变内存保护"></a> 改变内存保护</h2>
+<p><code>mprotect()</code>系统调用修改起始位置为<code>addr</code>（必须是分页大小整数倍），长度为<code>length</code>（会被向上舍入到分页大小整数倍）字节的虚拟内存区域中对分页的保护：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mprotect</span><span class="params">(<span class="keyword">void</span>* addr, <span class="keyword">size_t</span> length, <span class="keyword">int</span> prot)</span></span>; <span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p><code>prot</code>参数是一个位掩码，它指定了这块内存区域上的新保护，其取值是PROT_NONE或PROT_READ、PROT_WRITE以及PROT_EXEC这三个值中的一个或多个取或操作。如果一个进程在访问一块内存区域时违背了内存保护，那么内核就会向该进程发送一个SIGSEGV信号。</p>
+<h2 id="内存锁"><a class="markdownIt-Anchor" href="#内存锁"></a> 内存锁</h2>
+<p>在一些应用程序中，将一个进程的虚拟内存的部分或全部锁进内存以确保它们总是位于物理内存中，可以提高程序的性能，并且保证敏感数据不会被交换到磁盘上。</p>
+<p>特权进程能够锁住的内存数量是没有限制的（即 RLIMIT_MEMLOCK 会被忽略）；非特权进程能够锁住的内存数量上限由软限制RLIMIT_MEMLOCK定义。由于虚拟内存的管理单位是分页，因此内存加锁会应用于整个分页。在执行限制检查时，RLIMIT_MEMLOCK 限制会被向下舍入到最近的系统分页大小的整数倍。</p>
+<p>对内存区域加锁和解锁的操作如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mlock</span><span class="params">(<span class="keyword">void</span>* addr, <span class="keyword">size_t</span> length)</span></span>; <span class="comment">//addr为起始地址，不要求分页对齐，如果未对其则强制移动到下一个分页边界；由于加锁操作的单位是分页，因此被锁住的区域的结束位置为大于length加addr的下一个分页边界</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">munlock</span><span class="params">(<span class="keyword">void</span>* addr, <span class="keyword">size_t</span> length)</span></span>; <span class="comment">//参数含义与mlock相同。不会立即删除分页，只有其它进程请求内存时才会从RAM中删除分页</span></span><br><span class="line"><span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p>除了显式地使用<code>munlock()</code>之外，内存锁在下列情况下会被自动删除：</p>
+<ul>
+<li>进程终止</li>
+<li>被锁住的分页通过<code>munmap</code>被解除映射</li>
+<li>被锁住的分页通过<code>mmap</code>MAP_FIXED标记的映射覆盖时</li>
+</ul>
+<p>一个进程可以给它占据的所有内存加锁和解锁：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mlockall</span><span class="params">(<span class="keyword">int</span> flags)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">munlockall</span><span class="params">(<span class="keyword">void</span>)</span></span>; </span><br><span class="line"><span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p>其中<code>flags</code>参数可以为MCL_CURRENT、MCL_FUTURE以及二者的或。MCL_CURRENT将调用进程虚拟地址空间中当前所有映射的分页锁进内存，MCL_FUTURE将后续映射进调用进程的虚拟地址空间的所有分页锁进内存。</p>
+<h2 id="确定内存驻留性"><a class="markdownIt-Anchor" href="#确定内存驻留性"></a> 确定内存驻留性</h2>
+<p><code>mincore()</code>系统调用是内存加锁系统调用的补充，它报告在一个虚拟地址范围中哪些分页当前驻留在RAM 中，因此在访问这些分页时也不会导致分页故障：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mincore</span><span class="params">(<span class="keyword">void</span>* addr, <span class="keyword">size_t</span> length, <span class="keyword">unsigned</span> <span class="keyword">char</span>* vec)</span></span>; <span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p>这一系统调用返回起始地址为<code>addr</code>，长度为<code>length</code>字节的虚拟地址范围中分页的内存驻留信息。<code>addr</code>中的地址必须是分页对齐的，并且由于返回的信息是有关整个分页的，因此<code>length</code>实际上会被向上舍入到系统分页大小的下一个整数倍。内存驻留的相关信息会通过<code>vec</code>返回。</p>
+<h2 id="建议后续的内存使用模式"><a class="markdownIt-Anchor" href="#建议后续的内存使用模式"></a> 建议后续的内存使用模式</h2>
+<p><code>madvise()</code>系统调用通过通知内核调用进程对起始地址为<code>addr</code>长度为<code>length</code>字节的范围之内分页的可能的使用情况，来提升应用程序的性能。内核可能会使用这种信息来提升在分页之下的文件映射上执行的I/O的效率。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">madvise</span><span class="params">(<span class="keyword">void</span>* addr, <span class="keyword">size_t</span> length, <span class="keyword">int</span> advice)</span></span>; <span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p>参数<code>addr</code>的值要求分页对齐，<code>length</code>会被向上舍入到系统分页大小的下一个整数倍，<code>advice</code>可以为下面几个值其中之一：</p>
+<ul>
+<li>MADV_NORMAL：默认行为，分页以簇（一个系统分页大小整数倍）传输，这样会导致一些预先读和事后读</li>
+<li>MADV_RANDOM：这个区域的分页会被随机访问，这样预先读不会带来任何好处</li>
+<li>MADV_SEQUENTIAL：在此范围内的分页只会被访问一次，并且是顺序访问</li>
+<li>MADV_WILLNEED：预先读取这个区域中的分页以备将来的访问之需</li>
+<li>MADV_DONTNEED：调用进程不再要求这个区域中的分页驻留在内存中</li>
+</ul>
+
+      </div>
+      
+      
+      
+    </div>
+    
+  <ul class="breadcrumb">
+          
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">未完成的技术文档</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/">LINUX</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/">LINUX</a></li>
+            <li>内存映射与虚拟内存</li>
+          
+  </ul>
+
+    
+    
+    
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">16:41</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '183bc95b67679fe4bbc15c8fac0c3093',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

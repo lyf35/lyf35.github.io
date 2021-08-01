@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="文件系统  设备文件 设备专用文件与系统中的某个设备对应。在内核中，每种设备类型都有与之对应的设备驱动程序，用来处理设备的所有I&#x2F;O请求。设备驱动程序属内核代码单元，可执行一系列操作，（通常）与相关硬件的输入&#x2F;输出动作相对应。 由设备驱动程序提供的API 是固定的，包含的操作对应于系统调用open()、close()、read()、write()、mmap()以及ioctl()。每个设备驱动程序">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Yufei Luo&#39;s Blog">
+<meta property="og:url" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="文件系统  设备文件 设备专用文件与系统中的某个设备对应。在内核中，每种设备类型都有与之对应的设备驱动程序，用来处理设备的所有I&#x2F;O请求。设备驱动程序属内核代码单元，可执行一系列操作，（通常）与相关硬件的输入&#x2F;输出动作相对应。 由设备驱动程序提供的API 是固定的，包含的操作对应于系统调用open()、close()、read()、write()、mmap()以及ioctl()。每个设备驱动程序">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210628151559251.png">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210624093356351.png">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210628135556878.png">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210629110659209.png">
+<meta property="article:published_time" content="2021-08-01T14:38:05.197Z">
+<meta property="article:modified_time" content="2021-08-01T14:38:05.197Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="个人博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210628151559251.png">
+
+<link rel="canonical" href="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | Yufei Luo's Blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text"> 文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text"> 设备文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E5%92%8C%E5%88%86%E5%8C%BA"><span class="nav-number">1.2.</span> <span class="nav-text"> 磁盘和分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text"> 文件系统结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.4.</span> <span class="nav-text"> 虚拟文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E5%B1%82%E7%BA%A7%E4%B8%8E%E6%96%87%E4%BB%B6%E6%8C%82%E8%BD%BD"><span class="nav-number">1.5.</span> <span class="nav-text"> 目录层级与文件挂载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.6.</span> <span class="nav-text"> 虚拟内存文件系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6io"><span class="nav-number">2.</span> <span class="nav-text"> 文件I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E7%94%A8io"><span class="nav-number">2.2.</span> <span class="nav-text"> 通用I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#open"><span class="nav-number">2.2.1.</span> <span class="nav-text"> open()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read"><span class="nav-number">2.2.2.</span> <span class="nav-text"> read()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write"><span class="nav-number">2.2.3.</span> <span class="nav-text"> write()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close"><span class="nav-number">2.2.4.</span> <span class="nav-text"> close()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lseek"><span class="nav-number">2.2.5.</span> <span class="nav-text"> lseek()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E7%94%A8%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text"> 特殊用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fcntl"><span class="nav-number">2.3.1.</span> <span class="nav-text"> fcntl()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%AE%9A%E5%81%8F%E7%A7%BB%E9%87%8F%E7%9A%84io"><span class="nav-number">2.3.2.</span> <span class="nav-text"> 特定偏移量的I&#x2F;O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%95%A3%E8%BE%93%E5%85%A5%E5%92%8C%E9%9B%86%E4%B8%AD%E8%BE%93%E5%87%BA"><span class="nav-number">2.3.3.</span> <span class="nav-text"> 分散输入和集中输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%88%AA%E6%96%AD"><span class="nav-number">2.3.4.</span> <span class="nav-text"> 文件截断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#devfd%E7%9B%AE%E5%BD%95"><span class="nav-number">2.3.5.</span> <span class="nav-text"> &#x2F;dev&#x2F;fd目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6"><span class="nav-number">2.3.6.</span> <span class="nav-text"> 创建临时文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.4.</span> <span class="nav-text"> 示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6io%E7%BC%93%E5%86%B2"><span class="nav-number">3.</span> <span class="nav-text"> 文件I&#x2F;O缓冲</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E7%BC%93%E5%86%B2"><span class="nav-number">3.1.</span> <span class="nav-text"> 内核缓冲</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stdio%E5%BA%93%E7%9A%84%E7%BC%93%E5%86%B2"><span class="nav-number">3.2.</span> <span class="nav-text"> stdio库的缓冲</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%BC%93%E5%86%B2%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.1.</span> <span class="nav-text"> 设置缓冲模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%B7%E6%96%B0stdio%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">3.2.2.</span> <span class="nav-text"> 刷新stdio缓冲区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stdio%E5%BA%93%E4%B8%8E%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E6%B7%B7%E5%90%88"><span class="nav-number">3.3.</span> <span class="nav-text"> stdio库与系统调用混合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.4.</span> <span class="nav-text"> 总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%B1%9E%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text"> 文件属性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%96%87%E4%BB%B6%E4%BF%A1%E6%81%AF"><span class="nav-number">4.1.</span> <span class="nav-text"> 获取文件信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%97%B6%E9%97%B4%E6%88%B3"><span class="nav-number">4.2.</span> <span class="nav-text"> 文件时间戳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%89%80%E6%9C%89%E6%9D%83"><span class="nav-number">4.3.</span> <span class="nav-text"> 文件所有权</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90"><span class="nav-number">4.4.</span> <span class="nav-text"> 文件权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E5%B1%9E%E6%80%A7"><span class="nav-number">4.5.</span> <span class="nav-text"> 扩展属性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E4%B8%8E%E9%93%BE%E6%8E%A5"><span class="nav-number">5.</span> <span class="nav-text"> 目录与链接</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E9%93%BE%E6%8E%A5"><span class="nav-number">5.1.</span> <span class="nav-text"> 硬链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E9%93%BE%E6%8E%A5"><span class="nav-number">5.2.</span> <span class="nav-text"> 软链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">5.3.</span> <span class="nav-text"> 链接的系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E7%A7%BB%E9%99%A4%E9%93%BE%E6%8E%A5"><span class="nav-number">5.3.1.</span> <span class="nav-text"> 创建和移除链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-number">5.3.2.</span> <span class="nav-text"> 更改文件名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5"><span class="nav-number">5.3.3.</span> <span class="nav-text"> 使用符号链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E7%A7%BB%E9%99%A4"><span class="nav-number">5.3.4.</span> <span class="nav-text"> 文件&#x2F;目录的创建和移除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E7%9B%AE%E5%BD%95"><span class="nav-number">5.3.5.</span> <span class="nav-text"> 读目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%BD%93%E5%89%8D%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95"><span class="nav-number">5.3.6.</span> <span class="nav-text"> 进程当前工作目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%A0%B9%E7%9B%AE%E5%BD%95"><span class="nav-number">5.3.7.</span> <span class="nav-text"> 改变进程的根目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E8%A7%A3%E6%9E%90"><span class="nav-number">5.3.8.</span> <span class="nav-text"> 路径解析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text"> 监控文件事件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-number">6.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#api"><span class="nav-number">6.2.</span> <span class="nav-text"> API</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%8A%A0%E9%94%81"><span class="nav-number">7.</span> <span class="nav-text"> 文件加锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#flock%E5%87%BD%E6%95%B0"><span class="nav-number">7.1.</span> <span class="nav-text"> flock函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fcntl%E5%87%BD%E6%95%B0"><span class="nav-number">7.2.</span> <span class="nav-text"> fcntl函数</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+  
+  
+
+        <div class="content page posts-expand">
+          
+
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta">
+  
+  <ul class="breadcrumb">
+          
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">未完成的技术文档</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/">LINUX</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/">LINUX</a></li>
+            <li>文件系统</li>
+          
+  </ul>
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="文件系统"><a class="markdownIt-Anchor" href="#文件系统"></a> 文件系统</h1>
+<h2 id="设备文件"><a class="markdownIt-Anchor" href="#设备文件"></a> 设备文件</h2>
+<p>设备专用文件与系统中的某个设备对应。在内核中，每种设备类型都有与之对应的设备驱动程序，用来处理设备的所有I/O请求。设备驱动程序属内核代码单元，可执行一系列操作，（通常）与相关硬件的输入/输出动作相对应。</p>
+<p>由设备驱动程序提供的API 是固定的，包含的操作对应于系统调用<code>open()</code>、<code>close()</code>、<code>read()</code>、<code>write()</code>、<code>mmap()</code>以及<code>ioctl()</code>。每个设备驱动程序所提供的接口一致，这隐藏了每个设备在操作方面的差异，从而满足了I/O 操作的通用性。</p>
+<p>一些设备是实际存在的，如鼠标、磁盘和磁带设备；而另一些设备是虚拟的，就是不存在相应的硬件，但是内核会通过设备驱动程序提高一种抽象设备。设备可分为字符型设备和块设备，字符型设备基于每个字符来处理数据，如终端和键盘；而块设备则每次处理一块数据，如磁盘和磁带。在文件系统中，设备文件通常位于<code>/dev</code>目录下。</p>
+<p>每个设备文件都有一个主ID和辅ID，主ID号标识一般的设备登记，内核使用主ID号查找与该类设备相应的驱动程序；而辅ID号则能够在一般等级中唯一标识特定设备。每个设备驱动程序都会将自己与特定主设备号的关联关系向内核注册，从而建立设备专用文件和设备驱动程序之间的关系。</p>
+<h2 id="磁盘和分区"><a class="markdownIt-Anchor" href="#磁盘和分区"></a> 磁盘和分区</h2>
+<p>常规文件和目录通常都存放在磁盘设备中，每块磁盘都可以划分为一个或者多个不重叠的分区，而内核将每个分区视为<code>/dev</code>路径下的单独设备。磁盘分区通常只存放三种类型的信息：文件系统、数据区域、交换区域。</p>
+<h2 id="文件系统结构"><a class="markdownIt-Anchor" href="#文件系统结构"></a> 文件系统结构</h2>
+<p>文件系统是对常规文件和目录的组织集合，磁盘的每个分区都对应于一个文件系统。Linux支持多种不同的文件系统，包括传统的文件系统、原生UNIX文件系统、网络文件系统、日志文件系统（文件更新时间变长，但是无需在系统崩溃之后检查文件系统的一致性）等。</p>
+<p>在文件系统中，用来分配空间的基本单位是逻辑块，即文件系统所在磁盘设备上若干连续的物理块。文件系统由以下几个部分组成：</p>
+<ul>
+<li>引导块：文件系统的首块。引导块只是用来引导操作系统的信息。</li>
+<li>超级块：紧随引导块之后的一个独立块，包含与文件系统有关的参数信息，包括i节点表的容量、文件系统逻辑块的大小、文件系统大小</li>
+<li>i节点表：文件系统中的每个文件或者目录在i节点表中都对应着唯一一条记录，其中包含了关于文件的各种信息，包括文件类型、文件归属、文件访问权限、时间戳、文件大小、分配给文件的块数量、指向文件数据块的指针等。</li>
+<li>数据块：用于存放数据</li>
+</ul>
+<p>在ext2文件系统中，由于存储文件的数据块不一定连续甚至不一定按顺序存放，因此i节点表内维护了一组指针，如下图所示：</p>
+<img data-src="image-20210628151559251.png" alt="image-20210628151559251" style="zoom:67%;" />
+<p>其中，每个i节点包含15个指针，前12个指向文件前12个块的位置，而后面则是一个指向指针块的指针，提供了第13个及后续数据块的位置。指针块中指针的数量取决于文件系统中块的大小。而如果文件较大时，也可以是多重的间接指针。这样就在维持i节点结构大小固定的情况下，支持任意大小的文件；同时文件系统可以用不连续方式存储文件块，并支持随机访问文件；此外，对于小文件来说，这种设计也满足了对文件数据块的快速访问（前12个为直接指针）</p>
+<h2 id="虚拟文件系统"><a class="markdownIt-Anchor" href="#虚拟文件系统"></a> 虚拟文件系统</h2>
+<p>由于Linux支持的各种文件系统所对应的底层实现细节并不相同，因此虚拟文件系统（VFS）为文件系统创建了一个抽象层来解决这一问题。VFS为文件系统定义了一套通用接口，所有与文件交互的程序都会安装这一接口进行操作，而每种文件系统也会提供VFS接口的实现。</p>
+<p>VFS接口的操作与设计文件系统和目录的所有常规系统调用对应，包括<code>open()</code>, <code>read()</code>, <code>write()</code>, <code>lseek()</code>, <code>close()</code>, <code>truncate()</code>, <code>stat()</code>, <code>mount()</code>, <code>umount()</code>, <code>mmap()</code>, <code>mkdir()</code>, <code>link()</code>, <code>unlink()</code>, <code>symlink()</code>, <code>rename()</code>。</p>
+<h2 id="目录层级与文件挂载"><a class="markdownIt-Anchor" href="#目录层级与文件挂载"></a> 目录层级与文件挂载</h2>
+<p>Linux系统下所有文件系统中的文件都位于根目录树下，而树根就是根目录“/”，其他的文件系统都被挂载在根目录之下，被视为整个目录层级的子树。</p>
+<p>在Linux系统下，使用<code>mount device directory</code>命令即可将名为device的文件系统挂载到目录层级中由directory指定的目录。使用<code>unmount</code>命令则会相应地卸载文件系统。如果不带任何参数执行<code>mount</code>命令，则可以列出当前已经挂载地文件系统。</p>
+<p>同时，系统调用<code>mount()</code>也可以用来挂载文件，相应的卸载文件的系统调用为<code>umount()</code>和<code>umount2()</code>，它们的用法为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/mount.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mount</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* source, <span class="keyword">const</span> <span class="keyword">char</span>* target, <span class="keyword">const</span> <span class="keyword">char</span>* fstype, <span class="keyword">unsigned</span> <span class="keyword">long</span> mountflags, <span class="keyword">const</span> <span class="keyword">void</span>* data)</span> <span class="comment">//其中source指定要挂载的文件系统，target代表挂载的目录，fstype标识文件系统的类型，mountflags为掩码，用于修改mount操作，data为一个指向信息缓冲区的指针，对其信息的解释取决于文件系统。</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">umount</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* target)</span> <span class="comment">//target指定待卸载文件系统的挂载点</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">umount2</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* target, <span class="keyword">int</span> flags)</span> <span class="comment">//加入flags参数，用于对卸载操作进行控制</span></span></span><br><span class="line"><span class="function"><span class="comment">//上述三个函数的返回值0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p>要获得已挂载文件系统的相关信息，可以使用下面两个系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/statvfs.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">statvfs</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, struct statvfs* statvfsbuf)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstatvfs</span><span class="params">(<span class="keyword">int</span> fd, struct statvfs* statvfsbuf)</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p>上述调用同时会得到一个<code>statvfs</code>结构，属于由<code>statvfsbuf</code>指向的缓冲区。其中，<code>statvfs</code>数据结构包含了关于文件系统的信息。</p>
+<p>Linux系统下的三个文件包含了当前已挂载或者可挂载的文件系统信息：</p>
+<ul>
+<li><code>/proc/mounts</code>：它是内核数据接口的接口，因此总是包含已挂载文件系统的精确信息</li>
+<li><code>/etc/mtab</code>：包含的内容与<code>/proc/mounts</code>类似，但是更加详细一些。</li>
+<li><code>/etc/fstab</code>：由系统管理员手动维护，包含了对系统支持的所有文件系统的描述</li>
+</ul>
+<p>这三个文件的格式相同，都包含6个字段：已挂载设备名、设备挂载点、文件系统类型、挂载标志、用于控制对文件系统备份操作的数字、用于控制对文件系统检查顺序的数字。</p>
+<h2 id="虚拟内存文件系统"><a class="markdownIt-Anchor" href="#虚拟内存文件系统"></a> 虚拟内存文件系统</h2>
+<p>Linux同样支持驻留在内存中的虚拟文件系统tmpfs。对于应用程序来说，可以和使用其他文件系统一样的方法进行操作，但是由于不涉及磁盘访问，因此虚拟文件系统的操作速度极快。</p>
+<p>要创建一个tmpfs文件系统，可以使用如下命令：<code>mount -t tmpfs source target</code></p>
+<h1 id="文件io"><a class="markdownIt-Anchor" href="#文件io"></a> 文件I/O</h1>
+<h2 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h2>
+<p>在Linux系统中一切皆可以看成是文件，文件又可分为：普通文件、目录文件、字符设备文件、块设备文件、套接字文件、管道文件和链接文件。文件描述符（file  descriptor）是内核为了高效管理已被打开的文件所创建的索引，其是一个非负整数（通常是小整数），用于指代被打开的文件，所有执行I/O操作的系统调用都通过文件描述符。一个程序刚刚启动的时候，0是标准输入，1是标准输出，2是标准错误。如果此时去打开一个新的文件，它的文件描述符会是3。</p>
+<p>在Linux系统中，为了维护文件描述符，建立了三个表：进程级的文件描述符表（每个进程维护一个）、系统级的文件描述符表（所有进程共享）和文件系统的i-node表（所有进程共享），它们的关系如下图所示：</p>
+<img data-src="image-20210624093356351.png" alt="image-20210624093356351" style="zoom: 50%;" />
+<p>每一个文件描述符会与一个打开文件相对应。同时，不同的文件描述符也可以指向同一个文件。相同的文件可以被不同的进程打开，也可以在同一个进程中被多次打开。这些文件描述符也可以被重定向，从而指向其它任何文件对象。</p>
+<p>大多数程序使用的3种标准的文件描述符如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">文件描述符</th>
+<th style="text-align:center">用途</th>
+<th style="text-align:center">POSIX名称</th>
+<th style="text-align:center">stdio流</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">标准输入（默认指向键盘）</td>
+<td style="text-align:center">STDIN_FILENO</td>
+<td style="text-align:center">stdin</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">标准输出（默认指向终端）</td>
+<td style="text-align:center">STDOUT_FILENO</td>
+<td style="text-align:center">stdout</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">标准错误</td>
+<td style="text-align:center">STDERR_FILENO</td>
+<td style="text-align:center">stderr</td>
+</tr>
+</tbody>
+</table>
+<p>执行文件I/O操作的4个主要系统调用为：</p>
+<ul>
+<li><code>fd=open(pathname, flags, mode)</code>：打开<code>pathname</code>所标识的文件，并返回文件描述符，用于在后续的函数调用中指代打开的文件。如果文件不存在可以创建，这取决于<code>flags</code>参数的设置，同时<code>flags</code>参数还可以指定文件打开方式（只读、只写、读写）。<code>mode</code>参数指定了由<code>open()</code>调用创建文件的访问权限</li>
+<li><code>numread=read(fd, buffer, count)</code>：调用从<code>fd</code>所指代的打开文件中读取至多<code>count</code>字节的数据，并存储到<code>buffer</code>中。</li>
+<li><code>numwritten=write(fd, buffer, count)</code>：调用从<code>buffer</code>中读取多达<code>count</code>字节的数据写入<code>fd</code>所指代的已打开文件中。</li>
+<li><code>status=close(fd)</code>：在所有输入/输出操作完成之后，调用该函数释放文件描述符以及与之相关的内核资源</li>
+</ul>
+<p>上述四个系统调用可以对所有类型的文件执行I/O操作，包括终端之类的设备。</p>
+<h2 id="通用io"><a class="markdownIt-Anchor" href="#通用io"></a> 通用I/O</h2>
+<h3 id="open"><a class="markdownIt-Anchor" href="#open"></a> <code>open()</code></h3>
+<p><code>open()</code>系统调用既可以打开一个已经存在的文件，也可以创建并打开一个新文件。它的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">int</span> flags, <span class="keyword">mode_t</span> mode)</span></span></span><br></pre></td></tr></table></figure>
+<p>如果打开成功，则返回一个文件描述符，用于在后续的函数调用中指代该文件；如果发生错误，则返回-1，并将<code>errno</code>设置为相应的错误标志。而且这一函数调用会保证，如果调用成功，则返回值是进程未使用的文件描述符中数值最小者。</p>
+<p>其中参数的含义如下：</p>
+<ul>
+<li><code>pathname</code>：要打开的文件</li>
+<li><code>flags</code>：位掩码，用于指定文件的访问模式，可以用一系列的常量进行位或运算进行组合，例如<code>O_RDWR|O_CREAT|O_TRUNC</code></li>
+<li><code>mode</code>：如果使用<code>open()</code>创建新文件，则这一参数可以用于指定文件的访问权限；如果未指定<code>O_CREAT</code>标志，则可以省略该参数</li>
+</ul>
+<p>对于<code>flags</code>位掩码，它们可以使用的常量分为如下几组：</p>
+<ul>
+<li>文件访问模式标志：<code>O_RDONLY</code>，<code>O_WRONLY</code>，<code>O_RDWR</code>，分别表示以只读、只写、读写模式打开。这三个标志在<code>flags</code>参数中只能使用一个</li>
+<li>文件创建标志：
+<ul>
+<li><code>O_CLOEXEC</code>：为新的文件描述符启用<code>close-on-exec</code>标志</li>
+<li><code>O_CREAT</code>：如果文件不存在则创建一个新的空文件，此时需要额外提供<code>mode</code>参数</li>
+<li><code>O_DIRECT</code>：无系统缓冲的文件I/O 操作，也就是应用程序在执行磁盘I/O是绕过缓冲区高速缓存，从用户空间直接将数据传递到文件或者磁盘设备。对于大多数应用而言，使用这一方式可能会大大降低性能，因此它只适用于有特定I/O需求的应用。如果使用直接I/O，则用于传递数据的缓冲区的内存边界、文件和设备的偏移量、以及待传递数据的长度都必须为块大小的整数倍，否则将会导致EINVAL错误</li>
+<li><code>O_DIRECTORY</code>：如果<code>pathname</code>参数不是目录则返回错误</li>
+<li><code>O_EXCL</code>：此标志与<code>O_CREAT</code>标志结合使用表明如果文件已经存在，则不会打开文件，且 <code>open()</code>调用失败，并返回错误，错误号<code>errno</code>为<code>EEXIST</code>。也就是说，此标志确保了调用者（<code>open( )</code>的调用进程）就是创建文件的进程。对文件是否存在的检查和创建文件属于同一原子操作。</li>
+<li><code>O_LARGEFILE</code>：支持以大文件方式打开文件。由于存放文件偏移量的数据类型<code>off_t</code>是一个有符号的长整型数，因此在32位系统下，文件大小的限制为2GB以下。如果在32位系统下要处理大文件，则需要使用这一标志。此外，也可以在每个头文件中加入<code>#define _FILE_OFFSET_BITS 64</code>来实现。</li>
+<li><code>O_NOATIME</code>：在读文件时，不更新文件的最近访问时间。要使用该标志，要么调用进程的有效用户ID必须与文件的拥有者相匹配，要么进程需要拥有特权（<code>CAP_FOWNER</code>）。否则，<code>open()</code>调用失败，并返回错误，错误号<code>errno</code>为<code>EPERM</code>。</li>
+<li><code>O_NOCTTY</code>：如果正在打开的文件属于终端设备，这一标志防止其成为控制终端</li>
+<li><code>O_NOFOLLOW</code>：在<code>open()</code>函数中指定了<code>O_NOFOLLOW</code>标志，且<code>pathname</code>参数属于符号链接，则<code>open()</code>函数将返回失败（错误号<code>errno</code>为<code>ELOOP</code>）。此标志在特权程序中极为有用，能够确保<code>open()</code>函数不对符号链接进行解引用</li>
+<li><code>O_TRUNC</code>：如果文件已经存在且为普通文件，那么将清空文件内容，将其长度置0。在Linux 下使用此标志，无论以读、写方式打开文件，都可清空文件内容（在这两种情况下，都必须拥有对文件的写权限）</li>
+</ul>
+</li>
+<li>文件状态标志：
+<ul>
+<li><code>O_APPEND</code>：总是在文件尾部追加数据。如果使用这一标志，则每次写入都会将文件偏移量移动至文件末尾，并完成数据写操作。这两步操作被合并到同一原子操作，避免了文件的脏写入问题。</li>
+<li><code>O_ASYNC</code>：当对于<code>open()</code>调用所返回的文件描述符可以实施 I/O 操作时，系统会产生一个信号通知进程</li>
+<li><code>O_DSYNC</code>：根据同步I/O 数据完整性的完成要求来执行文件写操作，也就是说后续对于这个文件的每个<code>write</code>调用都会自动将文件数据和用于获取数据的文件元数据（并不是所有的元数据）刷新到磁盘上。</li>
+<li><code>O_NONBLOCK</code>：以非阻塞方式打开。如果<code>open()</code>调用没有立即打开文件，则返回错误，而不是陷入阻塞。而且调用<code>open()</code>成功之后，后续的I/O操作也是非阻塞的，如果I/O系统调用没有立即完成，则可能只会传输部分数据，或者系统调用失败。</li>
+<li><code>O_SYNC</code>：以同步方式写入文件，也就是说后续对于这个文件的每个<code>write</code>调用都会自动将所有的文件数据和元数据刷新到磁盘上。</li>
+</ul>
+</li>
+</ul>
+<h3 id="read"><a class="markdownIt-Anchor" href="#read"></a> <code>read()</code></h3>
+<p><code>read()</code>系统调用从文件描述符所指代的打开文件中读取数据，它的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">read</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buffer, <span class="keyword">size_t</span> count)</span></span></span><br></pre></td></tr></table></figure>
+<p>其中<code>count</code>参数指定最多能够读取的字节数，<code>buffer</code>参数提供用来存放输入数据的内存缓冲区地址，缓冲区应该至少有<code>count</code>个字节。</p>
+<p>如果<code>read()</code>调用成功，则返回实际读取的字节数；如果遇到文件结束则返回0；如果出现错误则返回-1。</p>
+<h3 id="write"><a class="markdownIt-Anchor" href="#write"></a> <code>write()</code></h3>
+<p><code>write()</code>系统调用将数据写入一个已经打开的文件中，它的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buffer, <span class="keyword">size_t</span> count)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>fd</code>为待写入文件的描述符，<code>count</code>参数指定最多能够写入文件的字节数，<code>buffer</code>参数为要写入文件中数据的内存缓冲区地址，缓冲区应该至少有<code>count</code>个字节。</p>
+<p>如果函数调用成功，将返回实际写入文件的字节数。该返回值可能小于<code>count</code>，对于磁盘文件可能因为磁盘已满，或者进程资源对于文件大小的限制。</p>
+<p>需要注意的是，对磁盘文件执行I/O操作时，<code>write()</code>调用成功并不能保证数据已经写入磁盘。这是因为为了减少磁盘活动量和加快<code>write()</code>系统调用，内核会缓存磁盘的I/O操作。</p>
+<h3 id="close"><a class="markdownIt-Anchor" href="#close"></a> <code>close()</code></h3>
+<p><code>close()</code>系统调用关闭一个打开的文件描述符，并将其释放回调用进程。这一文件描述符可以供该进程后续分配给其它文件。当一个进程终止时，将自动关闭它打开的所有文件描述符。它的用法为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">close</span><span class="params">(<span class="keyword">int</span> fd)</span></span></span><br></pre></td></tr></table></figure>
+<p>如果关闭成功，则返回0；失败则返回-1。</p>
+<p>由于文件描述符属于有限资源，因此在程序中显式关闭不再需要的文件描述符是一个好的编程习惯，使得代码更具可读性也更加可靠。</p>
+<h3 id="lseek"><a class="markdownIt-Anchor" href="#lseek"></a> <code>lseek()</code></h3>
+<p>对于每个打开的文件，系统内核会记录一个文件偏移量（又被称为读写偏移量或指针）。文件偏移量指的是下一个<code>read()</code>或者<code>write()</code>操作的文件起始位置，以相对于文件头部起始点的位置来表示。文件第一个字节的偏移量为0。</p>
+<p>打开一个文件时，会将文件偏移量设置为指向文件开始，以后每次<code>read()</code>或者<code>write()</code>调用都将自动对其进行调整，以指向已读或者已写数据的下一字节。</p>
+<p>它的使用方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">off_t</span> <span class="title">lseek</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">off_t</span> offset, <span class="keyword">int</span> whence)</span></span></span><br></pre></td></tr></table></figure>
+<p>如果设置成功，则返回新的偏移位置，失败则返回-1。其中，<code>fd</code>为文件描述符，指向一个已打开文件；<code>offset</code>参数指定了一个以字节为单位的数值，它是一个有符号的整型数；<code>whence</code>参数表明参照哪个基点来解释<code>offset</code>参数。</p>
+<p><code>whence</code>参数可以为下列之一：</p>
+<ul>
+<li><code>SEEK_SET</code>：将文件偏移量设置为从文件头部起始点开始的<code>offset</code>个字节。此时<code>offset</code>必须为非负数。</li>
+<li><code>SEEK_CUR</code>：相对于当前的文件偏移量，将文件偏移量调整<code>offset</code>个字节。此时<code>offset</code>可以为正也可以为负。</li>
+<li><code>SEEK_END</code>：将文件偏移量设置为起始于文件尾部的<code>offset</code>个字节，也就是从文件最后一个字节之后的下一个字节算起。此时<code>offset</code>可以为正也可以为负。</li>
+</ul>
+<p>如果程序的文件偏移量已跨越了文件结尾，然后再执行I/O操作，则会造成文件空洞。从文件结尾后到新写入数据间的这段空间被称为文件空洞。从编程角度看，文件空洞中是存在字节的，读取空洞将返回以0（空字节）填充的缓冲区。然而，文件空洞不占用任何磁盘空间。直到后续某个时点，在文件空洞中写入了数据，文件系统才会为之分配磁盘块。文件空洞的主要优势在于，与为实际需要的空字节分配磁盘块相比，稀疏填充的文件会占用较少的磁盘空间。</p>
+<h2 id="特殊用法"><a class="markdownIt-Anchor" href="#特殊用法"></a> 特殊用法</h2>
+<h3 id="fcntl"><a class="markdownIt-Anchor" href="#fcntl"></a> <code>fcntl()</code></h3>
+<p><code>fcntl()</code>系统调用对一个打开的文件描述符执行一系列的控制操作，它的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcntl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> cmd, ……)</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>fd</code>指的是文件描述符，<code>cmd</code>用于设置这一函数的功能，而后面的省略号表示参数会根据<code>cmd</code>的具体类型而定。返回值为-1表示失败，如果成功的话，返回值会因<code>cmd</code>而异。下面为<code>fcntl</code>的一些使用示例。</p>
+<p>例1：可以使用<code>fcntl()</code>来获取一个打开文件的访问模式和状态标志。方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> flags=fcntl(fd, F_GETFL);</span><br></pre></td></tr></table></figure>
+<p>后续可以使用<code>flags</code>参数通过位运算来检查一些状态标志，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">flags &amp; O_SYNC <span class="comment">//测试文件是否以同步写方式打开</span></span><br><span class="line">accessMode = flags &amp; O_ACCMODE <span class="comment">//借助掩码O_ACCMODE，获取文件的访问模式</span></span><br><span class="line">accessMode == O_WRONLY <span class="comment">//通过与常量进行比对，来判断访问模式的种类</span></span><br></pre></td></tr></table></figure>
+<p>例2：同样地，也可以修改一个打开文件的某些状态标志，允许更改的标志有：<code>O_APPEND</code>、<code>O_NONBLOCK</code>、<code>O_NOATIME</code>、<code>O_ASYNC</code>、<code>O_DIRECT</code>。修改方式如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> new_flags;</span><br><span class="line"><span class="comment">//do something to set new_flags</span></span><br><span class="line">fcntl(fd, F_SETFL, new_flags)</span><br></pre></td></tr></table></figure>
+<p>例3：可以用<code>fcntl()</code>复制文件描述符，用法为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> newfd = fcntl(oldfd, F_DUPFD, startfd);</span><br></pre></td></tr></table></figure>
+<p>其中，<code>oldfd</code>指的是要复制的文件描述符，<code>startfd</code>为文件描述符的副本进行编号限制，将使用不小于<code>startfd</code>的最小未用值作为描述符的编号。</p>
+<p>此外，另一系统调用<code>dup3</code>也可以完成这一功能，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dup3</span><span class="params">(<span class="keyword">int</span> oldfd, <span class="keyword">int</span> newfd, <span class="keyword">int</span> flags)</span></span>;<span class="comment">//flags只支持O_CLOEXEC标志，fcntl中可以使用F_DUPFD_CLOEXEC标志完成同样功能</span></span><br></pre></td></tr></table></figure>
+<p>如果成功则返回新的文件描述符，失败返回-1。</p>
+<h3 id="特定偏移量的io"><a class="markdownIt-Anchor" href="#特定偏移量的io"></a> 特定偏移量的I/O</h3>
+<p>系统调用<code>pread()</code>和<code>pwrite()</code>可以完成与<code>read()</code>和<code>write()</code>相类似的工作，但是前两者会在<code>offset</code>参数所指定的位置进行操作，而不是从当前的文件偏移量处，且不改变文件的当前偏移量。用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">pread</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span>* buf, <span class="keyword">size_t</span> count, <span class="keyword">off_t</span> offset)</span></span>; <span class="comment">//如果成功则返回读取的字节数，0代表文件末尾，-1代表失败</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">pwrite</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span>* buf, <span class="keyword">size_t</span> count, <span class="keyword">off_t</span> offset)</span></span>; <span class="comment">//如果成功则返回写入的字节数，-1代表失败</span></span><br></pre></td></tr></table></figure>
+<h3 id="分散输入和集中输出"><a class="markdownIt-Anchor" href="#分散输入和集中输出"></a> 分散输入和集中输出</h3>
+<p>系统调用<code>readv()</code>和<code>writev()</code>实现了分散输入和集中输出的功能，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/uio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">readv</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> struct iovec* iov, <span class="keyword">int</span> iovcnt)</span></span>; <span class="comment">//如果成功则返回读取的字节数，0代表文件末尾，-1代表失败</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">writev</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> struct iovec* iov, <span class="keyword">int</span> iovcnt)</span></span>; <span class="comment">//如果成功则返回写入的字节数，-1代表失败</span></span><br></pre></td></tr></table></figure>
+<p>上述两个系统调用一次可传输多个缓冲区的数据，数组<code>iov</code>定义了一组用来传输数据的缓冲区，<code>iovcnt</code>定义了<code>iov</code>数组的长度。<code>iovec</code>的数据结构如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">iovec</span>&#123;</span></span><br><span class="line">	<span class="keyword">void</span>* iov_base;</span><br><span class="line">	<span class="keyword">size_t</span> iov_len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>readv()</code>从文件描述符中读取一片连续的字节，然后将其分散放置在<code>iov</code>指定的缓冲区中，从第一个缓冲区开始，依次填满所有的缓冲区。如果数据不足以填充所有缓冲区，则只会占有部分。</p>
+<p><code>writev()</code>将<code>iov</code>指定的所有缓冲区的内容拼接起来，然后以连续字节序列写入文件描述符指代的文件中。</p>
+<p>如果想在指定的文件偏移量处执行分散输入/集中输出，则可以使用下面两个函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/uio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">preadv</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> struct iovec *iov, <span class="keyword">int</span> iovcnt, <span class="keyword">off_t</span> offset)</span></span>; <span class="comment">//如果成功则返回读取的字节数，0代表文件末尾，-1代表失败</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">pwritev</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> struct iovec *iov, <span class="keyword">int</span> iovcnt, <span class="keyword">off_t</span> offset)</span></span>; <span class="comment">//如果成功则返回写入的字节数，-1代表失败</span></span><br></pre></td></tr></table></figure>
+<h3 id="文件截断"><a class="markdownIt-Anchor" href="#文件截断"></a> 文件截断</h3>
+<p>下列两个系统调用可以将文件大小设置为<code>length</code>参数指定的值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">truncate</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">off_t</span> length)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ftruncate</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">off_t</span> length)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>如果成功，则函数的返回值为0；失败则返回-1。当文件长度大于<code>length</code>时，调用会丢弃超出部分，但如果小于参数<code>length</code>，则调用将会在文件尾部添加一系列空字节或者一个文件空洞。</p>
+<p>对于<code>truncate()</code>函数而言，它需要以路径名字符串来指定文件，并要求文件可访问，且对文件具有写权限。如果文件名为符号连接，则会对其解引用；而调用<code>ftruncate()</code>函数之前，需要以可写方式打开文件，获取其文件描述符，这一系统调用不会修改文件的偏移量。</p>
+<h3 id="devfd目录"><a class="markdownIt-Anchor" href="#devfd目录"></a> <code>/dev/fd</code>目录</h3>
+<p>对于每个进程，内核都提供了一个特殊的虚拟目录<code>/dev/fd</code>，该目录中包含<code>/dev/fd/n</code>形式的文件名，其中<code>n</code>是与进程中的打开文件相对应的编号。打开<code>/dev/fd</code>目录中的一个文件就等同于复制相应的文件描述符，因此下面两行代码等价：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fd=open(<span class="string">&quot;/dev/fd/1&quot;</span>,O_WRONLY);</span><br><span class="line">fd=dup(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，如果使用<code>open()</code>函数打开文件，则需要将其设置为与原描述符相同的访问模式，此时如果在<code>flag</code>标志的设置中引入其它标志是无意义的，系统会自动忽略。</p>
+<h3 id="创建临时文件"><a class="markdownIt-Anchor" href="#创建临时文件"></a> 创建临时文件</h3>
+<p>有些程序需要创建一些临时文件，仅供其在运行期间使用，程序终止后立即删除。有两个函数可以用于创建临时文件：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkstemp</span><span class="params">(<span class="keyword">char</span> *<span class="keyword">template</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>如果成功则返回一个文件描述符，失败则返回-1。其中参数<code>template</code>采用路径名的形式，最后6个字符必须为<code>XXXXXX</code>，这6个字符将会被替换，以保证文件名的唯一性，而且修改后的字符串将会被保存到<code>template</code>参数中。因此，<code>template</code>参数被设置为字符数组，而不是字符串常量。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function">FILE* <span class="title">tmpfile</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>tmpfile()</code>函数会创建一个名称唯一的临时文件，并以读写方式打开。这一函数执行成功之后，将会返回一个文件流供<code>stdio</code>库函数使用。文件流关闭之后将自动删除临时文件。</p>
+<h2 id="示例"><a class="markdownIt-Anchor" href="#示例"></a> 示例</h2>
+<p>下面的程序使用以上的系统调用函数实现了<code>tee</code>命令的功能：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">bool</span> append=<span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">int</span> filenum=argc<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">strcmp</span>(argv[<span class="number">1</span>],<span class="string">&quot;-a&quot;</span>)==<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        append=<span class="literal">true</span>;</span><br><span class="line">        filenum--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> fd_array[filenum];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;filenum;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> flags = O_RDWR | O_CREAT;</span><br><span class="line">        <span class="keyword">if</span>(append)</span><br><span class="line">        &#123;</span><br><span class="line">            flags|=O_APPEND;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            flags|=O_TRUNC;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> fd=open(argv[i+<span class="number">1</span>+append],flags,S_IRUSR|S_IWUSR);</span><br><span class="line">        <span class="keyword">if</span>(fd==<span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        fd_array[i]=fd;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">void</span>* buffer=<span class="built_in">malloc</span>(<span class="number">1024</span>);</span><br><span class="line">        <span class="keyword">ssize_t</span> num_read;</span><br><span class="line">        num_read=read(<span class="number">0</span>,buffer,<span class="number">1024</span>);</span><br><span class="line">        <span class="keyword">if</span>(num_read==<span class="number">0</span>||num_read==<span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;filenum;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(write(fd_array[i],buffer,num_read)==<span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;filenum;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(close(fd_array[i])==<span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="文件io缓冲"><a class="markdownIt-Anchor" href="#文件io缓冲"></a> 文件I/O缓冲</h1>
+<h2 id="内核缓冲"><a class="markdownIt-Anchor" href="#内核缓冲"></a> 内核缓冲</h2>
+<p><code>read()</code>和<code>write()</code>系统调用在操作磁盘文件时并不会直接发起磁盘访问，而是在用户空间缓冲区与内核缓冲区高速缓存之间复制数据。因此，写操作会先将用户空间内存传递到内核空间的缓冲区，然后在后续某个时刻再将缓冲区的数据刷写到磁盘中。如果在此期间另一进程试图读取文件的数据，内核将自动从缓冲区而不是文件中读取；而对于读操作，内核从磁盘中读取数据并存储到内核缓冲区，然后从缓冲区读取数据，直到把缓冲区的数据读完。对于序列化的文件访问，内核通常会执行预读以加快读取速度。</p>
+<p>如果与文件发生大量的数据传输，通过采用大块空间缓冲数据，以及执行更少的系统调用，可以极大地提高I/O性能。</p>
+<p>有时，我们需要控制文件I/O内核缓冲。<code>fsync</code>系统调用将使得缓冲数据与打开文件描述符<code>fd</code>相关的所有元数据都刷新到磁盘上。调用这一函数会强制使得文件处于同步I/O完成的状态，此时读请求的文件数据已经从磁盘传递给了进程，而写请求所指定的数据已经传递给磁盘，且用于获取数据的所有文件元数据以及所有发生更新的文件元数据也已经传递完毕。函数调用方式如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fsync</span><span class="params">(<span class="keyword">int</span> fd)</span> <span class="comment">//成功则返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>这一函数只有在对磁盘设备的传递完成之后才会返回。</p>
+<p>另一个系统调用是<code>fdatasync</code>，它的运作类似于<code>fsync</code>，但是对于文件的元数据来说，只要求获取数据的所有文件元数据传递完毕：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fdatasync</span><span class="params">(<span class="keyword">int</span> fd)</span> <span class="comment">//成功则返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p><code>fdatasync</code>可能会减少磁盘操作的次数，因为在这一函数的调用过程中，部分元数据的改变无需进行更新。而<code>fsync</code>则会强制将元数据也传递到磁盘上。对于某些对性能要求较高，但是对某些元数据准确性要求不高的应用，便可以通过这种方式减少磁盘操作次数。</p>
+<p>而<code>sync</code>系统调用则会使包含更新文件信息的所有内核缓冲区（数据块、指针块、元数据等）刷新到磁盘上：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sync</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>在调用<code>open</code>函数时，指定<code>O_SYNC</code>标志也会使得后续每次调用<code>write</code>时都会自动将文件数据和元数据刷新到磁盘上。</p>
+<p>需要特别注意的是，采用<code>O_SYNC</code>标志（或者频繁调用<code>fsync()</code>、<code>fdatasync()</code>或<code>sync()</code>）对性能的影响极大，会使得写入速度大大增加，尤其是当缓冲区的大小较低的时候。因此，如果需要强制刷新内核缓冲区，在设计应用程序的时候就应该考虑是否可以使用大尺寸的<code>write()</code>缓冲区。</p>
+<h2 id="stdio库的缓冲"><a class="markdownIt-Anchor" href="#stdio库的缓冲"></a> stdio库的缓冲</h2>
+<p>C语言的stdio函数库可以避免自行处理对数据的缓冲，一些相关的函数调用如下。</p>
+<h3 id="设置缓冲模式"><a class="markdownIt-Anchor" href="#设置缓冲模式"></a> 设置缓冲模式</h3>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setvbuf</span><span class="params">(FILE* stream, <span class="keyword">char</span>* buf, <span class="keyword">int</span> mode, <span class="keyword">size_t</span> size)</span> <span class="comment">//成功则返回0，失败返回非0值</span></span></span><br></pre></td></tr></table></figure>
+<p>在打开一个文件流之后，<code>setvbuf</code>函数必须在调用任何其他stdio函数之前调用。这一调用将会影响后续在指定流上的所有stdio操作。其中各个参数的含义如下：</p>
+<ul>
+<li><code>stream</code>：指定要修改的文件流</li>
+<li><code>buf</code>：针对于参数<code>stream</code>要使用的缓冲区，如果值为<code>NULL</code>，那么stdio库会为其自动分配一个缓冲区；如果不为<code>NULL</code>，则使用指向<code>size</code>大小的内存块作为缓冲区</li>
+<li><code>mode</code>：指定缓冲类型，具有下列值之一：
+<ul>
+<li><code>_IONBF</code>：不对I/O进行缓冲，每个stdio库函数立即调用<code>write()</code>和<code>read()</code>函数，并忽略<code>buf</code>和<code>size</code>参数。<code>stderr</code>默认为这一类型</li>
+<li><code>_IOLBF</code>：采用行缓冲I/O，指代终端设备的流默认属于这一类型。对于输出流，在输出一个换行符之前将缓冲数据；而对于输入流则每次读取一行数据</li>
+<li><code>_IOFBF</code>：采用全缓冲I/O，单次读写数据的大小与缓冲区相同。指代磁盘的流默认采用这一方式</li>
+</ul>
+</li>
+</ul>
+<p><code>setbuf</code>函数构建于<code>setvbuf</code>之上，执行了类似任务：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setbuf</span><span class="params">(FILE* stream, <span class="keyword">char</span>* buf)</span></span></span><br></pre></td></tr></table></figure>
+<p>在<code>setbuf</code>函数中，参数<code>buf</code>可以被设置为<code>NULL</code>表示无缓冲，也可以被设置为指向由调用者分配的<code>BUFSIZ</code>个字节大小的缓冲区。<code>BUFSIZ</code>参数定义于<code>&lt;stdio.h&gt;</code>头文件中。</p>
+<p><code>setbuffer</code>函数类似于<code>setbuf</code>函数，但是允许调用者指定<code>buf</code>缓冲区大小：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setbuffer</span><span class="params">(FILE* stream, <span class="keyword">char</span>* buf, <span class="keyword">size_t</span> size)</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="刷新stdio缓冲区"><a class="markdownIt-Anchor" href="#刷新stdio缓冲区"></a> 刷新stdio缓冲区</h3>
+<p>无论当前采用哪一种缓冲区模式，在任何时候都可以使用<code>fflush</code>库函数强制将stdio输出流中的数据刷新到内核缓冲区中，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fflush</span><span class="params">(FILE* stream)</span> <span class="comment">//返回0代表成功，EOF代表错误</span></span></span><br></pre></td></tr></table></figure>
+<p>如果参数<code>stream</code>为<code>NULL</code>，则<code>fflush</code>函数将刷新所有的stdio缓冲区。也可以将这一函数应用于输入流，这将丢弃已经缓冲的输入数据。</p>
+<h2 id="stdio库与系统调用混合"><a class="markdownIt-Anchor" href="#stdio库与系统调用混合"></a> stdio库与系统调用混合</h2>
+<p>在同一文件上执行I/O操作时，还可以将系统调用和标准C语言库函数混合使用，下面两个函数有助于完成这一工作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fileno</span><span class="params">(FILE* stream)</span> <span class="comment">//成功则返回文件描述符，失败返回-1</span></span></span><br><span class="line"><span class="function">FILE *<span class="title">fdopen</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span>* mode)</span> <span class="comment">//成功则返回一个新的文件指针，失败返回NULL</span></span></span><br></pre></td></tr></table></figure>
+<p>二者的功能相反，<code>fileno</code>函数是给定一个文件流，然后返回相应的文件描述符，之后便可在I/O系统调用中正常使用该文件描述符；而<code>fdopen</code>则给定一个文件描述符，然后创建一个使用该描述符进行文件I/O的相应流，<code>mode</code>参数与<code>fopen</code>中的含义相同，如果该参数与<code>fd</code>的访问模式不一致则会失败。</p>
+<p><code>fdopen</code>函数对于非常规的文件描述符很有用，借助这一函数便可在套接字、管道等文件类型上使用stdio库函数。</p>
+<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
+<p>stdio函数库和内核所采用的缓冲机制可以总结为下图：</p>
+<img data-src="image-20210628135556878.png" alt="image-20210628135556878" style="zoom: 80%;" />
+<h1 id="文件属性"><a class="markdownIt-Anchor" href="#文件属性"></a> 文件属性</h1>
+<h2 id="获取文件信息"><a class="markdownIt-Anchor" href="#获取文件信息"></a> 获取文件信息</h2>
+<p>使用如下几个系统调用，可以获取与文件有关的信息，其中大部分都提取自文件的i节点：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">stat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, struct stat* statbuf)</span> <span class="comment">//返回所命名文件的相关信息</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lstat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, struct stat* statbuf)</span> <span class="comment">//与stat类似，但是如果文件是符号连接则返回符号连接自身</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstat</span><span class="params">(<span class="keyword">int</span> fd, struct stat* statbuf)</span> <span class="comment">//返回由某个文件描述符所指代文件的信息</span></span></span><br><span class="line"><span class="function"><span class="comment">//对于上述调用，0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<p>对于<code>stat</code>和<code>lstat</code>，无需对其所操作的文件本身拥有任何权限，但是对于指定路径的父目录要有执行（搜索）权限。</p>
+<p>上述调用都会在缓冲区中返回一个由<code>statbuf</code>指向的<code>stat</code>结构，这个结构中包含了设备ID、i节点号、文件所有权、文件类型及权限、文件大小、已分配块、文件时间戳等信息。</p>
+<h2 id="文件时间戳"><a class="markdownIt-Anchor" href="#文件时间戳"></a> 文件时间戳</h2>
+<p><code>stat</code>结构的<code>st_atime</code>，<code>st_mtime</code>和<code>st_ctime</code>字段为文件的时间戳，分别记录了文件的上次访问时间、上次修改时间、文件状态（即i节点内的信息）上次发生变更的时间。对时间戳的记录形式为自1970年1月1日以来经历的秒数。</p>
+<p>一些系统调用可以用来修改时间戳：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;utime.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">utime</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> struct utimbuf* buf)</span> <span class="comment">//可以改变存储于文件i节点中的文件上次访问时间戳和上次修改时间戳，pathname代表要修改时间的文件，buf可以为NULL，也可以为指向utimbuf结构的指针。如果buf为NULL，则将两个时间同时改为当前时间；如果为指向utimbuf结构的指针，则按照结构内相应字段的值去更新时间。</span></span></span><br><span class="line"><span class="function">struct utimbuf</span>&#123;</span><br><span class="line">    <span class="keyword">time_t</span> actime; <span class="comment">//访问时间</span></span><br><span class="line">    <span class="keyword">time_t</span> modtime; <span class="comment">//修改时间</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">utimes</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> struct timeval tv[<span class="number">2</span>])</span> <span class="comment">//允许微秒级精度指定时间值</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">futimes</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> struct timeval tv[<span class="number">2</span>])</span> <span class="comment">//使用文件描述符fd来指定文件</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lutimes</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> struct timeval tv[<span class="number">2</span>])</span> <span class="comment">//使用路径名指定文件，如果指向链接则不进行解引用</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/stat.h&gt;</span></span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">utimensat</span><span class="params">(<span class="keyword">int</span> dirfd, <span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> struct timespec times[<span class="number">2</span>], <span class="keyword">int</span> flags)</span> <span class="comment">//支持纳秒精度的时间戳，同时可以独立设置某一个时间戳，flags参数可以为0或者AT_SYMLINK_NOFOLLOW，表示对符号链接不做解引用</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">futimens</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> struct timespec times[<span class="number">2</span>])</span></span></span><br><span class="line"><span class="function"><span class="comment">//上述函数返回0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="文件所有权"><a class="markdownIt-Anchor" href="#文件所有权"></a> 文件所有权</h2>
+<p>每个文件都有一个与之管理的用户ID和组ID，据此可以判定文件所属的用户和组。当一个文件被创建时，其用户ID取进程的有效用户ID，而组ID则曲子进程的有效组ID或父目录的组ID。</p>
+<p>下面的系统调用可以修改文件所有权：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chown</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">uid_t</span> owner, <span class="keyword">gid_t</span> group)</span> <span class="comment">//改变pathname参数对应文件的所有权。owner和group代表新的用户ID和组ID，如果无需改变某一个则将其设置为-1</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lchown</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">uid_t</span> owner, <span class="keyword">gid_t</span> group)</span> <span class="comment">//与chown相同，但是pathname如果为符号连接，则改变链接文件本身的所有权</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchown</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">uid_t</span> owner, <span class="keyword">gid_t</span> group)</span> <span class="comment">//修改fd对应文件的所有权</span></span></span><br><span class="line"><span class="function"><span class="comment">//上述函数返回0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="文件权限"><a class="markdownIt-Anchor" href="#文件权限"></a> 文件权限</h2>
+<p>对于普通文件，<code>stat</code>结构中的<code>st_mod</code>字段低12位定义了文件权限，其中前3位为专用位，分别为set-user-ID位、set-group-ID位和sticky位，其余9位构成了定义权限的掩码，分别授予访问文件的各类用户（文件所有者、文件所属组、其它用户）的权限（可以读取文件内容、可以更改文件内容、可以执行文件）。</p>
+<p>头文件<code>&lt;sys/stat.h&gt;</code>包含了用来表示文件权限位的常量，如下图所示：</p>
+<img data-src="image-20210629110659209.png" alt="image-20210629110659209" style="zoom: 67%;" />
+<blockquote>
+<p>备注1—Linux进程的ID</p>
+<ul>
+<li>
+<p>实际用户ID和实际组ID：登录shell从<code>/etc/passwd</code>文件中读取相应用户密码记录的第三字段和第四字段，置为其实际用户ID和实际组ID，当创建一个新的进程时（如shell执行一个程序），将从父进程继承这些ID</p>
+</li>
+<li>
+<p>有效用户ID和有效组ID：当进程尝试执行各种操作（系统调用）时，将结合有效用户ID、有效组ID与辅助组ID一起确定授予进程的权限。通常，有效用户ID和有效组ID与相应的实际ID相同，但是也可以通过一些系统调用去修改有效用户ID和有效组ID</p>
+</li>
+</ul>
+<p>备注2—文件权限专用位的含义</p>
+<ul>
+<li>
+<p>set-user-ID位：如果这一位被设置，那么其它用户在执行该程序时，进程会拥有与程序文件属主相同的权限，即有效用户ID会被改变</p>
+</li>
+<li>
+<p>set-group-ID位：与set-user-ID位的作用类似，但是修改的是有效组ID</p>
+</li>
+<li>
+<p>sticky位：作用于目录时，起限制删除的作用。如果目录设置了该位，则表明仅当非特权进程拥有对目录的写权限，且为文件或者目录的属主时，才能对目录下的文件进行删除和重命名操作。</p>
+</li>
+</ul>
+</blockquote>
+<p>而对于目录来说，其权限方案与普通文件类似，但是权限的含义有不同。目录的读权限可以列出目录中的内容，写权限允许在目录内创建或者删除文件，可执行权限允许访问目录中的文件。</p>
+<p>Linux内核会根据进程的有效用户ID、有效组ID和辅助组ID来进行权限检查。检查文件权限时，内核所遵循的规则如下：</p>
+<ol>
+<li>对于特权级进程，授予其所有访问权限。</li>
+<li>若进程的有效用户ID与文件的用户ID（属主）相同，内核会根据文件的属主权限，授予进程相应的访问权限。比方说，若文件权限掩码中的属主读权限（owner-read permission）位被置位，则授予进程读权限。否则，则拒绝进程对文件的读取操作。</li>
+<li>若进程的有效组ID或任一附属组ID与文件的组ID属组）相匹配，内核会根据文件的属组权限，授予进程对文件的相应访问权限。</li>
+<li>若以上三点皆不满足，内核会根据文件的other（其他）权限，授予进程相应权限。</li>
+</ol>
+<p>而系统调用<code>access</code>便可以根据当前进程的真实用户ID和组ID来检查文件的访问权限：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">access</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">int</span> mode)</span> <span class="comment">//如果mode中的所有权限被允许则返回0，否则返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>如果<code>pathname</code>为符号引用，则函数将对其做解引用。参数<code>mode</code>为位掩码，通过下面四个常量的或运算组合而成：</p>
+<ul>
+<li><code>F_OK</code>：该文件是否存在</li>
+<li><code>R_OK</code>：是否对该文件有读权限</li>
+<li><code>W_OK</code>：是否对该文件有写权限</li>
+<li><code>X_OK</code>：是否对该文件有执行权限</li>
+</ul>
+<p>对于新建文件，内核会使用<code>open()</code>或者<code>creat()</code>中的<code>mode</code>参数所指定的权限；对于新建目录则会根据<code>mkdir()</code>的<code>mode</code>参数来设置权限。但是文件模式创建掩码<code>umask</code>会对这些设置进行修改，它是一种进程属性，当进程新建文件或者目录时，该属性用于指明应该屏蔽哪些权限位。</p>
+<p>进程的<code>umask</code>通常继承自父shell，大多数shell的初始化文件会将<code>umask</code>默认设置为八进制值022，也就是对于同组或者其它用户总是屏蔽写权限。系统调用<code>umask()</code>可以将进程的<code>umask</code>改为指定的值，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">mode_t</span> <span class="title">umask</span><span class="params">(<span class="keyword">mode_t</span> mask)</span></span></span><br></pre></td></tr></table></figure>
+<p>对这一函数的调用总会成功，并返回进程的前一个<code>umask</code>。</p>
+<p>而下面两个系统调用可以直接修改文件的权限：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chmod</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">mode_t</span> mode)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchmod</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">mode_t</span> mode)</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>mode</code>参数可以是八进制的数字形式（如0777），也可以是各个权限位或运算的掩码。要想改变文件权限，进程要么具有特权级别，要么其有效用户ID与文件的用户ID相匹配。而<code>pathname</code>对应于要修改权限的文件，如果这一参数指向一个符号链接，那么调用<code>chmod</code>则会改变符号链接所指代文件的访问权限，而不是符号链接自身的访问权限（符号链接的所有权限为所有用户共享，且不得更改）。</p>
+<p>为了满足对特定用户和组授权时进行更为精密的控制这一需求，Linux内核支持使用访问控制列表（ACL）对文件权限模型进行扩展。利用ACL，可以在任意数量的用户和组之中，为单个用户或组指定文件权限。</p>
+<p>一个ACL由一系列ACL记录（ACE）组成，每一条记录都针对单个用户或者用户组定义了对文件的访问权限。例如：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">标记类型（表示该记录作用于一个用户、组还是其它类别的用户）</th>
+<th style="text-align:center">标记限定符（用于标识特定的用户或组，即某个用户ID或者组ID）</th>
+<th style="text-align:center">权限（为文件授予的权限信息）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">ACL_USER_OBJ（文件属主的权限）</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">rwx</td>
+</tr>
+<tr>
+<td style="text-align:center">ACL_USER（授予某个用户ID的权限）</td>
+<td style="text-align:center">1007</td>
+<td style="text-align:center">r–</td>
+</tr>
+<tr>
+<td style="text-align:center">ACL_GROUP_OBJ（文件组的权限）</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">rwx</td>
+</tr>
+<tr>
+<td style="text-align:center">ACL_GROUP（授予某个组ID的权限）</td>
+<td style="text-align:center">103</td>
+<td style="text-align:center">-w-</td>
+</tr>
+<tr>
+<td style="text-align:center">ACL_MASK（记录可以授予的最高权限）</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">rw-</td>
+</tr>
+<tr>
+<td style="text-align:center">ACL_OTHER（不匹配其它ACE的用户的权限）</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">r–</td>
+</tr>
+</tbody>
+</table>
+<h2 id="扩展属性"><a class="markdownIt-Anchor" href="#扩展属性"></a> 扩展属性</h2>
+<p>文件的扩展属性（EA）指的是以名称-值对的形式，将任意元数据与文件的i节点关联起来的技术。EA的命名格式为<code>namespace.name</code>，其中<code>namespace</code>用于把EA从功能上划分为不同的大类，而<code>name</code>则用于在命名空间中唯一标识某个EA。</p>
+<p>可供<code>namespace</code>使用的值包括：</p>
+<ul>
+<li><code>user</code>：在文件权限检查的制约下，由非特权级进程操控。它只能施加在文件或者目录上。要获取user EA的值，需要由读权限；而如果要修改user EA的值，则要求有写权限。</li>
+<li><code>trusted</code>：可以由用户进程操控，但是进程必须具有特权。</li>
+<li><code>system</code>：供内核使用，将系统对象与文件关联，目前仅支持访问控制列表。</li>
+<li><code>security</code>：存储服务于操作系统安全模块的文件安全标签，也用于将可执行文件的能力关联起来。</li>
+</ul>
+<p>一个i节点可以拥有多个相关的EA，其所从属的命名空间可以相同也可以不同，在各个命名空间内的EA名均自成一体。在<code>user</code>和<code>trusted</code>两个命名空间中，EA名可以为任意字符串；而在<code>system</code>内，只有经内核明确认可的命名才可以使用。</p>
+<p>在shell中，可以使用命令<code>setfattr</code>和<code>getfattr</code>来设置和查看文件的EA。同时，也有一系列的系统调用可以用来对文件的EA进行操作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/xattr.h&gt;</span></span></span><br><span class="line"><span class="comment">//创建和修改EA，返回0代表成功，-1代表失败</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setxattr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">void</span>* value, <span class="keyword">size_t</span> size, <span class="keyword">int</span> flags)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lsetxattr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">void</span>* value, <span class="keyword">size_t</span> size, <span class="keyword">int</span> flags)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fsetxattr</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">void</span>* value, <span class="keyword">size_t</span> size, <span class="keyword">int</span> flags)</span></span></span><br><span class="line"><span class="function"><span class="comment">//获取EA的值，如果成功则返回EA值的大小，失败返回-1。其中value指向一个缓冲区，size代表缓冲区大小</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">getxattr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">void</span>* value, <span class="keyword">size_t</span> size)</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">lgetxattr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">void</span>* value, <span class="keyword">size_t</span> size)</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">fgetxattr</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">void</span>* value, <span class="keyword">size_t</span> size)</span></span></span><br><span class="line"><span class="function"><span class="comment">//删除EA，返回0代表成功，-1代表失败</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">removexattr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* name)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lremovexattr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* name)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fremovexattr</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span>* name)</span></span></span><br><span class="line"><span class="function"><span class="comment">//获取与文件相关联的所有EA的名称，如果成功则返回list所包含的字节数，失败则返回-1。list指向一个缓冲区，size表示缓冲区大小</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">listxattr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">char</span>* <span class="built_in">list</span>, <span class="keyword">size_t</span> size)</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">llistxattr</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">char</span>* <span class="built_in">list</span>, <span class="keyword">size_t</span> size)</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">flistxattr</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">char</span>* <span class="built_in">list</span>, <span class="keyword">size_t</span> size)</span></span></span><br></pre></td></tr></table></figure>
+<h1 id="目录与链接"><a class="markdownIt-Anchor" href="#目录与链接"></a> 目录与链接</h1>
+<h2 id="硬链接"><a class="markdownIt-Anchor" href="#硬链接"></a> 硬链接</h2>
+<p>在文件系统中，目录的存储方式与普通文件类似，但是它们有两点不同：</p>
+<ol>
+<li>在i-node条目中，目录会被标记为一种不同的文件类型</li>
+<li>目录是经过特殊组织而成的文件，本质上是一个表格，其中包含了文件名和i-node编号</li>
+</ol>
+<p>文件i-node中所存储的信息列表中并未包含文件名，仅通过目录列表内的一个映射来定义文件名称。通过这种方式，能够在相同或者不同目录中创建多个名称，每个均指向相同的i-node节点。这些名称被称为链接，有时也被称为硬链接。</p>
+<p>在shell中，可以使用<code>ln</code>命令为一个已存在的文件创建新的硬链接，这样也就相当于同一个文件可以拥有多个名字。此时，如果移除其中一个文件名，另一个文件名以及文件本身将继续存在，但是会将文件i-node的链接计数减1。只有当文件的所有名字都被删除之后（即链接计数变为0），才会释放文件的i-node记录和数据块。</p>
+<p>对硬链接有如下限制：</p>
+<ol>
+<li>硬链接需要与其所指代的文件驻留在同一个文件系统中</li>
+<li>不能为目录创建硬链接，否则将会导致出现链接环路</li>
+</ol>
+<h2 id="软链接"><a class="markdownIt-Anchor" href="#软链接"></a> 软链接</h2>
+<p>而软链接（符号链接）是一种特殊的文件类型，它的数据是另一文件的名称。在shell中，通过使用<code>ln -s</code>即可创建一个符号链接，<code>ls -F</code>命令的输出结果会在符号链接的尾部标记@。符号链接的内容可以是绝对或者相对路径，解释相对路径时将以链接本身的位置作为参照点。</p>
+<p>需要注意的是，文件的链接计数中并未计算符号链接。因此，如果移除了符号链接所指向的文件名，符号链接还会继续存在。此时这一链接就变成了悬空链接，无法再对其进行解引用操作。也因此可以为并不存在的文件名创建一个符号链接。</p>
+<p>由于符号链接指代一个文件名，因此它可以链接不同文件系统内的文件，也可以为目录创建符号链接。</p>
+<p>符号链接直接可能会形成链路，在某些系统调用中如果指定了符号链接，内核会对一系列链接去层层解引用，直到最终文件。需要注意的是，有些系统调用会对符号链接进行解引用，而有些系统调用则对符号链接不做任何处理，直接作用于链接文件本身。</p>
+<h2 id="链接的系统调用"><a class="markdownIt-Anchor" href="#链接的系统调用"></a> 链接的系统调用</h2>
+<h3 id="创建和移除链接"><a class="markdownIt-Anchor" href="#创建和移除链接"></a> 创建和移除链接</h3>
+<p>系统调用<code>link</code>和<code>unlink</code>可以被用于创建和移除硬链接，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">link</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* oldpath, <span class="keyword">const</span> <span class="keyword">char</span>* newpath)</span> </span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">unlink</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname)</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p>在<code>link</code>系统调用中，如果<code>oldpath</code>提供的是一个硬链接，那么将以<code>newpath</code>参数指定的路径名创建一个新的链接，如果<code>newpath</code>指定的路径名存在，则产生错误。需要注意的是，<code>link</code>不会对符号链接进行解引用操作。</p>
+<p>而<code>unlink</code>系统调用则移除一个链接，且如果此链接是指向文件的最后一个链接，则还会移除文件本身。<code>unlink</code>不能用于移除目录，也不会对符号链接进行解引用操作。</p>
+<p>Linux内核除了为每个i-node维护链接计数，还会为文件已打开的文件描述符计数。因此，当移除指向文件的最后一个链接时，如果仍有进程持有指代该文件的打开文件描述符，则在关闭所有的这类描述符之前，系统实际上不会删除该文件。这将允许在取消对文件链接的时候，无需担心是否有其它进程已经将其打开。</p>
+<h3 id="更改文件名"><a class="markdownIt-Anchor" href="#更改文件名"></a> 更改文件名</h3>
+<p><code>rename</code>系统调用可以用于重命名文件，或者是将文件移动到同一文件系统中的另一目录：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">rename</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* oldpath, <span class="keyword">const</span> <span class="keyword">char</span>* newpath)</span> <span class="comment">//成功返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>这一调用将现有路径名<code>oldpath</code>重命名为<code>newpath</code>参数指定的路径名。该操作仅操作目录条目，而不移动文件数据。改名既不影响指向该文件的其它硬链接，也不影响持有该文件打开描述符的任何进程。</p>
+<p><code>rename</code>满足下面的规则：</p>
+<ul>
+<li>如果<code>newpath</code>已经存在，则将其覆盖</li>
+<li>如果<code>newpath</code>与<code>oldpath</code>指向同一文件，则不发生变化</li>
+<li>两个参数中的符号链接都不解引用</li>
+<li>如果<code>oldpath</code>指代文件，则不能将<code>newpath</code>指定为一个目录的路径名；而如果<code>oldpath</code>为目录名，则需要保证<code>newpath</code>不存在或者是空目录的名称，且<code>newpath</code>不能包含<code>oldpath</code>作为其目录前缀，此时相当于对目录重命名</li>
+<li>两个参数所指代的文件需要位于同一文件系统</li>
+</ul>
+<h3 id="使用符号链接"><a class="markdownIt-Anchor" href="#使用符号链接"></a> 使用符号链接</h3>
+<p>创建符号链接的系统调用如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">symlink</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* filepath, <span class="keyword">const</span> <span class="keyword">char</span>* linkpath)</span> <span class="comment">//成功返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p><code>symlink</code>系统调用会针对于<code>filepath</code>指定的路径名创建一个新的符号链接<code>linkpath</code>。如果<code>linkpath</code>给定的路径名已经存在，则调用失败；而<code>filepath</code>可以为绝对或者相对路径，且它所命名的文件或者目录在调用时无需存在。</p>
+<p>而获取符号链接本身的内容可以用如下系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">readlink</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">char</span>* buffer, <span class="keyword">size_t</span> bufsiz)</span> <span class="comment">//成功则返回实际放入buffer的字节数，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>这一系统调用会对<code>pathname</code>进行解引用，将其所指向的路径名称放入<code>buffer</code>指向的字符数组中，而<code>bufsiz</code>则对应于<code>buffer</code>参数的可用字节数。</p>
+<h3 id="文件目录的创建和移除"><a class="markdownIt-Anchor" href="#文件目录的创建和移除"></a> 文件/目录的创建和移除</h3>
+<p><code>mkdir</code>系统调用用于创建一个新的目录：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkdir</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">mode_t</span> mode)</span> <span class="comment">//返回0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<p><code>pathname</code>参数指定了新目录的路径名称，可为绝对路径或者相对路径；而<code>mode</code>参数指定了新目录的权限。在新建目录中包含两个条目<code>.</code>和<code>..</code>，分别代表指向目录自身的链接和指向父目录的链接。</p>
+<p>需要注意的是，这一系统调用所创建的仅仅是路径名中的最后一部分，<code>pathname</code>参数中的父目录必须存在，这一函数才能执行成功。</p>
+<p>如果要删除目录则可以使用如下的系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">rmdir</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname)</span> <span class="comment">//返回0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<p><code>pathname</code>可以为绝对路径也可以为相对路径。要使得<code>rmdir</code>调用成功，则必须保证<code>pathname</code>对应的目录为空。如果<code>pathname</code>为符号链接，则不会对其做解引用操作，并返回错误。</p>
+<p>要移除文件或者空目录也可以用<code>remove</code>库函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">remove</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname)</span> <span class="comment">//返回0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<p>如果<code>pathname</code>是一个文件，那么<code>remove</code>会调用<code>unlink</code>；而如果<code>pathname</code>是目录，则调用的是<code>rmdir</code>。<code>remove</code>不对符号链接进行解引用操作，如果它是符号链接，则<code>remove</code>会移除链接本身，而不是链接指向的文件。</p>
+<h3 id="读目录"><a class="markdownIt-Anchor" href="#读目录"></a> 读目录</h3>
+<p>下面两个函数用于打开一个目录，并返回指向该目录的句柄，供后续调用使用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;dirent.h&gt;</span></span></span><br><span class="line"><span class="function">DIR* <span class="title">opendir</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* dirpath)</span></span></span><br><span class="line"><span class="function">DIR* <span class="title">fdopendir</span><span class="params">(<span class="keyword">int</span> fd)</span></span></span><br><span class="line"><span class="function"><span class="comment">//如果调用成功则返回文件目录流，失败则返回一个空指针</span></span></span><br></pre></td></tr></table></figure>
+<p>函数的返回结果是一个<code>DIR</code>类型的指针，这一结构即为目录流。函数在返回时会将目录流指向目录列表的首条记录。在调用<code>fdopendir</code>之后，文件描述符将处于系统的控制之下，除了使用个别函数，程序不应该采取任何方式对其进行访问。</p>
+<p>对于得到的目录流，可以使用<code>readdir</code>函数从中读取条目：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;dirent.h&gt;</span></span></span><br><span class="line"><span class="function">struct dirent* <span class="title">readdir</span><span class="params">(DIR* dirp)</span> <span class="comment">//调用成功则返回一个dirent类型数据结构，如果失败或者DIR位于目录流的末尾，则返回空指针</span></span></span><br></pre></td></tr></table></figure>
+<p>每调用<code>readdir</code>一次，就会从<code>dirp</code>所指代的目录流中读取下一个目录条目，并返回一个指向<em>静态分配</em>的<code>dirent</code>数据结构的指针，其中包含了目录条目的信息。每次调用都会覆盖<code>dirent</code>结构。</p>
+<p><code>readdir</code>函数的一个变体是<code>readdir_r</code>，这一函数是可重入的，用法为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;dirent.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">readdir_r</span><span class="params">(DIR* dirp, struct dirent* entry, struct dirent** result)</span> <span class="comment">//成功返回0，失败则返回一个代表失败类型的正数</span></span></span><br></pre></td></tr></table></figure>
+<p>这一函数会将下一项目录条目放在<code>entry</code>指向的<code>dirent</code>结构中，同时会在<code>result</code>放置指向该结构的指针。</p>
+<p><code>rewinddir()</code>函数可以用于将目录流移动到起点：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;dirent.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rewinddir</span><span class="params">(DIR* dirp)</span></span></span><br></pre></td></tr></table></figure>
+<p>而<code>closedir()</code>函数可以将打开状态的目录流关闭：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;dirent.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">closedir</span><span class="params">(DIR* dirp)</span> <span class="comment">//成功返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>一个目录流会与一个文件描述符相关联，<code>dirfd()</code>函数返回与<code>dirp</code>目录流相关联的文件描述符：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;dirent.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dirfd</span><span class="params">(DIR* dirp)</span> <span class="comment">//成功则返回相应的文件描述符，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>而如果要递归遍历整个目录子树，可以使用<code>nftw()</code>函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;ftw.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">nftw</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* dirpath</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> (*func)(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> struct stat* statbuf, <span class="keyword">int</span> typeflag, struct FTW* ftwbuf),</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> nopenfd,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> flags)</span></span></span><br><span class="line"><span class="function"><span class="comment">//如果成功遍历则返回0，失败则返回-1或者是func返回的第一个非0值</span></span></span><br></pre></td></tr></table></figure>
+<p>默认情况下，<code>nftw</code>会针对于给定的树执行未排序的前序遍历，即对于各个目录的处理要比各目录下的文件和子目录优先。其中<code>dirpath</code>代表要遍历的目录树，<code>func</code>代表对目录树的每个文件所调用的函数，<code>nopenfd</code>代表可使用文件描述符数量的最大值，<code>flags</code>参数可以对函数的操作进行修正。</p>
+<h3 id="进程当前工作目录"><a class="markdownIt-Anchor" href="#进程当前工作目录"></a> 进程当前工作目录</h3>
+<p>一个进程的当前工作目录定义了该进程解析相对路径名的起点。新进程的当前工作目录继承自父进程。</p>
+<p>要获取当前工作目录可以用<code>getcwd</code>命令：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">getcwd</span><span class="params">(<span class="keyword">char</span>* cwdbuf, <span class="keyword">size_t</span> size)</span> <span class="comment">//如果成功则返回cwdbuf，失败返回NULL</span></span></span><br></pre></td></tr></table></figure>
+<p>这一函数会将内含当前目录绝对路径的字符串放置在<code>cwdbuf</code>指向的已分配缓冲区中，调用者需要为<code>cwdbuf</code>缓冲区分配至少<code>size</code>个字节的空间。一旦调用成功，<code>getcwd</code>将会返回一枚指向<code>cwdbuf</code>的指针。如果当前工作目录的路径名长度超过<code>size</code>，则会返回NULL，并将<code>errno</code>设置为<code>ERANGE</code>。</p>
+<p>如果<code>cwdbuf</code>为NULL且<code>size</code>为0，那么glibc封装函数会为<code>getcwd</code>按需分配一个缓冲区，并将指向该缓冲区的指针作为函数的返回值。</p>
+<p>要改变当前工作目录有两种方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chdir</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchdir</span><span class="params">(<span class="keyword">int</span> fd)</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p><code>chdir</code>系统调用将调用进程的当前工作目录改为由<code>pathname</code>指定的相对或者绝对路径名称，如果是符号链接还会解引用；而<code>fchdir</code>则是在指定目录时使用文件描述符，这一描述符为使用<code>open</code>打开相应目录时获得的。</p>
+<h3 id="改变进程的根目录"><a class="markdownIt-Anchor" href="#改变进程的根目录"></a> 改变进程的根目录</h3>
+<p>每个进程都有一个根目录，该目录是解释绝对路径（即以/开始的目录）时的起点。默认情况下，根目录为文件系统的真实根目录。有些场合需要改变一个进程的根目录，而特权级进程可以通过<code>chroot</code>系统调用来修改：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chroot</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname)</span> <span class="comment">//成功返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p><code>chroot</code>会将进程根目录改为<code>pathname</code>指定的目录，如果它为符号链接则要对其解引用。</p>
+<h3 id="路径解析"><a class="markdownIt-Anchor" href="#路径解析"></a> 路径解析</h3>
+<p><code>realpath</code>库函数可以用来解除路径中的符号链接，并解析其中对<code>/.</code>和<code>/..</code>的引用，从而生成一个以空字符结尾的字符串，内含相应的绝对路径名：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">realpath</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">char</span>* resolved_path)</span> <span class="comment">//如果成功则返回指向resolved_path的指针，失败返回NULL</span></span></span><br></pre></td></tr></table></figure>
+<p>glibc的<code>realpath</code>实现允许将<code>resolved_path</code>设置为空，此时函数会为解析生成的路径名称分配一个缓冲区，并将指向该缓冲区的指针作为结果返回。</p>
+<p>而<code>dirname</code>和<code>basename</code>两个函数可以将一个路径名字符串分解成目录和文件名两部分：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;libgen.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">dirname</span><span class="params">(<span class="keyword">char</span>* pathname)</span> <span class="comment">//返回目录名</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">basename</span><span class="params">(<span class="keyword">char</span>* pathname)</span> <span class="comment">//返回文件名</span></span></span><br></pre></td></tr></table></figure>
+<p>二者返回的字符串拼接起来，即可得到一个完整的路径名。</p>
+<h1 id="监控文件事件"><a class="markdownIt-Anchor" href="#监控文件事件"></a> 监控文件事件</h1>
+<h2 id="概述-2"><a class="markdownIt-Anchor" href="#概述-2"></a> 概述</h2>
+<p>某些应用程序需要对文件或目录进行监控，已侦测其是否发生了特定事件。例如，当把文件加入或移出一目录时，图形化文件管理器应能判定此目录是否在其当前显示之列，而守护进程可能也想要监控自己的配置文件，以了解其是否被修改。Linux提供了inotify机制，以允许应用程序监控文件事件。使用inotify API由如下几个关键步骤：</p>
+<ol>
+<li>使用<code>inotify_init()</code>创建一个inotify实例，这一调用会返回一个文件描述符，用于在后续操作中指向该实例</li>
+<li>应用程序使用<code>inotify_add_watch()</code>向inotify实例的监控列表添加条目，告知内核哪些文件是自己的兴趣所在。每个监控项包含一个路径名，以及一个相关的位掩码，指明所要监控的事件集合。</li>
+<li>为了获得事件通知，应用程序需要针对inotify文件描述符执行<code>read()</code>操作，每次对<code>read()</code>的成功调用，都会返回一个或者多个<code>inotify_event</code>结构，其中各自记录了处于inotify实例监控之下的某个路径名所发生的事件</li>
+<li>在结束监控时，应用程序关闭inotify文件描述符，这样便会自动清除与inotify实例相关的所有监控项。</li>
+</ol>
+<p>inotify机制不仅可以用于文件，还可以用于目录，监控目录时，与路径自身及其所含文件相关的事件都会通知给应用程序。</p>
+<h2 id="api"><a class="markdownIt-Anchor" href="#api"></a> API</h2>
+<p>与inotify相关的API调用包括：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/inotify.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inotify_init</span><span class="params">(<span class="keyword">void</span>)</span> <span class="comment">//成功则返回一个文件描述符，失败返回-1</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inotify_add_watch</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">uint32_t</span> mask)</span> <span class="comment">//成功则会返回一个监控描述符（wd），失败返回-1</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inotify_rm_watch</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">uint32_t</span> wd)</span> <span class="comment">//成功返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>在使用<code>inotify_add_watch</code>时，位掩码参数<code>mask</code>标识了针对给定路径名而要监控的事件。</p>
+<p>将监控项在监控列表中登记之后，应用程序可以使用<code>read</code>从inotify文件描述符中读取事件，以判定发生了哪些事件。如果直到读取时尚未发生任何事件，<code>read</code>调用会阻塞下去，直到有事件产生（如果设置了非阻塞的文件描述符标志，则会报错）</p>
+<p>事件发生后，每次调用<code>read</code>都会返回一个缓冲区，其中包含一个或者多个<code>inotify_event</code>的数据结构。这一数据结构的定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">inotify_event</span>&#123;</span></span><br><span class="line">	<span class="keyword">int</span> wd; <span class="comment">//监控描述符</span></span><br><span class="line">	<span class="keyword">uint32_t</span> mask; <span class="comment">//描述事件类型的位掩码</span></span><br><span class="line">	<span class="keyword">uint32_t</span> cookie; <span class="comment">//用于将相关的事件联系在一起</span></span><br><span class="line">	<span class="keyword">uint32_t</span> len; <span class="comment">//name字段的长度</span></span><br><span class="line">	<span class="keyword">char</span> name[]; <span class="comment">//以空字符填充的文件名</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="文件加锁"><a class="markdownIt-Anchor" href="#文件加锁"></a> 文件加锁</h1>
+<h2 id="flock函数"><a class="markdownIt-Anchor" href="#flock函数"></a> <code>flock</code>函数</h2>
+<p><code>flock</code>系统调用在整个文件上放置一个锁。待加锁的文件是一个通过传入<code>fd</code>的一个打开着的文件描述符：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/file.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">flock</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> operation)</span></span>; <span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p><code>operation</code>参数为LOCK_SH（给文件加共享锁）、LOCK_EX（给文件加互斥锁）和LOCK_UN（解锁<code>fd</code>引用的文件）。如果要进行非阻塞操作，则可以使用或操作加上LOCK_NB选项。</p>
+<p>任意数量的进程可同时持有一个文件上的共享锁，但在同一个时刻只有一个进程能够持有一个文件上的互斥锁。</p>
+<h2 id="fcntl函数"><a class="markdownIt-Anchor" href="#fcntl函数"></a> <code>fcntl</code>函数</h2>
+<p>使用<code>fcntl()</code>能够在一个文件的任意部分上放置一把锁，这个文件部分既可以是一个字节，也可以是整个文件。一般来讲，<code>fcntl()</code>会被用来锁住文件中与应用程序定义的记录边界对应的字节范围，这也是术语记录加锁的由来。Linux系统可以将一个记录锁应用在任意类型的文件描述符上。</p>
+<p>用来创建或者删除一个文件锁的<code>fcntl</code>调用的形式如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> <span class="title">flockstr</span>;</span></span><br><span class="line">fcntl(fd, cmd, &amp;flockstr);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span>&#123;</span></span><br><span class="line">	<span class="keyword">short</span> l_type; <span class="comment">//表示锁的类型，可以为F_RDLCK（放置读锁）、F_WRLCK（放置写锁）、F_UNLCK（删除锁）其中之一</span></span><br><span class="line">    <span class="keyword">short</span> l_whence; <span class="comment">//表示l_start参数如何使用，可以设为SEEK_SET、SEEK_CUR和SEEK_END</span></span><br><span class="line">    <span class="keyword">off_t</span> l_start; <span class="comment">//锁的起始位置（相对于l_whence的位置）</span></span><br><span class="line">    <span class="keyword">off_t</span> l_len; <span class="comment">//加锁的字节长度。它可以设置为0，代表对l_start和l_whence确定的起始位置到文件结尾的所有字节全部加锁</span></span><br><span class="line">    <span class="keyword">pid_t</span> l_pid; <span class="comment">//如果cmd为F_GETLK，那么代表持有锁的进程ID</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>cmd</code>参数可以为F_SETLK（获取或者释放<code>flockstr</code>指定的字节上的锁，如果另一个进程持有与待加锁区域任意部分不兼容的锁则返回EAGAIN错误）、F_SETLKW（获取或释放锁，但是如果遇到待加锁区域不兼容的情况则会阻塞等待）、F_GETLK（检测释放可以在给定区域上锁）这三个值的其中一个。</p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+  <ul class="breadcrumb">
+          
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">未完成的技术文档</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/">LINUX</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/">LINUX</a></li>
+            <li>文件系统</li>
+          
+  </ul>
+
+    
+    
+    
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">16:41</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'b52d761ae00ccf16fc1573242c43bbc1',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

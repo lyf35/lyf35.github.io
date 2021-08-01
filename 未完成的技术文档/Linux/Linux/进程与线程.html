@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="进程  基础内容  进程号 每个进程都有一个进程号（PID），它是一个正数，用来唯一标识系统中的某个进程。对于各种系统调用而言，进程号有时候可以作为传入参数，有时候可以作为返回值。 系统调用getpid返回调用进程的进程号： 12#include&lt;unistd.h&gt;pid_t getpid(void); getpid()返回值的数据类型是pid_t，这一数据类型被专门用来存储进程号。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Yufei Luo&#39;s Blog">
+<meta property="og:url" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="进程  基础内容  进程号 每个进程都有一个进程号（PID），它是一个正数，用来唯一标识系统中的某个进程。对于各种系统调用而言，进程号有时候可以作为传入参数，有时候可以作为返回值。 系统调用getpid返回调用进程的进程号： 12#include&lt;unistd.h&gt;pid_t getpid(void); getpid()返回值的数据类型是pid_t，这一数据类型被专门用来存储进程号。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210625111723877.png">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210701143620837.png">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210714115006363.png">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210714115027789.png">
+<meta property="og:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210714161535465.png">
+<meta property="article:published_time" content="2021-08-01T14:38:05.197Z">
+<meta property="article:modified_time" content="2021-08-01T14:38:05.197Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="个人博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/image-20210625111723877.png">
+
+<link rel="canonical" href="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | Yufei Luo's Blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text"> 进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E5%86%85%E5%AE%B9"><span class="nav-number">1.1.</span> <span class="nav-text"> 基础内容</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%8F%B7"><span class="nav-number">1.1.1.</span> <span class="nav-text"> 进程号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="nav-number">1.1.2.</span> <span class="nav-text"> 进程的内存布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%88%E5%92%8C%E6%A0%88%E5%B8%A7"><span class="nav-number">1.1.3.</span> <span class="nav-text"> 栈和栈帧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="nav-number">1.1.4.</span> <span class="nav-text"> 命令行参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%88%97%E8%A1%A8"><span class="nav-number">1.1.5.</span> <span class="nav-text"> 环境列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E5%B1%80%E9%83%A8%E8%B7%B3%E8%BD%AC"><span class="nav-number">1.1.6.</span> <span class="nav-text"> 非局部跳转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">1.1.7.</span> <span class="nav-text"> 内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98"><span class="nav-number">1.1.7.1.</span> <span class="nav-text"> 在堆上分配内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98"><span class="nav-number">1.1.7.2.</span> <span class="nav-text"> 在栈上分配内存</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%92%8C%E8%BF%9B%E7%A8%8B%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.</span> <span class="nav-text"> 系统和进程信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#proc%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.2.1.</span> <span class="nav-text"> &#x2F;proc文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.2.1.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E8%BF%9B%E7%A8%8B%E6%9C%89%E5%85%B3%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.1.2.</span> <span class="nav-text"> 获取进程有关的信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.1.3.</span> <span class="nav-text"> 系统信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%A0%87%E8%AF%86"><span class="nav-number">1.2.2.</span> <span class="nav-text"> 系统标识</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">1.3.</span> <span class="nav-text"> 进程的创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%BB%88%E6%AD%A2"><span class="nav-number">1.4.</span> <span class="nav-text"> 进程的终止</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#api"><span class="nav-number">1.4.1.</span> <span class="nav-text"> API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%88%E6%AD%A2%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">1.4.2.</span> <span class="nav-text"> 进程终止的细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.4.3.</span> <span class="nav-text"> 退出处理程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9B%91%E6%8E%A7"><span class="nav-number">1.5.</span> <span class="nav-text"> 进程监控</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%89%E5%BE%85%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.5.1.</span> <span class="nav-text"> 等待子进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.5.2.</span> <span class="nav-text"> 孤儿进程与僵尸进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sigchld%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.5.3.</span> <span class="nav-text"> SIGCHLD信号</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C"><span class="nav-number">1.6.</span> <span class="nav-text"> 程序执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%96%B0%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.6.1.</span> <span class="nav-text"> 执行新程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E4%B8%8E%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.6.2.</span> <span class="nav-text"> 文件描述符与信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8Cshell%E5%91%BD%E4%BB%A4"><span class="nav-number">1.6.3.</span> <span class="nav-text"> 执行shell命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.</span> <span class="nav-text"> 信号</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-number">2.1.</span> <span class="nav-text"> 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E4%BA%A7%E7%94%9F"><span class="nav-number">2.1.1.</span> <span class="nav-text"> 信号产生</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E7%9A%84%E4%BC%A0%E9%80%92%E4%B8%8E%E5%93%8D%E5%BA%94"><span class="nav-number">2.1.2.</span> <span class="nav-text"> 信号的传递与响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.1.3.</span> <span class="nav-text"> 信号类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%9B%86"><span class="nav-number">2.2.</span> <span class="nav-text"> 信号集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E6%8E%A9%E7%A0%81"><span class="nav-number">2.3.</span> <span class="nav-text"> 信号掩码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.4.</span> <span class="nav-text"> 特殊信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%BD%AE"><span class="nav-number">2.5.</span> <span class="nav-text"> 改变信号处置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#api-2"><span class="nav-number">2.5.1.</span> <span class="nav-text"> API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E5%99%A8%E5%87%BD%E6%95%B0"><span class="nav-number">2.5.2.</span> <span class="nav-text"> 信号处理器函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">2.5.2.1.</span> <span class="nav-text"> 设计原则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%88%E6%AD%A2%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E5%99%A8%E5%87%BD%E6%95%B0"><span class="nav-number">2.5.2.2.</span> <span class="nav-text"> 终止信号处理器函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sa_siginfo%E6%A0%87%E5%BF%97"><span class="nav-number">2.5.2.3.</span> <span class="nav-text"> SA_SIGINFO标志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E4%B8%AD%E6%96%AD%E5%92%8C%E9%87%8D%E5%90%AF"><span class="nav-number">2.5.2.4.</span> <span class="nav-text"> 系统调用的中断和重启</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-number">2.6.</span> <span class="nav-text"> 信号相关操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.6.1.</span> <span class="nav-text"> 发送信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E4%BF%A1%E5%8F%B7%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.6.2.</span> <span class="nav-text"> 显示信号描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E4%BA%8E%E7%AD%89%E5%BE%85%E7%8A%B6%E6%80%81%E7%9A%84%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.6.3.</span> <span class="nav-text"> 处于等待状态的信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%89%E5%BE%85%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.6.4.</span> <span class="nav-text"> 等待信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%8E%B7%E5%8F%96%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.6.5.</span> <span class="nav-text"> 通过文件描述符获取信号</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.7.</span> <span class="nav-text"> 实时信号</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-3"><span class="nav-number">2.7.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%AE%9E%E6%97%B6%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.7.2.</span> <span class="nav-text"> 发送实时信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%AE%9E%E6%97%B6%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.7.3.</span> <span class="nav-text"> 处理实时信号</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text"> 定时器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%B4%E9%9A%94%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.1.</span> <span class="nav-text"> 间隔定时器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%91%E7%9C%A0"><span class="nav-number">3.2.</span> <span class="nav-text"> 休眠</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#posix%E6%97%B6%E9%92%9F"><span class="nav-number">3.3.</span> <span class="nav-text"> POSIX时钟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#posix%E9%97%B4%E9%9A%94%E5%BC%8F%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.4.</span> <span class="nav-text"> POSIX间隔式定时器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-number">3.5.</span> <span class="nav-text"> 文件描述符定时器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text"> 线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-4"><span class="nav-number">4.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%8E%E7%BB%88%E6%AD%A2"><span class="nav-number">4.2.</span> <span class="nav-text"> 创建与终止</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E8%BF%9E%E6%8E%A5%E4%B8%8E%E5%88%86%E7%A6%BB"><span class="nav-number">4.3.</span> <span class="nav-text"> 线程的连接与分离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5"><span class="nav-number">4.4.</span> <span class="nav-text"> 线程同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E9%87%8F"><span class="nav-number">4.4.1.</span> <span class="nav-text"> 互斥量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="nav-number">4.4.2.</span> <span class="nav-text"> 条件变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">4.5.</span> <span class="nav-text"> 线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%8F%96%E6%B6%88"><span class="nav-number">4.6.</span> <span class="nav-text"> 线程取消</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-number">4.7.</span> <span class="nav-text"> 线程实现细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8Bid"><span class="nav-number">4.7.1.</span> <span class="nav-text"> 线程ID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%A0%88"><span class="nav-number">4.7.2.</span> <span class="nav-text"> 线程栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BF%A1%E5%8F%B7"><span class="nav-number">4.7.3.</span> <span class="nav-text"> 线程和信号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="nav-number">4.7.4.</span> <span class="nav-text"> 线程和进程控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linux%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.7.5.</span> <span class="nav-text"> Linux的线程实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%84%E5%92%8C%E4%BC%9A%E8%AF%9D"><span class="nav-number">5.</span> <span class="nav-text"> 进程组和会话</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-5"><span class="nav-number">5.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%BB%84"><span class="nav-number">5.2.</span> <span class="nav-text"> 进程组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D"><span class="nav-number">5.3.</span> <span class="nav-text"> 会话</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7%E5%92%8C%E8%B0%83%E5%BA%A6"><span class="nav-number">6.</span> <span class="nav-text"> 进程优先级和调度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">6.1.</span> <span class="nav-text"> 进程优先级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-number">6.2.</span> <span class="nav-text"> 实时进程调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cpu%E4%BA%B2%E5%92%8C%E5%8A%9B"><span class="nav-number">6.3.</span> <span class="nav-text"> CPU亲和力</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%B5%84%E6%BA%90"><span class="nav-number">7.</span> <span class="nav-text"> 进程资源</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8"><span class="nav-number">7.1.</span> <span class="nav-text"> 进程资源使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6"><span class="nav-number">7.2.</span> <span class="nav-text"> 进程资源限制</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#daemon%E8%BF%9B%E7%A8%8B"><span class="nav-number">8.</span> <span class="nav-text"> DAEMON进程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-6"><span class="nav-number">8.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="nav-number">8.2.</span> <span class="nav-text"> 创建流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">8.3.</span> <span class="nav-text"> 重新初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#syslog%E5%B7%A5%E5%85%B7"><span class="nav-number">8.4.</span> <span class="nav-text"> syslog工具</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+  
+  
+
+        <div class="content page posts-expand">
+          
+
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta">
+  
+  <ul class="breadcrumb">
+          
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">未完成的技术文档</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/">LINUX</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/">LINUX</a></li>
+            <li>进程与线程</li>
+          
+  </ul>
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="进程"><a class="markdownIt-Anchor" href="#进程"></a> 进程</h1>
+<h2 id="基础内容"><a class="markdownIt-Anchor" href="#基础内容"></a> 基础内容</h2>
+<h3 id="进程号"><a class="markdownIt-Anchor" href="#进程号"></a> 进程号</h3>
+<p>每个进程都有一个进程号（PID），它是一个正数，用来唯一标识系统中的某个进程。对于各种系统调用而言，进程号有时候可以作为传入参数，有时候可以作为返回值。</p>
+<p>系统调用<code>getpid</code>返回调用进程的进程号：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">getpid</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>getpid()</code>返回值的数据类型是<code>pid_t</code>，这一数据类型被专门用来存储进程号。创建一个新的进程时，内核会按顺序将下一个可用的进程号分配给新进程使用；而当进程号达到最大值的限制时，内核将重置进程号计数器至300（因为低数值的进程号通常被系统进程和守护进程长期占用，故之间跳过这一区域）。Linux的最大进程号由内核常量<code>PID_MAX</code>所定义。</p>
+<p>每个进程都有一个创建自己的父进程，系统调用<code>getppid</code>可以检索父进程的进程号：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">getppid</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>所有进程的始祖是1号进程<code>init</code>，在Linux的命令行输入<code>pstree 1</code>即可看到系统中进程的家族树结构。</p>
+<h3 id="进程的内存布局"><a class="markdownIt-Anchor" href="#进程的内存布局"></a> 进程的内存布局</h3>
+<p>在Linux系统中，进程的内存被布局到虚拟内存中。每个进程所分配的虚拟内存由很多部分组成，每个部分称为“段”，如下图所示：</p>
+<img data-src="image-20210625111723877.png" alt="image-20210625111723877" style="zoom: 67%;" />
+<p>每个部分的含义如下：</p>
+<ul>
+<li>文本段：包含进程运行的程序机器语言指令。为了防止进程通过错误指针修改指令，这段内存被设置为只读；同时因为多个进程可以运行同一程序，故这一段内存可共享，这样便可将程序代码映射到多个进程的虚拟地址空间中。</li>
+<li>初始化数据段：包含显式初始化的全局变量和静态变量。当程序加载到内存时，从可执行文件中读取这些变量的值。</li>
+<li>未初始化数据段：包含未进行显式初始化的全局变量和静态变量，程序启动之前，这段内存的所有值被初始化为0。</li>
+<li>栈：动态增长和收缩的段，由栈帧组成，系统会为每一个当前调用的函数分配一个栈帧。栈帧中存储了函数的局部变量、实参和返回值。</li>
+<li>堆：可以在运行时为变量动态分配内存的一块区域。</li>
+</ul>
+<p>虚拟内存的规划之一是将每个程序使用的内存切割成小型的、固定大小的“页”（page）单元。相应地，将RAM 划分成一系列与虚拟内存页尺寸相同的页帧。任一时刻，每个程序仅有部分页需要驻留在物理内存页帧中。这些页构成了所谓驻留集（resident set）。程序未使用的页拷贝保存在交换区（swap area）内（磁盘空间中的保留区域，作为计算机RAM 的补充），仅在需要时才会载入物理内存。若进程欲访问的页面目前并未驻留在物理内存中，将会发生页面错误（page fault），内核即刻挂起进程的执行，同时从磁盘中将该页面载入内存。由于程序访问的空间和时间局部性特征，程序即便仅有部分地址空间存在于RAM 中，依然可能得以执行。</p>
+<p>为支持这一组织方式，内核需要为每个进程维护一张页表（page table）。该页表描述了每页在进程虚拟地址空间（virtual address space）中的位置（可为进程所用的所有虚拟内存页面的集合）。页表中的每个条目要么指出一个虚拟页面在RAM中的所在位置，要么<br />
+表明其当前驻留在磁盘上。</p>
+<p>在进程虚拟地址空间中，并非所有的地址范围都需要页表条目。通常情况下，由于可能存在大段的虚拟地址空间并未投入使用，故而也无必要为其维护相应的页表条目。若进程试图访问的地址并无页表条目与之对应，那么进程将收到一个SIGSEGV信号。</p>
+<p>使用虚拟内存的优点包括：</p>
+<ul>
+<li>进程与进程，进程和内核互相隔离</li>
+<li>适当情况下，两个或者多个进程可以共享内存</li>
+<li>通过对页表条目的标记，方便实现内存保护机制</li>
+<li>无需关注程序在RAM的物理布局</li>
+<li>一个进程所使用的虚拟内存大小可以超过RAM的容量</li>
+<li>RAM中可以容纳多个进程所使用的内存，从而提高CPU的利用率</li>
+</ul>
+<h3 id="栈和栈帧"><a class="markdownIt-Anchor" href="#栈和栈帧"></a> 栈和栈帧</h3>
+<p>函数的调用和返回使得栈的增长和收缩呈线性。栈驻留在内存地址的高端并向下增长，栈指针寄存器用于跟踪当前的栈顶。每次调用函数时，会在栈上新分配一帧，而当函数返回时再从栈上将此帧移除。由于函数能够嵌套调用，故栈中可能有多个栈帧。</p>
+<p>每个用户栈的栈帧包括如下信息：</p>
+<ul>
+<li>函数实参和局部变量，函数返回时这些变量会自动被销毁</li>
+<li>函数调用的信息，每当一个函数调用另一个函数时，会在被调用函数的栈帧中保存当前寄存器的副本，以便函数返回时能为函数调用者将寄存器恢复原状</li>
+</ul>
+<h3 id="命令行参数"><a class="markdownIt-Anchor" href="#命令行参数"></a> 命令行参数</h3>
+<p>每个C语言程序都必须有一个<code>main()</code>的主函数，作为程序启动的起点。当执行程序时，命令行参数通过两个入参提供给<code>main</code>函数，第一个为<code>int argc</code>，表示命令行参数的个数；第二个参数<code>char *argv[]</code>，是一个指向命令行参数的指针数组，第一个字符串<code>argv[0]</code>指向该程序的名称，最后一个元素<code>argv[argc]</code>为NULL指针，其余参数指向其它的命令行参数。除了最后一个元素之外，其余指针指向的参数都以空字符结尾。</p>
+<h3 id="环境列表"><a class="markdownIt-Anchor" href="#环境列表"></a> 环境列表</h3>
+<p>每一个进程都有与之相关的环境列表，它是一个字符串数组，其中每个字符串都以名称=值（name=value）的格式定义。而列表中的名称也被称为环境变量。</p>
+<p>新进程在创建时，会继承其父进程的环境副本。子进程只有在创建时才能获得其父进程的环境副本，故这一信息传递是单向、一次性的。子进程创建之后，父进程和子进程都可以修改各自的环境变量，而且这些变更对于对方而言都不再可见。</p>
+<p>环境变量常见的用途之一是在shell中，通过在自身环境中放置变量值，shell便可以确保将这些值传递给所创建的进程。大多数shell使用export命令向环境中添加变量值。</p>
+<blockquote>
+<p>备注：shell和bash</p>
+<p>Shell是系统的用户界面，相当于操作系统的“外壳”，提供了用户与内核进行交互操作的一种接口。它接收用户输入的命令并把它送入内核去执行，是在Linux内核与用户之间的解释器程序。</p>
+<p>而bash指的是Linux系统中的/bin/bash解释器，它负责向内核翻译以及传达用户/程序指令。而如果在shell脚本的第一行写 #!/bin/bash ，意思就是用 /bin/bash解释器去执行这个脚本。</p>
+</blockquote>
+<p>通过Linux专有的/proc/PID/environ文件，可以检查任一进程的环境列表。而在C语言程序中，也可以使用全局变量<code>char** environ</code>来访问环境列表。<code>environ</code>和<code>argv</code>参数类似，指向一个以NULL结尾的指针数组，而其它每个指针又指向一个以空字节终止的字符串。</p>
+<p>如果要在环境列表里面检索单个值，可以用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">getenv</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name)</span></span></span><br></pre></td></tr></table></figure>
+<p>这一函数接收一个环境变量名称name作为参数，返回相应的value，并以字符串指针的形式传值；如果不存在指定名称的环境变量则返回NULL。</p>
+<p>如果要修改环境，可以使用的函数包括：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">putenv</span><span class="params">(<span class="keyword">char</span>* <span class="built_in">string</span>)</span> <span class="comment">//用于添加一个新变量或者修改一个已经存在的变量值，string参数指向一个name=value格式的字符串。如果成功则返回0，失败返回一个非0值</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setenv</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> <span class="keyword">char</span>* value, <span class="keyword">int</span> overwrite)</span> <span class="comment">//用于添加一个新变量或者修改一个已经存在的变量值，如果overwrite参数为0则不会改变已有的环境变量，如果不为0则总是改变环境。如果成功返回0，失败返回-1</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">unsetenv</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name)</span> <span class="comment">//从环境中移除name标识的环境变量，如果成功返回0，失败返回-1</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clearenv</span><span class="params">(<span class="keyword">void</span>)</span> <span class="comment">//清空整个环境，如果成功则返回0，失败返回一个非0值</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="非局部跳转"><a class="markdownIt-Anchor" href="#非局部跳转"></a> 非局部跳转</h3>
+<p>库函数<code>setjmp()</code>和<code>longjmp()</code>可以执行非局部跳转，此处的非局部指的是跳转的目标位于当前执行函数之外的某个位置。这两个函数可以被用于下面的场景：在一个深层嵌套的函数调用中发生了错误，需要放弃当前任务，从多层函数调用中返回主函数。二者的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;setjmp.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setjmp</span><span class="params">(jmp_buf env)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">longjmp</span><span class="params">(jmp_buf env, <span class="keyword">int</span> val)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>setjmp</code>函数用于设置跳转点，在后面调用<code>longjmp</code>时就会跳转到<code>setjmp</code>的位置。从编程的角度来看，调用<code>longjmp</code>之后，看起来和第二次调用<code>setjmp</code>返回时完全一样。。通过查看<code>setjmp()</code>返回的整数值，可以区分<code>setjmp</code>调用是初始返回还是第二次“返回”。初始调用返回值为0，后续“伪”返回的返回值为<code>longjmp()</code>调用中<code>val</code>参数所指定的任意值。通过对<code>val</code>参数使用不同值，能够区分出程序中跳转至同一目标的不同起跳位置。</p>
+<p><code>env</code>参数用于存储当前进程的信息，以及程序计数寄存器和栈指针寄存器的副本等信息，这些信息被用于恢复<code>setjmp</code>处的程序执行状态，从而使得后续的程序可以被接着执行。在调用<code>longjmp</code>时，需要传入与<code>setjmp</code>相同的<code>env</code>变量。由于两个函数的调用通常位于不同的函数，因此<code>env</code>参数常常被设置为全局变量。</p>
+<p>在实际工程中，应该尽可能地避免使用<code>setjmp</code>和<code>longjmp</code>这两个函数，因为它们会使得程序地复杂程度变高，使程序难以阅读和维护。</p>
+<h3 id="内存分配"><a class="markdownIt-Anchor" href="#内存分配"></a> 内存分配</h3>
+<h4 id="在堆上分配内存"><a class="markdownIt-Anchor" href="#在堆上分配内存"></a> 在堆上分配内存</h4>
+<p>进程可以通过增加堆的大小来分配内存，通常将堆的当前内存边界称为“Program Break”。在程序开始运行的时候，Program Break位于未初始化数据段的末尾之后。而在Program Break的位置抬升之后，程序可以访问新分配区域内的任何内存地址，而此时物理内存页尚未分配。内核会在进程首次试图访问这些虚拟内存地址时自动分配新的物理内存页。</p>
+<p>下面两个系统调用可以操纵Program Break：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">brk</span><span class="params">(<span class="keyword">void</span>* end_data_segment)</span> <span class="comment">//返回0代表成功，-1代表失败</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">sbrk</span><span class="params">(<span class="keyword">intptr_t</span> increment)</span> <span class="comment">//调用成功则返回上一个Program Break的位置，如果返回的指针指向-1则代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p><code>brk</code>会将Program Break设置为参数<code>end_data_segment</code>所指向的位置。由于虚拟内存以页为单位进行分配，因此<code>end_data_segment</code>实际会四舍五入到下一个内存页的边界处。而<code>sbrk</code>将Program Break在原有的位置上增加参数<code>increment</code>表示的大小，<code>intptr_t</code>属于整数数据类型，如果传入0则会返回当前Program Break的位置。</p>
+<p>需要注意的是，如果试图将Program Break设置为一个低于其初始值的位置，则有可能会导致无法预知的行为。</p>
+<p>C语言程序的<code>malloc</code>函数被用于在堆上分配<code>size</code>大小的内存，并返回指向新分配内存起始位置处的指针，其所分配的内存未初始化。这一函数的接口简单，更加方便在多线程程序中使用，且允许随意释放内存块。它的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> size)</span></span></span><br></pre></td></tr></table></figure>
+<p>如果函数执行成功，则返回分配内存起始位置的指针，失败则返回NULL。由于函数的返回类型为<code>void*</code>，因此可以将其赋值给任意类型的指针。同时<code>malloc</code>返回的内存块已经基于8或者16字节进行内存对齐，从而适宜于高效访问不同类型的数据结构。</p>
+<p><code>malloc()</code>的实现很简单。它首先会扫描之前由<code>free()</code>所释放的空闲内存块列表，以求找到尺寸大于或等于要求的一块空闲内存。（取决于具体实现，采用的扫描策略会有所不同）如果这一内存块的尺寸正好与要求相当，就把它直接返回给调用者。如果是一块较大的内存，那么将对其进行分割，在将一块大小相当的内存返回给调用者的同时，把较小的那块空闲内存块保留在空闲列表中。</p>
+<p>如果在空闲内存列表中根本找不到足够大的空闲内存块，那么<code>malloc()</code>会调用<code>sbrk()</code>以分配更多的内存。为减少对<code>sbrk()</code>的调用次数，<code>malloc()</code>并未只是严格按所需字节数来分配内存，而是以更大幅度（以虚拟内存页大小的数倍）来增加Program Break，并将超出部分置于空闲内存列表。</p>
+<p>堆内存的释放可以使用<code>free</code>函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span>* ptr)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>free</code>函数将会释放<code>ptr</code>参数所指向的内存块，它应当是之前由<code>malloc</code>或者其它堆内存分配函数之一所返回的地址。</p>
+<p>一般情况下，<code>free</code>函数并不降低Program Break的位置，而是将这块内存添加到空闲内存列表中，供后续的<code>malloc</code>函数循环使用。当<code>malloc()</code>分配内存块时，会额外分配几个字节来存放记录这块内存大小的整数值。该整数位于内存块的起始处，而实际返回给调用者的内存地址恰好位于这一长度记录字节之后。当将内存块置于空闲内存列表（双向链表）时，<code>free()</code>会使用内存块本身的空间来存放链表指针，将自身添加到列表中。</p>
+<p>此外，还有一些在堆上分配内存的其他函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">calloc</span><span class="params">(<span class="keyword">size_t</span> numitems, <span class="keyword">size_t</span> size)</span></span></span><br></pre></td></tr></table></figure>
+<p>这一函数用于给一组相同对象分配内存，其中<code>numitems</code>指的是对象的个数，<code>size</code>指的是每个对象的大小，已经分配的内存会被初始化为0。而函数的返回值则是一个指向这块内存起始处的指针。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">realloc</span><span class="params">(<span class="keyword">void</span>* ptr, <span class="keyword">size_t</span> size)</span></span></span><br></pre></td></tr></table></figure>
+<p>这一函数用来调整一块内存的大小为<code>size</code>，而<code>ptr</code>为需要调整大小的内存块的指针，这块内存应该是之前<code>malloc</code>函数分配的。而<code>realloc</code>函数可能会重新分配一块内存，并将原来的数据复制到新的内存块，这将会占用大量的CPU资源。因此，应该尽量避免调用<code>realloc</code>。</p>
+<h4 id="在栈上分配内存"><a class="markdownIt-Anchor" href="#在栈上分配内存"></a> 在栈上分配内存</h4>
+<p>由于栈帧也存在扩展空间，因此也可以通过增加栈帧的大小从栈上动态分配内存。<code>alloca</code>函数可以实现这一功能，它的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;alloca.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">alloca</span><span class="params">(<span class="keyword">size_t</span> size)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>size</code>参数指定在堆栈上分配的字节数，函数的返回值为指向已分配内存块的指针。</p>
+<p>由于编译器将<code>alloca</code>作为内联代码处理，且直接通过调整堆栈指针来实现，加上无需维护空闲内存块列表，因此使用<code>alloca</code>分配内存的速度快于<code>malloc</code>。在使用时需要注意的是，<code>alloca</code>函数分配的内存不需要也绝不能使用<code>free</code>函数释放，当栈帧移除之后（即函数返回）这块内存空间将会被自动释放掉。</p>
+<h2 id="系统和进程信息"><a class="markdownIt-Anchor" href="#系统和进程信息"></a> 系统和进程信息</h2>
+<h3 id="proc文件系统"><a class="markdownIt-Anchor" href="#proc文件系统"></a> <code>/proc</code>文件系统</h3>
+<h4 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h4>
+<p>为了提供更加简便的方法来访问内核信息，许多现代的UNIX实现提供了一个<code>/proc</code>虚拟文件系统。该文件系统驻留于<code>/proc</code>目录中，包含了各种用于展示内核信息的文件，并且允许进程通过常规文件I/O系统调用来方便地读取，有时还可以修改这些信息。这一文件系统称为虚拟，是因为其包含的文件和子目录并未存储于磁盘上，而是由内核在进程访问此类信息时动态创建而成。</p>
+<h4 id="获取进程有关的信息"><a class="markdownIt-Anchor" href="#获取进程有关的信息"></a> 获取进程有关的信息</h4>
+<p>对于系统中的每个进程，内核都提供了相应的目录，命名为<code>/proc/PID</code>，其中PID是进程的ID。在此目录中的各种文件和子目录包含了进程的相关信息，包括：</p>
+<ul>
+<li><code>status</code>：包含了关于进程的一系列信息，如进程ID、凭证、内存使用量、信号等</li>
+<li><code>cmdline</code>：以<code>\0</code>分割的命令行参数</li>
+<li><code>cwd</code>：指向当前工作目录的符号连接</li>
+<li><code>environ</code>：NAME=value键值对环境列表，用<code>\0</code>分割</li>
+<li><code>exe</code>：指向正在执行文件的符号连接</li>
+<li><code>fd</code>：文件目录，包含了指向由进程打开文件的符号连接，例如<code>/proc/1968/1</code>是ID为1968的进程中指向标准输出的符号连接</li>
+<li><code>maps</code>：内存映射</li>
+<li><code>mem</code>：进程的虚拟内存</li>
+<li><code>mounts</code>：进程的安装点</li>
+<li><code>root</code>：指向根目录的符号连接</li>
+<li><code>task</code>：包含了进程中的每个线程，每个线程都对应于一个子目录</li>
+</ul>
+<h4 id="系统信息"><a class="markdownIt-Anchor" href="#系统信息"></a> 系统信息</h4>
+<p>在<code>/proc</code>目录下还包含了一些系统信息，例如：</p>
+<ul>
+<li><code>/proc/net</code>：有关网络和套接字的状态信息</li>
+<li><code>/proc/sys/fs</code>：文件系统的相关设置</li>
+<li><code>/proc/sys/kernel</code>：各种常规的内核设置</li>
+<li><code>/proc/sys/net</code>：网络和套接字的设置</li>
+<li><code>/proc/sys/vm</code>：内存管理设置</li>
+<li><code>/proc/sysvipc</code>：有关System V IPC对象的信息</li>
+</ul>
+<h3 id="系统标识"><a class="markdownIt-Anchor" href="#系统标识"></a> 系统标识</h3>
+<p>系统调用<code>uname()</code>返回了一系列关于主机系统的标识信息，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/utsname.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">uname</span><span class="params">(struct utsname* utsbuf)</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>utsbuf</code>参数是一个指向<code>utsname</code>的指针，它的定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">utsname</span>&#123;</span></span><br><span class="line">	<span class="keyword">char</span> sysname[_UTSNAME_LENGTH]; <span class="comment">//由内核自动设置</span></span><br><span class="line">	<span class="keyword">char</span> nodename[_UTSNAME_LENGTH]; <span class="comment">//由sethostname()系统调用设置</span></span><br><span class="line">	<span class="keyword">char</span> release[_UTSNAME_LENGTH]; <span class="comment">//由内核自动设置</span></span><br><span class="line">	<span class="keyword">char</span> version[_UTSNAME_LENGTH]; <span class="comment">//由内核自动设置</span></span><br><span class="line">	<span class="keyword">char</span> machine[_UTSNAME_LENGTH]; <span class="comment">//由内核自动设置</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> _GNU_SOURCE</span></span><br><span class="line">	<span class="keyword">char</span> domainname[_UTSNAME_LENGTH]; <span class="comment">//由setdomainname()系统调用设置</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="进程的创建"><a class="markdownIt-Anchor" href="#进程的创建"></a> 进程的创建</h2>
+<p>系统调用<code>fork()</code>可以创建一个新的进程，它的用法为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>这一系统调用执行完成之后，将会存在两个进程，这两个进程都会从<code>fork()</code>的返回处继续往下执行。这两个进程执行相同的程序代码段，但是各自拥有不同的栈段、数据段和堆段拷贝。子进程的栈、数据和堆段开始时完全复制于父进程。而在此之后，每个进程可以修改各自的栈数据和堆段的变量，对另一进程完全没有影响。</p>
+<p>程序代码可以通过<code>fork()</code>的返回值来区分父进程和子进程。在父进程中，这一系统调用返回的时子进程的进程ID，而在子进程中则返回0。如果无法创建子进程，则父进程返回-1。</p>
+<p>执行<code>fork()</code>之后，子进程会获得父进程所有文件描述符的副本。因此这意味着父、子进程中对应的文件描述符会指向相同的打开文件句柄（其中含有当前文件偏移量、文件状态标志，这些属性在父子进程中共享）。因此如果子进程更新了文件偏移量，那么这也会影响到父进程中相应的描述符。</p>
+<p>在执行<code>fork()</code>之后，父进程和子进程执行的特定顺序是不确定的，如果要保证某一特定执行顺序，则需要使用一些同步技术如信号等。</p>
+<h2 id="进程的终止"><a class="markdownIt-Anchor" href="#进程的终止"></a> 进程的终止</h2>
+<h3 id="api"><a class="markdownIt-Anchor" href="#api"></a> API</h3>
+<p>进程的终止有两种方式，一种为异常终止，通过接收一个信号而引发；而另一个方式是使用<code>_exit()</code>系统调用正常终止：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="keyword">void</span> _exit(<span class="keyword">int</span> status);</span><br></pre></td></tr></table></figure>
+<p>其中，<code>status</code>参数定义了进程的终止状态，父进程可以调用<code>wait()</code>来获取该状态。虽然它为<code>int</code>数据类型，但是只有低8位可以被父进程使用。调用<code>_exit()</code>的程序总是会成功终止。</p>
+<p>但是程序一般不会直接调用<code>_exit()</code>，而是调用库函数<code>exit()</code>，它会在调用<code>_exit()</code>之前执行各种动作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">exit</span><span class="params">(<span class="keyword">int</span> status)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>exit()</code>系统调用执行的动作包括：</p>
+<ul>
+<li>调用退出处理程序，即通过<code>atexit()</code>和<code>on_exit()</code>注册的函数，其执行顺序和注册顺序相反。</li>
+<li>刷新<code>stdio</code>流缓冲区</li>
+<li>使用由<code>status</code>提供的值，执行<code>_exit()</code>系统调用。</li>
+</ul>
+<p>程序的另一种终止方法是从<code>main()</code>函数中返回，或者一直执行到函数的结尾处。执行<code>return n</code>其实等同于执行<code>exit(n)</code>。如果<code>main()</code>函数无返回值，则同样会执行<code>exit()</code>函数，但是返回值与C语言的标准以及编译器选项有关。</p>
+<h3 id="进程终止的细节"><a class="markdownIt-Anchor" href="#进程终止的细节"></a> 进程终止的细节</h3>
+<p>在进程终止时，无论是正常还是异常终止，都会发生如下动作：</p>
+<ul>
+<li>关闭所有打开的文件描述符、目录流、信息目录描述符和字符集转换描述符</li>
+<li>释放进程持有的任何文件锁</li>
+<li>分离任何已经连接的System V共享内存段，且对应于各段的<code>shm_nattch</code>计数器值将会减一</li>
+<li>进程为每个System V信号量设置的<code>semadj</code>值将会被加到信号量值中</li>
+<li>如果该进程是一个管理终端的管理进程，那么系统会向终端前台进程组中的每个进程发送SIGHUP信号，接着终端与会话脱离</li>
+<li>关闭该进程打开的任何POSIX有名信号量</li>
+<li>关闭该进程打开的任何POSIX消息队列</li>
+<li>如果某进程组称为孤儿，且该组中存在任何已停止进程，则组中所有进程都会收到SIGHUP信号，随后收到SIGCONT信号</li>
+<li>移除该进程通过<code>mlock()</code>或者<code>mlockall()</code>建立的任何内存锁</li>
+<li>取消该进程调用<code>mmap()</code>所创建的任何内存映射</li>
+</ul>
+<h3 id="退出处理程序"><a class="markdownIt-Anchor" href="#退出处理程序"></a> 退出处理程序</h3>
+<p>退出处理程序指的是由程序设计者提供的函数，在调用<code>exit()</code>使得程序正常终止时会自动执行（异常终止或者调用<code>_exit()</code>则不会调用）。注册退出处理程序的函数有两个：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">atexit</span><span class="params">(<span class="keyword">void</span> (*func)(<span class="keyword">void</span>))</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">on_exit</span><span class="params">(<span class="keyword">void</span> (*func)(<span class="keyword">int</span>, <span class="keyword">void</span>*), <span class="keyword">void</span>* args)</span></span>;</span><br><span class="line"><span class="comment">//返回0代表成功，非0值代表失败</span></span><br></pre></td></tr></table></figure>
+<p>可以注册多个退出处理程序，甚至将同一个函数注册多次。当应用程序调用<code>exit()</code>时，这些函数的执行顺序与注册顺序相反。但是如果其中任意一个退出处理程序无法返回，那么就不再调用剩余的处理程序。</p>
+<p>通过<code>fork()</code>创建的子进程会继承父进程注册的退出处理函数。而进程调用<code>exec()</code>时，会移除所有已注册的退出处理程序。</p>
+<h2 id="进程监控"><a class="markdownIt-Anchor" href="#进程监控"></a> 进程监控</h2>
+<h3 id="等待子进程"><a class="markdownIt-Anchor" href="#等待子进程"></a> 等待子进程</h3>
+<p>对于需要创建子进程的程序来说，父进程可以监测子进程的终止时间和过程是很有必要的。系统调用<code>wait()</code>等待调用进程的任意一个子进程终止，同时在参数<code>status</code>所指向的缓冲区中返回该子进程的终止状态：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">wait</span><span class="params">(<span class="keyword">int</span>* status)</span> <span class="comment">//如果成功则返回终止的进程ID号，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>这一系统调用会执行如下的动作：</p>
+<ol>
+<li>如果调用这一函数时没有任何子进程终止，则这一调用将一直阻塞，直到某个子进程终止；如果调用时已有子进程终止，则立即返回。需要注意的是，如果在同一时刻有多个子进程同时退出，<code>wait</code>处理它们的顺序没有任何的规定。</li>
+<li>如果<code>status</code>非空，则关于子进程如何终止的信息会通过它指向的整型变量返回</li>
+<li>内核将为父进程下所有子进程的运行总量追加进程CPU时间以及资源使用数据</li>
+<li>将终止子进程的ID作为<code>wait()</code>的结果返回</li>
+</ol>
+<p>出错时返回-1，可能的错误原因之一是调用进程并无已经终止的子进程，此时会将<code>errno</code>设置为ECHILD。</p>
+<p>系统调用<code>wait()</code>存在很多限制，包括：</p>
+<ul>
+<li>如果父进程已经创建了多个子进程，无法等待某个特定子进程的完成，只能按顺序等待下一个子进程的终止</li>
+<li>如果没有子进程退出，则一直保持阻塞状态。有时会希望执行非阻塞的等待</li>
+<li>只能发现那些已经终止的子进程，无法处理子进程因为某个信号而停止或者已停止子进程收到信号恢复执行的情况</li>
+</ul>
+<p>为了解决这些限制，可以使用<code>waitpid()</code>系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">waitpid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span>* status, <span class="keyword">int</span> options)</span> <span class="comment">//如果成功则返回子进程ID，失败则返回0或-1</span></span></span><br></pre></td></tr></table></figure>
+<p><code>waitpid</code>与<code>wait</code>的返回值和<code>status</code>参数的含义相同。参数<code>pid</code>表示需要等待的具体子进程，如果大于0则表示等待进程ID为<code>pid</code>的子进程，如果等于0则等待与父进程同一个进程组的所有子进程，如果小于-1则等待进程标识符等于<code>pid</code>绝对值的所有子进程，如果等于-1则等待任意子进程。参数<code>options</code>是一个位掩码，可以按位或操作包含这些标志：<code>WUNTRACED</code>（除返回终止子进程的信息外，还返回因信号而停止的子进程信息）、<code>WCONTINUED</code>（返回那些收到SIGCONT信号而恢复执行的已停止子进程的状态信息）、<code>WNOHANG</code>（如果参数<code>pid</code>指定的子进程并未发生状态改变，则立即返回而不会阻塞，此时返回0。</p>
+<p>由<code>wait</code>或者<code>waitpid</code>返回的<code>status</code>值可以用来区分不同的子进程事件。有一组标准宏可以用来解析等待状态值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line">WIFEXITED(status) <span class="comment">//如果子进程正常结束则返回真，使用宏WEXITSTATUS(status)可以进一步查看子进程的退出状态</span></span><br><span class="line">WIFSIGNALED(status) <span class="comment">//如果通过信号杀死子进程则返回真，使用宏WTERMSIG(status)返回导致子进程终止的信号编号</span></span><br><span class="line">WIFSTOPPED(status) <span class="comment">// 如果子进程因为信号而停止则返回真，使用WSTOPSIG(status)可以返回导致子进程停止的信号编号</span></span><br><span class="line">WIFCONTINUED(status) <span class="comment">//如果子进程收到SIGCONT而恢复执行，则返回真</span></span><br></pre></td></tr></table></figure>
+<p>在Linux系统中，也可以使用<code>waitid</code>系统调用来等待子进程：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">waitid</span><span class="params">(<span class="keyword">idtype_t</span> idtype, <span class="keyword">id_t</span> id, <span class="keyword">siginfo_t</span>* infop, <span class="keyword">int</span> options)</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回-1代表失败，如果返回0则代表成功，或者是在设置WNOHANG标志下无子进程可以等待</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>idtype</code>和<code>id</code>指定了需要等待的子进程，<code>idtype</code>可以为下面三个参数中的其中一个：</p>
+<ul>
+<li><code>P_ALL</code>：等待任何子进程，同时忽略id值</li>
+<li><code>P_PID</code>：等待进程ID为id进程的子进程</li>
+<li><code>P_PGID</code>：等待进程组ID为id各进程的所有子进程</li>
+</ul>
+<p><code>waitid</code>可以更加精确地控制子进程，可以通过位运算指定如下的标识：</p>
+<ul>
+<li><code>WEXITED</code>：等待已终止的子进程，无论其是否正常返回</li>
+<li><code>WSTOPPED</code>：等待已通过信号而停止的子进程</li>
+<li><code>WCONTINUED</code>：等待经信号SIGCONT恢复的子进程</li>
+<li><code>WNOHANG</code>：非阻塞调用</li>
+<li><code>WNOWAIT</code>：返回子进程状态，但子进程依然处于可等待状态，稍后可再次等待并获取相同信息</li>
+</ul>
+<h3 id="孤儿进程与僵尸进程"><a class="markdownIt-Anchor" href="#孤儿进程与僵尸进程"></a> 孤儿进程与僵尸进程</h3>
+<p>孤儿进程指的是父进程先于子进程结束的情况，此时孤儿进程将会由<code>init</code>进程（进程ID为1，即所有进程始祖）来接管。</p>
+<p>僵尸进程指的是在父进程执行<code>wait</code>之前就已经终止的子进程。此时，内核会将子进程转为僵尸进程，这将会释放掉子进程使用的大部分资源供其它进程使用。子进程会在内核进程表中保留一条记录，其中包含子进程ID、终止状态、资源使用数据等信息。这确保了父进程总是可以执行<code>wait</code>方法。当父进程执行完<code>wait</code>之后，内核会自动删除僵尸进程；如果父进程结束之前没有调用<code>wait</code>，那么init进程将会接管这些僵尸进程并删除。</p>
+<p>因此，如果父进程创建了某一子进程且一直未退出，但是未执行<code>wait</code>，在内核的进程表中将为这一子进程永久保留一条记录，如果存在大量的僵尸进程，它们将会填满内核进程表，从而阻碍新进程的创建。在设计长生命周期的父进程（如网络服务器和shell）时要特别注意这一点。</p>
+<h3 id="sigchld信号"><a class="markdownIt-Anchor" href="#sigchld信号"></a> SIGCHLD信号</h3>
+<p>前面介绍的系统调用将会导致阻塞或者轮询，从而造成了CPU资源浪费，并增加了应用程序复杂度。为了规避这些问题，可以采样针对SIGCHLD信号的处理程序。</p>
+<p>无论一个子进程于何时终止，系统都会向其父进程发送SIGCHLD 信号。对该信号的默认处理是将其忽略，不过也可以使用信号处理程序来捕获它。还有另一种移植性稍差的处理方法，进程可选择将对SIGCHLD 信号的处置置为忽略（<code>SIG_IGN</code>），这时将立即丢弃终止子进程的状态（因此其父进程从此也无法获取到这些信息），子进程也不会成为僵尸进程。</p>
+<h2 id="程序执行"><a class="markdownIt-Anchor" href="#程序执行"></a> 程序执行</h2>
+<h3 id="执行新程序"><a class="markdownIt-Anchor" href="#执行新程序"></a> 执行新程序</h3>
+<p>系统调用<code>execve()</code>可以将新程序加载到某一进程的内存空间。在这一操作过程中，将会丢弃掉旧的程序，而进程的栈、数据和堆段也将会被新程序的对应部分替换。在执行了各种C语言函数库的运行时启动代码和程序的初始化代码之后，将会从新程序的<code>main()</code>函数处开始执行。这一系统调用的使用方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execve</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">char</span>* <span class="keyword">const</span> argv[], <span class="keyword">char</span>* <span class="keyword">const</span> envp[])</span></span>; <span class="comment">//如果执行失败则返回-1，成功则永不返回</span></span><br></pre></td></tr></table></figure>
+<p>其中，参数<code>pathname</code>包含了准备载入当前进程空间新程序的路径名，可以为绝对或者相对路径；参数<code>argv</code>用来给程序传递命令行参数；最后一个参数<code>envp</code>指定了新程序的的环境列表。在调用<code>execve</code>之后，因为同一进程依然存在，所以进程ID保持不变。</p>
+<p>如果函数返回则表明发生错误，可以从<code>errno</code>来判断原因。可能返回的错误有：<code>EACCES</code>，代表<code>pathname</code>指向的不是常规文件、文件不可执行或者其中某一级目录不可搜索；<code>ENOENT</code>，代表<code>pathname</code>指向的文件不存在；<code>ENOEXEC</code>，代表系统无法识别文件格式；<code>ETXTBSY</code>，代表存在进程以写入方式打开<code>pathname</code>指代的文件；<code>E2BIG</code>，代表参数列表和环境列表所需空间总和超出了允许的最大值。</p>
+<p>基于<code>execve</code>系统调用，还有下面的多种库函数可以选择，它们在为新程序指定程序名、参数列表以及环境变量的方式上有所不同：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execle</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* arg, …, <span class="keyword">char</span>* <span class="literal">NULL</span>, <span class="keyword">char</span>* <span class="keyword">const</span> envp[])</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execlp</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* arg, …, <span class="keyword">char</span>* <span class="literal">NULL</span>)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execvp</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execv</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execl</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">const</span> <span class="keyword">char</span>* arg, …, <span class="keyword">char</span>* <span class="literal">NULL</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>这些函数的差异体现在函数名称在<code>exec</code>之后的不同后缀：</p>
+<ul>
+<li>后缀p代表系统会在由环境变量PATH所指定的目录列表中寻找相应的执行文件，允许只提供程序的文件名而不提供完整路径。如果文件名称中包含&quot;/&quot;则将其视为相对或者绝对路径名，不再使用变量PATH来搜索文件。</li>
+<li>后缀l代表以字符串列表的形式来指定参数，而不使用数组来描述<code>argv</code>列表。字符串列表需要以NULL指针来终止。</li>
+<li>后缀e代表允许手动为新程序指定环境变量，而其余函数则使用调用者当前环境作为新程序的环境</li>
+</ul>
+<h3 id="文件描述符与信号"><a class="markdownIt-Anchor" href="#文件描述符与信号"></a> 文件描述符与信号</h3>
+<p>默认情况下，由<code>exec()</code>的调用程序所打开的所有文件描述符在<code>exec()</code>的执行过程中会保持打开状态，且在新程序中依然有效。如果要改变这一设定，可以在打开文件描述符时设置<code>FD_CLOEXEC</code>标志。</p>
+<p><code>exec()</code>在执行时会将现有进程的文本段丢弃。该文本段可能包含了由调用进程创建的信号处理器程序。既然处理器已经不知所踪，内核就会将对所有已设信号的处置重置为<code>SIG_DFL</code>，而对所有其他信号（即将处置置为<code>SIG_IGN</code>或<code>SIG_DFL</code>的信号）的处置则保持不变。</p>
+<h3 id="执行shell命令"><a class="markdownIt-Anchor" href="#执行shell命令"></a> 执行shell命令</h3>
+<p>程序可以通过调用<code>system()</code>函数来执行任意的shell命令，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">system</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* command)</span></span></span><br></pre></td></tr></table></figure>
+<p>函数会创建一个子进程来运行shell，并执行命令<code>command</code>。它的使用十分简便，但是效率很低，因为在调用过程中需要创建至少两个进程，一个用于运行shell，另一个或者多个用于shell所执行的命令。</p>
+<h1 id="信号"><a class="markdownIt-Anchor" href="#信号"></a> 信号</h1>
+<h2 id="概述-2"><a class="markdownIt-Anchor" href="#概述-2"></a> 概述</h2>
+<h3 id="信号产生"><a class="markdownIt-Anchor" href="#信号产生"></a> 信号产生</h3>
+<p>信号是事件发生时对进程的通知机制，有时也被称为软件中断。一个具有合适权限的进程可以向另一个进程发送信号，这一用法可以作为一种同步技术，或是进程间通信的方式。但是将信号利用于通信的场景很少，因为标准信号不能排队处理，实时信号也存在对信号排队数量的限制，而且信号可携带的信息量也有限。</p>
+<p>发往进程的信号通常都源于内核，引发内核为进程产生信号的各类事件包括：</p>
+<ul>
+<li>硬件发生异常，即硬件检测到一个错误条件并通知内核，然后再由内核发送相应信号给相关进程。硬件异常的例子包括执行一条异常的机器语言指令、引用无法访问的内存区域等。</li>
+<li>用户键入能够产生信号的终端特殊字符，包括中断字符、暂停字符等。</li>
+<li>发生了软件事件。例如针对于文件描述符的输出变为有效、定时器到期、进程执行的CPU事件超限、进程的某个子进程退出等。</li>
+</ul>
+<p>信号的生成分为两种方式：同步生成和异步生成。异步生成指的是引发信号产生的事件与进程的执行无关，例如子进程终止、输入中断字符等。对于这类信号，进程一般无法预测其接收信号的时间。而另一种为同步生成，指的是进程本身的执行产生信号，例如执行特定的机器语言指令导致了硬件异常，或者是进程使用<code>raise()</code>、<code>kill()</code>或者<code>killpg()</code>向自身发送信号。</p>
+<p>针对于每个信号，都定义了一个唯一的小整数，从1开始对它们进行标记。在头文件<code>&lt;signal.h&gt;</code>中，以<code>SIGxxxx</code>形式的符号名对这些整数做了定义。在Linux中，编号1-31所对应的信号为标准信号，用于内核向进程通知事件；而其余编号表示实时信号。</p>
+<h3 id="信号的传递与响应"><a class="markdownIt-Anchor" href="#信号的传递与响应"></a> 信号的传递与响应</h3>
+<p>同步产生的信号会立即传递，例如硬件异常会触发一个即时信号；而当进程使用<code>raise()</code>向自身发送信号时，信号也会在<code>raise()</code>调用返回之前就已经发出。</p>
+<p>而对于异步信号来说，它们在产生之后，可能会在稍后被传递给某一个进程，中间可能会存在一个瞬时延迟。在产生和到达期间，信号处于等待状态。这是因为内核将等待信号传递给进程的时机为，该进程正在执行，且发生由内核态到用户态的下一次切换时。这意味着只有在系统调用完成时，或者进程再度获得调度时（即一个时间片的开始处），才会发生信号的传递。</p>
+<p>如果要确保一段代码不被传递来的信号所中断，可以将信号添加到进程的信号掩码中，这样便会阻塞信号的到达。如果所产生的信号属于阻塞之列，则信号将保持等待状态直到稍后对其解除阻塞。如果一个进程同时解除对多个等待信号的阻塞，那么所有这些信号都会立即传递给该进程。Linux内核会按照信号编号的升序来传递信号。</p>
+<p>信号到达之后，进程将视具体信号执行如下的默认操作之一：</p>
+<ul>
+<li>忽略信号：内核将信号丢弃，信号对进程没有产生任何影响（相当于进程永远不知道曾经出现过该信号）</li>
+<li>终止进程：进程异常终止</li>
+<li>产生核心转储文件，同时进程终止：核心转储文件包含了进程虚拟内存的镜像，可将其加载到调试器中，以检查进程终止时的状态</li>
+<li>停止进程：暂停进程的执行</li>
+<li>恢复进程：在之前暂停之后，再次恢复进程的执行</li>
+</ul>
+<blockquote>
+<p>备注—核心转储文件的概念：</p>
+<p>特定信号会引发进程创建一个核心转储文件并终止运行，核心转储指的是内含进程终止时内存映像的一个文件。将这一内存映像加载到调试器中，即可查明信号到达时程序代码和数据的状态。</p>
+<p>例如在程序运行时键入退出字符（Ctrl+\），则会生成SIGQUIT信号，此时shell会显示core dump信息，代表生成了核心转储文件。这一文件创建于进程的工作目录中，名为core。</p>
+</blockquote>
+<p>除了根据特定信号产生上述的默认行为，程序也可以改变信号到达时的响应行为，也将其称为对信号的处置设置。程序可将信号的处置设为如下之一：</p>
+<ul>
+<li>采取默认行为：即撤销之前对于信号处置的修改，恢复其默认处置</li>
+<li>忽略信号：适用于默认行为是终止进程的信号</li>
+<li>执行信号处理器程序：这一程序是程序员编写的函数，用于执行适当任务以响应传递来的信号</li>
+</ul>
+<h3 id="信号类型"><a class="markdownIt-Anchor" href="#信号类型"></a> 信号类型</h3>
+<p>下表所示为Linux系统与信号相关的信息：</p>
+<img data-src="image-20210701143620837.png" alt="image-20210701143620837" style="zoom:67%;" />
+<p>其中，信号值在不同的硬件架构下也具有不同的编号。默认列显示的是信号的默认行为，term表示信号终止进程，core表示进程产生核心转储文件并退出，ignore表示忽略该信号，stop表示信号停止了进程，cont表示信号恢复了一个已停止的进程。</p>
+<h2 id="信号集"><a class="markdownIt-Anchor" href="#信号集"></a> 信号集</h2>
+<p>许多信号相关的系统调用都需要能够表示一组不同的信号。多个信号可以使用一个称为信号集的数据结构来表示，其系统数据类型为<code>sigset_t</code>。可以用来操纵信号集的函数有：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigemptyset</span><span class="params">(<span class="keyword">sigset_t</span>* <span class="built_in">set</span>)</span> <span class="comment">//初始化一个未包含任何成员的信号集</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigfillset</span><span class="params">(<span class="keyword">sigset_t</span>* <span class="built_in">set</span>)</span> <span class="comment">//初始化一个信号集，使其包含所有信号</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigaddset</span><span class="params">(<span class="keyword">sigset_t</span>* <span class="built_in">set</span>, <span class="keyword">int</span> sig)</span> <span class="comment">//向一个信号集中添加单个信号</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigdelset</span><span class="params">(<span class="keyword">sigset_t</span>* <span class="built_in">set</span>, <span class="keyword">int</span> sig)</span> <span class="comment">//移除一个信号集中的单个信号</span></span></span><br><span class="line"><span class="function"><span class="comment">//上面四个函数返回0表示成功，返回-1表示失败</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigismember</span><span class="params">(<span class="keyword">const</span> <span class="keyword">sigset_t</span>* <span class="built_in">set</span>, <span class="keyword">int</span> sig)</span> <span class="comment">//判断信号sig是否是信号集set的成员，如果是则返回1，否则返回0</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigandset</span><span class="params">(<span class="keyword">sigset_t</span>* dest, <span class="keyword">sigset_t</span>* left, <span class="keyword">sigset_t</span>* right)</span> <span class="comment">//将left与right的交集放在dest集</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigorset</span><span class="params">(<span class="keyword">sigset_t</span>* dest, <span class="keyword">sigset_t</span>* left, <span class="keyword">sigset_t</span>* right)</span> <span class="comment">//将left与right的并集放在dest集</span></span></span><br><span class="line"><span class="function"><span class="comment">//上面两个函数返回0表示成功，返回-1表示失败</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigisemptyset</span><span class="params">(<span class="keyword">const</span> <span class="keyword">sigset_t</span>* <span class="built_in">set</span>)</span> <span class="comment">//如果set是一个空信号集则返回1，否则返回0</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="信号掩码"><a class="markdownIt-Anchor" href="#信号掩码"></a> 信号掩码</h2>
+<p>内核会为每个进程维护一个信号掩码，即一组信号，并将阻塞其针对该进程的传递。如果将遭阻塞的信号发送给某进程，那么对该信号的传递将延后，直至从进程信号掩码中移除该信号，从而解除阻塞为止。</p>
+<p>向信号掩码中添加信号的方式有：</p>
+<ul>
+<li>调用信号处理器程序时，可将引发调用的信号自动添加到信号掩码中，是否发生这一情况要视<code>sigaction()</code>函数在安装信号处理器程序时使用的标志而定。</li>
+<li>使用<code>sigaction()</code>函数建立信号处理器程序时，可以指定一组额外信号，当调用该处理器程序时会将其阻塞。</li>
+<li>使用<code>sigprocmask()</code>系统调用，随时显式地向信号掩码中添加或者移除信号。</li>
+</ul>
+<p><code>sigprocmask()</code>的使用方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigprocmask</span><span class="params">(<span class="keyword">int</span> how, <span class="keyword">const</span> <span class="keyword">sigset_t</span>* <span class="built_in">set</span>, <span class="keyword">sigset_t</span>* oldset)</span> <span class="comment">//返回0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p>这一函数既可以修改进程的信号掩码，也可以获得现有的掩码。其中，<code>how</code>参数指定了函数想给信号掩码带来的变化，它的值可以为：</p>
+<ul>
+<li>SIG_BLOCK：将<code>set</code>指向信号集内的指定信号添加到信号掩码中</li>
+<li>SIG_UNBLOCK：将<code>set</code>指向信号集内的指定信号从信号掩码中移除</li>
+<li>SIG_SETMASK：将<code>set</code>指向的信号集赋给信号掩码</li>
+</ul>
+<p>如果<code>oldset</code>参数不为空，则它应该指向一个<code>sigset_t</code>结构的缓冲区，用于返回之前的信号掩码。如果要获取信号掩码但是对其不做改动，则可以将<code>set</code>参数设为空值，此时将忽略<code>how</code>参数。</p>
+<h2 id="特殊信号"><a class="markdownIt-Anchor" href="#特殊信号"></a> 特殊信号</h2>
+<p>一些特定的信号在传递、处置和处理方面适用于一些特殊规则：</p>
+<ul>
+<li>SIGKILL和SIGSTOP：SIGKILL的默认行为是终止一个进程，SIGSTOP信号的默认行为是停止一个进程，二者的默认行为均无法改变。同样，这两个信号也不能被阻塞。</li>
+<li>SIGCONT和停止信号：如果一个进程处于停止状态，那么一个SIGCONT 信号的到来总是会促使其恢复运行，即使该进程正在阻塞或者忽略SIGCONT 信号。因为只有这种方法可以恢复一个处于停止状态的进程。每当进程收到SIGCONT 信号时，会将处于等待状态的停止信号丢弃。相反，如果任何停止信号传递给了进程，那么进程将自动丢弃任何处于等待状态的SIGCONT 信号。</li>
+<li>如果程序在执行时发现，已将对由终端产生信号的处置置为了SIG_IGN（忽略），那么程序通常不应试图去改变信号处置。与之相关的信号有：SIGHUP、SIGINT、SIGQUIT、SIGTTIN、SIGTTOU 和SIGTSTP。</li>
+</ul>
+<p>而系统中的硬件异常也可以产生SIGBUS、SIGFPE、SIGILL，和SIGSEGV信号，在硬件异常的情况下，如果进程从此类信号的处理器函数中返回，或者是进程忽略或阻塞了这类信号，那么进程的行为未定义。正确处理硬件产生信号的方法有两种，要么接受信号的默认行为（进程终止），要么为其编写不会正常返回的处理器函数。</p>
+<h2 id="改变信号处置"><a class="markdownIt-Anchor" href="#改变信号处置"></a> 改变信号处置</h2>
+<h3 id="api-2"><a class="markdownIt-Anchor" href="#api-2"></a> API</h3>
+<p>UNIX系统提供了两种方法来改变信号处置：<code>signal()</code>和<code>sigaction()</code>。<code>signal()</code>的接口相对简单，但是它的行为在不同的UNIX实现之间存在差异。因此，建立信号处理器应该优先考虑使用<code>sigaction()</code>函数。</p>
+<p><code>signal</code>的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="keyword">void</span>(*signal(<span class="keyword">int</span> sig, <span class="keyword">void</span> (*handler)(<span class="keyword">int</span>))) (<span class="keyword">int</span>);</span><br></pre></td></tr></table></figure>
+<p>其中，第一个参数<code>sig</code>标识希望修改处置的信号编号；第二个参数<code>handler</code>则标识信号抵达时所调用函数的地址。该函数无返回值，并接受一个整型参数。<code>handler</code>所对应的信号处理器函数一般具有如下格式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handler</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">/*Code for handler*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果调用<code>signal</code>成功，则返回之前的信号处置函数，它是一枚指针，指向带有一个整型参数且无返回值的函数。</p>
+<p><code>handler</code>参数也可以用如下值来代替函数地址：</p>
+<ul>
+<li><code>SIG_DFL</code>：将信号处置重置为默认值</li>
+<li><code>SIG_IGN</code>：忽略该信号</li>
+</ul>
+<p><code>sigaction</code>的用法比<code>signal</code>要更灵活一些。<code>sigaction()</code>允许在获取信号处置的同时无需将其改变，并且，还可设置各种属性对调用信号处理器程序时的行为施以更加精准的控制。此外，在建立信号处理器程序时，<code>sigaction()</code>较之<code>signal()</code>函数可移植性更佳。它的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigaction</span><span class="params">(<span class="keyword">int</span> sig, <span class="keyword">const</span> struct sigaction* act, struct sigaction* oldact)</span> <span class="comment">//返回0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<p><code>sig</code>参数标识想要获取或改变的信号编号。该参数可以是除去SIGKILL和SIGSTOP之外的任何信号。<code>act</code>参数是一枚指针，指向描述信号新处置的数据结构。如果仅对信号的现有处置感兴趣，那么可将该参数指定为<code>NULL</code>。<code>oldact</code>参数是指向同一结构类型的指针，用来返回之前信号处置的相关信息。如果无意获取此类信息，那么可将该参数指定为<code>NULL</code>。</p>
+<p><code>sigaction</code>结构类型如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span>&#123;</span></span><br><span class="line">	<span class="keyword">union</span>&#123;</span><br><span class="line">        <span class="keyword">void</span> (*sa_handler)(<span class="keyword">int</span>); </span><br><span class="line">        <span class="keyword">void</span> (*sa_sigaction)(<span class="keyword">int</span>, <span class="keyword">siginfo_t</span>*, <span class="keyword">void</span>*);</span><br><span class="line">    &#125;__sigaction_handler; <span class="comment">//对应于signal函数的handler参数</span></span><br><span class="line">	<span class="keyword">sigset_t</span> sa_mask; <span class="comment">//信号掩码</span></span><br><span class="line">	<span class="keyword">int</span> sa_flags; <span class="comment">//位掩码</span></span><br><span class="line">	<span class="keyword">void</span> (*sa_restorer)(<span class="keyword">void</span>); <span class="comment">//仅供内部使用，用于确保信号处理器程序完成之后，会调用专用的sigreturn()系统调用，借此来恢复进程的执行上下文</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>sa_mask</code>字段定义了一组信号，在调用由<code>sa_handler</code>所定义的处理器程序时将阻塞该组信号。当调用信号处理器程序时，会在调用信号处理器之前，将该组信号中当前未处于进程掩码之列的任何信号自动添加到进程掩码中。这些信号将保留在进程掩码中，直至信号处理器函数返回，届时将自动删除这些信号。此外，引发对处理器程序调用的信号将自动添加到进程信号掩码中，保证不会递归地中断自己。</p>
+<p>而<code>sa_flags</code>字段是一个位掩码，指定用于控制信号处理过程中的各种选项。</p>
+<h3 id="信号处理器函数"><a class="markdownIt-Anchor" href="#信号处理器函数"></a> 信号处理器函数</h3>
+<h4 id="设计原则"><a class="markdownIt-Anchor" href="#设计原则"></a> 设计原则</h4>
+<p>信号处理器程序（也称为信号捕捉器）是当指定信号传递给进程时将会调用的一个函数。调用信号处理器程序，可能会随时打断主程序流程；内核代表进程来调用处理器程序，当处理器返回时，主程序会在处理器打断的位置恢复执行。</p>
+<p>一般而言，信号处理器函数设计地越简单越好，这将降低引发竞争条件的风险。两种常见的设计方式为：</p>
+<ol>
+<li>信号处理器函数设置全局性标志变量并退出。主程序对此标志进行周期性检查，一旦置位便采取相应动作</li>
+<li>信号处理器函数执行某种类型的清理动作，接着终止进程或者使用非本地跳转，将栈解开并将控制返回到主程序的预定位置</li>
+</ol>
+<p>在信号处理器函数中，并非所有的系统调用和库函数都可以安全调用。在编写信号处理器函数时有两种选择：</p>
+<ul>
+<li>确保信号处理器函数代码本身可重入，且只调用异步信号安全的函数</li>
+<li>当主程序执行不安全函数，或者操作信号处理器函数也可以更新的全局数据结构时，阻塞信号的传递（这一要求有些困难，）</li>
+</ul>
+<blockquote>
+<p>备注—可重入与异步信号安全的概念</p>
+<p>可重入指的是，函数由两条或多条线程调用时，即便是交叉执行，其效果也与各线程以未定义顺序依次调用时一致。例如更新全局变量或静态数据结构的函数可能是不可重入的。</p>
+<p>如果某一函数是可重入的，又或者信号处理器函数无法将其中断时，就称该函数是异步信号安全的。</p>
+</blockquote>
+<p>而如果必须要共享某些全局变量，则可以在声明变量的时候使用<code>volatile</code>关键字，并且使用<code>sig_atomic_t</code>来保证读写操作的原子性。也就是说，所有在主程序和信号处理器函数之间共享的全局变量应声明为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="keyword">sig_atomic_t</span> flag</span><br></pre></td></tr></table></figure>
+<h4 id="终止信号处理器函数"><a class="markdownIt-Anchor" href="#终止信号处理器函数"></a> 终止信号处理器函数</h4>
+<p>信号处理器函数的终止方式包括：</p>
+<ul>
+<li>返回主程序</li>
+<li>使用<code>_exit()</code>终止进程，处理器函数可以提前做一些清理工作</li>
+<li>使用<code>kill()</code>发送信号来杀掉进程</li>
+<li>从信号处理器函数中执行非本地跳转</li>
+<li>使用<code>abort()</code>函数终止进程，并产生核心转储</li>
+</ul>
+<p>如果使用<code>longjmp()</code>来退出信号处理器函数，这一系统调用是否会恢复信号掩码取决于具体的UNIX实现。因此，最好是使用如下一对系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;setjmp.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigsetjmp</span><span class="params">(sigjmp_buf env, <span class="keyword">int</span> savesigs)</span> <span class="comment">//第一次调用设置跳转点时返回0，通过siglongjmp返回跳转点时返回非0值</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">siglongjmp</span><span class="params">(sigjmp_buf env, <span class="keyword">int</span> val)</span></span></span><br></pre></td></tr></table></figure>
+<p>在<code>sigsetjmp</code>函数中多出了一个参数<code>savesigs</code>，如果它被设置为非0值，那么<code>sigsetjmp</code>会将进程的当前掩码保存在<code>env</code>中，之后通过相同<code>env</code>参数的<code>siglongjmp</code>调用进行恢复；如果它被设置为0，则不会保存和恢复进程的信号掩码。</p>
+<p>需要注意的是，这两个函数都不是异步信号安全的。</p>
+<p><code>abort()</code>的使用方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">abort</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>函数<code>abort()</code>通过产生<code>SIGABRT</code>信号来终止调用进程，对这一信号的默认动作是产生核心转储文件并终止进程。无论阻塞或者忽略<code>SIGABRT</code>信号，<code>abort()</code>调用均不受影响；而且除非进程捕获<code>SIGABRT</code>信号之后信号处理器函数尚未返回，否则<code>abort()</code>必须终止进程。</p>
+<h4 id="sa_siginfo标志"><a class="markdownIt-Anchor" href="#sa_siginfo标志"></a> SA_SIGINFO标志</h4>
+<p>如果在使用<code>sigaction()</code>创建处理器函数的时候，设置了<code>SA_SIGINFO</code>标志，那么在收到信号时，处理器函数可以获取该信号的一些附加信息。为了获取这一信息，需要将处理器函数声明如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handler</span><span class="params">(<span class="keyword">int</span> sig, <span class="keyword">siginfo_t</span>* siginfo, <span class="keyword">void</span>* ucontext)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>其中<code>sig</code>表示信号编号，<code>siginfo</code>是用于提供信号附加信息的一个数据结构，<code>ucontext</code>则是一个指向<code>ucontext_t</code>类型数据结构的指针，该结构提供了用户上下文信息，用于描述调用信号处理器函数之前的进程状态。</p>
+<h4 id="系统调用的中断和重启"><a class="markdownIt-Anchor" href="#系统调用的中断和重启"></a> 系统调用的中断和重启</h4>
+<p>信号处理器函数返回之后，默认情况下，系统调用失败，并将<code>errno</code>设置为EINTR。如果希望遭到中断的系统调用可以继续运行，则可以在<code>sigaction</code>调用中设置<code>SA_RESTART</code>标志。</p>
+<p>需要注意的是，并非所有的系统调用都可以通过指定<code>SA_RESTART</code>来达到自动重启的目的。</p>
+<h2 id="信号相关操作"><a class="markdownIt-Anchor" href="#信号相关操作"></a> 信号相关操作</h2>
+<h3 id="发送信号"><a class="markdownIt-Anchor" href="#发送信号"></a> 发送信号</h3>
+<p>一个进程可以使用<code>kill()</code>系统调用向另一个进程发送信号（之所以用kill，是因为早期的UNIX实现中，大多数信号的默认行为是终止进程）。它的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kill</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> sig)</span> <span class="comment">//返回0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<p>其中<code>sig</code>代表要发送的信号。<code>pid</code>参数用于标识一个或者多个目标进程，如何解释这一参数要视其具体数值：</p>
+<ul>
+<li>如果<code>pid</code>大于0，则发送信号给<code>pid</code>指定的进程</li>
+<li>如果<code>pid</code>等于0，则发送信号给与调用进程同组的每个进程，包括调用进程自身</li>
+<li>如果<code>pid</code>小于-1，那么会向组ID等于该<code>pid</code>绝对值的进程组内所有下属进程发送信号</li>
+<li>如果<code>pid</code>等于-1，那么除去init和调用进程自身之外，给它有权将信号发往的所有进程发送信号。这一方式也称为广播信号</li>
+</ul>
+<p>如果没有进程与指定的<code>pid</code>匹配，则<code>kill</code>调用失败，同时将<code>errno</code>设置为ESRCH（即查无此进程）。</p>
+<p>进程要发送信号给另一个进程，还需要适当权限，权限的规则如下：</p>
+<ul>
+<li>特权级进程可以向任何进程发送信号</li>
+<li>以root用户和组运行的init进程（进程号为1）仅接收已安装了处理器函数的信号，这可以防止系统管理员意外杀死init进程</li>
+<li><code>SIGCONT</code>信号需要特殊处理。无论对用户ID的检查结果如何，非特权进程可以向同一会话中的任何其他进程发送这一信号</li>
+<li>如果发送者的实际或有效用户ID匹配于接受者的实际用户ID或者保存设置用户ID（saved set-user-id），那么非特权进程也可以向另一进程发送信号</li>
+</ul>
+<p>如果进程无权发送信号给所请求的<code>pid</code>，那么<code>kill()</code>调用将失败，且将<code>errno</code>置为EPERM。若<code>pid</code>所指为一系列进程（即<code>pid</code>是负值）时，只要可以向其中之一发送信号，则<code>kill()</code>调用成功。</p>
+<p><code>kill()</code>函数的另一种用法是，如果将参数<code>sig</code>设置为0（即空信号），则无信号发送。但是此时仍然会执行错误检查，查看是否可以向目标进程发送信号。利用这一特点，可以使用空信号来检测具有特定ID的进程是否存在。如果发送空信号失败，且<code>errno</code>是EPERM，也或者是调用成功，则表示进程存在。</p>
+<p>此外，还有一些其它的发送信号方式。</p>
+<p><code>raise()</code>函数用于给自身发送信号，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">raise</span><span class="params">(<span class="keyword">int</span> sig)</span> <span class="comment">//成功返回0，失败返回一个非0值</span></span></span><br></pre></td></tr></table></figure>
+<p><code>killpg()</code>函数向某一进程组的所有成员发送一个信号，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">killpg</span><span class="params">(<span class="keyword">pid_t</span> pgrp, <span class="keyword">int</span> sig)</span> <span class="comment">//成功返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="显示信号描述"><a class="markdownIt-Anchor" href="#显示信号描述"></a> 显示信号描述</h3>
+<p>每个信号都有一串与之相关的可打印说明，这些描述位于数组<code>sys_siglist</code>中。例如可以直接使用<code>sys_siglist[SIGPIPE]</code>来获取对<code>SIGPIPE</code>信号的描述。另一种办法是使用<code>strsignal</code>函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">strsignal</span><span class="params">(<span class="keyword">int</span> sig)</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">psignal</span><span class="params">(<span class="keyword">int</span> sig, <span class="keyword">const</span> <span class="keyword">char</span>* msg)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>strsignal</code>函数对<code>sig</code>参数进行边界检查，然后返回一枚指针，指向针对于该信号的可打印描述字符串，或者是当信号编号无效时指向错误字符串。</p>
+<p><code>psignal</code>函数所示为<code>msg</code>参数所给定的字符串，后面跟有一个冒号，随后是对应于<code>sig</code>的信号描述。</p>
+<h3 id="处于等待状态的信号"><a class="markdownIt-Anchor" href="#处于等待状态的信号"></a> 处于等待状态的信号</h3>
+<p>如果某进程接受了一个该进程正在阻塞的信号，那么会将该信号填加到进程的等待信号集。当（且如果）之后解除了对该信号的锁定时，会随之将信号传递给此进程。<code>sigpending()</code>系统调用可以确定进程中处于等待状态的信号：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigpending</span><span class="params">(<span class="keyword">sigset_t</span>* <span class="built_in">set</span>)</span> <span class="comment">//返回0表示成功，-1表示失败</span></span></span><br></pre></td></tr></table></figure>
+<p>这一调用为调用进程返回处于等待状态的信号集，并将其置于<code>set</code>指向的<code>sigset_t</code>结构中。而等待信号集仅仅是一个掩码，仅表明信号是否发生，而未表明其发生的次数。如果同一个信号在阻塞状态下发生多次，那么会将该信号记录在等待信号集中，并在随后只传递一次。</p>
+<h3 id="等待信号"><a class="markdownIt-Anchor" href="#等待信号"></a> 等待信号</h3>
+<p>调用<code>pause</code>将暂停进程执行，直到信号处理器函数中断该调用，或者一个未处理信号终止进程。也就是说，只有当前进程接收到信号之后，进程才可能会继续执行下去，否则会一直等待信号的到来。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pause</span><span class="params">(<span class="keyword">void</span>)</span> <span class="comment">//返回-1，并且将errno设置为EINTR</span></span></span><br></pre></td></tr></table></figure>
+<p>处理信号时，<code>pause()</code>会遭到中断并返回。</p>
+<p>在对信号编程时偶尔会遇到如下的情况，需要临时阻塞一个信号，以防止其信号处理器不会将某些关键代码片段的执行中断，然后解除对这一信号的阻塞并暂停执行，直到有信号到达。而解除并暂停执行这一步操作需要保证其原子性，否则可能会出现竞争条件。因此，可以使用<code>sigsuspend</code>系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigsuspend</span><span class="params">(<span class="keyword">const</span> <span class="keyword">sigset_t</span>* mask)</span></span></span><br></pre></td></tr></table></figure>
+<p>这一系统调用将<code>mask</code>所指向的信号集来替换进程的信号掩码，然后挂起进程的指向，直到其捕获到信号，并从信号处理器中返回。一旦处理器返回，进程的信号掩码将被恢复为调用前的值。</p>
+<p>若<code>sigsuspend()</code>因信号的传递而中断，则将返回−1，并将<code>errno</code>置为EINTR。如果<code>mask</code>指向的地址无效，则<code>sigsuspend()</code>调用失败，并将<code>errno</code>置为EFAULT。</p>
+<p>另一个替代方案是使用<code>sigwaitinfo()</code>系统调用，可以用来同步接收信号：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigwaitinfo</span><span class="params">(<span class="keyword">const</span> <span class="keyword">sigset_t</span>* <span class="built_in">set</span>, <span class="keyword">siginfo_t</span>* info)</span> <span class="comment">//成功则返回发送的信号数目，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>这一系统调用会挂起进程的执行，直到<code>set</code>所对应信号集中的某一信号抵达。如果在调用时，<code>set</code>中的某一信号已经处于等待状态，那么函数会立即返回。传递来的信号就会从进程的等待信号队列中移除，并将返回信号编号作为函数结果。</p>
+<p><code>info</code>参数如果不为空，则会指向经初始化处理的<code>siginfo_t</code>结构，其中包含的信息与提供给信号处理器函数的这一参数相同。</p>
+<p>它的一个变体是<code>sigtimedwait()</code>系统调用，这一函数允许指定等待时限：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigtimedwait</span><span class="params">(<span class="keyword">const</span> <span class="keyword">sigset_t</span>* <span class="built_in">set</span>, <span class="keyword">siginfo_t</span>* info, <span class="keyword">const</span> struct timespec* timeout)</span> <span class="comment">//成功则返回发送的信号数目，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>其中<code>timeout</code>参数指向一个<code>timespec</code>数据结构，是指向如下数据结构的一枚指针：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>&#123;</span></span><br><span class="line">	<span class="keyword">time_t</span> tv_sec;</span><br><span class="line">	<span class="keyword">long</span> tv_nsec;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="通过文件描述符获取信号"><a class="markdownIt-Anchor" href="#通过文件描述符获取信号"></a> 通过文件描述符获取信号</h3>
+<p>Linux提供了一个非标准的<code>signalfd()</code>系统调用，利用它可以创建一个特殊的文件描述符，发往调用者的信号都可以从该描述符中读取。用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/signalfd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">signalfd</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">sigset_t</span>* mask, <span class="keyword">int</span> flags)</span> <span class="comment">//成功则返回相应的文件描述符，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>mask</code>参数是一个信号集，指定了有意通过<code>signalfd</code>文件描述符来读取的信号；<code>fd</code>参数如果为-1，则创建一个新的文件描述符，否则会修改与<code>fd</code>相关的<code>mask</code>值，且要求这一<code>fd</code>一定是由之前<code>signalfd()</code>的一次调用创建而得。<code>flags</code>参数可以设置为SFD_CLOEXEC和<code>SFD_NONBLOCK</code>。</p>
+<p>创建了文件描述符之后，便可以使用<code>read()</code>从中读取信号。提供给<code>read</code>的缓冲区必须足够大，至少能够容纳一个<code>signalfd_siginfo</code>结构。</p>
+<h2 id="实时信号"><a class="markdownIt-Anchor" href="#实时信号"></a> 实时信号</h2>
+<h3 id="概述-3"><a class="markdownIt-Anchor" href="#概述-3"></a> 概述</h3>
+<p>实时信号用于弥补对于标准信号的限制，相比于标准信号，它具有如下这些优势：</p>
+<ul>
+<li>信号范围有所扩大，可用于应用程序自定义的目的。</li>
+<li>对实时信号采取队列化管理。如果将某个实时信号的多个实例发送给一个进程，则会多次传递该信号</li>
+<li>当发送一个实时信号时，可为信号指定伴随数据。</li>
+<li>不同实时信号的传递顺序具有保障，信号的优先级与编号有关，编号越小则优先级越高</li>
+</ul>
+<p>在<code>&lt;signal.h&gt;</code>头文件中定义的RTSIG_MAX常量表征实时信号的可用数量，常量SIGRTMIN和SIGRTMAX则分别表示可用实时信号编号的最小值和最大值。</p>
+<h3 id="发送实时信号"><a class="markdownIt-Anchor" href="#发送实时信号"></a> 发送实时信号</h3>
+<p>系统调用<code>sigqueue()</code>将<code>sig</code>指定的实时信号发送给由<code>pid</code>指定的进程。用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sigqueue</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> sig, <span class="keyword">const</span> <span class="keyword">union</span> sigval value)</span> <span class="comment">//返回0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p>使用<code>sigqueue</code>发送信号的权限与<code>kill</code>的要求一致，也可以发送空信号（即信号0）。但是<code>sigqueue</code>不能通过将<code>pid</code>设置为负值而向整个进程组发送信号。参数<code>value</code>是一个<code>sigval</code>类型的联合体，指定了信号的伴随数据，具有以下形式：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span> sigval&#123;</span><br><span class="line">	<span class="keyword">int</span> sival_int;</span><br><span class="line">	<span class="keyword">void</span>* sival_ptr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一旦触及到排队信号的数量限制，<code>sigqueue</code>调用将会失败，同时将<code>errno</code>设置为EAGAIN，表示需要再次发送信号。</p>
+<h3 id="处理实时信号"><a class="markdownIt-Anchor" href="#处理实时信号"></a> 处理实时信号</h3>
+<p>实时信号的处理方式与标准信号一样，可以使用<code>signal()</code>或者<code>sigaction()</code>函数来处理实时信号。</p>
+<h1 id="定时器"><a class="markdownIt-Anchor" href="#定时器"></a> 定时器</h1>
+<h2 id="间隔定时器"><a class="markdownIt-Anchor" href="#间隔定时器"></a> 间隔定时器</h2>
+<p>系统调用<code>setitimer</code>会创建一个间隔式定时器，它会在未来的某个时间点到期，（可选）并于此后每隔一段时间到期一次：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setitimer</span><span class="params">(<span class="keyword">int</span> which, <span class="keyword">const</span> struct itimerval* new_value, struct itimerval* old_value)</span> <span class="comment">//返回0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p><code>which</code>参数可以设置为下面3个值的其中一个：</p>
+<ul>
+<li>ITIMER_REAL：创建以真实时间倒计时的定时器，到期时产生SIGALARM信号</li>
+<li>ITIMER_VIRTUAL：创建以进程虚拟时间（用户模式下的CPU时间）倒计时的定时器，到期产生SIGVTALRM信号</li>
+<li>ITIMER_PROF：创建一个profiling定时器，以进程时间（用户态与内核态CPU时间总和）倒计时，到期产生SIGPROF信号</li>
+</ul>
+<p>对上述所有这些信号的默认处置均会终止进程。</p>
+<p>参数<code>new_value</code>和<code>old_value</code>均为指向结构<code>itimerval</code>的指针，其定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">itimerval</span>&#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">it_interval</span>;</span> </span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">it_value</span>;</span> </span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span>&#123;</span></span><br><span class="line">	<span class="keyword">time_t</span> tv_sec; <span class="comment">//秒数</span></span><br><span class="line">	<span class="keyword">suseconds_t</span> tv_usec; <span class="comment">//微秒</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一个进程只能拥有上述三类计时器的各一个。当第二次调用<code>setitimer</code>时，修改已有定时器的属性要符合参数<code>which</code>中的类型。如果调用<code>setitimer()</code>时将<code>new_value.it_value</code>的两个字段均置为0，那么会屏蔽任何已有的定时器。</p>
+<p>参数<code>new_value</code>的下属结构<code>it_value</code>指定了距离定时器到期的延迟时间。另一下属结构<code>it_interval</code>则说明该定时器是否为周期性定时器。如果<code>it_interval</code>的两个字段值均为0，那么该定时器就属于在<code>it_value</code>所指定的时间间隔后到期的一次性定时器。只要<code>it_interval</code>中的任一字段非0，那么在每次定时器到期之后，都会将定时器重置为在指定间隔后再次到期。</p>
+<p>如果参数<code>old_value</code>不为NULL，则以其所指向的<code>interval</code>结构来返回定时器的前一个设置。如果<code>old_value.it_value</code>的两个字段值均为0，那么该定时器之前处于屏蔽状态；如果<code>old_value.it_interval</code>的两个字段值均为0，那么该定时器之前被设置为一次性定时器。如果不关心定时器的前一个设置，可以将<code>old_value</code>设置为NULL。</p>
+<p>定时器会从初始值<code>it_value</code>开始倒计时至0为止。递减至0时，会有相应的信号发送给进程。随后，如果时间间隔值<code>it_interval</code>非0，则会再次将<code>it_value</code>加载至计时器，重新开始向0倒计时。</p>
+<p>可以在任何时刻调用<code>getitimer()</code>，以了解定时器的当前状态：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getitimer</span><span class="params">(<span class="keyword">int</span> which, <span class="keyword">const</span> struct itimerval* curr_value)</span> <span class="comment">//返回0代表成功，-1代表失败</span></span></span><br></pre></td></tr></table></figure>
+<p>一个更加简单的定时器接口是<code>alarm()</code>系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">alarm</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> seconds)</span></span>; </span><br></pre></td></tr></table></figure>
+<p>其中，参数<code>seconds</code>表示定时器到期的秒数。到期时会向调用进程发送SIGALRM信号。调用<code>alarm</code>会覆盖对定时器的前一个设置，而调用<code>alarm(0)</code>可屏蔽现有定时器。它的返回值是定时器的前一个设置距离到期的剩余秒数，如果未设置定时器则返回0。</p>
+<p>取决于当前负载和对进程的调度，系统可能会在定时器到期的瞬间（通常是几分之一秒）之后才去调度其所属进程。但是后续定时器的调度会严格遵守其设置的时间间隔。而且定时器的精度受制于软件时钟的频率，如果定时器值未能与软件时钟间隔的倍数严格匹配，那么定时器值则会向上取整。</p>
+<h2 id="休眠"><a class="markdownIt-Anchor" href="#休眠"></a> 休眠</h2>
+<p>有时需要将进程挂起一段时间，此时可以使用休眠函数来实现：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">sleep</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> seconds)</span><span class="comment">//休眠正常结束则返回0，如果因信号而中断则返回剩余秒数</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;time.h&gt;</span></span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">nanosleep</span><span class="params">(<span class="keyword">const</span> struct timespec* request, struct timespec* remain)</span> <span class="comment">//返回0代表休眠正常结束，-1代表因信号而中断或者错误。request参数用于设置休眠时间，remain函数为返回的时间</span></span></span><br><span class="line"><span class="function">struct timespec</span>&#123;</span><br><span class="line">    <span class="keyword">time_t</span> tv_sec;</span><br><span class="line">    <span class="keyword">long</span> tv_nsec;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="posix时钟"><a class="markdownIt-Anchor" href="#posix时钟"></a> POSIX时钟</h2>
+<p>POSIX时钟所提供的时钟访问API可以支持纳秒级的时间精度，在Linux中调用此API的程序必须以<code>-lrt</code>选项进行编译，从而与<code>librt</code>函数库相链接。POSIX时钟API的三个主要系统调用如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clock_gettime</span><span class="params">(<span class="keyword">clockid_t</span> clockid, struct timespec* tp)</span> <span class="comment">//针对于clockid指定的时钟返回时间，返回0表示成功，-1表示失败</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clock_getres</span><span class="params">(<span class="keyword">clockid_t</span> clockid, struct timespec* res)</span> <span class="comment">//针对于clockid指定的时钟返回时钟分辨率，返回0表示成功，-1表示失败</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clock_settime</span><span class="params">(<span class="keyword">clockid_t</span> clockid, <span class="keyword">const</span> struct timespec* tp)</span> <span class="comment">//利用参数tp所指向缓冲区中的时间来设置clockid指定的时钟，返回0表示成功，-1表示失败</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clock_getcpuclockid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">clockid_t</span>* clockid)</span> <span class="comment">//获得进程pid的clockid，如果pid为0则返回调用进程的CPU时间时钟ID；clockid指向一个缓冲区。返回0代表成功，失败则返回一个对应于错误类型的正数</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_getcpuclockid</span><span class="params">(<span class="keyword">pthread_t</span> thread, <span class="keyword">clockid_t</span>* clockid)</span> <span class="comment">//获取线程thread的clockid。返回0代表成功，失败则返回一个对应于错误类型的正数</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clock_nanosleep</span><span class="params">(<span class="keyword">clockid_t</span> clockid, <span class="keyword">int</span> flags, <span class="keyword">const</span> struct timespec* request, struct timespec* remain)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>clockid_t</code>数据类型用于表示时钟标识符，一共有四种类型：</p>
+<ul>
+<li>CLOCK_REALTIME：可设定的系统级实时时钟</li>
+<li>CLOCK_MONOTONIC：不可设定的恒定态时钟</li>
+<li>CLOCK_PROCESS_CPUTIME_ID：每进程CPU时间的时钟</li>
+<li>CLOCK_THREAD_CPUTIME_ID：每线程CPU时间的时钟</li>
+</ul>
+<h2 id="posix间隔式定时器"><a class="markdownIt-Anchor" href="#posix间隔式定时器"></a> POSIX间隔式定时器</h2>
+<p><code>setitimer()</code>设置的经典UNIX间隔式定时器存在一些制约，而POSIX定时器可以突破这些限制。在Linux中调用此API的程序必须以<code>-lrt</code>选项进行编译，从而与<code>librt</code>函数库相链接。POSIX定时器的生命周期分为三个阶段：创建、启动/停止、删除。</p>
+<p>相关的API如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">timer_create</span><span class="params">(<span class="keyword">clockid_t</span> clockid, struct sigevent* evp, <span class="keyword">timer_t</span>* timerid)</span> <span class="comment">//创建一个定时器，使用clockid指定的时钟来进行时间度量。evp决定定时器到期时对应用程序的通知方式，timerid为一个缓冲区。</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">timer_settime</span><span class="params">(<span class="keyword">timer_t</span> timerid, <span class="keyword">int</span> flags, <span class="keyword">const</span> struct itimerspec* value, struct itimerspec* old_value)</span> <span class="comment">//启动/停止定时器，timerid由timer_create()调用返回。flags可以为0，代表相对时间；或者为TIMER_ABSTIME，代表绝对时间</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">timer_gettime</span><span class="params">(<span class="keyword">timer_t</span> timerid, struct itimerspec* curr_value)</span> <span class="comment">//返回由timerid指定POSIX定时器的间隔和剩余时间</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">timer_delete</span><span class="params">(<span class="keyword">timer_t</span> timerid)</span> <span class="comment">//删除一个定时器</span></span></span><br><span class="line"><span class="function"><span class="comment">//上述调用成功返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="文件描述符定时器"><a class="markdownIt-Anchor" href="#文件描述符定时器"></a> 文件描述符定时器</h2>
+<p>Linux特有的timerfd API可以从文件描述符中读取其所创建定时器的到期通知。相关的系统调用包括：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/timerfd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">timerfd_create</span><span class="params">(<span class="keyword">int</span> clockid, <span class="keyword">int</span> flags)</span> <span class="comment">//创建一个新的定时器对象，并返回一个指代该对象的文件描述符。参数clockid 的值可以设置为CLOCK_REALTIME或CLOCK_MONOTONIC; flags参数可设为TFD_CLOEXEC或TFD_NONBLOCK</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">timerfd_settime</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> flags, <span class="keyword">const</span> struct itimerspec* value, struct itimerspec* old_value)</span> <span class="comment">//启动/停止定时器</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">timerfd_gettime</span><span class="params">(<span class="keyword">int</span> fd, struct itimerspec* curr_value)</span> <span class="comment">//返回fd标识定时器的间隔和剩余时间</span></span></span><br><span class="line"><span class="function"><span class="comment">//上述调用成功返回0，失败返回-1</span></span></span><br></pre></td></tr></table></figure>
+<p>一旦以<code>timerfd_settime()</code>启动了定时器，就可以从相应文件描述符中调用<code>read()</code>来读取定时器的到期信息。出于这一目的，传给<code>read()</code>的缓冲区必须足以容纳一个无符号8字节整型（<code>uint64_t</code>）数。在上次使用<code>timerfd_settime()</code>修改设置以后，或是最后一次执行<code>read()</code>后，如果发生了一起到多起定时器到期事件，那么<code>read()</code>会立即返回，且返回的缓冲区中包含了已发生的到期次数。如果并无定时器到期，<code>read()</code>会一直阻塞直至产生下一个到期。</p>
+<p>可以利用<code>select()</code>、<code>poll()</code>和<code>epoll()</code>对<code>timerfd</code>文件描述符进行监控。如果定时器到期，会将对应的文件描述符标记为可读。</p>
+<h1 id="线程"><a class="markdownIt-Anchor" href="#线程"></a> 线程</h1>
+<h2 id="概述-4"><a class="markdownIt-Anchor" href="#概述-4"></a> 概述</h2>
+<p>线程是允许应用程序并发执行多个人物的一种机制，一个进程可以包含多个线程。同一程序中的所有线程会独立执行相同区域，且共享同一份全局内存区域。因此，线程之间可以方便、快速地共享信息，同时创建线程的速度也比创建进程要快得多。</p>
+<p>线程之间共享的属性包括：全局内存、进程ID和父进程ID、进程组ID和会话ID、控制终端、进程凭证、打开的文件描述符、记录锁、信号处置、文件系统的相关信息、间隔定时器和POSIX定时器、System V信号量撤销值、资源限制、CPU时间消耗、资源消耗、nice值</p>
+<p>各线程独有的属性包括：线程ID、信号掩码、线程特有数据、备选信号栈、errno变量、浮点型环境、实时调度策略和优先级、CPU亲和力、Linux特有的Capability、栈，本地变量和函数的调用链接信息。</p>
+<h2 id="创建与终止"><a class="markdownIt-Anchor" href="#创建与终止"></a> 创建与终止</h2>
+<p>启动程序时，产生的进程只有单条线程，被称为初始或者主线程。函数<code>pthread_create()</code>负责创建一条新的线程：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_create</span><span class="params">(<span class="keyword">pthread_t</span>* thread, <span class="keyword">const</span> <span class="keyword">pthread_attr_t</span>* attr, <span class="keyword">void</span>*(*start)(<span class="keyword">void</span> *), <span class="keyword">void</span>* arg)</span></span></span><br><span class="line"><span class="function"><span class="comment">//执行成功返回0，识别返回一个正数代表错误码</span></span></span><br></pre></td></tr></table></figure>
+<p>新线程通过调用带有参数<code>arg</code>的函数<code>start</code>，即<code>start(arg)</code>来开始执行。而调用<code>pthread_create</code>的线程则会接着继续执行该调用之后的程序语句。参数<code>thread</code>指向一个<code>pthread_t</code>类型的缓冲区，在<code>pthread_create()</code>返回之前，会在此保持一个该线程的唯一标识，后续的<code>Pthreads</code>函数将会使用该标识来引用此线程。参数<code>attr</code>是一个指向<code>pthread_attr_t</code>对象的指针，该对象指定了新线程的各种属性，如果将其设置为NULL，则创建新线程时将会使用各种默认属性。</p>
+<p>如果要终止线程，有如下几种方法：</p>
+<ul>
+<li>线程start函数执行return语句并返回指定值</li>
+<li>线程调用<code>pthread_exit()</code></li>
+<li>调用<code>pthread_cancel()</code>取消线程</li>
+<li>任意线程调用了<code>exit()</code>，或者主线程执行了return语句，此时会导致进程中的所有线程立即终止。</li>
+</ul>
+<p><code>pthread_exit()</code>函数将终止调用线程，且其返回值可以由另一个线程通过调用<code>pthread_join()</code>来获取，使用方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pthread_exit</span><span class="params">(<span class="keyword">void</span>* retval)</span></span></span><br></pre></td></tr></table></figure>
+<p>执行这一函数相当于在线程的<code>start</code>函数中执行return，但是这一函数可以在线程<code>start</code>函数所调用的任意函数中被调用。参数<code>retval</code>指定了线程的返回值，它所指向的内容不应被分配到线程栈中，因为线程终止之后无法确定线程栈中的内容是否有效。</p>
+<h2 id="线程的连接与分离"><a class="markdownIt-Anchor" href="#线程的连接与分离"></a> 线程的连接与分离</h2>
+<p>默认情况下，线程是可连接的，也就是说当其退出时，其它线程可以获取其返回状态。函数<code>pthread_join()</code>等待由<code>thread</code>标识的线程终止，如果线程已经终止则立刻返回，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_join</span><span class="params">(<span class="keyword">pthread_t</span> thread, <span class="keyword">void</span>** retval)</span> <span class="comment">//返回0代表成功，失败则返回代表失败类型的正数</span></span></span><br></pre></td></tr></table></figure>
+<p>如果<code>retval</code>是非空指针，将会保存线程终止时返回值的拷贝，即线程调用<code>return</code>或者<code>pthread_exit()</code>时传入的值。</p>
+<p>如果线程没有被分离，则必须使用<code>pthread_join</code>来进行连接，否则在线程终止时将会产生一个僵尸线程。</p>
+<p>需要注意的是，一个进程的任意线程都可以调用<code>pthread_join</code>与该进程的任何其它线程连接起来，即线程之间的关系对等；这与进程间的层次关系不同，进程只能由父进程对子进程调用<code>wait</code>。但是可以连接不代表任意线程的连接能够成功，可以限制只能连接特定的线程ID，且线程连接也不能以非阻塞方式进行。</p>
+<p>有时，我们并不关心线程的返回状态，只希望系统在线程终止时可以自动清理并移除，此时可以使用<code>pthread_detach()</code>系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_detach</span><span class="params">(<span class="keyword">pthread_t</span> thread)</span></span>; <span class="comment">//返回0代表成功，失败则返回代表失败类型的正数</span></span><br></pre></td></tr></table></figure>
+<p>这一系统调用传入<code>thread</code>指定要分离的线程标识符，调用成功之后线程便会处于分离状态，在此之后不能再使用<code>pthread_join()</code>来获取其状态，也无法使其重返可连接的状态。</p>
+<h2 id="线程同步"><a class="markdownIt-Anchor" href="#线程同步"></a> 线程同步</h2>
+<h3 id="互斥量"><a class="markdownIt-Anchor" href="#互斥量"></a> 互斥量</h3>
+<p>互斥量用于确保同时仅有一个线程可以访问某一项共享资源，它可以保证访问操作的原子性。互斥量只有两种状态：已锁定和未锁定。任何时候，至多只有一个线程可以锁定该互斥量；而一旦线程锁定互斥量，则成为该互斥量的所有者，只有该线程才可以给互斥量解锁。</p>
+<p>一般情况下，对每一个共享资源会使用不同的互斥量，而每一个线程在访问同一资源时将采用如下步骤：针对共享资源锁定互斥量、访问共享资源、对互斥量解锁。</p>
+<p>创建一个互斥量的方法分为静态和动态两种。静态分配一个互斥量的方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pthread_mutex_t</span> mtx = PTHREAD_MUTEX_INITIALIZER;</span><br></pre></td></tr></table></figure>
+<p>在静态初始化一个互斥量之后，互斥量处于未锁定状态。</p>
+<p>而动态分配与销毁一个互斥量的方法为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_mutex_init</span><span class="params">(<span class="keyword">pthread_mutex_t</span>* mutex, <span class="keyword">const</span> <span class="keyword">pthread_mutexattr_t</span>* attr)</span> </span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_mutex_destroy</span><span class="params">(<span class="keyword">pthread_mutex_t</span>* mutex)</span> </span></span><br><span class="line"><span class="function"><span class="comment">//返回0代表成功，失败则返回代表失败类型的正数</span></span></span><br></pre></td></tr></table></figure>
+<p>在<code>pthread_mutex_init</code>函数中，参数<code>mutex</code>指定函数执行初始化操作的目标互斥量，参数<code>attr</code>是指向<code>pthread_mutexattr_t</code>类型对象的指针，该对象在函数调用之前已经被初始化处理，用于定义互斥量的属性。如果这一参数被设为NULL，那么互斥量的各种属性将会取默认值。而当动态分配的互斥量<code>mutex</code>不需要再被使用之后，便可以使用<code>pthread_mutex_destroy</code>函数将其销毁。</p>
+<p>使用下面两个函数可以锁定或者解锁某个互斥量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_mutex_lock</span><span class="params">(<span class="keyword">pthread_mutex_t</span>* mutex)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_mutex_unlock</span><span class="params">(<span class="keyword">pthread_mutex_t</span>* mutex)</span></span>;</span><br><span class="line"><span class="comment">//返回0代表成功，失败则返回代表失败类型的正数</span></span><br></pre></td></tr></table></figure>
+<p>在调用<code>pthread_mutex_lock</code>时，需要指定互斥量，如果互斥量当前处于未锁定状态，则会锁定互斥量并立即返回；如果其它线程已锁定了这个互斥量，那么这一调用将会一直堵塞，直到该互斥量被解锁，而此时将会锁定互斥量并返回。如果一个线程在调用<code>pthread_mutex_lock</code>时，已经将目标的互斥量锁定，则线程会陷入死锁状态。</p>
+<p>函数<code>pthread_mutex_unlock</code>将会解锁之前已经被锁定的互斥量。如果对处于未锁定状态的互斥量进行解锁，或者是解锁由其它线程锁定的互斥量都会返回错误。</p>
+<p>有时，一个线程需要同时访问两个或更多不同的共享资源，而每个资源又都由不同的互斥量管理。当超过一个线程加锁同一组互斥量时，就有可能发生死锁。要避免此类死锁问题，最简单的方法是定义互斥量的层级关系。当多个线程对一组互斥量操作时，总是应该以相同顺序对该组互斥量进行锁定。</p>
+<p><code>pthread_mutexattr_t</code>类型的变量可为互斥量设置不同的属性。使用<code>pthread_mutexattr_init(pthread_mutexattr_t* attr)</code>函数可以初始化一个<code>pthread_mutexattr_t</code>类型的变量；<code>pthread_mutexattr_settype(pthread_mutexattr_t* attr, int flags)</code>函数可以添加属性；当<code>pthread_mutexattr_t</code>类型的变量不需要再使用时，可以使用函数<code>pthread_mutexattr_destroy(pthread_mutexattr_t&amp; attr)</code>将其释放掉。</p>
+<h3 id="条件变量"><a class="markdownIt-Anchor" href="#条件变量"></a> 条件变量</h3>
+<p>条件变量允许一个线程就某个共享变量（或其他共享资源）的状态变化通知其他线程，并让其他线程等待（堵塞于）这一通知。条件变量总是结合互斥量使用。条件变量就共享变量的状态改变发出通知，而互斥量则提供对该共享变量访问的互斥（mutual exclusion）。</p>
+<p>同互斥量一样，条件变量的分配有静态和动态之分。静态创建的方法为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pthread_cond_t</span> cond = PTHREAD_COND_INITIALIZER;</span><br></pre></td></tr></table></figure>
+<p>动态创建与销毁环境变量的函数如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_init</span><span class="params">(<span class="keyword">pthread_cond_t</span>* cond, <span class="keyword">const</span> <span class="keyword">pthread_condattr_t</span>* attr)</span></span>; <span class="comment">//参数cond代表要初始化的条件变量，attr参数用来设置条件变量的属性，如果设置为NULL则代表使用默认属性</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_destroy</span><span class="params">(<span class="keyword">pthread_cond_t</span>* cond)</span> <span class="comment">//当cond不再需要时可以使用这一系统调用将其销毁</span></span></span><br></pre></td></tr></table></figure>
+<p>条件变量的主要操作是发送信号和等待。发送信号操作即通知一个或多个处于等待状态的线程，某个共享变量的状态已经改变。等待操作是指在收到一个通知前一直处于阻塞状态。相关的函数包括：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_signal</span><span class="params">(<span class="keyword">pthread_cond_t</span>* cond)</span></span>; <span class="comment">//只保证唤醒至少一条遭到阻塞的线程</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_broadcast</span><span class="params">(<span class="keyword">pthread_cond_t</span>* cond)</span></span>; <span class="comment">//唤醒所有遭到阻塞的线程</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_wait</span><span class="params">(<span class="keyword">pthread_cond_t</span>* cond, <span class="keyword">pthread_mutex_t</span>* mutex)</span></span>; <span class="comment">//阻塞一个线程，直至收到条件变量cond的通知</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_timedwait</span><span class="params">(<span class="keyword">pthread_cond_t</span>* cond, <span class="keyword">pthread_mutex_t</span>* mutex, <span class="keyword">const</span> struct timespec* abstime)</span></span>; <span class="comment">//与pthread_cond_wait类似，但是有一个等待时间上限，超过上限则返回ETIMEOUT错误</span></span><br><span class="line"><span class="comment">//返回0代表成功，失败则返回代表失败类型的正数</span></span><br></pre></td></tr></table></figure>
+<p>每个条件变量都有与之相关的判断条件，涉及一个或者多个共享变量。由于代码从<code>pthread_cond_wait</code>返回时，并不能确定判断条件的状态，因此应该重新检查判断条件，在条件不满足的情况下继续等待。所以必须使用while循环而不是if语句来控制对<code>pthread_cond_wait()</code>的调用。</p>
+<h2 id="线程安全"><a class="markdownIt-Anchor" href="#线程安全"></a> 线程安全</h2>
+<p>若函数可同时供多个线程安全调用，则称之为线程安全函数；反之，如果函数不是线程安全的，则不能并发调用。实现线程安全有多种方式，一是将函数与互斥量关联使用，二是将共享变量与互斥量关联起来。因此，在多线程的程序中如果要用到一些系统调用或者库函数，需要确定它们的线程安全性。</p>
+<p>实现函数线程安全最为有效的方式就是使其可重入，应以这种方式来实现所有新的函数库。而对于已有的函数而言，使用线程特有数据技术，可以无需修改函数接口而实现已有函数的线程安全。</p>
+<p>要使用线程特有数据的一般步骤如下：</p>
+<ul>
+<li>函数创建一个键（key），用来将不同函数使用的线程特有数据项区分开来。可以使用调用函数<code>pthread_key_create()</code>函数来创建，这一调用也允许调用者自定义一个析构函数，用于释放为该键分配的存储块</li>
+<li>函数为每个调用者线程创建线程特有的数据块</li>
+<li>函数使用<code>pthread_setspecific()</code>和<code>pthread_getspecific()</code>来存储或者提取数据</li>
+</ul>
+<p>要创建一个新键可以使用<code>pthread_key_create()</code>函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_key_create</span><span class="params">(<span class="keyword">pthread_key_t</span>* key, <span class="keyword">void</span> (*destructor)(<span class="keyword">void</span> *))</span></span>; <span class="comment">//成功返回0，失败则返回代表失败类型的正数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dest</span><span class="params">(<span class="keyword">void</span> *value)</span> <span class="comment">//destructor的函数格式定义</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//release storage pointed by value</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只要线程终止时与<code>key</code>的关联值不为<code>NULL</code>，Pthreads API 会自动执行解构函数，并将与<code>key</code>的关联值作为参数传入解构函数。传入的值通常是与该键关联，且指向线程特有数据块的指针。如果无需解构，那么可将<code>destructor</code>设置为<code>NULL</code>。</p>
+<p>而存储与取出数据的函数如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_setspecific</span><span class="params">(<span class="keyword">pthread_key_t</span> key, <span class="keyword">const</span> <span class="keyword">void</span>* value)</span></span>; <span class="comment">//将value对应的数据存储一个副本，并将其与key相关联。成功返回0，失败则返回代表失败类型的正数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span>* <span class="title">pthread_getspecific</span><span class="params">(<span class="keyword">pthread_key_t</span> key)</span></span>; <span class="comment">//返回一个指向数据副本的指针，如果key没有对应的数据则返回NULL</span></span><br></pre></td></tr></table></figure>
+<p>一种更简单的方法是使用线程局部存储。如果要创建线程局部变量，只需要简单地在全局或者静态变量的声明中包含<code>__thread</code>说明符即可：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> __thread buf[<span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+<p>带有这一说明符的变量，每个线程都拥有一份对变量的拷贝。线程局部存储中的变量将会一直存在直到线程终止。</p>
+<h2 id="线程取消"><a class="markdownIt-Anchor" href="#线程取消"></a> 线程取消</h2>
+<p>有时候，需要向线程发送请求让它立即退出，例如一个图形用户界面的应用程序的取消按钮就对应于终止后台某一线程正在执行的任务。在这种情况下，主线程（即控制图形用户界面）需要请求后台线程退出。</p>
+<p>函数<code>pthread_cancel()</code>向一个指定线程发送取消请求：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cancel</span><span class="params">(<span class="keyword">pthread_t</span> thread)</span></span>; <span class="comment">//成功返回0，失败则返回代表失败类型的正数</span></span><br></pre></td></tr></table></figure>
+<p>发送取消请求之后，函数立即返回，不会等待目标线程的退出。目标线程对这一指令的响应过程可以使用下面两个函数进行控制：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_setcancelstate</span><span class="params">(<span class="keyword">int</span> state, <span class="keyword">int</span>* oldstate)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_setcanceltype</span><span class="params">(<span class="keyword">int</span> type, <span class="keyword">int</span>* oldtype)</span></span></span><br><span class="line"><span class="function"><span class="comment">//成功返回0，失败则返回代表失败类型的正数</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>state</code>参数可以设置为<code>PTHREAD_CANCEL_DISABLE</code>或者<code>PTHREAD_CANCEL_ENABLE</code>，分别对应于线程不可取消和线程可以取消。<code>oldstate</code>用于保存前一个状态。</p>
+<p>参数<code>type</code>可以设置为<code>PTHREAD_CANCEL_ASYNCHRONOUS</code>，代表可能会在任何时刻取消线程，因此一般原则是可异步取消的线程不应该分配任何资源，也不能获取互斥量或锁；或者<code>PTHREAD_CANCEL_DEFERED</code>，代表取消请求保持挂起状态直到到达取消点（有一系列的取消点函数，可以查阅相关资料），这也是新建线程的默认类型。参数<code>oldtype</code>保存之前的状态。</p>
+<p>如果线程执行的是一个不包含取消点的循环，则永远不会响应取消请求。如果要手动加入取消点，则可以使用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pthread_testcancel</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>如果一个线程已有处于挂起状态的取消请求，那么只要调用该函数，则线程会立即终止。</p>
+<p>在线程执行到取消点时，如果仅仅是直接退出，则很可能会导致一些共享变量或者Pthreads对象处于不一致的状态，导致进程中的其它线程产生错误结果、死锁等。因此，线程可以设置清理函数，当线程被取消时会自动执行这些函数，用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pthread_cleanup_push</span><span class="params">(<span class="keyword">void</span> (*routine)(<span class="keyword">void</span>*), <span class="keyword">void</span>* arg)</span></span>; <span class="comment">//向清理函数栈添加清理函数，arg值会传入routine中</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pthread_cleanup_pop</span><span class="params">(<span class="keyword">int</span> execute)</span></span>; <span class="comment">//移除清理函数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">routine</span><span class="params">(<span class="keyword">void</span>* arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//执行清理过程</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="线程实现细节"><a class="markdownIt-Anchor" href="#线程实现细节"></a> 线程实现细节</h2>
+<h3 id="线程id"><a class="markdownIt-Anchor" href="#线程id"></a> 线程ID</h3>
+<p>进程内部的每一个线程都有一个唯一的线程ID作为标识。线程ID会返回给<code>pthread_create()</code>的调用者，一个线程可以使用<code>pthread_self()</code>函数来获取自己的线程ID：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pthread_t</span> <span class="title">pthread_self</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>而<code>pthread_equal()</code>可以检查两个线程的ID是否相同：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_equal</span><span class="params">(<span class="keyword">pthread_t</span> t1, <span class="keyword">pthread_t</span> t2)</span></span>; <span class="comment">//如果相等返回非0，不相等返回0</span></span><br></pre></td></tr></table></figure>
+<h3 id="线程栈"><a class="markdownIt-Anchor" href="#线程栈"></a> 线程栈</h3>
+<p>创建线程时，每个线程都有一个属于自己的线程栈，且大小固定。主线程的线程栈要大一些，除此之外的所有线程栈大小都相等。使用函数<code>pthread_attr_setstacksize()</code>可以设置线程栈的大小。</p>
+<h3 id="线程和信号"><a class="markdownIt-Anchor" href="#线程和信号"></a> 线程和信号</h3>
+<p>在UNIX信号模型中，一些方面属于进程层面（即进程中的所有线程共享），另一些方面属于线程层面。一些关键规则包括：</p>
+<ul>
+<li>信号动作属于进程层面。如果某进程的任一线程收到任何未经（特殊）处理的信号，且其缺省动作为stop 或terminate，那么将停止或者终止该进程的所有线程。</li>
+<li>对信号的处置属于进程层面，进程中的所有线程共享对每个信号的处置设置</li>
+<li>信号的发送既可针对整个进程，也可针对某个特定线程。如果信号产生源于线程上下文的特定硬件指令执行、线程试图对断开的管道进行写操作、或者由函数<code>pthread_kill()</code>或<code>pthread_sigqueue()</code>所发出的信号，那么这些信号是面向线程的，除此之外的信号是面向进程的。</li>
+<li>当多线程程序收到一个信号，且该进程已然为此信号创建了信号处理程序时，内核会任选一条线程来接收这一信号，并在该线程中调用信号处理程序对其进行处理。</li>
+<li>信号掩码（mask）是针对每个线程而言，每个线程可以设置自己的信号掩码</li>
+<li>针对为整个进程所挂起（pending）的信号，以及为每条线程所挂起的信号，内核都分别维护有记录</li>
+</ul>
+<p>刚创建的新线程会从其创建者处继承信号掩码的一份拷贝。线程可以使用<code>pthread_sigmask()</code>来改变或/并获取当前的信号掩码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_mask</span><span class="params">(<span class="keyword">int</span> how, <span class="keyword">const</span> <span class="keyword">sigset_t</span>* <span class="built_in">set</span>, <span class="keyword">sigset_t</span>* oldset)</span></span>; <span class="comment">//成功返回0，失败返回代表失败类型的正数</span></span><br></pre></td></tr></table></figure>
+<p>它的用法与<code>sigprocmask</code>完全相同。</p>
+<p>如果要向一个线程发送信号，可以使用<code>pthread_kill()</code>函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_kill</span><span class="params">(<span class="keyword">pthread_t</span> thread, <span class="keyword">int</span> sig)</span></span>; <span class="comment">//成功返回0，失败返回代表失败类型的正数</span></span><br></pre></td></tr></table></figure>
+<p>Linux特有的函数<code>pthread_sigqueue()</code>将<code>pthread_kill()</code>和<code>sigqueue()</code>的功能合并，可以向同一进程的另一线程发送携带数据的信号：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_sigqueue</span><span class="params">(<span class="keyword">pthread_t</span> thread, <span class="keyword">int</span> sig, <span class="keyword">const</span> <span class="keyword">union</span> sigval value)</span></span>; <span class="comment">//成功返回0，失败返回代表失败类型的正数</span></span><br></pre></td></tr></table></figure>
+<p>由于没有任何Pthreads API属于异步信号安全函数，因此当多线程应用程序处理异步产生的信号时，通常不应该将信号处理函数作为接收信号到达的通知机制。推荐的方法是所有线程都阻塞进程可能接收的所有异步信号，然后再创建一个专用线程来接收信号，从而实现同步接收异步产生的信号。</p>
+<h3 id="线程和进程控制"><a class="markdownIt-Anchor" href="#线程和进程控制"></a> 线程和进程控制</h3>
+<p>对于<code>exec()</code>系列函数，只要有任意一个线程调用它，则调用程序将被完全替换。除了调用<code>exec</code>的线程之外，其余线程立刻消失。没有任何线程会针对线程特有数据执行解构函数（destructor），也不会调用清理函数（cleanup handler）。该进程的所有互斥量（为进程私有）和属于进程的条件变量都会消失。调用<code>exec()</code>之后，调用线程的线程ID 是不确定的。</p>
+<p>当多线程进程调用<code>fork()</code>时，仅会将发起调用的线程复制到子进程中。（子进程中该线程的线程ID与父进程中发起<code>fork()</code>调用线程的线程ID相一致。）其他线程均在子进程中消失，也不会为这些线程调用清理函数以及针对线程特有数据的解构函数。这将会导致全局变量的状态以及所有的Pthreads对象都会在子进程中得以保留，可能会导致线程阻塞或者内存泄漏。因此，推荐在多线程程序中的<code>fork()</code>调用后紧跟<code>exec()</code>调用；或者使用<code>pthread_atfork()</code>系统调用来创建fork处理函数。</p>
+<p>如果任何线程调用了<code>exit()</code>，或者主线程执行了return，那么所有线程都将消失，也不会执行线程特有数据的解构函数以及清理函数。</p>
+<h3 id="linux的线程实现"><a class="markdownIt-Anchor" href="#linux的线程实现"></a> Linux的线程实现</h3>
+<p>目前Linux的线程实现为NPTL，它属于一对一实现的线程模型，即内核分别对每个线程做调度处理。线程同步操作通过内核系统调用实现。Linux的线程使用函数<code>clone()</code>创建，并指定如下标志：CLONE_VM|CLONE_FILES|CLONE_FS|CLONE_SIGHAND|CLONE_THREAD|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID|CLONE_SYSVSEM。</p>
+<p>系统调用<code>clone</code>的用法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clone</span><span class="params">(<span class="keyword">int</span> (*func)(<span class="keyword">void</span> *), <span class="keyword">void</span>* child_stack, <span class="keyword">int</span> flags, <span class="keyword">void</span>* func_arg, <span class="keyword">pid_t</span>* ptid, struct user_desc* tls, <span class="keyword">pid_t</span>* ctid)</span></span>; <span class="comment">//成功返回子进程编号，失败返回-1</span></span><br></pre></td></tr></table></figure>
+<p><code>clone</code>生成的子进程在继续运行时会调用<code>func</code>参数指定的函数，它的参数由<code>func_arg</code>指定。<code>flags</code>参数存放位掩码，用于控制<code>clone</code>的操作。</p>
+<p><img data-src="image-20210714115006363.png" alt="image-20210714115006363" /></p>
+<p><img data-src="image-20210714115027789.png" alt="image-20210714115027789" /></p>
+<p>在Linux系统中，实际上线程和进程都是内核调度实体（Kernel Scheduling Entity, KSE），只是与其他KSE 之间对属性（虚拟内存、打开文件描述符、对信号的处置、进程ID 等）的共享程度不同。</p>
+<h1 id="进程组和会话"><a class="markdownIt-Anchor" href="#进程组和会话"></a> 进程组和会话</h1>
+<h2 id="概述-5"><a class="markdownIt-Anchor" href="#概述-5"></a> 概述</h2>
+<p>进程组由一个或多个共享同一进程组标识符（PGID）的进程组成。进程组ID是一个数字，其类型与进程ID一样（<code>pid_t</code>）。一个进程组拥有一个进程组首进程，该进程是创建该组的进程，其进程ID为该进程组的ID，新进程会继承其父进程所属的进程组ID。进程组拥有一个生命周期，其开始时间为首进程创建组的时刻，结束时间为最后一个成员进程退出组的时刻。</p>
+<p>会话是一组进程组的集合。进程的会话成员关系是由其会话标识符（SID）确定的，会话标识符与进程组ID一样，是一个类型为<code>pid_t</code>的数字。会话首进程是创建该新会话的进程，其进程ID会成为会话 ID。新进程会继承其父进程的会话ID。</p>
+<p>一个会话中的所有进程共享单个控制终端。控制终端会在会话首进程首次打开一个终端设备时被建立，而一个终端最多只会成为一个会话的控制终端。在任一时刻，会话中的其中一个进程组会成为终端的前台进程组，其他进程组会成为后台进程组。只有前台进程组中的进程才能从控制终端中读取输入。当用户在控制终端中输入其中一个信号生成终端字符之后，该信号会被发送到前台进程组中的所有成员。</p>
+<p>进程组和会话是为支持shell作业控制而定义的抽象概念，用户通过shell能够交互式地在前台或后台运行命令。例如登录shell是会话首进程和终端的控制进程，也是其自身进程组的唯一成员；从shell发出的每个命令或者通过管道连接的一组命令都会导致一个或者多个进程的创建，并且shell会将其放入一个新的进程组中。当命令或者管道连接的一组命令以&amp;符号结束时会在后台进程组中运行这些命令，否则会在前台进程组中运行这些命令。而在窗口环境中，每个终端窗口都有一个独立的会话，而窗口的启动shell就是会话首进程和终端的控制进程。</p>
+<h2 id="进程组"><a class="markdownIt-Anchor" href="#进程组"></a> 进程组</h2>
+<p>每个进程都拥有一个以数字表示的进程组ID，表示该进程所属的进程组。新进程会继承其父进程的进程组ID，要查看进程组ID可以使用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">getpgrp</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//返回进程的组ID号，返回值与调用进程的进程 ID 匹配的话就说明该调用进程是其进程组的首进程。</span></span><br></pre></td></tr></table></figure>
+<p>修改进程组ID可以使用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">stdpgid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">pid_t</span> pgid)</span></span>; <span class="comment">//返回0为成功，-1为失败</span></span><br></pre></td></tr></table></figure>
+<p>如果<code>pid</code>的值为0，则调用进程的进程组ID就会被改变；如果<code>pgid</code>设置为0，那么ID为<code>pid</code>进程的进程组ID就会被设置为<code>pid</code>的值。在其它情况下，如果<code>pid</code>和<code>pgid</code>参数指定同一个进程，那么就会创建一个新的进程组，且这个指定的进程为新组的首进程；如果两个参数指定不同的进程，那么会将一个进程从一个进程组移到另一个进程组。</p>
+<p>控制终端保留了前台进程组的概念，前台进程组是唯一能够自由地读取和写入控制终端的进程组。在一个会话中，在同一时刻只有一个进程能成为前台进程，会话中的其他所有进程都是后台进程组。要获取或者修改一个终端的进程组可以使用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">tcgetpgrp</span><span class="params">(<span class="keyword">int</span> fd)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">tcsetpgrp</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">pid_t</span> pgid)</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="会话"><a class="markdownIt-Anchor" href="#会话"></a> 会话</h2>
+<p>一个进程的会话成员关系是由其会话ID来定义的，会话ID是一个数字。新进程会继承其父进程的会话ID。要查看会话ID可以使用<code>getsid()</code>系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">getsid</span><span class="params">(<span class="keyword">pid_t</span> pid)</span></span>; <span class="comment">//失败返回-1，成功返回指定进程的会话ID。如果pid为0则返回调用进程的会话ID</span></span><br></pre></td></tr></table></figure>
+<p>要创建一个新会话可以使用<code>setsid()</code>系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">setsid</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//成功则返回一个新会话的ID号，失败返回-1</span></span><br></pre></td></tr></table></figure>
+<p>调用进程成为新会话的首进程和该会话中新进程组的首进程，调用进程的进程组ID和会话ID会被设置成该进程的进程ID。调用进程没有控制终端，且所有之前到控制终端的连接都会被断开。如果调用进程是一个进程组首进程，那么<code>setsid()</code>调用会报出EPERM错误，这一限制避免了破坏会话和进程组之间严格的两级层次。</p>
+<p>一个会话中的所有进程可能会拥有一个控制终端。会话在被创建出来的时候是没有控制终端的，当会话首进程首次打开一个终端，且这个终端还没有成为某个会话的控制终端时，则会建立控制终端，除非在调用<code>open()</code>时指定O_NOCTTY标记。而一个终端至多只能成为一个会话的控制终端。当会话首进程打开了一个控制终端之后它同时也成为了该终端的控制进程。在发生终端断开之后，内核会向控制进程发送一个SIGHUP信号来通知这一事件的发生。如果一个进程拥有一个控制终端，那么打开特殊文件<code>/dev/tty</code>就能够获取该终端的文件描述符。</p>
+<h1 id="进程优先级和调度"><a class="markdownIt-Anchor" href="#进程优先级和调度"></a> 进程优先级和调度</h1>
+<h2 id="进程优先级"><a class="markdownIt-Anchor" href="#进程优先级"></a> 进程优先级</h2>
+<p>Linux与大多数其他UNIX实现一样，调度进程使用CPU的默认模型是循环时间共享。这种模型中，每个进程轮流使用CPU一段时间，这段时间被称为时间片。循环时间共享方式满足了交互式多任务系统的公平性和响应度两个需求。在这种调度算法下，进程无法直接控制何时使用CPU以及使用CPU的时间。在默认情况下，每个进程轮流使用CPU 直至时间片被用光或自己自动放弃CPU。</p>
+<p>进程特性nice值允许进程间接地影响内核的调度算法。每个进程都拥有一个nice值，其取值范围为−20（高优先级）～19（低优先级），默认值为0。需要注意的是，进程的调度不是严格按照nice值的层次进行的，nice值仅是一个权重因素，它导致内核调度器倾向于调度拥有高优先级的进程。给一个进程赋一个低优先级（即高nice值）并不会导致它完全无法用到CPU，但会导致它使用CPU的时间变少。nice值对进程调度的影响程度则依据Linux内核版本的不同而不同。</p>
+<p>特权进程可以修改任意进程的优先级，而非特权进程只能修改自己的优先级，以及有效用户ID匹配进程的优先级。非特权进程可以降低或者在一定范围内提升nice值，而特权进程则可以任意修改nice值。</p>
+<p>使用<code>fork()</code>创建子进程时，会继承nice值，并且该值会在<code>exec()</code>调用中得到保持。</p>
+<p>要获取或者修改优先级可以使用下面的系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/resource.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getpriority</span><span class="params">(<span class="keyword">int</span> which, <span class="keyword">id_t</span> who)</span></span>; <span class="comment">//如果成功则返回nice值，失败返回-1</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setpriority</span><span class="params">(<span class="keyword">int</span> which, <span class="keyword">id_t</span> who, <span class="keyword">int</span> prio)</span></span>; <span class="comment">//成功返回0，失败返回-1</span></span><br></pre></td></tr></table></figure>
+<p><code>which</code>参数用于确定<code>who</code>参数如何被解释，它的取值及其对<code>who</code>的解释如下：</p>
+<ul>
+<li>PRIO_PROCESS：操作进程ID为<code>who</code>的进程，如果<code>who</code>为0则使用调用者的进程ID。</li>
+<li>PRIO_PGRP：操作进程组ID为<code>who</code>的进程组中的所有成员，如果<code>who</code>为0则使用调用者的进程组。</li>
+<li>PRIO_USER：操作所有真实用户ID为<code>who</code>的进程，如果<code>who</code>为0则使用调用者的真实用户ID。</li>
+</ul>
+<h2 id="实时进程调度"><a class="markdownIt-Anchor" href="#实时进程调度"></a> 实时进程调度</h2>
+<p>Linux提供了另外两种实时调度策略：SCHED_RR和SCHED_FIFO，使用这两种策略中任意一种策略进行调度的进程的优先级，都要高于标准循环时间分享策略（SCHED_OTHER）来调度的进程。Linux 提供了 99 个实时优先级，其数值从1（最低）～99（最高），并且这个取值范围同时适用于两个实时调度策略。每个策略中的优先级是等价的，这意味着如果两个进程拥有同样的优先级，则两个都符合运行条件，运行哪个则取决于被调度的顺序。</p>
+<p>在SCHED_RR（循环）策略中，优先级相同的进程以循环时间分享的方式执行。进程每次使用CPU的时间为一个固定长度的时间片。一旦被调度执行之后，使用SCHED_RR策略的进程会保持对CPU的控制，直到时间片被消耗完、自愿放弃CPU、程序终止、或是被优先级更改的进程抢占。对于前两种放弃控制的情况，进程将会被放在调度队列的队尾；而如果是被抢占，则会被放在队列的头部。这种调度方式会严格按照优先级的顺序进行调度。</p>
+<p>SCHED_FIFO（先入先出）策略与SCHED_RR策略类似，它们之间最主要的差别在于在SCHED_FIFO策略中不存在时间片。一旦一个SCHED_FIFO进程获得了CPU的控制权之后，它就会一直执行到程序自愿放弃CPU、程序终止、或是被优先级更高的进程抢占。</p>
+<p>要查看调度策略的优先级范围，可以使用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_get_priority_min</span><span class="params">(<span class="keyword">int</span> policy)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_get_priority_max</span><span class="params">(<span class="keyword">int</span> policy)</span></span>;</span><br><span class="line"><span class="comment">//policy代表要查询的调度策略，一般为SCHED_FIFO和SCHED_RR。成功则返回相应的优先级数值，失败返回-1</span></span><br></pre></td></tr></table></figure>
+<p>要修改一个进程的调度策略和优先级的方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_setscheduler</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> policy, <span class="keyword">const</span> struct sched_param* param)</span></span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sched_param</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> sched_priority;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>fork()</code>创建的子进程会继承父进程的调度策略和优先级，并且在<code>exec()</code>调用中会保持这些信息。</p>
+<p><code>sched_setparam()</code>系统调用提供了<code>sched_setscheduler()</code>函数的一个功能子集。它修改一个进程的调度策略，但不会修改其优先级:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.t&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_setparam</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">const</span> struct sched_param* param)</span></span>; <span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p>要查看调度策略和优先级可以使用如下的系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_getscheduler</span><span class="params">(<span class="keyword">pid_t</span> pid)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_getparam</span><span class="params">(<span class="keyword">pid_t</span> pid, struct sched_param* param)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>实时进程如果要自愿释放CPU可以使用<code>sched_yield</code>系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_yield</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>要查看SCHED_RR调度时间片的大小可以使用下面的系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_rr_get_interval</span><span class="params">(<span class="keyword">pid_t</span> pid, struct timespec* tp)</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="cpu亲和力"><a class="markdownIt-Anchor" href="#cpu亲和力"></a> CPU亲和力</h2>
+<p>当一个进程在一个多处理器系统上被重新调度时无需在上一次执行的CPU上运行。但是出于性能优化的考虑，有时需要为进程设置硬CPU亲和力，显式地将其限制在某一个或者一组CPU上运行。</p>
+<p>要修改和获取进程的硬CPU亲和力可以使用下面的函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_setaffinity</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">size_t</span> len, <span class="keyword">cpu_set_t</span>* <span class="built_in">set</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sched_getaffinity</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">size_t</span> len, <span class="keyword">cpu_set_t</span>* <span class="built_in">set</span>)</span></span>;</span><br><span class="line"><span class="comment">//返回0表示成功，-1表示失败</span></span><br></pre></td></tr></table></figure>
+<p><code>cpu_set_t</code>数据类型是一个位掩码，但是通常将其看作是不透明结构，对它的操作使用下面几个宏来完成：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CPU_ZERO</span><span class="params">(<span class="keyword">cpu_set_t</span>* <span class="built_in">set</span>)</span></span>; <span class="comment">//将set初始化为空</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CPU_SET</span><span class="params">(<span class="keyword">int</span> cpu, <span class="keyword">cpu_set_t</span>* <span class="built_in">set</span>)</span></span>; <span class="comment">//将cpu添加到set中</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CPU_CLR</span><span class="params">(<span class="keyword">int</span> cpu, <span class="keyword">cpu_set_t</span>* <span class="built_in">set</span>)</span></span>; <span class="comment">//将cpu从set中删除</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">CPU_ISSET</span><span class="params">(<span class="keyword">int</span> cpu, <span class="keyword">cpu_set_t</span>* <span class="built_in">set</span>)</span></span>; <span class="comment">//检查cpu是否包含在set中</span></span><br></pre></td></tr></table></figure>
+<h1 id="进程资源"><a class="markdownIt-Anchor" href="#进程资源"></a> 进程资源</h1>
+<h2 id="进程资源使用"><a class="markdownIt-Anchor" href="#进程资源使用"></a> 进程资源使用</h2>
+<p>要查看调用进程或其子进程用掉的各类系统资源的统计信息，可以使用<code>getrusage()</code>系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/resource.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getrusage</span><span class="params">(<span class="keyword">int</span> who, struct rusage* res_usage)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>who</code>参数指定需要查询资源使用信息的进程，它的取值为下列的其中一个：</p>
+<ul>
+<li>RUSAGE_SELF：返回调用进程的相关信息</li>
+<li>RUSAGE_CHILDREN：返回调用进程的所有被终止和处于等待状态的子进程相关的信息。</li>
+<li>RUSAGE_THREAD：返回调用线程相关的信息</li>
+</ul>
+<p><code>res_usage</code>参数是一个指向<code>rusage</code>结构的指针，其中存储了各类系统资源使用的详细信息。</p>
+<h2 id="进程资源限制"><a class="markdownIt-Anchor" href="#进程资源限制"></a> 进程资源限制</h2>
+<p>每个进程都用一组资源限值，它们可以用来限制进程能够消耗的各种系统资源。要查看或者修改资源限制，可以使用下面的系统调用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys/resource.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getrlimit</span><span class="params">(<span class="keyword">int</span> resource, struct rlimit* rlim)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setrlimit</span><span class="params">(<span class="keyword">int</span> resource, <span class="keyword">const</span> struct rlimit* rlim)</span></span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">rlimit</span>&#123;</span></span><br><span class="line">    <span class="keyword">rlim_t</span> rlim_cur;</span><br><span class="line">    <span class="keyword">rlim_t</span> rlim_max;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>resource</code>参数标识出了需读取或修改的资源限制，<code>rlim</code>参数用来返回限制值或指定新的资源限制值。<code>resource</code>参数可以使用的值包括：</p>
+<p><img data-src="image-20210714161535465.png" alt="image-20210714161535465" /></p>
+<h1 id="daemon进程"><a class="markdownIt-Anchor" href="#daemon进程"></a> DAEMON进程</h1>
+<h2 id="概述-6"><a class="markdownIt-Anchor" href="#概述-6"></a> 概述</h2>
+<p>daemon进程通常指的是在后台运行并且不拥有控制终端，且生命周期很长的进程。例如httpd、inetd等进程。</p>
+<h2 id="创建流程"><a class="markdownIt-Anchor" href="#创建流程"></a> 创建流程</h2>
+<p>要创建一个daemon进程，程序要完成下面的步骤：</p>
+<ol>
+<li>执行<code>fork()</code>，然后父进程退出，子进程继续执行。这保证子进程可以一直在后台执行，且子进程不会成为一个进程组的首进程</li>
+<li>子进程调用<code>setsid()</code>，开启一个新会话，并释放它与控制终端的所有关联关系</li>
+<li>如果daemon 后面可能会打开一个终端设备，那么必须要采取措施来确保这个设备不会成为控制终端。例如使用O_NOCTTY标记，或者在<code>setsid()</code>之后调用执行第二个<code>fork()</code>并退出父进程</li>
+<li>清除进程的<code>umask</code>，确保创建文件和目录时的所需权限</li>
+<li>修改进程当前工作目录为根目录</li>
+<li>关闭daemon从其父进程继承而来的所有打开着的文件描述符</li>
+<li>daemon 通常会打开/dev/null并使用<code>dup2()</code>（或类似的函数）使所有这些描述符指向这个设备</li>
+</ol>
+<p>一些函数库提供了<code>daemon()</code>函数，可以将调用者变为一个daemon进程。</p>
+<h2 id="重新初始化"><a class="markdownIt-Anchor" href="#重新初始化"></a> 重新初始化</h2>
+<p>有时需要修改daemon的操作参数，或者让其对文件进行处理，因此需要为daemon进程设置一些重新初始化的方法。一种方案是让daemon为SIGHUP信号建立一个处理器，并且在收到此信号时采取措施。由于daemon没有控制终端，因此内核永远不会向daemon发送SIGHUP信号。这样daemon就可以借助这个信号达到目的。</p>
+<h2 id="syslog工具"><a class="markdownIt-Anchor" href="#syslog工具"></a> syslog工具</h2>
+<p>由于daemon是在后台运行的，因此通常无法像其他程序那样将消息输出到关联终端上。这个问题的一种解决方式是将消息写入到一个特定于应用程序的日志文件中。syslog 工具提供了一个集中式日志工具，系统中的所有应用程序都可以使用这个工具来记录日志消息。</p>
+<p>syslog API 由以下三个主要函数构成：</p>
+<ul>
+<li><code>openlog</code>：为后续的<code>syslog</code>调用建立默认设置</li>
+<li><code>syslog</code>：记录一条日志消息</li>
+<li><code>closelog</code>：完成日志消息记录之后，拆除与日志之间的连接</li>
+</ul>
+<p>它们的使用方法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;syslog.h&gt;</span><br><span class="line">void openlog(const char* ident, int log_options, int facility); &#x2F;&#x2F;ident时一个指向字符串的指针，syslog()输出的每一条消息都会包含这个字符串；log_options是一个位掩码，用于设置log的格式；facility参数表示记录日志消息的应用程序的类别，指定了后续的syslog()调用中所使用的默认facility值</span><br><span class="line">void syslog(int priority, const char* format, ...); &#x2F;&#x2F;priority参数是facility和level值的或运算结果，用于设置记录日志消息的应用程序以及消息的严重程度，另一个参数是一个格式字符串以及相应的参数</span><br><span class="line">void closelog(void); &#x2F;&#x2F;关闭日志</span><br><span class="line">int setlogmask(int mask_priority); &#x2F;&#x2F;设置一个可以过滤由syslog写入消息的掩码</span><br></pre></td></tr></table></figure>
+<p><code>/etc/syslog.conf</code>配置文件控制syslogd daemon的操作，这个文件由规则和注释构成。通过这一文件，可以实现一些更加强大的规则，例如指定消息发送的位置、指定发送消息的类型等。</p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+  <ul class="breadcrumb">
+          
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">未完成的技术文档</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/">LINUX</a></li>
+            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/">LINUX</a></li>
+            <li>进程与线程</li>
+          
+  </ul>
+
+    
+    
+    
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.1m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">16:41</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+  <script src="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '310b99101af595687270cbed584a0bf4',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
