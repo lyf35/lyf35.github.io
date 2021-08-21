@@ -263,20 +263,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-count">78</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -409,7 +409,8 @@
 <ul>
 <li>
 <p>通用寄存器：X64将x86的8个通用寄存器扩展为64位，并且增加8个新的64位寄存器。64位寄存器命名以“r”开始，例如：eax扩展为64位就是rax，8个新的64位寄存器命名为r8到r15。每个寄存器的低32位，16位，8位可以作为操作数直接寻址，这包括向esi这样的寄存器，以前他的低8位不可以直接寻址。下表说明了64位通用寄存器的低位部分在汇编语言中的命名。</p>
-<p>除了r8~r15这8个寄存器只能供64位程序使用外，其余8个可以只使用低32字节以兼容32位程序。</p>
+<p>除了r8~r15这8个寄存器只能供64位程序使用外，其余8个可以只使用低32字节以兼容32位程序。生成1字节和2字节数字的指令会保持剩下的字节不变；生成4字节数字的指令会把高位4个字节置为0。</p>
+<a id="more"></a>
 </li>
 </ul>
 <table>
@@ -537,8 +538,6 @@
 </tr>
 </tbody>
 </table>
-<p>​		生成1字节和2字节数字的指令会保持剩下的字节不变；生成4字节数字的指令会把高位4个字节置为0。</p>
-<a id="more"></a>
 <ul>
 <li>
 <p>8个64位媒体和浮点指针寄存器MMX0/FPR0-MMX7/FPR7</p>
@@ -590,7 +589,7 @@
 </ul>
 <h1 id="数据传输"><a class="markdownIt-Anchor" href="#数据传输"></a> 数据传输</h1>
 <h2 id="数据格式"><a class="markdownIt-Anchor" href="#数据格式"></a> 数据格式</h2>
-<p>C语言数据格式，对应大小，及其汇编代码后缀</p>
+<p>C语言数据格式，对应大小，及其汇编代码后缀如下表所示。GCC生成的汇编代码会有一个字符的后缀，代表操作数的大小。</p>
 <table>
 <thead>
 <tr>
@@ -645,7 +644,6 @@
 </tr>
 </tbody>
 </table>
-<p>GCC生成的汇编代码会有一个字符的后缀，代表操作数的大小。</p>
 <h2 id="操作数指示符"><a class="markdownIt-Anchor" href="#操作数指示符"></a> 操作数指示符</h2>
 <p>在下面的表格中，$Imm表示立即数，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>a</mi></msub></mrow><annotation encoding="application/x-tex">r_a</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">a</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>表示某个寄存器，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mo stretchy="false">[</mo><msub><mi>r</mi><mi>a</mi></msub><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">R[r_a]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mopen">[</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">a</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">]</span></span></span></span>表示引用某个寄存器的值，M[Addr]表示引用内存的数值，Addr有多种不同的寻址模式，允许不同形式的内存引用。<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>b</mi></msub></mrow><annotation encoding="application/x-tex">r_b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 表示基址寄存器，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 表示变址寄存器，s表示比例因子，s必须为1，2，4或8</p>
 <table>
@@ -1896,13 +1894,13 @@ ATT：%segreg:disp(base,index,scale)</p>
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">1.1m</span>
+    <span title="站点总字数">1.3m</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">16:41</span>
+    <span title="站点阅读时长">19:04</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>
@@ -2012,7 +2010,6 @@ ATT：%segreg:disp(base,index,scale)</p>
   </div>
 
   
-  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>

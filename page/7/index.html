@@ -256,20 +256,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-count">78</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -315,6 +315,886 @@
 
         <div class="content index posts-expand">
           
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">机器学习-概述</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-15 21:34:36" itemprop="dateCreated datePublished" datetime="2020-11-15T21:34:36+08:00">2020-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-25 22:33:06" itemprop="dateModified" datetime="2021-12-25T22:33:06+08:00">2021-12-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="机器学习-概述" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="什么是机器学习"><a class="markdownIt-Anchor" href="#什么是机器学习"></a> 什么是机器学习</h1>
+<p>机器学习是近20多年兴起的一门多领域交叉学科，涉及概率论、统计学、逼近论、凸分析、算法复杂度理论等多门学科。机器学习理论主要是设计和分析一些让计算机可以自动“学习”的算法。机器学习算法是一类从数据中自动分析获得规律，并利用规律对未知数据进行预测的算法。因为学习算法中涉及了大量的统计学理论，机器学习与统计推断学联系尤为密切，也被称为<strong>统计学习</strong>。</p>
+<p>目前，机器学习技术已经渗透进各种不同的领域，例如手机上的垃圾短信过滤、淘宝主页上的商品推荐、银行的智能客服机器人、AlphaGo能够学会下围棋，等等。而且可以预见的是，随着芯片算力以及人类产生数据量的快速增长，这一技术在自动驾驶、生物医药、工业4.0等等领域将会得到更加广泛的应用。</p>
+<p>那么，究竟如何定义机器学习？关于机器学习的定义有多种不同的表达方法，比如：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/" class="post-title-link" itemprop="url">操作系统-持久性</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-18 00:22:32" itemprop="dateCreated datePublished" datetime="2020-10-18T00:22:32+08:00">2020-10-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-23 00:18:51" itemprop="dateModified" datetime="2020-11-23T00:18:51+08:00">2020-11-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/" class="post-meta-item leancloud_visitors" data-flag-title="操作系统-持久性" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="io设备"><a class="markdownIt-Anchor" href="#io设备"></a> I/O设备</h1>
+<h2 id="标准设备"><a class="markdownIt-Anchor" href="#标准设备"></a> 标准设备</h2>
+<p>一个标准设备包含两部分重要组件：其中一部分是向系统其他部分展示的硬件接口，用于让系统软件控制它的操作；另一部分是它的内部结构，包含设备相关的特定实现，负责具体实现设备展示给系统的抽象接口。标准设备的示意图如下所示：</p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20201115222652.png" alt="标准设备" style="zoom: 50%;" />
+<p>从图中可以看出，一个设备接口包括3个寄存器：一个可以读取并查看当前设备状态的状态寄存器、一个通知设备执行某个具体任务的命令寄存器、和一个用于将数据传给设备或是从设备接收数据的数据寄存器。通过读写这些寄存器，操作系统可以控制设备的行为。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E6%8C%81%E4%B9%85%E6%80%A7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91/" class="post-title-link" itemprop="url">操作系统-并发</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-18 00:21:55" itemprop="dateCreated datePublished" datetime="2020-10-18T00:21:55+08:00">2020-10-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-12 22:51:13" itemprop="dateModified" datetime="2020-11-12T22:51:13+08:00">2020-11-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91/" class="post-meta-item leancloud_visitors" data-flag-title="操作系统-并发" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="并发"><a class="markdownIt-Anchor" href="#并发"></a> 并发</h1>
+<h2 id="定义"><a class="markdownIt-Anchor" href="#定义"></a> 定义</h2>
+<p>如果一个逻辑流的执行在时间上与另一个流重叠，称为并发流，这两个流被称为并发地运行。多个流并发执行的一般现象被简称为<strong>并发</strong>。在多线程的并发执行中，由于这些线程会共享地址空间，这就带来了一些必须要处理的问题。</p>
+<blockquote>
+<p>备注—并发（concurrent）与并行（parallel）：</p>
+<p>在计算机系统中，只要两个任务在时间上重叠就被称为并发，这一概念并不关心任务如何具体地被执行，与执行这些任务的处理器核数或者是计算机数无关。并发主要关注的是任务的抽象调度，相当于是站在任务安排者视角看到的东西。</p>
+<p>并行是并发的一个真子集，指的是两个流并发地运行在不同的处理器核或者计算机上。并行关注的是任务的实际执行，相当于是站在任务执行者视角的概念。</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%B9%B6%E5%8F%91/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-title-link" itemprop="url">操作系统-内存虚拟化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-18 00:19:17" itemprop="dateCreated datePublished" datetime="2020-10-18T00:19:17+08:00">2020-10-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-03 22:53:12" itemprop="dateModified" datetime="2020-12-03T22:53:12+08:00">2020-12-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-meta-item leancloud_visitors" data-flag-title="操作系统-内存虚拟化" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="地址空间与地址转换"><a class="markdownIt-Anchor" href="#地址空间与地址转换"></a> 地址空间与地址转换</h1>
+<h2 id="内存虚拟化与虚拟地址空间"><a class="markdownIt-Anchor" href="#内存虚拟化与虚拟地址空间"></a> 内存虚拟化与虚拟地址空间</h2>
+<p>一个操作系统内部同时运行着多个进程，这些进程之间采用时分共享的方式来使用硬件。对于CPU来说，时分共享是通过让一个进程全部占用CPU运行一段时间，在进程切换的时候通过上下文切换来完成；但是对于内存来说，如果采用这种方式，在进程切换的时候需要将物理内存中当前所有的内容保存到磁盘中去，并从磁盘中读取另一个进程的物理内存数据到物理内存中。根据计算机组成原理的知识，磁盘与物理内存之间的数据传输是很慢的。因此，操作系统的做法是在进程切换的时候仍然将进程信息放在物理内存中，也就意味着许多程序在同一时刻共享着物理内存。</p>
+<p>但是这种做法又对操作系统有了新的要求，人们不希望一个进程可以读取甚至修改其他进程使用的物理内存。因此，操作系统使用了<strong>虚拟内存</strong>（Virtual Memory）的概念，对物理内存进行了抽象，通过这种抽象所形成的地址集合被叫做<strong>虚拟地址空间</strong>（Virtual Address Space）。相应地，一个物理内存所对应的地址集合被称为<strong>物理地址空间</strong>。一个进程的虚拟地址空间是运行中的程序看到的系统中的内存，它包含了这个程序的所有内存状态，包括程序代码、栈、堆等部分。为了给进程提供保护，每个进程都有着自己独立的虚拟地址空间，但是不同进程的虚拟内存可能会共享使用部分物理内存，从而实现数据共享。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-title-link" itemprop="url">操作系统-CPU虚拟化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-18 00:18:19" itemprop="dateCreated datePublished" datetime="2020-10-18T00:18:19+08:00">2020-10-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-25 23:30:52" itemprop="dateModified" datetime="2020-10-25T23:30:52+08:00">2020-10-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-meta-item leancloud_visitors" data-flag-title="操作系统-CPU虚拟化" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="cpu虚拟化"><a class="markdownIt-Anchor" href="#cpu虚拟化"></a> CPU虚拟化</h1>
+<h2 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h2>
+<p>在操作系统中，常常同时运行着许多个进程，对于现代操作系统来说可能会有上百个进程同时运行（Windows可查看任务管理器，Linux系统为top或ps命令）。但是实际上只有少量的物理CPU可用，操作系统通过虚拟化CPU提供了几乎有无数个CPU可用的假象。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/17/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-CPU%E8%99%9A%E6%8B%9F%E5%8C%96/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/10/15/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8-OpenSSL%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/15/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8-OpenSSL%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/" class="post-title-link" itemprop="url">信息安全-OpenSSL的基本使用（摘录）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-15 13:20:36" itemprop="dateCreated datePublished" datetime="2020-10-15T13:20:36+08:00">2020-10-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-05 22:14:05" itemprop="dateModified" datetime="2021-01-05T22:14:05+08:00">2021-01-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">工程实践</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/10/15/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8-OpenSSL%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/" class="post-meta-item leancloud_visitors" data-flag-title="信息安全-OpenSSL的基本使用（摘录）" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>100k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1:31</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h1>
+<p>OpenSSL是一个C语言实现的，功能丰富且自包含的安全工具箱，提供的主要功能包括SSL协议实现、加密解密算法、非对称算法的密钥生成、数字证书验证等。</p>
+<p>OpenSSL Manual: <span class="exturl" data-url="aHR0cHM6Ly93d3cub3BlbnNzbC5vcmcvZG9jcy9tYW4xLjEuMS9tYW43Lw==">https://www.openssl.org/docs/man1.1.1/man7/<i class="fa fa-external-link-alt"></i></span></p>
+<h1 id="安装与使用"><a class="markdownIt-Anchor" href="#安装与使用"></a> 安装与使用</h1>
+<p>在linux系统下面，可以使用apt-get命令安装OpenSSL和libssl-dev（这个必须安装，包含了lib和header等信息，安装之后才能在c/cpp程序中使用OpenSSL的函数）。</p>
+<p>如果是简单地对文件做一些加密或者哈希等操作，只需要在命令行中执行openssl ……就可以，结果会直接打印在命令行内。</p>
+<p>如果在c/cpp程序中使用了OpenSSL函数，编译的时候使用这一命令：g++ test.cpp -lssl -lcrypto，后两个编译选项是为了在编译的时候将OpenSSL的函数库链接进去。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/15/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8-OpenSSL%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%88%E6%91%98%E5%BD%95%EF%BC%89/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/10/14/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E5%9F%BA%E4%BA%8E%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E7%9A%84%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/14/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E5%9F%BA%E4%BA%8E%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E7%9A%84%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">计算机组成原理-基于硬件原理的程序优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-14 22:25:51 / 修改时间：23:46:14" itemprop="dateCreated datePublished" datetime="2020-10-14T22:25:51+08:00">2020-10-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">工程实践</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/10/14/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E5%9F%BA%E4%BA%8E%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E7%9A%84%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-基于硬件原理的程序优化" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ol>
+<li>
+<p>对于一些简单的函数，用内联函数替换。即：将代码中调用函数的步骤用函数体填充。这样就减少了调用函数的开销。</p>
+</li>
+<li>
+<p>消除循环的低效率。循环中可能存在需要执行多次，但是每次的计算结果都不变的表达式。此时可以把这一表达式移动到循环体之外。例如循环体的结束条件中，有时是以一个字符串的大小作为判据的。如果字符串的大小不变，那么不必每次调用strlen()函数，只需要在开始的时候调用一次即可。</p>
+</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/14/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E5%9F%BA%E4%BA%8E%E7%A1%AC%E4%BB%B6%E5%8E%9F%E7%90%86%E7%9A%84%E7%A8%8B%E5%BA%8F%E4%BC%98%E5%8C%96/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/10/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-title-link" itemprop="url">计算机组成原理-高速缓存</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-11 21:16:46" itemprop="dateCreated datePublished" datetime="2020-10-11T21:16:46+08:00">2020-10-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-24 22:11:34" itemprop="dateModified" datetime="2020-10-24T22:11:34+08:00">2020-10-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/10/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-高速缓存" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="局部性"><a class="markdownIt-Anchor" href="#局部性"></a> 局部性</h1>
+<p>一个编写良好的计算机程序常常具有较好的局部性，它们倾向于引用最近引用过的数据项，或是引用与它们相邻的数据项。这种倾向性被称为<strong>局部性原理</strong>。通常一个局部性良好的程序比局部性差的程序运行地更快。</p>
+<p>局部性分为两种：</p>
+<ul>
+<li>时间局部性：被引用过一次的内存位置很可能在不远的将来再被多次引用</li>
+<li>空间局部性：对于一个被引用过一次的内存位置，程序很可能在不远的将来引用它附近的内存位置</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -540,1029 +1420,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/09/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/" class="post-title-link" itemprop="url">计算机组成原理-数据的表示与运算</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-27 19:47:30" itemprop="dateCreated datePublished" datetime="2020-09-27T19:47:30+08:00">2020-09-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-29 22:16:54" itemprop="dateModified" datetime="2020-09-29T22:16:54+08:00">2020-09-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/09/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-数据的表示与运算" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="数据的存储"><a class="markdownIt-Anchor" href="#数据的存储"></a> 数据的存储</h1>
-<h2 id="数据的字长"><a class="markdownIt-Anchor" href="#数据的字长"></a> 数据的字长</h2>
-<p>计算机中，数据存储与访问的最小单位是字节。一个字节对应于8个二进制比特。一个字节可以表示的范围从<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0000000</mn><msub><mn>0</mn><mn>2</mn></msub><mo>∼</mo><mn>1111111</mn><msub><mn>1</mn><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">00000000_2\sim 11111111_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.79444em;vertical-align:-0.15em;"></span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord">0</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.79444em;vertical-align:-0.15em;"></span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord">1</span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，这相当于十进制数的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn><mo>∼</mo><mn>255</mn></mrow><annotation encoding="application/x-tex">0\sim255</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">5</span><span class="mord">5</span></span></span></span>，或是十六进制数的<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>00</mn><mo>∼</mo><mi>F</mi><mi>F</mi></mrow><annotation encoding="application/x-tex">00\sim FF</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">0</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span></span></span></span>。</p>
-<p>每台计算机都有一个字长，对应于指针类型数据的大小。由于指针的值是一个虚拟地址，因此字长也决定了虚拟地址空间的大小。例如32位的字长所能表示的虚拟空间为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>4</mn><mo>×</mo><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">4\times 10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span>字节(约4GB)，而64位字长能表示的虚拟空间大小达<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1.84</mn><mo>×</mo><mn>1</mn><msup><mn>0</mn><mn>19</mn></msup></mrow><annotation encoding="application/x-tex">1.84\times 10^{19}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">1</span><span class="mord">.</span><span class="mord">8</span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span></span>字节。64位的计算机上可以运行64位的程序，同时也可以兼容32位程序，而32位的计算机上只能运行32位的程序。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E4%B8%8E%E8%BF%90%E7%AE%97/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/09/17/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/17/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/" class="post-title-link" itemprop="url">计算机组成原理-程序的机器级表示</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-17 09:12:05" itemprop="dateCreated datePublished" datetime="2020-09-17T09:12:05+08:00">2020-09-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-07 22:12:32" itemprop="dateModified" datetime="2020-10-07T22:12:32+08:00">2020-10-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">计算机组成原理</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/09/17/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/" class="post-meta-item leancloud_visitors" data-flag-title="计算机组成原理-程序的机器级表示" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>17k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="寄存器"><a class="markdownIt-Anchor" href="#寄存器"></a> 寄存器</h1>
-<ul>
-<li>
-<p>通用寄存器：X64将x86的8个通用寄存器扩展为64位，并且增加8个新的64位寄存器。64位寄存器命名以“r”开始，例如：eax扩展为64位就是rax，8个新的64位寄存器命名为r8到r15。每个寄存器的低32位，16位，8位可以作为操作数直接寻址，这包括向esi这样的寄存器，以前他的低8位不可以直接寻址。下表说明了64位通用寄存器的低位部分在汇编语言中的命名。</p>
-<p>除了r8~r15这8个寄存器只能供64位程序使用外，其余8个可以只使用低32字节以兼容32位程序。</p>
-</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">64-bit register</th>
-<th style="text-align:center">Lower 32 bits</th>
-<th style="text-align:center">Lower 16 bits</th>
-<th style="text-align:center">Lower 8 bits</th>
-<th style="text-align:center">用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">rax</td>
-<td style="text-align:center">eax</td>
-<td style="text-align:center">ax</td>
-<td style="text-align:center">al</td>
-<td style="text-align:center">返回值</td>
-</tr>
-<tr>
-<td style="text-align:center">rbx</td>
-<td style="text-align:center">ebx</td>
-<td style="text-align:center">bx</td>
-<td style="text-align:center">bl</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">rcx</td>
-<td style="text-align:center">ecx</td>
-<td style="text-align:center">cx</td>
-<td style="text-align:center">cl</td>
-<td style="text-align:center">第4个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">rdx</td>
-<td style="text-align:center">edx</td>
-<td style="text-align:center">dx</td>
-<td style="text-align:center">dl</td>
-<td style="text-align:center">第3个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">rsi</td>
-<td style="text-align:center">esi</td>
-<td style="text-align:center">si</td>
-<td style="text-align:center">sil</td>
-<td style="text-align:center">第2个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">rdi</td>
-<td style="text-align:center">edi</td>
-<td style="text-align:center">di</td>
-<td style="text-align:center">dil</td>
-<td style="text-align:center">第1个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">rbp</td>
-<td style="text-align:center">ebp</td>
-<td style="text-align:center">bp</td>
-<td style="text-align:center">bpl</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">rsp</td>
-<td style="text-align:center">esp</td>
-<td style="text-align:center">sp</td>
-<td style="text-align:center">spl</td>
-<td style="text-align:center">栈指针</td>
-</tr>
-<tr>
-<td style="text-align:center">r8</td>
-<td style="text-align:center">r8d</td>
-<td style="text-align:center">r8w</td>
-<td style="text-align:center">r8b</td>
-<td style="text-align:center">第5个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">r9</td>
-<td style="text-align:center">r9d</td>
-<td style="text-align:center">r9w</td>
-<td style="text-align:center">r9b</td>
-<td style="text-align:center">第6个参数</td>
-</tr>
-<tr>
-<td style="text-align:center">r10</td>
-<td style="text-align:center">r10d</td>
-<td style="text-align:center">r10w</td>
-<td style="text-align:center">r10b</td>
-<td style="text-align:center">调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r11</td>
-<td style="text-align:center">r11d</td>
-<td style="text-align:center">r11w</td>
-<td style="text-align:center">r11b</td>
-<td style="text-align:center">调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r12</td>
-<td style="text-align:center">r12d</td>
-<td style="text-align:center">r12w</td>
-<td style="text-align:center">r12b</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r13</td>
-<td style="text-align:center">r13d</td>
-<td style="text-align:center">r13w</td>
-<td style="text-align:center">r13b</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r14</td>
-<td style="text-align:center">r14d</td>
-<td style="text-align:center">r14w</td>
-<td style="text-align:center">r14b</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-<tr>
-<td style="text-align:center">r15</td>
-<td style="text-align:center">r15d</td>
-<td style="text-align:center">r15w</td>
-<td style="text-align:center">r15b</td>
-<td style="text-align:center">被调用者保存</td>
-</tr>
-</tbody>
-</table>
-<p>​		生成1字节和2字节数字的指令会保持剩下的字节不变；生成4字节数字的指令会把高位4个字节置为0。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/17/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/09/10/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/10/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/" class="post-title-link" itemprop="url">密码学-数字签名</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-10 20:43:01" itemprop="dateCreated datePublished" datetime="2020-09-10T20:43:01+08:00">2020-09-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-19 20:21:52" itemprop="dateModified" datetime="2020-10-19T20:21:52+08:00">2020-10-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/09/10/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/" class="post-meta-item leancloud_visitors" data-flag-title="密码学-数字签名" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>24k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>22 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="overview"><a class="markdownIt-Anchor" href="#overview"></a> Overview</h1>
-<h2 id="introduction"><a class="markdownIt-Anchor" href="#introduction"></a> Introduction</h2>
-<p>Signature schemes allow a signer <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> who has established a public key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">pk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> to “sign” a message using the associated private key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">sk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> in such a way that anyone who knows <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>k</mi></mrow><annotation encoding="application/x-tex">pk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">p</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> (and knows that this public key was established by <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span>) can verify that the message originated from <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span> and was not modified in transit. (Note that the owner of the public key behaves as the sender, which is in contrast to the public-key encryption)</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/09/10/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/08/30/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/30/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-title-link" itemprop="url">密码学-公钥加密</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-30 19:58:52" itemprop="dateCreated datePublished" datetime="2020-08-30T19:58:52+08:00">2020-08-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-16 22:12:54" itemprop="dateModified" datetime="2020-09-16T22:12:54+08:00">2020-09-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/08/30/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="密码学-公钥加密" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>20k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>18 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="math-related-with-public-key-encryption"><a class="markdownIt-Anchor" href="#math-related-with-public-key-encryption"></a> Math related with public-key encryption</h1>
-<h2 id="diffie-hellman-problems"><a class="markdownIt-Anchor" href="#diffie-hellman-problems"></a> Diffie-Hellman problems</h2>
-<p>Fix a cyclic group <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">\mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span> and a generator <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>g</mi><mo>∈</mo><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">g\in \mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335400000000001em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span>. Given elements <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo>∈</mo><mi mathvariant="double-struck">G</mi></mrow><annotation encoding="application/x-tex">h_{1},h_{2}\in \mathbb{G}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68889em;vertical-align:0em;"></span><span class="mord"><span class="mord mathbb">G</span></span></span></span></span>, define <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><msub><mi>H</mi><mi>g</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mo>=</mo><msup><mi>g</mi><mrow><mi>l</mi><mi>o</mi><msub><mi>g</mi><mi>g</mi></msub><msub><mi>h</mi><mn>1</mn></msub><mo>⋅</mo><mi>l</mi><mi>o</mi><msub><mi>g</mi><mi>g</mi></msub><msub><mi>h</mi><mn>2</mn></msub></mrow></msup></mrow><annotation encoding="application/x-tex">DH_{g}(h_{1},h_{2})=g^{log_{g}h_{1}\cdot log_{g}h_{2}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.043548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.849108em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span><span class="mord mtight"><span class="mord mathdefault mtight">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">⋅</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">o</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285716em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span><span class="mord mtight"><span class="mord mathdefault mtight">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>. That is, if <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub><mo>=</mo><msup><mi>g</mi><msub><mi>x</mi><mn>1</mn></msub></msup></mrow><annotation encoding="application/x-tex">h_{1}=g^{x_{1}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.858832em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>2</mn></msub><mo>=</mo><msup><mi>g</mi><msub><mi>x</mi><mn>2</mn></msub></msup></mrow><annotation encoding="application/x-tex">h_{2}=g^{x_{2}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.858832em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span> then</p>
-<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><msub><mi>H</mi><mi>g</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo stretchy="false">)</mo><mo>=</mo><msup><mi>g</mi><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>⋅</mo><msub><mi>x</mi><mn>2</mn></msub></mrow></msup><mo>=</mo><msubsup><mi>h</mi><mn>1</mn><msub><mi>x</mi><mn>2</mn></msub></msubsup><mo>=</mo><msubsup><mi>h</mi><mn>2</mn><msub><mi>x</mi><mn>1</mn></msub></msubsup></mrow><annotation encoding="application/x-tex">DH_{g}(h_{1},h_{2})=g^{x_{1}\cdot x_{2}}=h_{1}^{x_{2}}=h_{2}^{x_{1}}
-</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.918555em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.724115em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">⋅</span><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0126em;vertical-align:-0.26630799999999993em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.746292em;"><span style="top:-2.433692em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.26630799999999993em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0126em;vertical-align:-0.26630799999999993em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.746292em;"><span style="top:-2.433692em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.1449em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31731428571428577em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.26630799999999993em;"><span></span></span></span></span></span></span></span></span></span></span></p>
-<p>The computational Diffie-Hellman(CDH) problem is to compute <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><msub><mi>H</mi><mi>g</mi></msub><mo stretchy="false">(</mo><msub><mi>h</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>h</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">DH_{g}(h_{1},h_{2})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.08125em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> for uniform <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">h_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>h</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">h_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>. It is not clear whether hardness of the discrete-logarithm problem implies that the CDH problem is hard as well.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/30/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/08/10/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/10/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">密码学-哈希函数</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-10 20:42:49" itemprop="dateCreated datePublished" datetime="2020-08-10T20:42:49+08:00">2020-08-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-30 22:14:54" itemprop="dateModified" datetime="2020-08-30T22:14:54+08:00">2020-08-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/08/10/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/" class="post-meta-item leancloud_visitors" data-flag-title="密码学-哈希函数" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>10k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="basic-concepts"><a class="markdownIt-Anchor" href="#basic-concepts"></a> Basic concepts</h1>
-<h2 id="definition"><a class="markdownIt-Anchor" href="#definition"></a> Definition</h2>
-<p>A <strong>hash function</strong> (with output length <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">ℓ</mi></mrow><annotation encoding="application/x-tex">\ell</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">ℓ</span></span></span></span>) is a pair of probabilistic polynomial-time algorithms <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>G</mi><mi>e</mi><mi>n</mi><mo separator="true">,</mo><mi>H</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(Gen,H)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">G</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mclose">)</span></span></span></span> satisfying the following:</p>
-<ul>
-<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>G</mi><mi>e</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">Gen</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">G</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span></span></span></span> is a probabilistic algorithm that takes as input a security parameter <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>1</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">1^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span> and outputs a key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>. We assume that <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>1</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">1^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">1</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span> is implicit in <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>.</li>
-<li><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi></mrow><annotation encoding="application/x-tex">H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span></span></span></span> takes as input a key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span> and a string <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mo>∗</mo></msup></mrow><annotation encoding="application/x-tex">x\in \{0,1\}^*</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.688696em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mbin mtight">∗</span></span></span></span></span></span></span></span></span></span></span> and outputs a string <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>H</mi><mi>s</mi></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mrow><mi mathvariant="normal">ℓ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">H^{s}(x)\in \{0,1\}^{\ell(n)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">s</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8879999999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">ℓ</span><span class="mopen mtight">(</span><span class="mord mathdefault mtight">n</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span></span></span></span> (<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span> is the security parameter implicit in <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">s</span></span></span></span>).</li>
-</ul>
-<p>In general case, the function takes as input strings of arbitrary length. If <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>H</mi><mi>s</mi></msup></mrow><annotation encoding="application/x-tex">H^s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">s</span></span></span></span></span></span></span></span></span></span></span> is defined only for inputs <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mrow><msup><mi mathvariant="normal">ℓ</mi><mo mathvariant="normal">′</mo></msup><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></msup></mrow><annotation encoding="application/x-tex">x\in\{0,1\}^{\ell &#x27;(n)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.19248em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.94248em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mtight">ℓ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8278285714285715em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mathdefault mtight">n</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi mathvariant="normal">ℓ</mi><mo mathvariant="normal">′</mo></msup><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo>&gt;</mo><mi mathvariant="normal">ℓ</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\ell &#x27;(n)&gt;\ell(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.001892em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">ℓ</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span>, then we say that <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo stretchy="false">(</mo><mi>G</mi><mi>e</mi><mi>n</mi><mo separator="true">,</mo><mi>H</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(Gen,H)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">G</span><span class="mord mathdefault">e</span><span class="mord mathdefault">n</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mclose">)</span></span></span></span> is a fixed-length hash function for inputs of length <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi mathvariant="normal">ℓ</mi><mo mathvariant="normal">′</mo></msup></mrow><annotation encoding="application/x-tex">\ell &#x27;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.751892em;vertical-align:0em;"></span><span class="mord"><span class="mord">ℓ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span></span></span></span>. In this case, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi></mrow><annotation encoding="application/x-tex">H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span></span></span></span> is also called a <em>compression function</em>.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/10/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/08/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%B6%88%E6%81%AF%E9%AA%8C%E8%AF%81%E7%A0%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%B6%88%E6%81%AF%E9%AA%8C%E8%AF%81%E7%A0%81/" class="post-title-link" itemprop="url">密码学-消息验证码</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-05 20:43:25" itemprop="dateCreated datePublished" datetime="2020-08-05T20:43:25+08:00">2020-08-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-23 22:04:43" itemprop="dateModified" datetime="2020-08-23T22:04:43+08:00">2020-08-23</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/08/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%B6%88%E6%81%AF%E9%AA%8C%E8%AF%81%E7%A0%81/" class="post-meta-item leancloud_visitors" data-flag-title="密码学-消息验证码" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>16k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="basic-concepts"><a class="markdownIt-Anchor" href="#basic-concepts"></a> Basic concepts</h1>
-<h2 id="message-integrity"><a class="markdownIt-Anchor" href="#message-integrity"></a> Message integrity</h2>
-<p><strong>Message integrity (Message authentication)</strong>: each party should be able to identify when a message it receives was sent by the party claiming to send it, and it was not modified in transit.</p>
-<p>E.g. A bank should make sure a transfer request is sent by a legitimate user, and the received request should not be modified.</p>
-<p><em>Remember that encryption does not privide any integrity unless it is specifically designed with that purpose!</em></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/05/%E5%AF%86%E7%A0%81%E5%AD%A6-%E6%B6%88%E6%81%AF%E9%AA%8C%E8%AF%81%E7%A0%81/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/07/30/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/30/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-title-link" itemprop="url">密码学-私钥加密</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-30 21:29:24" itemprop="dateCreated datePublished" datetime="2020-07-30T21:29:24+08:00">2020-07-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-15 22:52:35" itemprop="dateModified" datetime="2020-08-15T22:52:35+08:00">2020-08-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/07/30/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="密码学-私钥加密" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>38k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>35 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="computational-secure-encryption"><a class="markdownIt-Anchor" href="#computational-secure-encryption"></a> Computational secure encryption</h1>
-<h2 id="perfect-secrecy"><a class="markdownIt-Anchor" href="#perfect-secrecy"></a> Perfect secrecy</h2>
-<p><strong>Perfect secrecy</strong>: absolutely no information is leaked, even the eavesdropper has unlimited computational power(not practical in reality so it could be compromised in implementation).</p>
-<p>Two attacks apply regardless of how the encryption scheme is constructed:</p>
-<ol>
-<li>
-<p>Brute force attack: the adversary decrypt <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">c</span></span></span></span> using all keys <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi><mo>∈</mo><mi mathvariant="script">K</mi></mrow><annotation encoding="application/x-tex">k\in \mathcal{K}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.73354em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.01445em;">K</span></span></span></span></span>.</p>
-</li>
-<li>
-<p>Random attack: the adversary guess a uniform key <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi><mo>∈</mo><mi mathvariant="script">K</mi></mrow><annotation encoding="application/x-tex">k\in \mathcal{K}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.73354em;vertical-align:-0.0391em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathcal" style="margin-right:0.01445em;">K</span></span></span></span></span> and check to see whether <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>e</mi><msub><mi>c</mi><mi>k</mi></msub><mo stretchy="false">(</mo><msub><mi>c</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msub><mi>m</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">Dec_{k}(c_{i})=m_{i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">e</span><span class="mord"><span class="mord mathdefault">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> for all <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>, which has success probability <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mn>1</mn><mrow><mi mathvariant="normal">∣</mi><mi mathvariant="script">K</mi><mi mathvariant="normal">∣</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{1}{|\mathcal{K}|}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.365108em;vertical-align:-0.52em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.845108em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣</span><span class="mord mtight"><span class="mord mathcal mtight" style="margin-right:0.01445em;">K</span></span><span class="mord mtight">∣</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>.</p>
-</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/30/%E5%AF%86%E7%A0%81%E5%AD%A6-%E7%A7%81%E9%92%A5%E5%8A%A0%E5%AF%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/07/25/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="Yufei Luo">
-      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yufei Luo's Blog">
-    </span>
-
-    
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/25/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">密码学-基础知识</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-25 19:58:12" itemprop="dateCreated datePublished" datetime="2020-07-25T19:58:12+08:00">2020-07-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-31 20:42:56" itemprop="dateModified" datetime="2020-07-31T20:42:56+08:00">2020-07-31</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">信息安全</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/07/25/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-meta-item leancloud_visitors" data-flag-title="密码学-基础知识" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span><br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="basic-concepts"><a class="markdownIt-Anchor" href="#basic-concepts"></a> Basic concepts</h1>
-<h2 id="what-is-cryptography"><a class="markdownIt-Anchor" href="#what-is-cryptography"></a> What is cryptography？</h2>
-<p>The study of mathematical techniques for securing digital information, systems, and distributed computations against adversarial attacks.</p>
-<h2 id="category"><a class="markdownIt-Anchor" href="#category"></a> Category</h2>
-<ul>
-<li>private(symmetric) key encryption: encryption and decryption use the same key.</li>
-<li>public(asymmetric) key encryption: encryption and decryption use different keys.</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/25/%E5%AF%86%E7%A0%81%E5%AD%A6-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span>
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1614,13 +1475,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">1.1m</span>
+    <span title="站点总字数">1.3m</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">16:41</span>
+    <span title="站点阅读时长">19:04</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>
@@ -1730,7 +1591,6 @@
   </div>
 
   
-  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>

@@ -29,20 +29,18 @@
     var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="系统调用 系统调用是受控的内核入口，借助于这一机制，进程可以请求内核去执行某些动作。内核以应用程序编程接口（API）的形式，提供了一系列的服务供程序访问，包括创建新进程，执行I&#x2F;O等。 执行系统调用时会完成如下这些步骤：  应用程序调用C语言函数库的外壳（wrapper）函数，来发起系统调用 外壳函数将系统调用参数放入到特定的寄存器中 外壳函数将系统调用编号复制到寄存器%eax 外壳函数执行中断">
+  <meta name="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Yufei Luo&#39;s Blog">
-<meta property="og:url" content="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/Linux%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86.html">
+<meta property="og:url" content="http://lyf35.github.io/archives/2021/08/index.html">
 <meta property="og:site_name" content="Yufei Luo&#39;s Blog">
-<meta property="og:description" content="系统调用 系统调用是受控的内核入口，借助于这一机制，进程可以请求内核去执行某些动作。内核以应用程序编程接口（API）的形式，提供了一系列的服务供程序访问，包括创建新进程，执行I&#x2F;O等。 执行系统调用时会完成如下这些步骤：  应用程序调用C语言函数库的外壳（wrapper）函数，来发起系统调用 外壳函数将系统调用参数放入到特定的寄存器中 外壳函数将系统调用编号复制到寄存器%eax 外壳函数执行中断">
+<meta property="og:description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-08-01T14:38:05.185Z">
-<meta property="article:modified_time" content="2021-08-01T14:38:05.185Z">
 <meta property="article:author" content="Yufei Luo">
 <meta property="article:tag" content="个人博客">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://lyf35.github.io/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/Linux%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86">
+<link rel="canonical" href="http://lyf35.github.io/archives/2021/08/">
 
 
 <script data-pjax class="page-configurations">
@@ -55,8 +53,7 @@
   };
 </script>
 
-  <title> | Yufei Luo's Blog
-</title>
+  <title>归档 | Yufei Luo's Blog</title>
   
 
 
@@ -232,7 +229,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -244,7 +241,6 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text"> 系统调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%99%90%E5%88%B6%E5%92%8C%E9%80%89%E9%A1%B9"><span class="nav-number">2.</span> <span class="nav-text"> 系统限制和选项</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text"> 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%99%90%E5%88%B6"><span class="nav-number">2.2.</span> <span class="nav-text"> 系统限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%80%89%E9%A1%B9"><span class="nav-number">2.3.</span> <span class="nav-text"> 系统选项</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -260,20 +256,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-count">78</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -316,110 +312,178 @@
 
       <div class="main-inner">
         
-  
-  
 
-        <div class="content page posts-expand">
+        <div class="content archive">
           
 
-    
-    
-    
-    <div class="post-block" lang="zh-CN">
-      <header class="post-header">
-
-<h1 class="post-title" itemprop="name headline">
-</h1>
-
-<div class="post-meta">
   
-  <ul class="breadcrumb">
-          
-            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">未完成的技术文档</a></li>
-            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/">LINUX</a></li>
-            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/">LINUX</a></li>
-            <li>LINUX系统相关知识</li>
-          
-  </ul>
-
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
-          <h1 id="系统调用"><a class="markdownIt-Anchor" href="#系统调用"></a> 系统调用</h1>
-<p>系统调用是受控的内核入口，借助于这一机制，进程可以请求内核去执行某些动作。内核以应用程序编程接口（API）的形式，提供了一系列的服务供程序访问，包括创建新进程，执行I/O等。</p>
-<p>执行系统调用时会完成如下这些步骤：</p>
-<ol>
-<li>应用程序调用C语言函数库的外壳（wrapper）函数，来发起系统调用</li>
-<li>外壳函数将系统调用参数放入到特定的寄存器中</li>
-<li>外壳函数将系统调用编号复制到寄存器%eax</li>
-<li>外壳函数执行中断机器指令（int 0x80），使处理器从用户态切换到内核态</li>
-<li>内核调用<code>system_call()</code>例程：
-<ol>
-<li>在内核栈中保存寄存器的值</li>
-<li>审核系统调用编号的有效性</li>
-<li>以系统调用编号对存放所有调用服务例程的列表进行索引，发现并调用相应的系统调用服务例程，然后将结果状态返回给<code>system_call()</code></li>
-<li>从内核栈恢复各个寄存器的值，并将系统调用返回值置于栈中</li>
-<li>返回至外壳函数，将处理器切换至用户态</li>
-</ol>
-</li>
-<li>如果系统调用的返回值表明调用有误，外壳函数会使用该值来设置全局变量<code>errno</code>，然后外壳函数返回调用程序，并同时返回一个整型值，表明系统调用是否成功。</li>
-</ol>
-<h1 id="系统限制和选项"><a class="markdownIt-Anchor" href="#系统限制和选项"></a> 系统限制和选项</h1>
-<h2 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h2>
-<p>UNIX系统中需要对各种各样的系统特性和资源进行限制，并选择提供或者不提供由各种标准定义的选项，例如一个进程能同时拥有多少已打开的文件、路径名的最大长度、一个程序的参数列表可以多大等。在不同的操作系统实现中，这些变量往往不同。</p>
-<h2 id="系统限制"><a class="markdownIt-Anchor" href="#系统限制"></a> 系统限制</h2>
-<p>针对于系统中的每个限制，所有的实现都必须支持一个最小值，它们被定义为<code>&lt;limits.h&gt;</code>文件中的常量，命名形如<code>_POSIX_XXX_MAX</code>。这类常量的每一个都对应着对某类资源或者特性的上限，且要求这些上限具有一个确定的最小值。而在某些情况下，需要为某个限制提供一个最大值，对这些值的命名中包含字符串<code>_MIN</code>，它们代表了对某些资源的下限。</p>
-<p>这些系统限制分为三类：</p>
-<ol>
-<li>
-<p>运行时恒定值：这些值可能依赖于具体的运行环境，需要在程序运行时调用<code>sysconf()</code>函数来获取。这一函数用法如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">sysconf</span><span class="params">(<span class="keyword">int</span> name)</span> <span class="comment">//返回name指代的系统限制的数值，如果返回-1则代表这个系统限制未被确定或者发生错误</span></span></span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>路径名变量值：与路径名（文件、目录、终端等）相关的限制，每个限制可能是相对于某个系统实现的常量，也可能随文件系统的不同而不同。在限制可能因路径名而发生变化的情况下，应用程序可以使用<code>pathconf()</code>或<code>fpathconf()</code>来获取该值。它们的用法如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">pathconf</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* pathname, <span class="keyword">int</span> name)</span> <span class="comment">//返回name指代的系统限制的数值，如果返回-1则代表这个系统限制未被确定或者发生错误</span></span></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">fpathconf</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> name)</span> <span class="comment">//返回name指代的系统限制的数值，如果返回-1则代表这个系统限制未被确定或者发生错误</span></span></span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>运行时可增加值：对于某些系统限制，特定系统在运行时可能会增加该值，应用程序可以使用<code>sysconf()</code>来获得系统所支持的实际值。</p>
-</li>
-</ol>
-<h2 id="系统选项"><a class="markdownIt-Anchor" href="#系统选项"></a> 系统选项</h2>
-<p>对于一些选项，如实时信号、POSIX共享内存、任务控制等，它们允许自行定义。通过在<code>&lt;unistd.h&gt;</code>文件中定义相应的常量，便可实现在编译时通过其对特定选项的支持。</p>
-<p>各个选项常量在定义之后，其值必为下列之一：</p>
-<ul>
-<li>值为-1：表示不支持该选项。此时，系统无需定义与该选项相关的头文件、数据类型和函数接口</li>
-<li>值为0：表示实现可能支持该选项，应用程序需要在运行时检查该选项是否获得支持</li>
-<li>值大于0：表示实现支持该选项，实现定义了与该选项有关的所有头文件、数据类型和函数接口，其行为也符合规范要求</li>
-</ul>
-
+  
+  
+  <div class="post-block">
+    <div class="posts-collapse">
+      <div class="collection-title">
+        
+        <span class="collection-header">不错! 目前共计 78 篇日志。 继续努力。</span>
       </div>
-      
-      
-      
-    </div>
-    
-  <ul class="breadcrumb">
-          
-            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">未完成的技术文档</a></li>
-            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/">LINUX</a></li>
-            <li><a href="/%E6%9C%AA%E5%AE%8C%E6%88%90%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Linux/Linux/">LINUX</a></li>
-            <li>LINUX系统相关知识</li>
-          
-  </ul>
 
-    
-    
-    
+      
+    <div class="collection-year">
+      <span class="collection-header">2021</span>
+    </div>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-08-17T21:10:32+08:00"
+              content="2021-08-17">
+          08-17
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/2021/08/17/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86-%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/" itemprop="url">
+            <span itemprop="name">信号处理-卡尔曼滤波</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-08-13T19:50:42+08:00"
+              content="2021-08-13">
+          08-13
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/2021/08/13/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-PhysNet%20A%20Neural%20Network%20for%20Predicting%20Energies,%20Forces,%20Dipole%20Moments,%20and%20Partial%20Charges/" itemprop="url">
+            <span itemprop="name">论文笔记-PhysNet A Neural Network for Predicting Energies, Forces, Dipole Moments, and Partial Charges</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-08-11T19:02:52+08:00"
+              content="2021-08-11">
+          08-11
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/2021/08/11/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-SchNet%20A%20Continuous-filter%20convolutional%20neural%20network%20for%20modeling%20quantum%20interactions/" itemprop="url">
+            <span itemprop="name">论文笔记-SchNet A Continuous-filter convolutional neural network for modeling quantum interactions</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-08-09T19:38:53+08:00"
+              content="2021-08-09">
+          08-09
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/2021/08/09/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-How%20Powerfol%20are%20Graph%20Neural%20Networks/" itemprop="url">
+            <span itemprop="name">论文笔记-How Powerfol are Graph Neural Networks</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-08-07T14:57:23+08:00"
+              content="2021-08-07">
+          08-07
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/2021/08/07/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-Neural%20Message%20Passing%20for%20Quantum%20Chemistry/" itemprop="url">
+            <span itemprop="name">论文笔记-Neural Message Passing for Quantum Chemistry</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-08-04T10:23:23+08:00"
+              content="2021-08-04">
+          08-04
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/2021/08/04/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-End-to-End%20object%20detection/" itemprop="url">
+            <span itemprop="name">论文笔记-End-to-end Object Detection</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-08-02T19:12:34+08:00"
+              content="2021-08-02">
+          08-02
+        </time>
+      </div>
+
+      <div class="post-title">
+          <a class="post-title-link" href="/2021/08/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-Strategies%20for%20Pre-training%20Graph%20Neural%20Networks/" itemprop="url">
+            <span itemprop="name">论文笔记-Strategies for Pre-training Graph Neural Networks</span>
+          </a>
+      </div>
+
+    </header>
+  </article>
+
+
+    </div>
+  </div>
+  
+  
+  
+
+  
+
 
 
         </div>
         
-    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -465,13 +529,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">1.1m</span>
+    <span title="站点总字数">1.3m</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">16:41</span>
+    <span title="站点阅读时长">19:04</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>
@@ -581,7 +645,6 @@
   </div>
 
   
-  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
@@ -705,25 +768,6 @@ if (document.querySelectorAll('pre.mermaid').length) {
 
   
 
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
-
-<script>
-NexT.utils.loadComments('#gitalk-container', () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
-    var gitalk = new Gitalk({
-      clientID    : '4dcdc02d24075b0e9d3a',
-      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
-      repo        : 'lyf35.github.io',
-      owner       : 'lyf35',
-      admin       : ['lyf35'],
-      id          : 'e40e7bacf4418d27c3a434aad973091b',
-        language: 'zh-CN',
-      distractionFreeMode: true
-    });
-    gitalk.render('gitalk-container');
-  }, window.Gitalk);
-});
-</script>
 
     </div>
 </body>
