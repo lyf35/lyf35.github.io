@@ -544,6 +544,7 @@
 <h2 id="数据集的划分"><a class="markdownIt-Anchor" href="#数据集的划分"></a> 数据集的划分</h2>
 <h3 id="目的"><a class="markdownIt-Anchor" href="#目的"></a> 目的</h3>
 <p>为了避免训练好的模型出现严重的欠拟合或者过拟合现象，同时也为了验证模型的泛化能力，我们一般不会将全部数据集都用于模型的训练过程，而是将其分成训练集和测试集两部分。训练集用于模型的训练过程，而测试集用于验证模型的泛化能力。而当模型有超参数时，还需要额外分出一个验证集，用于选择合适的超参数。</p>
+<p>需要说明的是，这一部分介绍的数据集划分方法主要是为了评估模型的效果，训练出的模型并不能直接作为最终的模型使用。需要根据评估结果，选择出最优模型及其对应的参数，然后使用全部的数据再重新进行训练，从而得到最终的模型。</p>
 <h3 id="留出法"><a class="markdownIt-Anchor" href="#留出法"></a> 留出法</h3>
 <p>留出法是最简单的划分数据集的办法，它直接将数据集划分为两个互斥的集合，其中一个作为训练集，另一个作为测试集。例如一个1000条样本的数据集，将其划分为700个样本的训练集与300个样本的测试集。</p>
 <p>这种方法虽然简单，但是也要注意一些问题。首先，我们需要保证训练集和测试集的划分要尽可能地保持数据分布的一致性，从而避免因为数据划分引入的额外偏差而对最终结果产生影响。例如在一个二分类的任务中，正例的样本数占70%，反例的样本数占30%，那么训练集与测试集中的正反样本比例也应该大致为7：3。这种保留类别比例的采样方式通常也被称为是<strong>分层采样</strong>。</p>
@@ -760,7 +761,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">19:04</span>
+    <span title="站点阅读时长">19:11</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>
