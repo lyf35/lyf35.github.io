@@ -269,7 +269,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-count">82</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1207,9 +1207,9 @@
 <p>前面已经提到，在对两个形状不同的数/数组进行运算操作的时候，可能会对数字或者数组做一些扩展操作。</p>
 <p>只有当两个array相容时才能做数据扩展，即它们每个维度上的长度按照从右往左的顺序进行比较时，要么在某个维度上二者维度相等，要么某个维度上其中一个array的长度为1（如果缺失则可以看作为1）。如果两个array相容，会在长度为1的维度上通过复制元素将array扩展至与另一个array长度相同。</p>
 <p>下面为一些broadcast操作的图例：</p>
-<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210105233413.png" alt="1" /></p>
-<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210105233455.png" alt="2" /></p>
-<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210105233518.png" alt="3" /></p>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210105233413.png" alt="1" style="zoom: 50%;" />
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210105233455.png" alt="2" style="zoom:50%;" />
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210105233518.png" alt="3" style="zoom:50%;" />
 <p>可以在slide操作中结合np.newaxis，手动添加一个新的维度，例如：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">test_shape2[:,np.newaxis,:,:]</span><br></pre></td></tr></table></figure>
 <pre><code>array([[[[ 0,  1,  2,  3,  4],
@@ -1311,7 +1311,7 @@
 <div class="copyright">
   
   &copy; 2020 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1327,7 +1327,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">19:31</span>
+    <span title="站点阅读时长">20:16</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>

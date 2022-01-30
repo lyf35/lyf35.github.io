@@ -269,7 +269,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-count">82</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1014,8 +1014,7 @@ Name: Age, dtype: float64
 <p>通过以上分析可知，Age对生还的影响很大，因此我们不能直接拿平均值或者中位数进行填充。可以通过使用其他特征训练一个能够预测Age的模型，让这个模型去预测Age的值。</p>
 <p>Fare：我们通过作图分析票价与生还之间的关系，可以发现票价越高的乘客，其生还的概率越高。因此这一特征属于比较重要的特征，需要保留。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">facet = sns.FacetGrid(train_data, hue=<span class="string">&quot;Survived&quot;</span>,aspect=<span class="number">2</span>)</span><br><span class="line">facet.map(sns.kdeplot,<span class="string">&#x27;Fare&#x27;</span>,shade= <span class="literal">True</span>)</span><br><span class="line">facet.set(xlim=(<span class="number">0</span>, train_data[<span class="string">&#x27;Fare&#x27;</span>].max()))</span><br></pre></td></tr></table></figure>
-<p>​<br />
-<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210302233452.png" alt="png" /><br />
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210302233452.png" alt="png" /><br />
 ​</p>
 <p>Cabin：对于Cabin特征，我们先查看NaN值与非NaN值对于生还是否有影响，为此我们可以做一个交叉表来查看。交叉表的内容明显说明了Cabin值是否为NaN对于生还率有着巨大的影响，因此不能直接删除。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pd.crosstab(train_data[<span class="string">&#x27;Cabin&#x27;</span>].isnull(),train_data[<span class="string">&#x27;Survived&#x27;</span>])</span><br></pre></td></tr></table></figure>
@@ -1265,7 +1264,7 @@ Accuracy of logistic regression:
 <div class="copyright">
   
   &copy; 2020 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1281,7 +1280,7 @@ Accuracy of logistic regression:
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">19:31</span>
+    <span title="站点阅读时长">20:16</span>
 </div>
   <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
   </div>
