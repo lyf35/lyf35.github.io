@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="简介 Transformer的来历 Transformer是Attention is All You Need论文中提出的一种新的框架。在Transformer结构中，抛弃了传统的CNN和RNN，整个网络的结构仅由Self-attention和全连接的前馈网络组成。 由于Attention机制最初是基于seq2seq提出的，因此下文将首先简单地介绍seq2seq和Attention机制，然后再详细">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习-Transformer">
+<meta property="og:url" content="http://lyf35.github.io/2021/07/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Transformer/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="简介 Transformer的来历 Transformer是Attention is All You Need论文中提出的一种新的框架。在Transformer结构中，抛弃了传统的CNN和RNN，整个网络的结构仅由Self-attention和全连接的前馈网络组成。 由于Attention机制最初是基于seq2seq提出的，因此下文将首先简单地介绍seq2seq和Attention机制，然后再详细">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222058.io%2526app%253D2002%2526size%253Df9999%252C10000%2526q%253Da80%2526n%253D0%2526g%253D0n%2526fmt%253Djpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222104.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222109">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222120.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222124.png">
+<meta property="article:published_time" content="2021-07-01T11:51:34.000Z">
+<meta property="article:modified_time" content="2021-07-12T14:58:19.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222058.io%2526app%253D2002%2526size%253Df9999%252C10000%2526q%253Da80%2526n%253D0%2526g%253D0n%2526fmt%253Djpeg">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/07/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Transformer/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深度学习-Transformer | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#transformer%E7%9A%84%E6%9D%A5%E5%8E%86"><span class="nav-number">1.1.</span> <span class="nav-text">Transformer的来历</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seq2seq"><span class="nav-number">1.2.</span> <span class="nav-text">Seq2Seq</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#attention"><span class="nav-number">1.3.</span> <span class="nav-text">Attention</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#transformer"><span class="nav-number">2.</span> <span class="nav-text">Transformer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.</span> <span class="nav-text">基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90"><span class="nav-number">2.2.</span> <span class="nav-text">结构解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%8D%E5%B5%8C%E5%85%A5"><span class="nav-number">2.2.1.</span> <span class="nav-text">词嵌入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E5%B5%8C%E5%85%A5"><span class="nav-number">2.2.2.</span> <span class="nav-text">位置嵌入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%A4%B4%E6%B3%A8%E6%84%8F%E5%8A%9B%E5%B1%82"><span class="nav-number">2.2.3.</span> <span class="nav-text">多头注意力层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%8B%E5%B7%AE%E9%93%BE%E6%8E%A5%E5%92%8C%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">2.2.4.</span> <span class="nav-text">残差链接和标准化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E7%BD%91%E7%BB%9C"><span class="nav-number">2.2.5.</span> <span class="nav-text">前向网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#decoder%E7%9A%84%E5%8F%98%E5%8C%96"><span class="nav-number">2.2.6.</span> <span class="nav-text">Decoder的变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%B9%E5%A4%84%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">批处理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">代码示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/07/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Transformer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习-Transformer
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-01 19:51:34" itemprop="dateCreated datePublished" datetime="2021-07-01T19:51:34+08:00">2021-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-12 22:58:19" itemprop="dateModified" datetime="2021-07-12T22:58:19+08:00">2021-07-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/07/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Transformer/" class="post-meta-item leancloud_visitors" data-flag-title="深度学习-Transformer" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>19k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>17 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="简介">简介</h1>
+<h2 id="transformer的来历">Transformer的来历</h2>
+<p>Transformer是Attention is All You Need论文中提出的一种新的框架。在Transformer结构中，抛弃了传统的CNN和RNN，整个网络的结构仅由Self-attention和全连接的前馈网络组成。</p>
+<p>由于Attention机制最初是基于seq2seq提出的，因此下文将首先简单地介绍seq2seq和Attention机制，然后再详细介绍Transformer。</p>
+<span id="more"></span>
+<h2 id="seq2seq">Seq2Seq</h2>
+<p>Seq2Seq属于Encoder-Decoder结构中的一种，它的基本思想是使用两个RNN（或者LSTM、GRU等），一个作为Encoder，另一个作为Decoder。Encoder负责将输入序列压缩成指定长度的向量，这个向量就可以看作是这个序列的语义，这一过程称为编码。而Decoder则负责根据语义向量生成指定的序列，这个过程也被称为解码。</p>
+<p>下图所示便是使用RNN构造的一个Encoder-Decoder结构，它可以被用于机器翻译等应用中去：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222058.io%2526app%253D2002%2526size%253Df9999%252C10000%2526q%253Da80%2526n%253D0%2526g%253D0n%2526fmt%253Djpeg" alt="img" style="zoom:67%;" /></p>
+<h2 id="attention">Attention</h2>
+<p>在Seq2Seq架构中，Encoder要将整个输入序列的信息全部编码成一个向量传给Decoder。这样就要求了编码向量中包含有原始序列中尽可能多的信息。而当要编码的序列较长时，由于编码向量的大小固定，因此这个向量可能无法保存有序列的所有信息，从而导致模型精度的下降。</p>
+<p>为了解决这一问题，人们在Seq2Seq架构中引入了Attention机制。从感性的角度来看，当我们在看一张图片时，我们可能更加关注图片内的文字和人像，忽略掉图片中的背景部分；与之类似的是，我们在读一句话的时候，也会更加关注于其中关键性的名词和动词，而忽略掉一些无关紧要的介词、形容词等。而Attention机制便类似于人的这一机制。</p>
+<p>具体来说，Attention机制通过保留Encoder对于输入序列的中间输出结果，然后结合Decoder的输入值以及Encoder的这些中间输出结果，计算得到一个对应的注意力输出值，并且在解码器输出时，将输出序列与注意力值关联。如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222104.png" alt="image-20210701215504394" style="zoom:67%;" /></p>
+<h1 id="transformer">Transformer</h1>
+<h2 id="基本原理">基本原理</h2>
+<p>Transformer是Google在2017年提出的用于机器翻译的模型，在它的内部，其实是一个Encoder-Decoder的结构。在Transformer中，抛弃了传统的CNN和RNN，整个网络结构完全由Attention机制组成，并且采用了6层的Encoder-Decoder结构。</p>
+<p>以一个简单的例子说明Transformer的结构及其原理：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222109" alt="图片" style="zoom: 67%;" /></p>
+<p>其中，左边的部分为Encoder，右边部分为Decoder，原论文中使用的Transformer结构中，N=6。编码器负责将自然语言序列映射称为一个隐藏层，即一个包含了自然语言序列信息的数学表达；而解码器则将隐藏层再映射为自然语言序列。</p>
+<p>例如我们以Why do we work？作为输入，Transformer的工作流程如下：</p>
+<ol type="1">
+<li>输入自然语言序列Why do we work？到编码器中；</li>
+<li>编码器会负责将这句话编码为一个向量，这个向量将作为解码器的输入；</li>
+<li>输入一个起始符号&lt;start&gt;给解码器，解码器便可以生成第一个输出；</li>
+<li>然后将第一个输出作为输入继续输入解码器，便可以得到第二个输出；</li>
+<li>以此类推，直到解码器输出&lt;end&gt;，代表序列生成完成。</li>
+</ol>
+<h2 id="结构解析">结构解析</h2>
+<p>由于编码器与解码器的结构类似，因此下面我们以编码器为例，说明Transformer的结构。为了叙述方便，此处仍然使用上面的Why do we work为例来说明其原理。</p>
+<h3 id="词嵌入">词嵌入</h3>
+<p>由于模型无法直接对输入的单词进行解析，因此第一步要做的事情就是词嵌入（图中的Input Embedding），就是将输入数据中的每一个词都编码为一个词向量。</p>
+<p>词嵌入可以使用Word2Vec的方法。为了叙述方便，我们以Why do we work这句话为例，并假设使用的Word2Vec将一个单词映射为一个长度为512的词向量。那么输入数据<span class="math inline">\(X\)</span>就是一个长度为4的向量，在经过词嵌入之后，得到一个大小为<span class="math inline">\(4\times 512\)</span>的向量。</p>
+<h3 id="位置嵌入">位置嵌入</h3>
+<p>文字的位置信息很重要，在上图的Encoder结构中，并没有用到类似于RNN的循环结构，因此Encoder本身无法捕捉顺序序列。为了加入位置信息，Transformer使用了位置嵌入（即图中的Positional Encoding）的方法。具体来讲，Transformer使用了sin-cos规则，利用正弦和余弦函数的周期性变化来向模型提供位置信息： <span class="math display">\[
+PE_{\text{pos},2i}=\sin(\text{pos}/(10000^{2i/d_{\text{model}}})) \\
+PE_{\text{pos},2i+1}=\cos(\text{pos}/(10000^{2i/d_{\text{model}}})) \\
+\]</span> 其中，<span class="math inline">\(\text{pos}\)</span>指的是句子中词的位置，例如we对应的<span class="math inline">\(\text{pos}\)</span>值为2，do对应的pos值为1；<span class="math inline">\(i\)</span>的取值范围为<span class="math inline">\([0,512)\)</span>，对应于词嵌入向量每个元素的位置；<span class="math inline">\(d_{model}\)</span>指的是词嵌入向量的长度，即512。</p>
+<p>也就是说，词嵌入向量的512个位置对应于512个不同的三角函数公式，产生不同的周期性变化。当<span class="math inline">\(\text{pos}\)</span>取不同的值时，这512个三角函数值也有所不同，也就对应了独特的位置嵌入向量。</p>
+<p>接下来，将每个词向量与它的位置嵌入向量相加，便得到了下一层的输入<span class="math inline">\(X_{\text{embedding}}\)</span>。</p>
+<h3 id="多头注意力层">多头注意力层</h3>
+<p>图中的Multi-Head Attention主要包括两个重要的点，一个是自注意力（self-attention）机制，另外一个是多头（Multi-Head）机制。</p>
+<p>首先介绍自注意力机制。自注意力模块的结构如下：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222120.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>其中，<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>对应于三个不同的矩阵，各自又被称为查询向量、键向量和值向量，是通过对<span class="math inline">\(X_{\text{embedding}}\)</span>做线性变换而来的。三个矩阵<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>对应于三个不同的权值矩阵<span class="math inline">\(W^Q\)</span>，<span class="math inline">\(W^K\)</span>和<span class="math inline">\(W^V\)</span>，而<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>通过下面的公式计算而得： <span class="math display">\[
+Q=X_{\text{embedding}} W^Q \\
+K=X_{\text{embedding}} W^K \\
+V=X_{\text{embedding}} W^V
+\]</span> 我们假设三个权值矩阵的大小都为<span class="math inline">\(512\times 64\)</span>，那么<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>的大小相应为<span class="math inline">\(4\times 64\)</span>。</p>
+<p>而最终的Attention可以通过如下公式计算而得： <span class="math display">\[
+\text{Attention}(Q,K,V)=\text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\]</span> 其中<span class="math inline">\(d_k\)</span>代表<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>第二个维度上的长度，即64，这一参数用于稳定梯度的值。因此最终计算出的Attention也是一个<span class="math inline">\(4\times 64\)</span>的矩阵。</p>
+<p>而“多头”机制其实相当于是有多个<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>的集合，即多个Self-Attention的集成。我们假设head的个数为8，那么将<span class="math inline">\(X_{\text{embedding}}\)</span>输入到这8个Self-Attention模块之后，便会得到相对应的输出。将它们按列拼接起来再送到一个全连接层，便可以得到Multi-Head Attention模块的输出。</p>
+<p>在Multi-Head Attention模块中，多个<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>的集合是通过将原始的<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>通过不同的全连接层进行线性变换，得到多组<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>的值。</p>
+<p>综上，Multi-Head Attention模块可以表示为下图所示的结构：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210703222124.png" alt="image-20210703003709815" style="zoom:67%;" /></p>
+<h3 id="残差链接和标准化">残差链接和标准化</h3>
+<p>Transformer结构图中的Add&amp;Norm模块便对应于残差链接和标准化操作。通过合理地设置Multi-Head Attention模块中每个子模块的尺寸大小，可以使得模块的输出尺寸大小与<span class="math inline">\(X_{\text{embedding}}\)</span>的尺寸大小完全一致，这样便可以将他们直接进行元素相加，从而实现残差链接。</p>
+<p>而标准化则是将残差链接的结果做BatchNorm操作进行批标准化。批标准化的原理此处不再赘述，可参考本博客中介绍深度前馈网络的文章。</p>
+<h3 id="前向网络">前向网络</h3>
+<p>Transformer结构图中的FeedForward模块其实指的是一个前向网络。在原文中是由两个线性变换模块，以及这两个模块中间的ReLU激活函数组成。这一模块输入和输出的维度相等。</p>
+<h3 id="decoder的变化">Decoder的变化</h3>
+<p>在Decoder中，Multi-Head Attention模块与Encoder有一些不同，下面进行详细说明。</p>
+<p>Decoder中Multi-Head Attention模块的形式与Encoder一致，唯一不同的是其<span class="math inline">\(Q\)</span>，<span class="math inline">\(K\)</span>，<span class="math inline">\(V\)</span>矩阵的来源。在Decoder中，<span class="math inline">\(Q\)</span>矩阵来自于下面子模块的输出，而<span class="math inline">\(K\)</span>和<span class="math inline">\(V\)</span>矩阵则来源于整个Encoder的输出。</p>
+<p>而由于Decoder的目的是进行预测，它看不到未来的序列。所以Decoder中的Masked Multi-Head Attention模块需要将当前预测的单词以及之后的单词全部掩盖掉。</p>
+<h2 id="批处理">批处理</h2>
+<p>在上面说明Transformer结构的时候，我们以一句话作为输入来举例讲解其原理。Transformer支持计算多句话组成的batch，在上面的推导过程中，只需要在每个输入、中间计算结果和输出的维度中，再添加一个batchsize作为第0个维度，便得到它们在批量处理时的尺寸大小。</p>
+<p>此外，由于每个句子的长度不一样，因此在计算时需要按照最长的句子长度统一处理。对于短句，则可以进行填充操作，从而使得它们的长度对齐。</p>
+<h1 id="代码示例">代码示例</h1>
+<p>下面的代码是使用Transformer训练一个对话机器人的代码，主要参考了https://pytorch.org/tutorials/beginner/translation_transformer.html和https://pytorch.org/tutorials/beginner/chatbot_tutorial.html?highlight=chatbot这两个官方教程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"><span class="keyword">from</span> torchtext.data.utils <span class="keyword">import</span> get_tokenizer</span><br><span class="line"><span class="keyword">from</span> torchtext.vocab <span class="keyword">import</span> build_vocab_from_iterator</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> Iterable, <span class="type">List</span></span><br><span class="line"><span class="keyword">from</span> torch.nn.utils.rnn <span class="keyword">import</span> pad_sequence</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> codecs</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"><span class="keyword">import</span> unicodedata</span><br><span class="line"><span class="keyword">import</span> itertools</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DEVICE = <span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span></span><br><span class="line">batch_size = <span class="number">32</span></span><br></pre></td></tr></table></figure>
+<p>下面的操作是清洗掉原始数据无用的部分，只保留对话</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">corpus_name = <span class="string">&quot;cornell movie-dialogs corpus&quot;</span></span><br><span class="line">corpus = os.path.join(<span class="string">&#x27;./&#x27;</span>, corpus_name)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Split each line of the file into a dictionary of fields (lineID, characterID, movieID, character, text)</span></span><br><span class="line"><span class="comment"># The content of file &quot;movie_lines.txt&quot; is as follows:</span></span><br><span class="line"><span class="comment"># L1045 +++$+++ u0 +++$+++ m0 +++$+++ BIANCA +++$+++ They do not!</span></span><br><span class="line"><span class="comment"># L1044 +++$+++ u2 +++$+++ m0 +++$+++ CAMERON +++$+++ They do to!</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">loadlines</span>(<span class="params">filename, fields</span>):</span><br><span class="line">    lines = &#123;&#125;</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;iso-8859-1&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            values = line.split(<span class="string">&quot; +++$+++ &quot;</span>)</span><br><span class="line">            lineobj = &#123;&#125;</span><br><span class="line">            <span class="keyword">for</span> i, field <span class="keyword">in</span> <span class="built_in">enumerate</span>(fields):</span><br><span class="line">                lineobj[field] = values[i]</span><br><span class="line">            lines[lineobj[<span class="string">&#x27;lineID&#x27;</span>]] = lineobj</span><br><span class="line">    <span class="keyword">return</span> lines</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Group fields of lines into conversations. fields = [&#x27;character1ID&#x27;, &#x27;character2ID&#x27;, &#x27;movieID&#x27;, &#x27;utteranceIDs&#x27;]</span></span><br><span class="line"><span class="comment"># The content of file &quot;movie_conversations.txt&quot; is as follows:</span></span><br><span class="line"><span class="comment"># u0 +++$+++ u2 +++$+++ m0 +++$+++ [&#x27;L194&#x27;, &#x27;L195&#x27;, &#x27;L196&#x27;, &#x27;L197&#x27;]</span></span><br><span class="line"><span class="comment"># u0 +++$+++ u2 +++$+++ m0 +++$+++ [&#x27;L198&#x27;, &#x27;L199&#x27;]</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">loadconversations</span>(<span class="params">filename, lines, fields</span>):</span><br><span class="line">    conversations = []</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(filename, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;iso-8859-1&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">            values = line.split(<span class="string">&quot; +++$+++ &quot;</span>)</span><br><span class="line">            convObj = &#123;&#125;</span><br><span class="line">            <span class="keyword">for</span> i, field <span class="keyword">in</span> <span class="built_in">enumerate</span>(fields):</span><br><span class="line">                convObj[field] = values[i]</span><br><span class="line">            utterance_id_pattern = re.<span class="built_in">compile</span>(<span class="string">&#x27;L[0-9]+&#x27;</span>)</span><br><span class="line">            lineIDs = utterance_id_pattern.findall(convObj[<span class="string">&#x27;utteranceIDs&#x27;</span>])</span><br><span class="line">            convObj[<span class="string">&#x27;lines&#x27;</span>]=[]</span><br><span class="line">            <span class="keyword">for</span> lineID <span class="keyword">in</span> lineIDs:</span><br><span class="line">                convObj[<span class="string">&#x27;lines&#x27;</span>].append(lines[lineID])</span><br><span class="line">            conversations.append(convObj)</span><br><span class="line">    <span class="keyword">return</span> conversations</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Extract pairs of sentences from conversations</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">extractSentencePairs</span>(<span class="params">conversations</span>):</span><br><span class="line">    qa_pairs = []</span><br><span class="line">    <span class="keyword">for</span> conversation <span class="keyword">in</span> conversations:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(conversation[<span class="string">&#x27;lines&#x27;</span>])-<span class="number">1</span>):</span><br><span class="line">            inputline = conversation[<span class="string">&#x27;lines&#x27;</span>][i][<span class="string">&#x27;text&#x27;</span>].strip()</span><br><span class="line">            targetline = conversation[<span class="string">&#x27;lines&#x27;</span>][i+<span class="number">1</span>][<span class="string">&#x27;text&#x27;</span>].strip()</span><br><span class="line">            <span class="keyword">if</span> inputline <span class="keyword">and</span> targetline:</span><br><span class="line">                qa_pairs.append([inputline, targetline])</span><br><span class="line">    <span class="keyword">return</span> qa_pairs</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">datafile = <span class="string">&#x27;./cornell movie-dialogs corpus/formatted_movie_lines.txt&#x27;</span></span><br><span class="line">delimiter = <span class="string">&#x27;\t&#x27;</span></span><br><span class="line">delimiter = <span class="built_in">str</span>(codecs.decode(delimiter, <span class="string">&#x27;unicode_escape&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lines = &#123;&#125;</span><br><span class="line">conversations = []</span><br><span class="line">MOVIE_LINES_FIELDS = [<span class="string">&#x27;lineID&#x27;</span>, <span class="string">&#x27;characterID&#x27;</span>, <span class="string">&#x27;movieID&#x27;</span>, <span class="string">&#x27;character&#x27;</span>, <span class="string">&#x27;text&#x27;</span>]</span><br><span class="line">MOVIE_CONVERSATIONS_FIELDS = [<span class="string">&#x27;character1ID&#x27;</span>, <span class="string">&#x27;character2ID&#x27;</span>, <span class="string">&#x27;movieID&#x27;</span>, <span class="string">&#x27;utteranceIDs&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lines = loadlines(<span class="string">&#x27;./cornell movie-dialogs corpus/movie_lines.txt&#x27;</span>, MOVIE_LINES_FIELDS)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conversations = loadconversations(<span class="string">&#x27;./cornell movie-dialogs corpus/movie_conversations.txt&#x27;</span>, lines, MOVIE_CONVERSATIONS_FIELDS)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(datafile, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> outputfile:</span><br><span class="line">    writer = csv.writer(outputfile, delimiter=delimiter, lineterminator=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> pair <span class="keyword">in</span> extractSentencePairs(conversations):</span><br><span class="line">        writer.writerow(pair)</span><br></pre></td></tr></table></figure>
+<p>通过上面的操作，我们得到了用于训练的语料库，其中每一条都代表一问一答组成的对话。接下来需要将它们转为数字表示的格式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">PAD_token = <span class="number">0</span></span><br><span class="line">SOS_token = <span class="number">1</span></span><br><span class="line">EOS_token = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 词库的定义。语料库中所有的词语及其映射到的整数都保存在类的成员变量中。</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Voc</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name</span>):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.trimmed = <span class="literal">False</span></span><br><span class="line">        self.word2index = &#123;<span class="string">&#x27;PAD&#x27;</span>: PAD_token, <span class="string">&#x27;SOS&#x27;</span>: SOS_token, <span class="string">&#x27;EOS&#x27;</span>: EOS_token&#125;</span><br><span class="line">        self.word2count = &#123;&#125;</span><br><span class="line">        self.index2word = &#123;PAD_token: <span class="string">&#x27;PAD&#x27;</span>, SOS_token: <span class="string">&#x27;SOS&#x27;</span>, EOS_token: <span class="string">&#x27;EOS&#x27;</span>&#125;</span><br><span class="line">        self.num_words = <span class="number">3</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">addSentence</span>(<span class="params">self, sentence</span>):</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> sentence.split(<span class="string">&#x27; &#x27;</span>):</span><br><span class="line">            self.addWord(word)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">addWord</span>(<span class="params">self, word</span>):</span><br><span class="line">        <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> self.word2index:</span><br><span class="line">            self.word2index[word] = self.num_words</span><br><span class="line">            self.word2count[word] = <span class="number">1</span></span><br><span class="line">            self.index2word[self.num_words] = word</span><br><span class="line">            self.num_words += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.word2count[word] += <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">trim</span>(<span class="params">self, min_count</span>):</span><br><span class="line">        <span class="keyword">if</span> self.trimmed:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        self.trimmed = <span class="literal">True</span></span><br><span class="line">        </span><br><span class="line">        keep_words = []</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> k, v <span class="keyword">in</span> self.word2count.items():</span><br><span class="line">            <span class="keyword">if</span> v &gt;= min_count:</span><br><span class="line">                keep_words.append(k)</span><br><span class="line">                </span><br><span class="line">        self.word2index = &#123;<span class="string">&#x27;PAD&#x27;</span>: PAD_token, <span class="string">&#x27;SOS&#x27;</span>: SOS_token, <span class="string">&#x27;EOS&#x27;</span>: EOS_token&#125;</span><br><span class="line">        self.word2count = &#123;&#125;</span><br><span class="line">        self.index2word = &#123;PAD_token: <span class="string">&#x27;PAD&#x27;</span>, SOS_token: <span class="string">&#x27;SOS&#x27;</span>, EOS_token: <span class="string">&#x27;EOS&#x27;</span>&#125;</span><br><span class="line">        self.num_words = <span class="number">3</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> keep_words:</span><br><span class="line">            self.addWord(word)</span><br></pre></td></tr></table></figure>
+<p>下面的函数是对语料库进行清洗，去除掉其中过短或者过长的语句，并在此过程中同时建立词库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">MAX_LENGTH = <span class="number">15</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">unicodeToAscii</span>(<span class="params">s</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join(</span><br><span class="line">        c <span class="keyword">for</span> c <span class="keyword">in</span> unicodedata.normalize(<span class="string">&#x27;NFD&#x27;</span>, s)</span><br><span class="line">        <span class="keyword">if</span> unicodedata.category(c) != <span class="string">&#x27;Mn&#x27;</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="comment"># Lowercase, trim and remove non-letter characters</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">normalizeString</span>(<span class="params">s</span>):</span><br><span class="line">    s = unicodeToAscii(s.lower().strip())</span><br><span class="line">    s = re.sub(<span class="string">r&quot;([.!?])&quot;</span>, <span class="string">r&quot; \1&quot;</span>, s)</span><br><span class="line">    s = re.sub(<span class="string">r&quot;[^a-zA-Z.!?]+&quot;</span>, <span class="string">r&quot; &quot;</span>, s)</span><br><span class="line">    s = re.sub(<span class="string">r&quot;\s+&quot;</span>, <span class="string">r&quot; &quot;</span>, s).strip()</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">readVocs</span>(<span class="params">datafile, corpus_name</span>):</span><br><span class="line">    lines = <span class="built_in">open</span>(datafile, encoding=<span class="string">&#x27;utf-8&#x27;</span>).read().strip().split(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    pairs = [[normalizeString(s) <span class="keyword">for</span> s <span class="keyword">in</span> l.split(<span class="string">&#x27;\t&#x27;</span>)] <span class="keyword">for</span> l <span class="keyword">in</span> lines]</span><br><span class="line">    voc = Voc(corpus_name)</span><br><span class="line">    <span class="keyword">return</span> voc, pairs</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">filterPair</span>(<span class="params">p</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">len</span>(p[<span class="number">0</span>].split(<span class="string">&#x27; &#x27;</span>)) &lt; MAX_LENGTH <span class="keyword">and</span> <span class="built_in">len</span>(p[<span class="number">1</span>].split(<span class="string">&#x27; &#x27;</span>)) &lt; MAX_LENGTH</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">filterPairs</span>(<span class="params">pairs</span>):</span><br><span class="line">    <span class="keyword">return</span> [pair <span class="keyword">for</span> pair <span class="keyword">in</span> pairs <span class="keyword">if</span> filterPair(pair)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">loadPrepareData</span>(<span class="params">corpus, corpus_name, datafile</span>):</span><br><span class="line">    voc, pairs = readVocs(datafile, corpus_name)</span><br><span class="line">    pairs = filterPairs(pairs)</span><br><span class="line">    <span class="keyword">for</span> pair <span class="keyword">in</span> pairs:</span><br><span class="line">        voc.addSentence(pair[<span class="number">0</span>])</span><br><span class="line">        voc.addSentence(pair[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">return</span> voc, pairs</span><br><span class="line"></span><br><span class="line">voc, pairs = loadPrepareData(corpus, corpus_name, datafile)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">MIN_COUNT = <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">trimRareWords</span>(<span class="params">voc, pairs, MIN_COUNT</span>):</span><br><span class="line">    voc.trim(MIN_COUNT)</span><br><span class="line">    keep_pairs = []</span><br><span class="line">    <span class="keyword">for</span> pair <span class="keyword">in</span> pairs:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(pair) != <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        input_sentence = pair[<span class="number">0</span>]</span><br><span class="line">        output_sentence = pair[<span class="number">1</span>]</span><br><span class="line">        keep_input = <span class="literal">True</span></span><br><span class="line">        keep_output = <span class="literal">True</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> input_sentence.split(<span class="string">&#x27; &#x27;</span>):</span><br><span class="line">            <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> voc.word2index:</span><br><span class="line">                keep_input = <span class="literal">False</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">                </span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> output_sentence.split(<span class="string">&#x27; &#x27;</span>):</span><br><span class="line">            <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> voc.word2index:</span><br><span class="line">                keep_output = <span class="literal">False</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">                </span><br><span class="line">        <span class="keyword">if</span> keep_input <span class="keyword">and</span> keep_output:</span><br><span class="line">            keep_pairs.append(pair)</span><br><span class="line">            </span><br><span class="line">    <span class="keyword">return</span> keep_pairs</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pairs = trimRareWords(voc, pairs, MIN_COUNT)</span><br></pre></td></tr></table></figure>
+<p>下面的函数是使用词库构造数据集的函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">indexesFromSentence</span>(<span class="params">sentence, voc=voc</span>):</span><br><span class="line">    <span class="keyword">return</span> [voc.word2index[word] <span class="keyword">for</span> word <span class="keyword">in</span> sentence.split(<span class="string">&#x27; &#x27;</span>)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sequentialTransforms</span>(<span class="params">*transforms</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">txt_input</span>):</span><br><span class="line">        <span class="keyword">for</span> transform <span class="keyword">in</span> transforms:</span><br><span class="line">            txt_input = transform(txt_input)</span><br><span class="line">        <span class="keyword">return</span> txt_input</span><br><span class="line">    <span class="keyword">return</span> func</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tensorTransform</span>(<span class="params">token_ids</span>):</span><br><span class="line">    <span class="keyword">return</span> torch.cat((torch.tensor([SOS_token]),</span><br><span class="line">                 torch.tensor(token_ids),</span><br><span class="line">                 torch.tensor([EOS_token])))</span><br><span class="line">text_transform=sequentialTransforms(indexesFromSentence, tensorTransform)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">collate_fn</span>(<span class="params">batch</span>):</span><br><span class="line">    source_batch = []</span><br><span class="line">    target_batch = []</span><br><span class="line">    <span class="keyword">for</span> source_sample, target_sample <span class="keyword">in</span> batch:</span><br><span class="line">        source_batch.append(text_transform(source_sample))</span><br><span class="line">        target_batch.append(text_transform(target_sample))</span><br><span class="line">    source_batch = pad_sequence(source_batch, padding_value=PAD_token)</span><br><span class="line">    target_batch = pad_sequence(target_batch, padding_value=PAD_token)</span><br><span class="line">    <span class="keyword">return</span> source_batch, target_batch</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Transfromer中的位置编码操作</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PositionalEncoding</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, embedding_size, maxlen=<span class="number">5000</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(PositionalEncoding, self).__init__()</span><br><span class="line">        den = torch.exp(-torch.arange(<span class="number">0</span>, embedding_size, <span class="number">2</span>)*math.log(<span class="number">10000</span>) / embedding_size)</span><br><span class="line">        pos = torch.arange(<span class="number">0</span>, maxlen).reshape(maxlen, <span class="number">1</span>)</span><br><span class="line">        pos_embedding = torch.zeros((maxlen, embedding_size))</span><br><span class="line">        pos_embedding[:, <span class="number">0</span>::<span class="number">2</span>] = torch.sin(pos*den)</span><br><span class="line">        pos_embedding[:, <span class="number">1</span>::<span class="number">2</span>] = torch.cos(pos*den)</span><br><span class="line">        pos_embedding = pos_embedding.unsqueeze(-<span class="number">2</span>)</span><br><span class="line">        </span><br><span class="line">        self.register_buffer(<span class="string">&#x27;pos_embedding&#x27;</span>, pos_embedding)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, token_embedding</span>):</span><br><span class="line">        <span class="keyword">return</span> token_embedding+self.pos_embedding[:token_embedding.size(<span class="number">0</span>), :]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Word2Vec操作</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TokenEmbedding</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, vocab_size, embedding_size</span>):</span><br><span class="line">        <span class="built_in">super</span>(TokenEmbedding, self).__init__()</span><br><span class="line">        self.embedding = nn.Embedding(vocab_size, embedding_size)</span><br><span class="line">        self.embedding_size = embedding_size</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, tokens</span>):</span><br><span class="line">        <span class="keyword">return</span> self.embedding(tokens.long())</span><br></pre></td></tr></table></figure>
+<p>备注—PyTorch的<code>TransformerEncoder</code>和<code>TransformerDecoder</code>两个模块中，Masking的用法：</p>
+<p>mask分为两种，一种是<code>*_mask</code>，在这种mask中，没有被掩盖的部分的值为0.0，而被掩盖的部分则值为-inf；另一种mask为<code>*_key_padding_mask</code>，在这种mask中，使用True代表这个位置被掩盖，而False代表未被掩盖。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Seq2SeqTransformer</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">            source_vocab_size,</span></span><br><span class="line"><span class="params">            target_vocab_size,</span></span><br><span class="line"><span class="params">            num_encoder_layers = <span class="number">3</span>,</span></span><br><span class="line"><span class="params">            num_decoder_layers = <span class="number">3</span>,</span></span><br><span class="line"><span class="params">            embedding_size = <span class="number">512</span>,</span></span><br><span class="line"><span class="params">            nhead = <span class="number">8</span>,</span></span><br><span class="line"><span class="params">            dim_feedforward = <span class="number">512</span>,</span></span><br><span class="line"><span class="params">            dropout = <span class="number">0.1</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(Seq2SeqTransformer, self).__init__()</span><br><span class="line">        self.transformer = nn.Transformer(d_model=embedding_size,</span><br><span class="line">                              nhead=nhead,</span><br><span class="line">                              num_encoder_layers=num_encoder_layers,</span><br><span class="line">                              num_decoder_layers=num_decoder_layers,</span><br><span class="line">                              dim_feedforward=dim_feedforward)</span><br><span class="line">        self.generator = nn.Linear(embedding_size, target_vocab_size)</span><br><span class="line">        self.source_token_embedding = TokenEmbedding(source_vocab_size, embedding_size)</span><br><span class="line">        self.target_token_embedding = TokenEmbedding(target_vocab_size, embedding_size)</span><br><span class="line">        self.positional_encoding = PositionalEncoding(embedding_size)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_generate_square_subsequent_mask</span>(<span class="params">self, sz</span>):</span><br><span class="line">        mask = (torch.triu(torch.ones(sz, sz)) == <span class="number">1</span>).transpose(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        mask = mask.<span class="built_in">float</span>().masked_fill(mask == <span class="number">0</span>, <span class="built_in">float</span>(<span class="string">&#x27;-inf&#x27;</span>)).masked_fill(mask == <span class="number">1</span>, <span class="built_in">float</span>(<span class="number">0.0</span>))</span><br><span class="line">        <span class="keyword">return</span> mask</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">create_mask</span>(<span class="params">self, source, target</span>):</span><br><span class="line">        source_seq_len = source.shape[<span class="number">0</span>]</span><br><span class="line">        target_seq_len = target.shape[<span class="number">0</span>]</span><br><span class="line">        </span><br><span class="line">        target_mask = self._generate_square_subsequent_mask(target_seq_len)</span><br><span class="line">        source_mask = torch.zeros((source_seq_len, source_seq_len), device=DEVICE).<span class="built_in">type</span>(torch.<span class="built_in">bool</span>)</span><br><span class="line">        </span><br><span class="line">        source_padding_mask = (source == PAD_token).transpose(<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">        target_padding_mask = (target == PAD_token).transpose(<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> source_mask, target_mask, source_padding_mask, target_padding_mask</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, </span></span><br><span class="line"><span class="params">            source, </span></span><br><span class="line"><span class="params">            target</span>):</span><br><span class="line">        source_mask, target_mask, source_padding_mask, target_padding_mask = self.create_mask(source, target[:-<span class="number">1</span>,:])</span><br><span class="line">        source_mask = source_mask.to(DEVICE)</span><br><span class="line">        target_mask = target_mask.to(DEVICE)</span><br><span class="line">        source_padding_mask = source_padding_mask.to(DEVICE)</span><br><span class="line">        target_padding_mask = target_padding_mask.to(DEVICE)</span><br><span class="line">        source_embedding = self.positional_encoding(self.source_token_embedding(source))</span><br><span class="line">        target_embedding = self.positional_encoding(self.target_token_embedding(target[:-<span class="number">1</span>,:]))</span><br><span class="line">        </span><br><span class="line">        outs=self.transformer(source_embedding, </span><br><span class="line">                       target_embedding, </span><br><span class="line">                       source_mask, </span><br><span class="line">                       target_mask,</span><br><span class="line">                       <span class="literal">None</span>,</span><br><span class="line">                       source_padding_mask,</span><br><span class="line">                       target_padding_mask)</span><br><span class="line">        <span class="keyword">return</span> self.generator(outs)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">self, source, source_mask</span>):</span><br><span class="line">        <span class="keyword">return</span> self.transformer.encoder(self.positional_encoding(self.source_token_embedding(source)),source_mask)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">decode</span>(<span class="params">self, target, memory, target_mask</span>):</span><br><span class="line">        <span class="keyword">return</span> self.transformer.decoder(self.positional_encoding(self.target_token_embedding(target)), memory, target_mask)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br><span class="line">vocab_size = voc.num_words</span><br><span class="line">transformer = Seq2SeqTransformer(vocab_size, vocab_size)</span><br><span class="line">transformer = transformer.to(DEVICE)</span><br><span class="line">loss_fn = torch.nn.CrossEntropyLoss(ignore_index=PAD_token)</span><br><span class="line">optimizer = torch.optim.Adam(transformer.parameters(), lr=<span class="number">0.0001</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">train_size = <span class="built_in">int</span>(<span class="built_in">len</span>(pairs)*<span class="number">0.8</span>)</span><br><span class="line">val_size = <span class="built_in">int</span>(<span class="built_in">len</span>(pairs)*<span class="number">0.2</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">train_dataloader = DataLoader(pairs[:train_size], batch_size=batch_size, collate_fn=collate_fn)</span><br><span class="line">val_dataloader = DataLoader(pairs[train_size:], batch_size=batch_size, collate_fn=collate_fn)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">train_epoch</span>(<span class="params">model, dataloader, optimizer</span>):</span><br><span class="line">    model.train()</span><br><span class="line">    losses = <span class="number">0</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> source, target <span class="keyword">in</span> dataloader:</span><br><span class="line">        source = source.to(DEVICE)</span><br><span class="line">        target = target.to(DEVICE)</span><br><span class="line">        </span><br><span class="line">        logits = model(source, target)</span><br><span class="line"></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        </span><br><span class="line">        target_out=target[<span class="number">1</span>:,:]</span><br><span class="line"></span><br><span class="line">        loss = loss_fn(logits.reshape(-<span class="number">1</span>, logits.shape[-<span class="number">1</span>]), target_out.reshape(-<span class="number">1</span>)) <span class="comment">#需要注意传入参数的顺序</span></span><br><span class="line">        loss.backward()</span><br><span class="line"></span><br><span class="line">        optimizer.step()</span><br><span class="line">        losses += loss.item()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> losses / <span class="built_in">len</span>(dataloader)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">evaluate</span>(<span class="params">model, dataloader</span>):</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    losses = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> source, target <span class="keyword">in</span> dataloader:</span><br><span class="line">        source = source.to(DEVICE)</span><br><span class="line">        target = target.to(DEVICE)</span><br><span class="line">        </span><br><span class="line">        logits = model(source, target)</span><br><span class="line">        </span><br><span class="line">        target_out=target[<span class="number">1</span>:,:]</span><br><span class="line"></span><br><span class="line">        loss = loss_fn(logits.reshape(-<span class="number">1</span>, logits.shape[-<span class="number">1</span>]), target_out.reshape(-<span class="number">1</span>))</span><br><span class="line">        losses += loss.item()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> losses / <span class="built_in">len</span>(dataloader)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">epoches = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epoches):</span><br><span class="line">    train_loss = train_epoch(transformer, train_dataloader, optimizer)</span><br><span class="line">    val_loss = evaluate(transformer, val_dataloader)</span><br><span class="line">    <span class="built_in">print</span>((<span class="string">f&quot;Epoch: <span class="subst">&#123;epoch&#125;</span>, Train loss: <span class="subst">&#123;train_loss:<span class="number">.3</span>f&#125;</span>, Val loss: <span class="subst">&#123;val_loss:<span class="number">.3</span>f&#125;</span>&quot;</span>))</span><br></pre></td></tr></table></figure>
+<pre><code>Epoch: 0, Train loss: 4.303, Val loss: 4.004
+Epoch: 1, Train loss: 3.832, Val loss: 3.882
+Epoch: 2, Train loss: 3.669, Val loss: 3.824
+Epoch: 3, Train loss: 3.545, Val loss: 3.806
+Epoch: 4, Train loss: 3.438, Val loss: 3.801
+Epoch: 5, Train loss: 3.340, Val loss: 3.804
+Epoch: 6, Train loss: 3.245, Val loss: 3.823
+Epoch: 7, Train loss: 3.151, Val loss: 3.839
+Epoch: 8, Train loss: 3.060, Val loss: 3.866
+Epoch: 9, Train loss: 2.967, Val loss: 3.903</code></pre>
+<p>训练完成之后，便可以使用训练好的Transformer来自动生成对话：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">greedyDecode</span>(<span class="params">model, src, src_mask, max_len, start_symbol</span>):</span><br><span class="line">    src = src.to(DEVICE)</span><br><span class="line">    src_mask = src_mask.to(DEVICE)</span><br><span class="line"></span><br><span class="line">    memory = model.encode(src, src_mask)</span><br><span class="line">    ys = torch.ones(<span class="number">1</span>, <span class="number">1</span>).fill_(start_symbol).<span class="built_in">type</span>(torch.long).to(DEVICE)</span><br><span class="line">    memory = memory.to(DEVICE)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(max_len-<span class="number">1</span>):</span><br><span class="line">        tgt_mask = (model._generate_square_subsequent_mask(ys.size(<span class="number">0</span>)).<span class="built_in">type</span>(torch.<span class="built_in">bool</span>)).to(DEVICE)</span><br><span class="line">        out = model.decode(ys, memory, tgt_mask)</span><br><span class="line">        out = out.transpose(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        prob = model.generator(out[:, -<span class="number">1</span>])</span><br><span class="line">        _, next_word = torch.<span class="built_in">max</span>(prob, dim=<span class="number">1</span>)</span><br><span class="line">        next_word = next_word.item()</span><br><span class="line"></span><br><span class="line">        ys = torch.cat([ys, torch.ones(<span class="number">1</span>, <span class="number">1</span>).type_as(src.data).fill_(next_word)], dim=<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">if</span> next_word == EOS_token:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">return</span> ys</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getSentenceFromTokens</span>(<span class="params">tokens, voc=voc</span>):</span><br><span class="line">    sentence = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> token <span class="keyword">in</span> tokens:</span><br><span class="line">        sentence += voc.index2word[token]</span><br><span class="line">        sentence += <span class="string">&#x27; &#x27;</span></span><br><span class="line">    <span class="keyword">return</span> sentence</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getAnswer</span>(<span class="params">model, src_sentence</span>):</span><br><span class="line">    model.<span class="built_in">eval</span>()</span><br><span class="line">    src_sentence = normalizeString(src_sentence)</span><br><span class="line">    src = text_transform(src_sentence).view(-<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">    num_tokens = src.shape[<span class="number">0</span>]</span><br><span class="line">    src_mask = (torch.zeros(num_tokens, num_tokens)).<span class="built_in">type</span>(torch.<span class="built_in">bool</span>)</span><br><span class="line">    tgt_tokens = greedyDecode(model, src, src_mask, max_len=MAX_LENGTH, start_symbol=SOS_token).flatten()</span><br><span class="line">    <span class="keyword">return</span> getSentenceFromTokens(<span class="built_in">list</span>(tgt_tokens.cpu().numpy())).replace(<span class="string">&quot;SOS&quot;</span>, <span class="string">&quot;&quot;</span>).replace(<span class="string">&quot;EOS&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getAnswer(transformer, <span class="string">&quot;Do you have time tomorrow?&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>&#39; i m not sure .  &#39;</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getAnswer(transformer, <span class="string">&quot;The movie looks great .&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>&#39; i m sorry .  &#39;</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getAnswer(transformer, <span class="string">&quot;Where are you ?&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>&#39; i m here .  &#39;</code></pre>
+<p>从中可以看出，由于在训练模型时使用的数据集较为简单，因此有一些问题的回答与输入不太能对得上。</p>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li>[<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzE3MDYuMDM3NjI=">1706.03762] Attention Is All You Need (arxiv.org)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC9iMmI5NWY5NDVhOTg=">Seq2Seq模型概述 - 简书 (jianshu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2d1b2hhb196aGFuZy9hcnRpY2xlL2RldGFpbHMvNzk1NDAwMTQ=">深度学习中 的 Attention机制_GerHard 的博客-CSDN博客_attention机制<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21hbGVmYWN0b3IvYXJ0aWNsZS9kZXRhaWxzLzc4NzY3Nzgx">深度学习中的注意力机制(2017版)_张俊林的博客-CSDN博客_注意力机制<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8zMzkyMDcwOTI=">搞懂Transformer结构，看这篇PyTorch实现就够了 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8zNDc5MDQ5NDA=">保姆级教程：图解Transformer - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC80ODUwODIyMQ==">详解Transformer （Attention Is All You Need） - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li>https://blog.csdn.net/longxinchen_ml/article/details/86533005</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzQzOTI0MzgyNw==">Transformer统治的时代，LSTM模型并没有被代替，LSTM比Tranformer优势在哪里？ - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC84MjM5MTc2OA==">关于Transformer的若干问题整理记录 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/07/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Transformer/" title="深度学习-Transformer">http://lyf35.github.io/2021/07/01/深度学习-Transformer/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/06/27/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C/" rel="prev" title="深度学习-生成对抗网络">
+      <i class="fa fa-chevron-left"></i> 深度学习-生成对抗网络
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/07/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/" rel="next" title="机器学习-文本预处理">
+      机器学习-文本预处理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'b8de6459ca6e08fdcbd088ca9d16a613',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

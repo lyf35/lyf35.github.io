@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="引言 在分子性质预测任务中，有标签的数据通常十分宝贵。因此，目前有一些工作使用大规模无标签（或弱标签）数据集对模型做预训练，然后在下游任务上进行微调，从而提高在下游任务上的表现，下文将介绍其中的一些工作。本文具有一定的时效性，此外本文的内容以3D（即除了拓扑结构之外还包含有原子坐标信息）的分子为主。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记-分子图预训练">
+<meta property="og:url" content="http://lyf35.github.io/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="引言 在分子性质预测任务中，有标签的数据通常十分宝贵。因此，目前有一些工作使用大规模无标签（或弱标签）数据集对模型做预训练，然后在下游任务上进行微调，从而提高在下游任务上的表现，下文将介绍其中的一些工作。本文具有一定的时效性，此外本文的内容以3D（即除了拓扑结构之外还包含有原子坐标信息）的分子为主。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140929.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140937.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140939.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140942.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140950.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172519.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172523.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172529.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172534.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172539.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172543.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172549.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172553.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172600.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172605.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172610.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172616.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172620.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172624.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172628.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172633.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172638.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172643.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172649.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172655.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172700.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172705.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172709.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172714.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172719.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172723.png">
+<meta property="article:published_time" content="2022-12-02T11:12:34.000Z">
+<meta property="article:modified_time" content="2022-12-02T15:12:42.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="图神经网络">
+<meta property="article:tag" content="论文笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140929.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>论文笔记-分子图预训练 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%89%B9%E5%BE%81%E9%A2%84%E6%B5%8B%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">基于特征预测的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pretrain-gnn"><span class="nav-number">2.1.</span> <span class="nav-text">Pretrain-GNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83%E7%AD%96%E7%95%A5"><span class="nav-number">2.1.2.</span> <span class="nav-text">预训练策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E7%82%B9%E5%B1%82%E7%BA%A7%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">结点层级预训练</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#context-prediction"><span class="nav-number">2.1.2.1.1.</span> <span class="nav-text">Context Prediction</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#attribute-masking"><span class="nav-number">2.1.2.1.2.</span> <span class="nav-text">Attribute Masking</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E5%B1%82%E7%BA%A7%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">图层级预训练</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#property-prediction"><span class="nav-number">2.1.2.2.1.</span> <span class="nav-text">Property Prediction</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#structural-similarity-prediction"><span class="nav-number">2.1.2.2.2.</span> <span class="nav-text">Structural Similarity Prediction</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-number">2.1.3.</span> <span class="nav-text">实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="nav-number">2.1.4.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chem-rl-gem"><span class="nav-number">2.2.</span> <span class="nav-text">Chem-RL GEM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E5%B1%82%E7%BA%A7%E8%87%AA%E7%9B%91%E7%9D%A3%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="nav-number">2.2.1.</span> <span class="nav-text">几何层级自监督预训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">2.2.2.</span> <span class="nav-text">实验结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">基于对比学习的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#d-infomax"><span class="nav-number">3.1.</span> <span class="nav-text">3D infomax</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">3.1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.1.2.</span> <span class="nav-text">对比学习设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C-1"><span class="nav-number">3.1.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#graphmvp"><span class="nav-number">3.2.</span> <span class="nav-text">GraphMVP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.2.2.</span> <span class="nav-text">预训练设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">对比学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E4%BB%BB%E5%8A%A1"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">生成任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">3.2.2.3.</span> <span class="nav-text">损失函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C-2"><span class="nav-number">3.2.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%8E%BB%E5%99%AA%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">基于去噪的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#d-emgp"><span class="nav-number">4.1.</span> <span class="nav-text">3D-EMGP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-number">4.1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%BB%E5%99%AA%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.1.2.</span> <span class="nav-text">去噪任务设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E8%83%8C%E6%99%AF"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">物理背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%8E%9F%E5%AD%90%E5%8A%9B%E7%9A%84%E5%8E%BB%E5%99%AA"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">基于原子力的去噪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E5%99%AA%E5%A3%B0%E5%B0%BA%E5%BA%A6"><span class="nav-number">4.1.2.3.</span> <span class="nav-text">预测噪声尺度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0-1"><span class="nav-number">4.1.2.4.</span> <span class="nav-text">损失函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C-3"><span class="nav-number">4.1.3.</span> <span class="nav-text">实验结果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83%E6%95%88%E6%9E%9C"><span class="nav-number">4.1.3.1.</span> <span class="nav-text">预训练效果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="nav-number">4.1.3.2.</span> <span class="nav-text">消融实验</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E8%B4%A8%E9%87%8F%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">4.1.3.3.</span> <span class="nav-text">数据集质量的影响</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-number">4.1.3.4.</span> <span class="nav-text">结果可视化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E8%BF%91%E4%BC%BC%E5%B7%A5%E4%BD%9C"><span class="nav-number">4.1.4.</span> <span class="nav-text">一个近似工作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#se3-ddm"><span class="nav-number">4.2.</span> <span class="nav-text">SE(3)-DDM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-3"><span class="nav-number">4.2.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.2.2.</span> <span class="nav-text">任务设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%92%E4%BF%A1%E6%81%AF%E6%9C%80%E5%A4%A7%E5%8C%96"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">互信息最大化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E5%BE%97%E5%88%86%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.2.2.</span> <span class="nav-text">引入得分函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%AD%A5%E9%AA%A4"><span class="nav-number">4.2.2.3.</span> <span class="nav-text">训练步骤</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C-4"><span class="nav-number">4.2.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记-分子图预训练
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-12-02 19:12:34 / 修改时间：23:12:42" itemprop="dateCreated datePublished" datetime="2022-12-02T19:12:34+08:00">2022-12-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83/" class="post-meta-item leancloud_visitors" data-flag-title="论文笔记-分子图预训练" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>18k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="引言">引言</h1>
+<p>在分子性质预测任务中，有标签的数据通常十分宝贵。因此，目前有一些工作使用大规模无标签（或弱标签）数据集对模型做预训练，然后在下游任务上进行微调，从而提高在下游任务上的表现，下文将介绍其中的一些工作。本文具有一定的时效性，此外本文的内容以3D（即除了拓扑结构之外还包含有原子坐标信息）的分子为主。</p>
+<span id="more"></span>
+<h1 id="基于特征预测的方法">基于特征预测的方法</h1>
+<h2 id="pretrain-gnn">Pretrain-GNN</h2>
+<h3 id="简介">简介</h3>
+<p>文章<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvcGRmLzE5MDUuMTIyNjUucGRm">Strategies for Pre-training Graph Neural Networks<i class="fa fa-external-link-alt"></i></span>（下文简称Pretrain-GNN）介绍了一种可以用于图神经网络预训练的策略，并通过分子性质预测以及蛋白质功能预测两个任务来证明这一手段的有效性。在后续的一些工作中，经常借鉴其中提出的一些预训练策略，并且提出的方法也常被用作自监督学习的benchmark之一。</p>
+<h3 id="预训练策略">预训练策略</h3>
+<p>在文章中，作者提出了四种不同的预训练策略，分为结点层级（Node-level）的预训练和图层级（Graph-level）的预训练。而在这两种不同层级的预训练中，又分为性质预测和结构预测两个任务。</p>
+<h4 id="结点层级预训练">结点层级预训练</h4>
+<p>在结点层级的预训练中，作者提出了两种方法，分别为Context Prediction和Attribute Masking，它们的原理可以表示为下图：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140929.png" alt="image-20210802201731181" /><figcaption aria-hidden="true">image-20210802201731181</figcaption>
+</figure>
+<h5 id="context-prediction">Context Prediction</h5>
+<p>为Context Prediction这一预训练任务设计的目标是，给定一个Subgraph以及一个Context graph，判断二者是否来自于同一图结构的同一结点。针对于结点<span class="math inline">\(v\)</span>，它的Subgraph被定义为它的K-hop Neighborhood，指的是与<span class="math inline">\(v\)</span>的距离在<span class="math inline">\(K\)</span>以内的所有结点和边；而它的Context graph则需要<span class="math inline">\(r_1\)</span>和<span class="math inline">\(r_2\)</span>两个参数，取与<span class="math inline">\(v\)</span>的距离在<span class="math inline">\(r_1\)</span>和<span class="math inline">\(r_2\)</span>之间的所有边和结点构成一个子图，这可以理解为环绕<span class="math inline">\(v\)</span>的邻居结点的子图结构。</p>
+<p>为了使得Subgraph和Context graph中有一些结点共享，需要保证<span class="math inline">\(r_1&lt;K&lt;r_2\)</span>​​。作者将这些共享的结点称为Context anchor nodes，它们的存在提供了两个子图如何连接在一起的信息。</p>
+<p>这一预训练任务相当于是一个二分类问题，因此训练数据中需要同时有正负样本。正样本指的是Subgraph和Context graph来自于同一个结点，而负样本则刚好相反。在得到正样本之后，负样本的生成也很简单，针对于一个特定的Subgraph，只需要在与它不匹配的Context graph中随机选择一个即可。</p>
+<p>在训练过程中，使用主GNN网络对Subgraph进行编码，得到一个固定长度的向量<span class="math inline">\(\boldsymbol{h}\)</span>​；同时需要使用一个辅助GNN网络将Context graph编码为另一个固定长度的向量<span class="math inline">\(\boldsymbol{k}\)</span>​。然后计算<span class="math inline">\(\text{Sigmoid}(\boldsymbol{h}^T\boldsymbol{k})\)</span>​​，从而判断二者是否来自于同一个结点。在训练结束之后，只需要保留主GNN网络即可。</p>
+<h5 id="attribute-masking">Attribute Masking</h5>
+<p>Attribute Masking这一训练任务的目标是从图结构中结点/边的分布规律中学习到一些相应的领域知识。这一预训练任务需要引入一个特殊的Mask变量，然后在图结构中随机选择若干个结点/边，将其设置为Mask。然后便可以使用GNN去学习结点和边的特征向量表示，其中包含了它周围的结构信息。以有机物分子图为例，可以将原子结点的元素种类遮盖起来，构造预测原子种类的预训练任务。</p>
+<p>为了使用结点/边的特征向量去预测它被遮盖的特征，需要再引入一个模型（可以是线性模型等），这一模型以特征向量为输入，以结点/边自身的特征为输出。通过结点/边的真实特征和预测特征便可计算模型损失，对它做反向传播即可对网络的参数进行更新。</p>
+<p>作者提到，这种预训练方法在结点信息充足的图结构中会取得很大的收益。例如在分子图中，结点信息对应于原子种类，GNN学习结点的分布规律的同时也可以学习到一些化学规则，例如化合价、官能团性质等信息；而在蛋白质的交联网络中，边的信息对应于两个蛋白质分子之间不同的相互作用，让GNN学习这些相互作用在图中的分布规律可以让GNN学习到不同相互作用之间的关联性。</p>
+<h4 id="图层级预训练">图层级预训练</h4>
+<h5 id="property-prediction">Property Prediction</h5>
+<p>为了将图层级的领域知识引入到预训练模型中，可以让模型去完成图的性质预测这一监督学习任务。具体地说，就是构造一个多目标学习的任务，让模型同时预测图的这些性质。例如在分子性质预测任务中，可以让模型去预测某个分子已知的所有性质（可参考<span class="exturl" data-url="aHR0cDovL3F1YW50dW0tbWFjaGluZS5vcmcvZGF0YXNldHMv">QM9数据集<i class="fa fa-external-link-alt"></i></span>）。</p>
+<p>作者发现，如果仅仅是用多目标预测的预训练方式，可能无法生成可迁移的图层级表征。这是因为预训练中的一些任务可能与后续要完成的任务无关，甚至可能会起到反作用。一个解决办法是尽可能地选择与后续任务相关的预训练任务，但是这需要掌握一些领域知识。另一种解决办法是先进行结点层级的预训练，然后再做图层级的预训练。这是因为图层级的预训练可能无法产生有用的结点特征表示，而且不同的任务之间可能会相互影响。</p>
+<h5 id="structural-similarity-prediction">Structural Similarity Prediction</h5>
+<p>另一个图层级的预训练方式是为两幅图的结构相似性建模。但是这种方式需要花费很大的工作量去构造数据集，因此作者仅仅是提出了这种方式，并未在实验过程中用到这一手段。</p>
+<h3 id="实验">实验</h3>
+<p>为了验证上述预训练方法的效果，作者使用分子性质预测和蛋白质功能预测这两个化学和生物领域的任务进行实验。下面介绍实验的设计以及结果。</p>
+<p>对于化学领域的任务，结点层级预训练使用的数据来自于ZINC15数据集中随机采样出的200万个分子结构；而图层级预训练使用的数据来自于ChEMBL数据集，其中包含了约45万个原子以及1300多种不同的性质。</p>
+<p>对于生物领域的任务，结点层级预训练的数据集包含了从50个物种中的PPI网络中提取出来的约40万个蛋白质的ego-network；图层级的预训练数据集包含了8.8万个蛋白质的ego-network，以及它们粗粒度的生物学特性。</p>
+<blockquote>
+<p>备注：ego-network的详细解释可参考<span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC83OTNmZTY4ODdhYWY=">自我中心网络-Egonetwork - 简书 (jianshu.com)<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+<p>在预训练完成之后，化学领域的下游任务使用的是MoleculeNet这一工作中用到的数据集；而生物领域则依据Zitnik等人的工作构造出的PPI网络，从中提取出ego-network。</p>
+<h3 id="结果分析">结果分析</h3>
+<p>下表为是否做预训练的不同网络结构在测试集上的ROC-AUC指标：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140937.png" alt="image-20210802224253838" style="zoom: 67%;" /></p>
+<p>下表为GIN网络在使用不同的预训练方法组合时，化学领域任务上的表现。其中粗体代表预训练效果较好，而阴影组则代表预训练起了反作用：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140939.png" alt="image-20210802225112691" /><figcaption aria-hidden="true">image-20210802225112691</figcaption>
+</figure>
+<p>下面的图表为生物领域上预训练的表现：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140942.png" alt="image-20210802225751199" /><figcaption aria-hidden="true">image-20210802225751199</figcaption>
+</figure>
+<p>从这些实验结果中，可以得到的结论有：</p>
+<ol type="1">
+<li>预训练方法在表达能力更强的网络结构（如GIN）上可以取得更好的效果。但是在表达能力较弱的网络结构（如GCN、GraphSAGE、GAT等）上，预训练的提升效果不是很明显，甚至可能会起到反作用。</li>
+<li>如果只做图层级的多任务监督学习预训练，对于网络预测效果的提升有限，甚至会产生反作用。</li>
+<li>如果只做结点层级的预训练，对于网络的提升效果也有限</li>
+<li>如果同时做结点层级和图层级的预训练，就不会出现负迁移的现象，并且可以取得最好的效果（同时也提升了相应任务的Baseline）</li>
+</ol>
+<p>同时作者也发现，在使用预训练好的网络进行下游任务的学习时，ROC-AUC指标很快就可以达到一个比较高的值。而相比之下，没有做预训练的网络则花费很长时间也无法达到相同的数值。如下图所示（实线代表训练集，虚线代表验证集）：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210807140950.png" alt="image-20210802230923434" /><figcaption aria-hidden="true">image-20210802230923434</figcaption>
+</figure>
+<h2 id="chem-rl-gem">Chem-RL GEM</h2>
+<p>### 简介</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIxMDYuMDYxMzB2Mw==">ChemRL-GEM: Geometry Enhanced Molecular Representation Learning for Property Prediction<i class="fa fa-external-link-alt"></i></span>这一工作提出了一个新的GNN结构GeoGNN，并提出了三种几何层级上的自监督学习任务。但是在下游任务上面的结果显示，这些自监督学习任务的帮助却并不太大。</p>
+<h3 id="几何层级自监督预训练">几何层级自监督预训练</h3>
+<p>作者认为，一个分子的几何信息差异可以用于区别结构相近的分子，因此作者设计了三个不同的自监督学习任务：预测键长、预测键角、预测原子之间距离，如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172519.png" alt="image-20230217181420622" style="zoom:80%;" /></p>
+<p>这三个自监督学习任务的损失函数分别为： <span class="math display">\[
+\begin{aligned}
+&amp;L_{length}(\mathcal{E})=\frac{1}{|\mathcal{E}|}\sum_{(u,v)\in\mathcal{E}}(f_{length}(h^{(K_w},h^{(K_w)}_{v})-l_{uv})^2\\ 
+&amp;L_{angle}(\mathcal{A})=\frac{1}{|\mathcal{A}|}\sum_{(u,v,w)\in\mathcal{A}}(f_{angle}(h^{(K_w)},h^{(K_w)},h^{(K_w)}_{w})-\phi_{uvw})^2 \\
+&amp;L_{distance}(\mathcal{V})=\frac{1}{|\mathcal{V}|^{2}}\sum_{u,v\in\mathcal{V}}-bin^{T}(d_{u v})\cdot log(f_{distance}(h_{u}^{(K)},h_{v}^{(K)}))
+\end{aligned}
+\]</span></p>
+<h3 id="实验结果">实验结果</h3>
+<p>下面是在几个回归和分类任务上面与其它预训练方法的比较：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172523.png" alt="image-20230217215752727" style="zoom:80%;" /></p>
+<p>相比于表中其它的预训练方法，ChemRL-GEM的结果要稍好一些。</p>
+<p>此外作者也做了消融实验：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172529.png" alt="image-20230217215943363" style="zoom:80%;" /></p>
+<p>其中的Graph指的是预测分子指纹这一图层级的任务，Context指的是预测结点类型（即原子种类）这一结点层级的任务。</p>
+<p>但是消融实验的结果显示，即使模型不做任何的预训练，它的表现并没有比加入预训练之后要差很多。这说明基于几何特征的预训练起到的效果比较微弱。因此在与其它预训练方法对比的时候，其效果优于其它几种方法很可能是因为模型设计的因素。</p>
+<h1 id="基于对比学习的方法">基于对比学习的方法</h1>
+<h2 id="d-infomax">3D infomax</h2>
+<h3 id="概述">概述</h3>
+<p><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIxMTAuMDQxMjY=">3D Infomax<i class="fa fa-external-link-alt"></i></span>这篇文章的主要思想是用一个分子的2D特征表示与3D特征表示做对比学习，期望2D的GNN所产生的特征向量中能够包含有一定的3D信息。在下游任务上，就可以直接用2D的GNN来做，这样比3D的GNN要快，同时也比不包含3D信息的GNN更加准确。整体思路表示为下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172534.png" alt="image-20230217220814497" style="zoom:80%;" /></p>
+<p>其中，2D Net是<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDQuMDU3MTg=">PNA<i class="fa fa-external-link-alt"></i></span>，3D Net是<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIxMDIuMDUwMTM=">SphereNet<i class="fa fa-external-link-alt"></i></span>。</p>
+<h3 id="对比学习设计">对比学习设计</h3>
+<p>由于一个2D分子可以对应于多个不同的3D构象，因此作者在设计对比学习任务时，认为一个2D分子与它所有的3D构象都是正类，其余为负类。可以表示为下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172539.png" alt="image-20230217221100323" style="zoom:80%;" /></p>
+<p>对比学习的损失函数为： <span class="math display">\[
+\mathcal{L}^{multi3D}=-\frac{1}{N}\sum\limits_{i=1}^{N}\left[\log\frac{\sum_{j=1}^{c}e^{sim(z_i^a,z_{i,j}^b)/\tau}}{\sum_{k=1,k\neq i}^{N}\sum_{j=1}^{c}e^{sim(z_i^a,z_{k,j}^b)/\tau}}\right]
+\]</span></p>
+<h3 id="实验结果-1">实验结果</h3>
+<p>作者分别在QM9这个3D的下游任务上面以及一些2D的下游任务上面对模型的效果进行了测试。下面的表格中，蓝色代表相比于模型随机初始化之后训练的结果有提升，橙色代表结果下降。</p>
+<p>下表为QM9数据集上的结果：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172543.png" alt="image-20230217221747175" style="zoom:80%;" /></p>
+<p>从中可以看出，作者提出的3D infomax相比于其它的几种预训练baseline在QM9数据集上的表现更好一些。表中的最右侧一列为使用3D GNN的预测结果，与之对比可以看出，在某些预测目标上，3D GNN的误差比2D GNN要小一个数量级，这也说明2D与3D的对比学习能够对2D GNN在3D任务上的预测起到一些作用，但是作用有限。</p>
+<p>此外，作者也做了一些2D的下游任务：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172549.png" alt="image-20230217222145123" style="zoom:80%;" /></p>
+<p>从中可以看出，由于对比学习之后2D GNN的编码中包含3D信息，因此在2D的下游任务上表现略有提升。</p>
+<h2 id="graphmvp">GraphMVP</h2>
+<h3 id="概述-1">概述</h3>
+<p><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIxMTAuMDc3Mjg=">GraphMVP<i class="fa fa-external-link-alt"></i></span>这一工作中，作者也使用了2D和3D结构做对比学习的思想。除此之外，还包含用2D编码生成3D编码以及用3D编码生成2D编码这一生成任务。总体设计如下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172553.png" alt="image-20230217222616552" style="zoom:80%;" /></p>
+<p>其中，2D的GNN为<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzE4MTAuMDA4MjY=">GIN<i class="fa fa-external-link-alt"></i></span>，3D的GNN为<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzE3MDYuMDg1NjY=">SchNet<i class="fa fa-external-link-alt"></i></span>。通过对比学习，能够学到数据之间的知识，而编码的互相生成则能够学习到分子2D与3D结构内部的知识。</p>
+<p>与3D infomax类似，在预训练完成之后，就可以只使用2D GNN来做下游任务。</p>
+<h3 id="预训练设计">预训练设计</h3>
+<h4 id="对比学习">对比学习</h4>
+<p>与3D infomax类似，同一个分子的2D和3D编码组成的pair被认为是正类，不同分子的2D和3D编码组成pair被认为是负类。作者在对比学习任务中使用了两种不同的损失函数，在模型训练的时候把它看作超参数来调整： <span class="math display">\[
+\mathcal{L}_{\mathrm{infoNCE}}=-\frac{1}{2}\mathbb{E}_{p(\boldsymbol{x},\boldsymbol{y})} \left[\log\frac{\exp(f_\boldsymbol{x}(\boldsymbol{x},\boldsymbol{y}))}{\exp(f_\boldsymbol{x}(\boldsymbol{x},\boldsymbol{y}))+\sum_j\exp(f_\boldsymbol{x}(\boldsymbol{x}^j,\boldsymbol{y}))}+\log\frac{\exp(f_\boldsymbol{y}(\boldsymbol{y},\boldsymbol{x}))}{\exp(f_\boldsymbol{y}(\boldsymbol{y},\boldsymbol{x}))+\sum_j\exp(f_\boldsymbol{y}(\boldsymbol{y}^j,\boldsymbol{x}))}\right]
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathcal{L}_{\text{EBM-NCE}}=-\frac{1}{2}\mathbb{E}_{p(\boldsymbol{y})}\left[\mathbb{E}_{p_n(\boldsymbol{x}|\boldsymbol{y})}\log\left(1-\sigma(f_n(\boldsymbol{x},\boldsymbol{y}))\right)+\mathbb{E}_{p(\boldsymbol{x}|\boldsymbol{y})}\log\sigma(f_n(\boldsymbol{x},\boldsymbol{y}))\right]\\ 
+-\frac{1}{2}\mathbb{E}_{p(\boldsymbol{x})}\left[\mathbb{E}_{p_n(\boldsymbol{y}|\boldsymbol{x})}\log\left(1-\sigma(f_\boldsymbol{y}(\boldsymbol{y},\boldsymbol{x}))\right)+\mathbb{E}_{p(\boldsymbol{y},\boldsymbol{x})}\log\sigma(f_\boldsymbol{y}(\boldsymbol{y},\boldsymbol{x}))\right]
+\end{aligned}
+\]</span></p>
+<h4 id="生成任务">生成任务</h4>
+<p>由于不同的3D构象可能对应于同样的2D结构，加上3D的解码器通常比较复杂，因此作者在设计生成任务的时候，并不是让模型直接去生成2D结构或者3D构象，而是用了一个代理任务。这个代理任务类似于变分自编码器，给定一个分子结构的2D编码，首先将其映射到一个隐空间，然后再从隐空间中采样并以此生成对应的3D编码。用3D编码生成2D编码的过程也与之类似。</p>
+<p>设<span class="math inline">\(\boldsymbol{x},\boldsymbol{y}\)</span>分别为2D和3D的编码，这一生成任务的步骤以及损失函数如下： <span class="math display">\[
+{\boldsymbol{z_x}}={\boldsymbol{\mu_x}}+{\boldsymbol{\sigma_x}}\odot \boldsymbol{\epsilon} \\
+{\boldsymbol{z_y}}={\boldsymbol{\mu_y}}+{\boldsymbol{\sigma_y}}\odot \boldsymbol{\epsilon} \\
+\boldsymbol{\mu_{x}}=MLP\left(\boldsymbol{h_{x}}\right),\boldsymbol{\mu_{y}}=MLP\left(\boldsymbol{h_{y}}\right)\\ 
+\boldsymbol{\sigma_{x}}=MLP\left(\boldsymbol{h_{x}}\right),\boldsymbol{\sigma_{y}}=MLP\left(\boldsymbol{h_{y}}\right)\\
+\boldsymbol{\epsilon}\sim N(0,I)
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathcal{L}_G=\mathcal{L}_{\text{VRR}}=&amp;\dfrac{1}{2}\left[\mathbb{E}_{q(\boldsymbol{z_x}|\boldsymbol{x})}\left[\|\boldsymbol{q_x}(\boldsymbol{z_x})-\text{SG}(\boldsymbol{h_y})\|^2\right]+\mathbb{E}_{q(\boldsymbol{z_y}|\boldsymbol{y})}\left[\|\boldsymbol{q_y}(\boldsymbol{z_y})-\text{SG}(\boldsymbol{h_x})\|_2^2\right]\right]\\ 
+&amp;+\dfrac{\beta}{2}\cdot\left[KL(q(\boldsymbol{z_x}|\boldsymbol{x})|\|p(\boldsymbol{z_x}))+KL(q(\boldsymbol{z_y}|\boldsymbol{y})|\|p(\boldsymbol{z_y}))\right]
+\end{aligned}
+\]</span></p>
+<p>其中，SG代表Stop-Gradient，即阻止梯度反传。</p>
+<h4 id="损失函数">损失函数</h4>
+<p>将对比学习任务与生成任务的损失函数加在一起，就得到了整体的损失函数： <span class="math display">\[
+\mathcal L_{\text{GraphMVP}}=\alpha_1\cdot\mathcal L_\text{C}+\alpha_2\cdot\mathcal L_\text{G}
+\]</span> 其中，下标<span class="math inline">\(C\)</span>和<span class="math inline">\(G\)</span>分别代表对比学习任务和生成任务。</p>
+<p>此外，它还可以和其它的生成任务或者对比学习任务结合，对应的损失函数为： <span class="math display">\[
+\mathcal{L}_{\mathrm{GraphMVP-G}}=\mathcal{L}_{\mathrm{GraphMVP}}+\alpha_{3}\cdot\mathcal{L}_{\mathrm{Generative~2D-SSL}} \\
+\mathcal{L}_{\mathrm{GraphMVP-C}}=\mathcal{L}_{\mathrm{GraphMVP}}+\alpha_3\cdot\mathcal{L}_{\mathrm{Contrastive~2D-SSL}}
+\]</span></p>
+<h3 id="实验结果-2">实验结果</h3>
+<p>作者在一些2D分子的下游数据集上进行实验，其结果如下表：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172600.png" alt="image-20230220153643182" style="zoom:80%;" /></p>
+<p>其中，<span class="math inline">\(G\)</span>代表除了GraphMVP本身又额外加入了Attribute masking这一额外任务，而<span class="math inline">\(C\)</span>代表额外加入Context prediction这一额外任务（这两任务的详细描述可参照本文的Pretrain-GNN相关内容）。</p>
+<p>在平均意义上，GraphMVP相比于表中其它几种预训练方法的效果都要好，而且两个加入了额外任务的变体有着更好的效果。这说明一个分子的3D信息能够为2D的特征表示提供补充信息。</p>
+<p>此外作者也做了一些消融实验，验证GraphMVP的预训练设计中真正起作用的地方：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172605.png" alt="image-20230220155023721" style="zoom:80%;" /></p>
+<p>从这些结果中可以总结出三个结论：</p>
+<ol type="1">
+<li>单一的对比学习任务与生成任务都对下游任务有正向提升</li>
+<li>对比任务与生成任务结合，能够取得更好的效果</li>
+<li>生成任务中引入随机性（即使用VAE而不是AE）对学习到的特征表示有重要作用</li>
+</ol>
+<h1 id="基于去噪的方法">基于去噪的方法</h1>
+<h2 id="d-emgp">3D-EMGP</h2>
+<h3 id="概述-2">概述</h3>
+<p><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIyMDcuMDg4MjQ=">3D-EMGP<i class="fa fa-external-link-alt"></i></span>这一工作使用给原子加入随机噪声扰动，然后训练一个去噪的预训练模型，与此同时预测加入噪声的尺度。训练完成之后，便可以基于预训练的模型参数来做下游任务。整体框架如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172610.png" alt="image-20230220170950518" style="zoom:80%;" /></p>
+<h3 id="去噪任务设计">去噪任务设计</h3>
+<h4 id="物理背景">物理背景</h4>
+<p>分子的去噪预训练主要是基于这样的物理背景：一个分子处于平衡（或者称亚稳态）位置时，通常具有较低的能量，反映在分子的势能函数（即原子位置与分子能量之间的关系）上对应于局部最小值。势能函数是一个保守场，它只与原子位置有关，反映在数学上就是旋度为0。</p>
+<p>如果对平衡态的原子位置加入一定的噪声干扰，则原子会偏离平衡位置，处于一个能量较高的非平衡状态。对于非平衡状态的分子，每个原子都有自发向平衡位置移动的趋势，即原子力，它与分子势能的关系可以表示为： <span class="math display">\[
+\boldsymbol{F}=-\nabla_{\boldsymbol{X}} E_p(\boldsymbol{X})
+\]</span> 此外，在统计物理中，有如下的玻尔兹曼分布率： <span class="math display">\[
+p_i=\frac{1}{Z}\exp\left(-\frac{E(\boldsymbol{X})}{kT}\right)
+\]</span> 其中<span class="math inline">\(E\)</span>代表体系的能量，<span class="math inline">\(k\)</span>代表玻尔兹曼常数，<span class="math inline">\(T\)</span>代表温度，<span class="math inline">\(Z\)</span>为归一化常数。对上式做变换可得： <span class="math display">\[
+\nabla_{\boldsymbol{X}}\log p(\boldsymbol{X})\propto -\nabla_{\boldsymbol{X}}E(\boldsymbol{X}) =\boldsymbol{F}
+\]</span> 这一表达式则又与score-based model很接近。得分匹配模型的损失函数为 <span class="math display">\[
+E_{p_{\text{data}}(\boldsymbol x)}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)-\nabla_{\boldsymbol x}\log p_{\text{data}}(\boldsymbol x)||_2^2 \right]
+\]</span> 这里的<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta} (\boldsymbol x)=\nabla_{\boldsymbol x}\log p_\theta(\boldsymbol x)\)</span>，而根据玻尔兹曼分布律又有<span class="math inline">\(\nabla_{\boldsymbol{X}}\log p(\boldsymbol{X})\propto -\nabla_{\boldsymbol{X}}E(\boldsymbol{X}) =\boldsymbol{F}\)</span>，由此便可以将二者关联起来。也就是说，可以使用score model的训练方法来等价地训练一个预测原子力的模型。而score model目前常用的训练方法是去噪得分匹配，因此也同样可以设计去噪任务来训练模型。</p>
+<h4 id="基于原子力的去噪">基于原子力的去噪</h4>
+<p>由于分子的能量具有不变性，也就是无论分子如何旋转或平移，它所对应的能量都不改变。此外，原子力也应该具有旋转的等变性。因此编码器使用的是EGNN模型，它可以生成具有<span class="math inline">\(E(3)\)</span>不变性的特征表示<span class="math inline">\(H&#39;\)</span>： <span class="math display">\[
+H&#39;=\varphi_\text{EGN}\left(\mathbf{X},H\right)\\
+\]</span> 之后，基于去噪的物理背景，设计去噪头（energy head）如下： <span class="math display">\[
+\begin{aligned}
+&amp;E(\mathbf{X})=\varphi_\text{Proj}\left(\sum\limits_{i=1}^{N}\boldsymbol{h}_{i}&#39;\right)\\ 
+&amp;F(\mathbf{X})=-\lim\limits_{\Delta X\to 0}\dfrac{\Delta E}{\Delta\mathbf{X}}=-\nabla_\mathbf{X}E(\mathbf{X})
+\end{aligned}
+\]</span> 但是原始的score-based model中所使用的正态分布及其对应的训练目标，放在分子去噪任务上面并不合适，因为正态分布并不具有不变性。因此，作者使用了黎曼-高斯分布来代替普通的正态分布，即： <span class="math display">\[
+p_{\sigma}(\tilde{\boldsymbol{X}}\mid \boldsymbol{X})=\operatorname{Rie}_{\sigma}(\tilde{\boldsymbol{X}}\mid \boldsymbol{X}):=\dfrac{1}{Z(\sigma)}\exp\left(-\dfrac{d^2(\tilde{\boldsymbol{X}},\boldsymbol{X})}{4\sigma^2}\right)
+\]</span> 其中<span class="math inline">\(Z\)</span>为配分函数，<span class="math inline">\(d(X_{1},\boldsymbol{X}_{2})=\|\boldsymbol{Y}_{1}^{\top}\boldsymbol{Y}_{1}-\boldsymbol{Y}_{2}^{\top}\boldsymbol{Y}_{2}\|_{F}\)</span>，<span class="math inline">\(\boldsymbol{Y}=\boldsymbol{X}-\mu(\boldsymbol{X})\)</span>代表整体平移使得质心为0之后的坐标。</p>
+<p>从中计算可得，去噪的预测目标为： <span class="math display">\[
+\nabla_{\tilde{\boldsymbol{X}}}\log p_{\sigma}(\tilde{\boldsymbol{X}}|\boldsymbol{X})=-\dfrac{1}{\sigma^2}\big[(\tilde{\boldsymbol{Y}}\tilde{\boldsymbol{Y}}^{\top})\tilde{\boldsymbol{Y}}-(\tilde{\boldsymbol{Y}}\boldsymbol{Y}^{\top})\boldsymbol{Y}\big]
+\]</span> 作者也证明了这样的黎曼-高斯分布可以满足双<span class="math inline">\(E(3)\)</span>不变性（即条件概率中的输入和条件同时具有不变性）。</p>
+<p>由于配分函数的存在，无法直接通过函数变换的方式从黎曼-高斯分布中采样，需要借助如下的朗之万动力学采样：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172616.png" alt="image-20230220180428610" style="zoom: 67%;" /></p>
+<h4 id="预测噪声尺度">预测噪声尺度</h4>
+<p>除了去噪任务之外，作者还设计了预测噪声尺度任务。具体做法是将带有噪声与不带噪声的两个分子构象分别送入编码器中，得到二者的特征向量。然后通过池化操作生成两个全局的特征向量。之后，将二者拼接起来，并送入一个预测头中，预测不同噪声尺度的概率： <span class="math display">\[
+p\in\mathbb{R}^{L}=\varphi_{\mathbf{Scale}}\left(\boldsymbol{u}\|\tilde{\boldsymbol{u}}\right)
+\]</span></p>
+<h4 id="损失函数-1">损失函数</h4>
+<p>模型的损失函数由两部分组成： <span class="math display">\[
+\mathcal{L}=\lambda_1\mathcal{L}_\mathrm{EFP-Final}+\lambda_2\mathcal{L}_\mathrm{INP}
+\]</span> 其中，EFP指的是预测噪声的任务，它的损失函数即去噪误差，具体为： <span class="math display">\[
+\mathcal{L}_{\mathrm{EFP-Final}}=\mathbb{E}_{\mathcal{G}\sim G,l\sim U(1,L),\tilde{\boldsymbol{X}}\sim p_{\sigma_{l}}(\tilde{\boldsymbol{X}},\boldsymbol{\boldsymbol{X}})}\big[\|\boldsymbol{F}(\tilde{\boldsymbol{X}})-\frac{1}{\alpha}\nabla_{\tilde{X}}\log p_{\sigma_{l}}(\tilde{\boldsymbol{X}}|\boldsymbol{X})\|_{F}^{2}\big]
+\]</span> INP指的是预测噪声尺度，损失函数为： <span class="math display">\[
+\mathcal{L}_{\mathrm{INP}}=\mathbb{E}_{\mathcal{G}\sim\mathbb{G},l\sim U(1,L),\tilde{\mathbf{X}}\sim p_{\sigma_l}(\tilde{\mathbf{X}}|\mathbf{X})}\big[\mathcal{L}_{\mathrm{CE}}\left(\mathbb{I}[l],p\right)\big]
+\]</span> CE代表交叉熵损失，<span class="math inline">\(\mathbb{I}[l]\)</span>代表噪声尺度的one-hot编码。</p>
+<h3 id="实验结果-3">实验结果</h3>
+<h4 id="预训练效果">预训练效果</h4>
+<p>作者分别在MD17和QM9这两个数据集上做了实验。下面是MD17数据集上的结果：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172620.png" alt="image-20230220212513717" style="zoom:67%;" /></p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172624.png" alt="image-20230220212534505" /><figcaption aria-hidden="true">image-20230220212534505</figcaption>
+</figure>
+<p>从中可以看出，去噪预训练对于能量的预测提升效果不是很明显，但是对于力的预测有着很明显的提升效果。这也说明去噪预训练与原子力的预测有着很强的关联性。</p>
+<p>在QM9数据集上的结果如下表：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172628.png" alt="image-20230220212959713" /><figcaption aria-hidden="true">image-20230220212959713</figcaption>
+</figure>
+<p>在大多数任务上，去噪预训练方法对模型的提升效果都很明显。</p>
+<p>此外，相比于表中其它的几种预训练方法，去噪预训练的提升也更大一些。表中的其它预训练方法在下游任务上都只有微弱提升甚至是下降，而去噪预训练在下游任务上基本都能起到提升的效果。</p>
+<h4 id="消融实验">消融实验</h4>
+<p>下表为作者在MD17数据集上所做的消融实验：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172633.png" alt="image-20230220213823718" style="zoom:80%;" /></p>
+<p>其中，EFP only代表只做去噪，INP only代表只做噪声尺度的预测，Gaussian代表加入高斯噪声，distance代表在两原子之间的距离上加噪，direct代表去噪头直接预测噪声。</p>
+<p>从中可以得到下面的结论：</p>
+<ul>
+<li>去噪与预测噪声尺度这两个预训练任务对于下游任务都有帮助，但是去噪任务的帮助更大</li>
+<li>如果将加入的噪声换成高斯噪声，或者是直接在原子距离上加噪，则去噪预训练的效果会变差。这说明考虑噪声概率分布的不变性是有必要的</li>
+<li>如果让去噪头直接预测噪声，则预训练效果也会变差。这可能跟分子力属于保守力有关，如果直接预测噪声则很可能无法保证这一特性</li>
+</ul>
+<p>此外作者也用不同的backbone做了实验：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172638.png" alt="image-20230220222755245" style="zoom:80%;" /></p>
+<p>结果说明，这一去噪预训练的方法在换用两种不同的模型之后仍有效。</p>
+<h4 id="数据集质量的影响">数据集质量的影响</h4>
+<p>作者也验证了，如果使用带有噪声的低质量预训练数据集，这种去噪预训练的方法是否有效。在GEOM-QM9数据集上为每个原子的位置加入一个正态分布的随机噪声<span class="math inline">\(\boldsymbol{X}^{\prime}=\boldsymbol{X}+ 0.1\boldsymbol{\epsilon},\boldsymbol{\epsilon}\sim \mathcal{N}(0,\boldsymbol{I}^{N\times3})\)</span>，然后用这样的带噪数据集做预训练，在QM9和MD17这两个下游任务上面的表现如下表：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172643.png" alt="image-20230221120427310" style="zoom: 67%;" /></p>
+<p>从中可以看到，稍低质量的带噪数据集仍然可以做预训练，但是相比于干净数据集的效果会有所下降。由此想到的另一个延申问题就是，当预训练数据集的噪声进一步增大到什么程度时，这样的预训练就没有效果或者起反作用？</p>
+<h4 id="结果可视化">结果可视化</h4>
+<p>作者也以MD17数据集为例，对训练结果做了可视化。具体做法是，对于不同预训练方法得到的预训练模型，固定它们的backbone，然后用MD17的aspirin分子数据集对energy head进行微调训练。有些预训练方法并没有energy head，对于这些方法则是在这些模型后面加入一个MLP作为energy head。</p>
+<p>训练完成之后，在数据集中随机选取一个构象，并基于高斯分布随机采样两个方向矩阵<span class="math inline">\(\boldsymbol D_1,\boldsymbol D_2\in \mathbb{R}^{N\times 3}\)</span>，以此对原子坐标进行扰动： <span class="math display">\[
+\{\tilde{\boldsymbol X}(i,j)|\tilde{\boldsymbol X}(i,j)=\boldsymbol X+i \boldsymbol D_1+j \boldsymbol D_2\}
+\]</span> 用energy head的预测结果，便可以得到如下的能量面可视化示意图：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172649.png" alt="image-20230220223956392" /><figcaption aria-hidden="true">image-20230220223956392</figcaption>
+</figure>
+<p>从中可以看出，作者提出的预训练方法在原始的原子构象处是一个局部最小值，然后随着坐标扰动的增大，对应的能量也越来越大，这也符合物理规律。而其它几种预训练方法则会生成高低起伏的能量面。此外，对于base模型，可能是因为数据过少导致它无法学习到数据中所包含的物理规律。</p>
+<h3 id="一个近似工作">一个近似工作</h3>
+<p>另一个与之思想比较类似的工作是<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIyMDYuMDAxMzN2Mg==">Pre-training via Denoising for Molecular Property Prediction<i class="fa fa-external-link-alt"></i></span>，但是略有些不同之处。下面简单介绍一些它们的区别。</p>
+<p>首先是在3D-EMGP中，设计了几种不同的噪声尺度（即<span class="math inline">\(\sigma\)</span>）。而这一工作中作者所使用的噪声尺度为一个固定值，在训练的时候将其作为一个超参数来调整。从统计物理的角度来看，这里的<span class="math inline">\(\sigma\)</span>其实起到了玻尔兹曼分布律中温度<span class="math inline">\(T\)</span>的角色，因此可以近似认为如果使用多种噪声尺度，就相当于是让模型学会在不同的温度下做去噪。</p>
+<p>此外就是作者只是简单地加入了正态分布的噪声，没有像3D-EMGP那样考虑噪声与原子能量之间的关联性。GNN模型也是直接去预测噪声。因此去噪训练的损失函数也有更简单的形式： <span class="math display">\[
+\mathbb{E}_{q_{\sigma}(\tilde{\mathbf{x}},\mathbf{x})}\left[\left\|\mathrm{GNN}_{\theta}(\tilde{\mathbf{x}})-\nabla_{\tilde{\mathbf{x}}}\log{q_{\sigma}}(\tilde{\mathbf{x}}\mid\mathbf{x})\right\|^{2}\right]=\mathbb{E}_{q_{\sigma}(\tilde{\mathbf{x}},\mathbf{x})}\left[\left\|\mathrm{GNN}_{\theta}(\tilde{\mathbf{x}})-\dfrac{\mathbf{x}-\tilde{\mathbf{x}}}{\sigma^{2}}\right\|^{2}\right]
+\]</span> 从物理上来说，这样的训练目标会带来一些问题。考虑比较极端的情况，比如加入的噪声刚好使得整个分子体系做平移，或者是噪声刚好是使得整个体系做旋转，此时从物理规律上来说噪声应当为0。因此个人认为这种办法应该还是存在一些改进空间的。或者是能够从概率分布的角度证明这种情况对于损失函数的影响可以忽略不计，即极端情况出现的概率很小甚至为0。</p>
+<p>除了做去噪预训练，作者在做下游任务的时候还使用了<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIxMDYuMDc5NzE=">Noisy Nodes<i class="fa fa-external-link-alt"></i></span>作为辅助损失函数。Noisy Nodes这一工作其实与去噪预训练的方法很相似，但它是将结点去噪作为模型在下游任务上进行训练时的一个辅助任务，用于对结点特征做正则化，防止其出现过平滑的现象。</p>
+<p>下图说明了去噪预训练和noisy nodes在下游任务上分别起到的效果：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172655.png" alt="image-20230221112203106" style="zoom:80%;" /></p>
+<p>从中可以看出，在加入noisy nodes这个辅助任务之后，相比于base模型的误差会有所降低，而在加入了去噪预训练之后则又会进一步降低，这说明它们对于下游任务都有所帮助，而且可以同时使用。</p>
+<h2 id="se3-ddm">SE(3)-DDM</h2>
+<h3 id="概述-3">概述</h3>
+<p><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIyMDYuMTM2MDJ2MQ==">SE(3)-DDM<i class="fa fa-external-link-alt"></i></span>这一工作同样是使用去噪做预训练，但是它是从对比学习的角度设计预训练的损失函数。此外，它在加噪声的时候是在两原子对的位置矢量上进行操作的，而去噪也是在原子对之间的位置矢量进行。下面将详细介绍它的模型设计以及结果。</p>
+<h3 id="任务设计">任务设计</h3>
+<h4 id="互信息最大化">互信息最大化</h4>
+<p>作者所设计的互信息最大化目标函数是基于如下的物理假设：对于一个数据集中所包含的所谓亚稳态分子构象，它并不是真正地位于亚稳态位置。由于无法避免地系统误差、计算误差等的存在，以及温度引起的热振动的影响，最终导致它实际上处于略微偏离亚稳态的地方。</p>
+<p>因此，作者设计了下图所示的对比学习任务：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172700.png" alt="image-20230221121055671" style="zoom:80%;" /></p>
+<p>在原始位置<span class="math inline">\(g_1\)</span>的基础上，加入少量噪声得到<span class="math inline">\(g_2\)</span>，然后做两分子构象之间的互信息最大化： <span class="math display">\[
+I(G_1;G_2)=\mathbb{E}_{p(g_1,g_2)}\Big[\log\dfrac{p(g_1,g_2)}{p(g_1)p(g_2)}\Big]\geq\dfrac{1}{2}\mathbb{E}_{p(g_1,g_2)}\Big[\log p(g_1|g_2)+\log p(g_2|g_1)\Big]\triangleq\mathcal{L}_{\text{MI}}
+\]</span> 将其中的概率密度用能量函数来定义，上式可以变为： <span class="math display">\[
+\begin{aligned}
+\mathcal{L}_{MI}&amp;=\frac{1}{2}\mathbb{E}_{p(g_{1},g_{2})}\Big[\log p(g_{1}|g_{2})\Big]+\frac{1}{2}\mathbb{E}_{p(g_{1},g_{2})}\Big[\log p(g_{2}|g_{1})\Big]\\ 
+&amp;=\frac{1}{2}\mathbb{E}_{p(g_{1},g_{2})}\Big[\log p((\boldsymbol{X}_{1},\boldsymbol{R}_{1})|(\boldsymbol{X}_{2},\boldsymbol{R}_{2}))\Big]+\frac{1}{2}\mathbb{E}_{q(g_{1},g_{2})}\Big[\log p((\boldsymbol{X}_{2},\boldsymbol{R}_{2})|(\boldsymbol{X}_{1},\boldsymbol{R}_{1}))\Big]\\ 
+&amp;=\frac{1}{2}\mathbb{E}_{p(g_{1},g_{2})}\Big[\log p(\boldsymbol{R}_{1}|g_{2})\Big]+\frac{1}{2}\mathbb{E}_{q(g_{1},g_{2})}\Big[\log p(\boldsymbol{R}_{2}|g_{1})\Big]\\ 
+&amp;=\frac{1}{2}\mathbb{E}_{p(g_{1},g_{2})}\left[\log\frac{\exp (f(\boldsymbol{R}_{1},g_{2}))}{A_{\boldsymbol{R}_1|g_2}}\right]+\frac{1}{2}\mathbb{E}_{p(g_{1},g_{2})}\left[\log\frac{\exp (f(\boldsymbol{R}_{2},g_{1}))}{A_{\boldsymbol{R}_2|g_1}}\right]
+\end{aligned}
+\]</span></p>
+<h4 id="引入得分函数">引入得分函数</h4>
+<p>由于上式中包含配分函数难以求解，因此考虑使用score-based model，即定义 <span class="math display">\[
+s(\boldsymbol{R}_1,g_2)\triangleq\nabla_{\boldsymbol{R}_1}\log p(\boldsymbol{R}_1|g_2)=\nabla_{\boldsymbol{R}_1}f(\boldsymbol{R}_1,g_2)
+\]</span> 之后，便可以用得分函数去近似能量函数的梯度，以训练得分函数作为代理任务。作者设计的得分函数可以表示为： <span class="math display">\[
+s(\boldsymbol{R}_{1},g_{2})_{i}=\sum_{j\neq i}\frac{\partial f(\boldsymbol{R}_{1},g_{2})}{\partial d_{1,i j}}\cdot\frac{\partial d_{1,i j}}{\partial \boldsymbol{r}_{1,i}}=\sum_{j\neq i}\frac{1}{d_{1,i j}}\cdot s(d_{1},g_{2})_{i j}\cdot(\boldsymbol{r}_{1,i}-\boldsymbol{r}_{1,j})
+\]</span> 其中，<span class="math inline">\(s(d_1,g_2)_{ij}\)</span>的设计如下： <span class="math display">\[
+h(g_2)_i=\text{3D-GNN}(T(g_2)) \\
+h(g_2)_{ij}=h(g_2)_i+h(g_2)_j \\
+s_\theta(\tilde{d}_1,g_2)_{ij}=\operatorname{MLP}\big(\operatorname{MLP}(\tilde{d}_{1,i j})\oplus h(g_2)_{ij}\big)
+\]</span> 其中的3D-GNN用的是<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIxMDIuMDMxNTA=">PaiNN<i class="fa fa-external-link-alt"></i></span>结构。</p>
+<p>使用去噪得分匹配的方法做训练，则最终的训练目标为： <span class="math display">\[
+\begin{aligned}
+\mathcal{L}_{\text{SE(3)-DDM}}&amp;=\frac{1}{2L}\sum_{l=1}^{L}\sigma_{l}^{\beta}\mathbb{E}_{p_{\text{data}(d_{1}|g_{2})}}\mathbb{E}_{q(\tilde{d}_{1}|d_{1},g_{2})}\left[\left\|\frac{s_{\boldsymbol{\theta}}(\tilde{d}_{1},g_{2})}{\sigma_{l}}-\frac{d_{1}-\tilde{d}_{1}}{\sigma_{l}^{2}}\right\|_{2}^{2}\right]\\ 
+&amp;=\frac{1}{2L}\sum_{l=1}^{L}\sigma_{l}^{\beta}\mathbb{E}_{p_{\text{data}(d_{2}|g_{1})}}\mathbb{E}_{q(\tilde{d}_{2}|d_{2},g_{1})}\left[\left\|\frac{s_{\boldsymbol{\theta}}(\tilde{d}_{2},g_{1})}{\sigma_{l}}-\frac{d_{2}-\tilde{d}_{2}}{\sigma_{l}^{2}}\right\|_{2}^{2}\right]\\ 
+\end{aligned}
+\]</span> 但是进一步思考，这样的加噪方式是否会引起如下图所示的问题？</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172705.png" alt="image-20230221165450258" style="zoom: 67%;" /></p>
+<p>其中，箭头所指的向量应该为<span class="math inline">\([0.2,0.5]\)</span>才能满足向量的封闭性要求。但是如果直接加入随机噪声，不考虑向量的封闭性约束，从概率上讲几乎不可能生成满足这样的要求。这样的加噪方式是否会对预训练造成影响不得而知。</p>
+<h4 id="训练步骤">训练步骤</h4>
+<p>模型的训练步骤可以总结为如下的算法流程：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172709.png" alt="image-20230221164250790"  /></p>
+<p>其中，第四步加噪声的时候会加入很小的噪声，也就是用<span class="math inline">\(\sigma\)</span>只有零点几的正态分布生成噪声。</p>
+<h3 id="实验结果-4">实验结果</h3>
+<p>作者分别在QM9、MD17这两个分子性质预测任务，以及蛋白质结合的任务上分别做了实验。下表是QM9和MD17数据集的结果：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172714.png" alt="image-20230221171118670" /><figcaption aria-hidden="true">image-20230221171118670</figcaption>
+</figure>
+<p>表中的Supervised指的是用预训练数据集中的能量来做监督学习预训练，RR指的是类似于GraphMVP这一工作中的生成式预训练方法，Info-NCE和EBM-NCE指的是用对比学习的方法做预训练。从中可以看出，除了去噪预训练，其它几种预训练方法在下游任务上起到的作用很小，甚至起到了反作用。</p>
+<p>而在蛋白质结合预测任务上，也有类似的结论：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172719.png" alt="image-20230221171831872" /><figcaption aria-hidden="true">image-20230221171831872</figcaption>
+</figure>
+<p>此外，为了排除Backbone的影响，作者也用SchNet作为Backbone做了消融实验，证明了这种去噪预训练的方法仍然有效：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221172723.png" alt="image-20230221171924318" /><figcaption aria-hidden="true">image-20230221171924318</figcaption>
+</figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83/" title="论文笔记-分子图预训练">http://lyf35.github.io/2022/12/02/论文笔记-分子图预训练/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 图神经网络</a>
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"><i class="fa fa-tag"></i> 论文笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="prev" title="深度学习-扩散模型">
+      <i class="fa fa-chevron-left"></i> 深度学习-扩散模型
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-2D%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0/" rel="next" title="论文笔记-2D分子图预训练的效果评估">
+      论文笔记-2D分子图预训练的效果评估 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '72dc16558a649ad53c3958af2f2af63c',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

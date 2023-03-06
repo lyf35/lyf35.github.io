@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="Preface Recently, more and more works are published talking about pre-training strategies on molecular data, which lead to better performance on downstream tasks of molecules. However, the relationshi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记-2D分子图预训练的效果评估">
+<meta property="og:url" content="http://lyf35.github.io/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-2D%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="Preface Recently, more and more works are published talking about pre-training strategies on molecular data, which lead to better performance on downstream tasks of molecules. However, the relationshi">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224154.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224159.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224203.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224207.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224211.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224215.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224224.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224230.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224241.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224245.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224250.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224259.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224309.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224313.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224319.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224328.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224342.png">
+<meta property="article:published_time" content="2022-12-02T11:12:34.000Z">
+<meta property="article:modified_time" content="2022-12-02T15:12:42.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="图神经网络">
+<meta property="article:tag" content="论文笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224154.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-2D%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>论文笔记-2D分子图预训练的效果评估 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#preface"><span class="nav-number">1.</span> <span class="nav-text">Preface</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#does-gnn-pretraining-help-molecular-representation"><span class="nav-number">2.</span> <span class="nav-text">Does GNN Pretraining help molecular representation?</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#description"><span class="nav-number">2.1.</span> <span class="nav-text">Description</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment-design"><span class="nav-number">2.2.</span> <span class="nav-text">Experiment design</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#result"><span class="nav-number">2.3.</span> <span class="nav-text">Result</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#main-conclusion"><span class="nav-number">2.4.</span> <span class="nav-text">Main conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#more-experiments-results"><span class="nav-number">2.5.</span> <span class="nav-text">More experiments &amp; results</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#limitations"><span class="nav-number">2.6.</span> <span class="nav-text">Limitations</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#evaluating-self-supervised-learning-for-molecular-graph-embeddings"><span class="nav-number">3.</span> <span class="nav-text">Evaluating Self-Supervised Learning for Molecular Graph Embeddings</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#model-overview"><span class="nav-number">3.1.</span> <span class="nav-text">Model overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiment-settings"><span class="nav-number">3.2.</span> <span class="nav-text">Experiment settings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#results-conclusions"><span class="nav-number">3.3.</span> <span class="nav-text">Results &amp; conclusions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#performance-on-downstream-tasks"><span class="nav-number">3.3.1.</span> <span class="nav-text">Performance on downstream tasks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#molecular-graph-representation-evaluation"><span class="nav-number">3.3.2.</span> <span class="nav-text">Molecular graph representation evaluation</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-2D%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记-2D分子图预训练的效果评估
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-12-02 19:12:34 / 修改时间：23:12:42" itemprop="dateCreated datePublished" datetime="2022-12-02T19:12:34+08:00">2022-12-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-2D%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0/" class="post-meta-item leancloud_visitors" data-flag-title="论文笔记-2D分子图预训练的效果评估" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="preface">Preface</h1>
+<p>Recently, more and more works are published talking about pre-training strategies on molecular data, which lead to better performance on downstream tasks of molecules. However, the relationship between molecular representation and pre-training methods still remains a mystery. This blog is a brief note about two works taking about the evaluation of pre-training tasks on molecular data.</p>
+<p>Note that the two works only talk about pre-training on 2D molecular data. For 3D molecular data, there might be different results with 2D data. <span id="more"></span></p>
+<h1 id="does-gnn-pretraining-help-molecular-representation">Does GNN Pretraining help molecular representation?</h1>
+<h2 id="description">Description</h2>
+<p>In this paper, the author perform systematic studies to assess the performance of popular graph pretraining techniques on different types of <strong>molecular</strong> datasets, and exploit various confounding components in experimental setup in deciding the performance of downstream tasks with or without pretraining.</p>
+<p>The author have evaluated the following pre-training tasks:</p>
+<ul>
+<li><p>self-supervised pretraining:</p>
+<ul>
+<li><p>Node prediction (node-level task): some proportion of node attributes are masked and replaced with mask-specified indicators in the node input feature. After graph convolution, the embedding output from GNN is used to predict the true attribute of the node, e.g. atom type in molecular graphs, through a linear classifier on top of the node embedding.</p></li>
+<li><p>Context prediction (sub-graph level task): aiming at learning embedding that can represent the local subgraph surrounding a node</p></li>
+<li><p>Motif prediction (graph-level task): aiming at learning embedding that can represent the local subgraph surrounding a node. Graph embedding is used to jointly predict the occurrence of these semantic functional motifs.</p></li>
+<li><p>Contrastive learning: to maximize the agreement of two augmented views of the same graph, and minimize the agreement of different graphs. The optimization is conducted using contrastive loss in the latent embedding space. The augmentation function needs to transform graphs into realistic and novel augmentations without affecting semantic labels of the graphs.</p></li>
+</ul></li>
+<li><p>supervised pretraining: aims to learn domain-specific graph-level knowledge from specific designed pretraining tasks.</p></li>
+</ul>
+<h2 id="experiment-design">Experiment design</h2>
+<ul>
+<li>self-supervised learning:
+<ul>
+<li>masking: randomly masks 15% of the nodes’ feature</li>
+<li>context prediction: masks out the context from k1-hops to k2-hops and leverages adversarial training to predict the true context embeddings from the random context embeddings</li>
+<li>motif prediction: GNN is asked to predict whether a motif is contained in a molecule. The motif can be extracted from the molecule with RDKit.</li>
+<li>contrastive: corrupt the input node features with Gaussian noise to generate different views of the same graph, and maximize the consistency between positive pairs (same graph) and minimize that between negative pairs (different graphs).</li>
+<li>graph-level supervised: use the ChEMBL dataset with graph-level labels for graph- level supervised pretraining</li>
+</ul></li>
+<li>graph features (mainly consider the graph representations without the 3D information):
+<ul>
+<li>basic features: the node features contain the atom type and the derived features, such as formal charge list, chirality list, etc. The edge features contain the bond types and the bond directions.</li>
+<li>rich features (default): The rich feature set is a superset of the basic features. In addition to the basic ones mentioned above, it comes with the additional node features such as hydrogen acceptor match, acidic match and bond features such as ring information.</li>
+</ul></li>
+<li>pretraining dataset: ZINC15(default), SAVI for SSL, ChEMBL for supervised.</li>
+<li>GNN backbone: GIN(default), GraphSAGE</li>
+<li>dataset split: scaffold Split — first sorts the molecules according to the scaffold (e.g. molecule structure), and then partition the sorted list into train/valid/test splits consecutively. And Balanced Scaffold Split (default) — introduces randomness in sorting and splitting stages.</li>
+</ul>
+<h2 id="result">Result</h2>
+<p>The following table lists the result of default setting:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224154.png" alt="image-20220823173751225" /><figcaption aria-hidden="true">image-20220823173751225</figcaption>
+</figure>
+<p>Here is the result of using scaffold data splitting:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224159.png" alt="image-20220823173900729" /><figcaption aria-hidden="true">image-20220823173900729</figcaption>
+</figure>
+<p>Use basic feature:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224203.png" alt="image-20220823174140261" /><figcaption aria-hidden="true">image-20220823174140261</figcaption>
+</figure>
+<p>Basic feature + scaffold data splitting:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224207.png" alt="image-20220823174402887" /><figcaption aria-hidden="true">image-20220823174402887</figcaption>
+</figure>
+<h2 id="main-conclusion">Main conclusion</h2>
+<ul>
+<li><p>Regardless of the design of the pretraining tasks, applying self-supervised pretraining alone <strong>does not provide statistically significant improvements</strong> over non-pretrained methods on downstream tasks (from default setting, basic feature, scaffold splitting).</p></li>
+<li><p>Only when <strong>additional supervised pretraining step</strong> is conducted after self-supervised pretraining, we might observe statistically significant improvements (from all experiments above).</p></li>
+<li><p>However, the gain becomes marginal on some <strong>specific data splits</strong> (from scaffold data splitting) or diminishes if <strong>richer features</strong> are introduced (compare with basic feature and rich feature).</p></li>
+<li><p>So, <strong>pretraining might help when</strong>:</p>
+<ul>
+<li>if we can have the supervised pretraining with target labels that are aligned with the downstream tasks</li>
+<li>if the high quality hand-crafted features are absent (the rich features are calculated from the local environment of atoms, so already contain the useful neighborhood info)</li>
+<li>if the downstream train, valid and test dataset distributions are substantially different.</li>
+</ul></li>
+</ul>
+<h2 id="more-experiments-results">More experiments &amp; results</h2>
+<p>Pretraining on SAVI(larger than ZINC15):</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224211.png" alt="image-20220823175129922" /><figcaption aria-hidden="true">image-20220823175129922</figcaption>
+</figure>
+<p>Conclusion:</p>
+<ul>
+<li>The SAVI pretraining data <strong>does not</strong> have a significant improvement either on balanced scaffold split or scaffold split.</li>
+<li>Also similarly, the self-supervised pretraining objectives lead to negligible gain on downstream task performance.</li>
+</ul>
+<p>Using GraphSAGE architecture:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224215.png" alt="image-20220823175425156" /><figcaption aria-hidden="true">image-20220823175425156</figcaption>
+</figure>
+<p>Conclusion:</p>
+<ul>
+<li>The conclusion is the same as above. But for larger &amp; deeper GNN it might be different.</li>
+</ul>
+<p>Simple reproduce of the original code:</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224224.png" alt="image-20220823180032748" style="zoom: 67%;" /></p>
+<p>Conclusion:</p>
+<ul>
+<li>The usefulness of graph pretraining is also sensitive to the experimental hyperparameters (compared with default)</li>
+<li>Suspect the previous success of pretraining may largely due to <strong>lack of hyper-parameter tuning and not averaging over different splits</strong>.</li>
+</ul>
+<p>Pretraining accuracy curve:</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224230.png" alt="image-20220823180238723" style="zoom:67%;" /></p>
+<p>Conclusion:</p>
+<ul>
+<li>Tasks are easy: the pre-train task converges fast, which means that some of the self-pretraining tasks for molecules might be easy. So model learns less useful information from pretraining.</li>
+<li>The data lacks diversity: molecules share many common sub-structures, e.g., functional motifs. Hence, molecules are not as diversified as text data.</li>
+<li>2D Structure is not enough to infer functionality. Some important biophysical properties are barely reflected in the 2D-feature-based pretraining.</li>
+</ul>
+<h2 id="limitations">Limitations</h2>
+<ul>
+<li>The study is confined to small molecule graph, so the result can not extend to larger graphs or other fields.</li>
+<li>The study focused on representative 1-WL graph neural networks, for architectures go beyond the 1-WL check it might be useful.</li>
+<li><strong>And in personal perspective</strong>: the SSL tasks might not be designed delicately in the experiment.</li>
+</ul>
+<h1 id="evaluating-self-supervised-learning-for-molecular-graph-embeddings">Evaluating Self-Supervised Learning for Molecular Graph Embeddings</h1>
+<h2 id="model-overview">Model overview</h2>
+<p>The author designed the following framework for evaluation the graph embedding of different Graph Self-Supervised Learning(GSSL) methods:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224241.png" alt="image-20220823230048110" /><figcaption aria-hidden="true">image-20220823230048110</figcaption>
+</figure>
+<p>In predicting the evaluation metrics, the GSSL pre-trained backbones are frozen, and only the probe models are trained using extracted node/graph embeddings and corresponding graph metrics.</p>
+<h2 id="experiment-settings">Experiment settings</h2>
+<p>GSSL methods for evaluation:</p>
+<ul>
+<li>EdgePred: from <em>Inductive representation learning on large graphs</em>.</li>
+<li>InfoGraph: from <em>Infograph: Unsupervised and semisupervised graph-level representation learning via mutual information maximization.</em></li>
+<li>GPT-GNN: from <em>Gpt-gnn: Generative pre-training of graph neural networks.</em></li>
+<li>AttrMask &amp; ContextPred: from <em>Strategies for pre-training graph neural networks.</em></li>
+<li>G-Cont &amp; G-Motif: from <em>Self-supervised graph transformer on large-scale molecular data.</em></li>
+<li>GraphCL: from <em>Graph contrastive learning with augmentations.</em></li>
+<li>JOAO: from <em>Graph contrastive learning automated.</em></li>
+</ul>
+<p>Probe models: MLP (should not be too simple or too complex)</p>
+<p>Backbone: GIN</p>
+<h2 id="results-conclusions">Results &amp; conclusions</h2>
+<h3 id="performance-on-downstream-tasks">Performance on downstream tasks</h3>
+<p>Evaluating GSSL methods on molecular property prediction tasks:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224245.png" alt="image-20220824124227562" /><figcaption aria-hidden="true">image-20220824124227562</figcaption>
+</figure>
+<p>Note that the result in the last two column of the table are result without and with finetuning backbone, respectively.</p>
+<p>Conclusions:</p>
+<ul>
+<li>Rankings differ among fixed and fine-tuned embeddings.</li>
+<li>Random model parameter sometimes beats GSSL methods.</li>
+</ul>
+<h3 id="molecular-graph-representation-evaluation">Molecular graph representation evaluation</h3>
+<ol type="1">
+<li><p>Generic graph properties</p>
+<ul>
+<li>Node-level statistics: accompany each node with a local topological measure, which could be used as features in node classification
+<ul>
+<li>Node degree: the number of edges incident to node <span class="math inline">\(u\)</span>, i.e., <span class="math inline">\(d_u=\sum_{v\in V} A[u,v]\)</span></li>
+<li>Node centrality: represents a node’s importance, it is defined as a recurrence relation that is proportional to the average centrality of its neighbours: <span class="math inline">\(e_u=(\sum_{v\in V}A[u,v]e_v)/\lambda\)</span></li>
+<li>clustering coefficient: measures how tightly clustered a node’s neighbourhood is: <span class="math inline">\(c_u=(|(v_1,v_2)\in E: v_1, v_2\in N(u)|)/d_u^2\)</span>. i.e., the proportion of closed triangles in neighbourhood</li>
+</ul></li>
+<li>Graph-level statistics: summarize global topology information and are helpful for graph classification tasks
+<ul>
+<li>Diameter: the maximum distance between the pair of vertices.</li>
+<li>Cycle basis: a set of simple cycles that forms a basis of the graph cycle space. It is a minimal set that allows every even-degree subgraph to be expressed as a symmetric difference of basis cycles.</li>
+<li>Connectivity: the minimum number of elements (nodes or edges) that need to be removed to separate the remaining nodes into two or more isolated subgraphs.</li>
+<li>Associativity: measures the similarity of connections in the graph with respect to the node degree. It is essentially the Pearson correlation coefficient of degrees between pairs of linked nodes.</li>
+</ul></li>
+<li>Pair-level statistics: quantify the relationships between nodes (atoms), which is vital in molecular modelling
+<ul>
+<li>Link prediction: tests whether two nodes are connected or not, given their embeddings and inner products. Based on the principle of homophily, it is expected that embeddings of connected nodes are more similar compared to disconnected pairs: <span class="math inline">\(S_{\text{link}}[u,v,x_u^Tx_v^T]=\mathbb{1}_{N(u)}(v)\)</span></li>
+<li>Jaccard coefficient: quantify the overlap between neighbourhoods while minimizing the biases induced by node degrees: <span class="math inline">\(S_{\text{Jaccard}}[u,v]=|N(u)\cap N(v)|/|N(u)\cup N(v)|\)</span></li>
+<li>Katz index: a global overlap statistic, defined by the number of paths of all lengths between a pair of nodes: <span class="math inline">\(S_{\text{Katz}}=\sum_{i=1}^\infty \beta^i A^i[u,v]\)</span></li>
+</ul></li>
+</ul>
+<p>Results:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224250.png" alt="image-20220824165751944" /><figcaption aria-hidden="true">image-20220824165751944</figcaption>
+</figure>
+<p>Conclusion:</p>
+<ul>
+<li><strong>No single method is omnipotent</strong>.</li>
+<li><em>RANDOM</em> outperforms many GSSL methods on <strong>node- and pair-level tasks</strong>. RANDOM falls short of predicting <strong>graph-level metrics</strong>.</li>
+</ul>
+<p>Performance on the topological metrics prediction with embeddings extracted from different layers (Node Degree &amp; Graph Diameter):</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224259.png" alt="image-20220824171658396" style="zoom: 67%;" /></p>
+<p>Conclusion:</p>
+<ul>
+<li>GSSL learns hierarchical features in a localizable way:
+<ul>
+<li>The <em>first layer</em> of pre-trained embeddings performs the best on <strong>local structural metrics</strong>.</li>
+<li>The <em>last layer</em> of pre-trained embeddings performs the best on <strong>global structural metrics</strong>.</li>
+</ul></li>
+</ul></li>
+<li><p>Molecular substructure properties</p>
+<p>Substructure definition: 24 substructures which can be divided into three groups: rings, functional groups, redox Active Sites</p>
+<p>Simply feed counts of substructures within a molecule’s graph into classic ML methods (linear regression, random forest, and XGBoost) to predict the molecule’s properties on eight downstream datasets.</p>
+<p>Average scores (same tasks with previous part):</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224309.png" alt="image-20220824150120437" style="zoom:67%;" /></p>
+<p>Predict the counts of substructure:</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224313.png" alt="image-20220824223459854" style="zoom:80%;" /></p>
+<p>(Rank corr: the Spearman rank correlation between the substructure property and downstream performance)</p>
+<p>Conclusions:</p>
+<ul>
+<li><strong>Substructure detection</strong> performance correlates well with molecular property prediction performance.</li>
+<li><strong>Contrastive GSSL</strong> performs better than in molecular property prediction experiments.</li>
+<li>RANDOM falls short of predicting substructure properties.</li>
+</ul></li>
+<li><p>Embedding space properties</p>
+<ul>
+<li><p>Alignment: quantifies how similar produced embeddings are for similar samples</p>
+<p>The following is the cosine distance histogram of positive and negative pairs:</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224319.png" alt="image-20220824234810031" /><figcaption aria-hidden="true">image-20220824234810031</figcaption>
+</figure>
+<p>Conclusion: GSSL methods give rise to <strong>better alignment</strong> than RANDOM.</p></li>
+<li><p>Uniformity: measures how much information is preserved in the embedding space, i.e., how uniformly they are distributed on the unit hypersphere <span class="math display">\[
+\log \underset{\langle x, y\rangle \sim p_{\text {data }}}{\mathbb{E}}\left[e^{-t\|f(x)-f(y)\|_{2}^{2}}\right], \quad t&gt;0
+\]</span> <img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224328.png" alt="image-20220824235201572" style="zoom:80%;" /></p>
+<p>Conclusion:</p>
+<ul>
+<li>Relatively speaking, except for EDGEPRED, all GSSL methods achieve uniformity values that are <strong>many times less</strong> than RANDOM’s.</li>
+<li>Uniformity rankings <strong>do not correlate</strong> perfectly with molecular property prediction rankings.</li>
+</ul></li>
+<li><p>Dimensional collapse: refers to the problem of embedding vectors spanning a lower-dimensional subspace instead of the entire available embedding space. one simple way to test the occurrence of dimension collapse is to inspect the number of non-zero singular values of a matrix stacking the embedding vectors <span class="math inline">\(Z=\{z_i\}_{i=1}^N\)</span>.</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230221224342.png" alt="image-20220824234746386"  /></p>
+<p>Conclusion:</p>
+<ul>
+<li>Most GSSL methods “lift” the spectrum compared to RANDOM.</li>
+<li>EDGEPRED indeed suffered from dimensional collapse.</li>
+</ul></li>
+</ul></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-2D%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0/" title="论文笔记-2D分子图预训练的效果评估">http://lyf35.github.io/2022/12/02/论文笔记-2D分子图预训练的效果评估/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 图神经网络</a>
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"><i class="fa fa-tag"></i> 论文笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83/" rel="prev" title="论文笔记-分子图预训练">
+      <i class="fa fa-chevron-left"></i> 论文笔记-分子图预训练
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/12/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Score-based%20model/" rel="next" title="深度学习-Score-Based model">
+      深度学习-Score-Based model <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'e7651e1c1f755ef1543adab65cfccb3c',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="引言 自监督学习指的是构造辅助任务（pretext task），从大规模的无标签数据中构造出自身的监督信息，并使用其对模型进行训练。通过辅助任务所构造的监督信息，可以使得模型从中学习到对下游任务有价值的表征。 相比于监督学习，自监督学习的学习目标来自于人为定义；而相比于无监督学习，自监督学习中模型的训练方式采用的是更接近监督学习的方法。目前，自监督学习更被倾向于归类到无监督学习的范畴中去。 一些学">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记-图自监督学习概述">
+<meta property="og:url" content="http://lyf35.github.io/2022/08/09/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%9B%BE%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="引言 自监督学习指的是构造辅助任务（pretext task），从大规模的无标签数据中构造出自身的监督信息，并使用其对模型进行训练。通过辅助任务所构造的监督信息，可以使得模型从中学习到对下游任务有价值的表征。 相比于监督学习，自监督学习的学习目标来自于人为定义；而相比于无监督学习，自监督学习中模型的训练方式采用的是更接近监督学习的方法。目前，自监督学习更被倾向于归类到无监督学习的范畴中去。 一些学">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20220629232100.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20220629232509.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20220629232537.png">
+<meta property="article:published_time" content="2022-08-09T11:38:53.000Z">
+<meta property="article:modified_time" content="2022-08-10T15:01:24.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="图神经网络">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="自监督学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20220629232100.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2022/08/09/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%9B%BE%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>论文笔记-图自监督学习概述 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%E5%BC%8F%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.</span> <span class="nav-text">对比式学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">2.2.</span> <span class="nav-text">数据增强</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%89%B9%E5%BE%81%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">基于特征的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BB%93%E6%9E%84%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.2.</span> <span class="nav-text">基于结构的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%A0%B7%E6%9C%AC%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.3.</span> <span class="nav-text">基于样本的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E9%80%82%E5%BA%94%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">2.2.4.</span> <span class="nav-text">自适应数据增强</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E4%BB%BB%E5%8A%A1%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.3.</span> <span class="nav-text">辅助任务设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E5%B0%BA%E5%BA%A6%E4%B8%8B%E5%AF%B9%E6%AF%94"><span class="nav-number">2.3.1.</span> <span class="nav-text">同尺度下对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%A8%E5%B0%BA%E5%BA%A6%E5%AF%B9%E6%AF%94"><span class="nav-number">2.3.2.</span> <span class="nav-text">跨尺度对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="nav-number">2.4.</span> <span class="nav-text">对比学习目标</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%BC%8F%E5%AD%A6%E4%B9%A0"><span class="nav-number">3.</span> <span class="nav-text">生成式学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="nav-number">3.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E8%87%AA%E7%BC%96%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">图自编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E8%87%AA%E5%9B%9E%E5%BD%92"><span class="nav-number">3.3.</span> <span class="nav-text">图自回归</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E5%BC%8F%E5%AD%A6%E4%B9%A0"><span class="nav-number">4.</span> <span class="nav-text">预测式学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-2"><span class="nav-number">4.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E7%82%B9%E7%89%B9%E5%BE%81%E9%A2%84%E6%B5%8B"><span class="nav-number">4.2.</span> <span class="nav-text">结点特征预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BB%93%E6%9E%84%E7%9A%84%E9%A2%84%E6%B5%8B"><span class="nav-number">4.3.</span> <span class="nav-text">基于结构的预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E8%AE%AD%E7%BB%83"><span class="nav-number">4.4.</span> <span class="nav-text">自训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E7%9F%A5%E8%AF%86%E9%A2%84%E6%B5%8B"><span class="nav-number">4.5.</span> <span class="nav-text">领域知识预测</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2022/08/09/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%9B%BE%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记-图自监督学习概述
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-09 19:38:53" itemprop="dateCreated datePublished" datetime="2022-08-09T19:38:53+08:00">2022-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-10 23:01:24" itemprop="dateModified" datetime="2022-08-10T23:01:24+08:00">2022-08-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/08/09/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%9B%BE%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/" class="post-meta-item leancloud_visitors" data-flag-title="论文笔记-图自监督学习概述" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="引言">引言</h1>
+<p>自监督学习指的是构造辅助任务（pretext task），从大规模的无标签数据中构造出自身的监督信息，并使用其对模型进行训练。通过辅助任务所构造的监督信息，可以使得模型从中学习到对下游任务有价值的表征。</p>
+<p>相比于监督学习，自监督学习的学习目标来自于人为定义；而相比于无监督学习，自监督学习中模型的训练方式采用的是更接近监督学习的方法。目前，自监督学习更被倾向于归类到无监督学习的范畴中去。</p>
+<p>一些学者将图数据的自监督学习方法分为三大类：</p>
+<span id="more"></span>
+<ul>
+<li><p>对比式方法：使用两种不同的数据增强方式生成一个图的两个不同视角（view），二者之间的差异性被用作自监督的标签。这种方法的目标是学习数据对之间所包含的信息。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20220629232100.png" alt="image-20220629232053690" style="zoom: 33%;" /></p></li>
+<li><p>生成式方法：通常使用图数据自身所包含的信息来构造学习目标，例如图的重建任务，这一任务可以使模型学习到图数据的属性或是结构信息。生成式方法更侧重于学习数据内部所包含的信息。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20220629232509.png" alt="image-20220629232509692" style="zoom: 33%;" /></p></li>
+<li><p>预测式方法：通过使用一些统计分析方法或者是领域知识，从图数据中生成标签，然后让模型进行学习。预测式方法侧重于学习数据与自生成标签之间的关系。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20220629232537.png" alt="image-20220629232537392" style="zoom: 25%;" /></p></li>
+</ul>
+<p>对于自监督学习之后的下游任务，它的训练策略有三种：</p>
+<ul>
+<li><p>预训练后微调：这一策略下模型的训练分为两个阶段。第一阶段是使用自监督学习为编码器<span class="math inline">\(f_\theta(\cdot)\)</span>预训练一组参数<span class="math inline">\(\theta_{\text{init}}\)</span>，第二阶段根据特定的下游任务，使用监督学习的方式对编码器<span class="math inline">\(f_{\theta_{\text{init}}}(\cdot)\)</span>以及一个预测头（prediction head）<span class="math inline">\(g_\omega(\cdot)\)</span>进行微调，也就是说模型的训练过程可以被表示为： <span class="math display">\[
+\theta_{\text{init}}=\arg\min_\theta \mathcal{L}_{\text{ssl}} (f_\theta) \\
+\theta^*,\omega^*=\arg\min_{(\theta,\omega)}\mathcal{L}_{\text{task}}(f_{\theta_{\text{init}}},g_\omega)
+\]</span></p></li>
+<li><p>联合训练：这一方法也被称为辅助学习。在这一策略下，编码器<span class="math inline">\(f_\theta(\cdot)\)</span>与预测头<span class="math inline">\(g_\omega(\cdot)\)</span>会使用辅助任务以及下游任务同时作为监督信号进行训练。它也可以被看作是一种多任务学习，也或是可以将辅助任务看作是一种正则化的方式。训练目标可以表示为： <span class="math display">\[
+\theta^*,\omega^*=\arg\min_{(\theta,\omega)}\mathcal{L}_{\text{task}}(f_\theta,g_\omega) + \alpha \arg\min_\theta \mathcal{L}_{\text{ssl}} (f_\theta)
+\]</span> 其中<span class="math inline">\(\alpha\)</span>代表权重系数。</p></li>
+<li><p>非监督表示学习：这一策略与预训练后微调的模型训练方式相似。第一阶段完全相同；而第二阶段则是将编码器的预训练参数<span class="math inline">\(\theta_{\text{init}}\)</span>冻结，只调整预测头的参数。训练目标为： <span class="math display">\[
+\theta_{\text{init}}=\arg\min_\theta \mathcal{L}_{\text{ssl}} (f_\theta) \\
+\omega^*=\arg\min_{\omega}\mathcal{L}_{\text{task}}(f_{\theta_{\text{init}}},g_\omega)
+\]</span></p></li>
+</ul>
+<h1 id="对比式学习">对比式学习</h1>
+<h2 id="概述">概述</h2>
+<p>记一个图数据为<span class="math inline">\(g=(A,X)\)</span>，其中<span class="math inline">\(A\)</span>代表邻接矩阵，<span class="math inline">\(X\)</span>代表结点的特征向量组成的特征矩阵；记<span class="math inline">\(\mathcal{T}\)</span>为一个变换，通过对图数据使用不同的变换<span class="math inline">\(\mathcal{T}_i\)</span>，便可以得到图的不同视角<span class="math inline">\((A_i,X_i)=\mathcal{T}_i(A,X)\)</span>；同时记<span class="math inline">\(f_\theta\)</span>为一个图编码器。图对比学习可以描述为下面的框架：</p>
+<p>通过对图结构<span class="math inline">\((A,X)\)</span>使用一组不同的变换<span class="math inline">\(\{\mathcal{T}_i\},i=1,\cdots,k\)</span>，可以得到一组图的不同视角（view）<span class="math inline">\(\{(A_i,X_i)\},i=1,\cdots,k\)</span>。之后，一组编码器<span class="math inline">\(\{f_{\theta_i}\}\)</span>（它们可以共享参数，也可以各自使用不同参数）以这些不同的视角<span class="math inline">\(\{(A_i,X_i)\}\)</span>作为输入，得到对应的特征向量<span class="math inline">\(\boldsymbol{h}_1,\dots,\boldsymbol{h}_k\)</span>，即 <span class="math display">\[
+\boldsymbol{h}_i=f_{\theta_i}(A_i,X_i),i=1,\dots,k
+\]</span> 根据辅助任务的不同，<span class="math inline">\(\boldsymbol{h}_1,\dots,\boldsymbol{h}_k\)</span>可以为不同层级（结点、边、图三种）的向量表示。</p>
+<p>在训练模型时，对比学习的目标是使得编码器能够将同一个图的不同视角计算得到的特征向量<span class="math inline">\(\boldsymbol{h}_i\)</span>之间的相合程度（agreement）最大化。相合程度可以表示用互信息<span class="math inline">\(\mathcal{I}(\boldsymbol{h}_i,\boldsymbol{h}_j)\)</span>来衡量。也就是说，训练目标可以用如下的公式来表示： <span class="math display">\[
+\max_{\{\theta_i\}_{i=1}^{k}}  \sum_i \sum_{i\ne j} \alpha_{ij}\mathcal{I}(\boldsymbol{h}_i,\boldsymbol{h}_j)
+\]</span> 其中<span class="math inline">\(\alpha_{ij}\in \{0,1\}\)</span>，如果互信息是由<span class="math inline">\(\boldsymbol{h}_i,\boldsymbol{h}_j\)</span>这一正样本对来计算得到的，则<span class="math inline">\(\alpha_{ij}=1\)</span>，否则<span class="math inline">\(\alpha_{ij}=0\)</span>。为了能够高效地计算互信息（Mutual Information），通常会使用特定的函数<span class="math inline">\(\hat{\mathcal{I}}\)</span>来进行估计。与<span class="math inline">\(\{\boldsymbol{h}_i\}\)</span>进行对比的负样本，则可以取另一个图数据<span class="math inline">\(\tilde{g}=(\tilde{A},\tilde{X})\)</span>所生成的特征向量<span class="math inline">\(\{\tilde{\boldsymbol{h}}_i\}\)</span>。</p>
+<p>在推理阶段，既可以使用其中的某一个训练好的编码器，或者是将这些编码器通过特定方式组合起来使用。</p>
+<h2 id="数据增强">数据增强</h2>
+<p>在图数据中，常用的数据增强手段可以分为四类，下面分别进行介绍。</p>
+<h3 id="基于特征的方法">基于特征的方法</h3>
+<p>基于特征的数据增强仅对结点或边的特征矩阵进行变换，可以表示为如下的形式： <span class="math display">\[
+\mathcal{T}(A,X)=(A,\mathcal{T}_X(X))
+\]</span> 其中常用的方法包括：</p>
+<ul>
+<li><p>特征掩码：指的是随机地覆盖掉一小部分特征。记<span class="math inline">\(L\)</span>为掩码位置矩阵，它由元素0和1组成，如果<span class="math inline">\(L_{ij}=1\)</span>，则代表结点<span class="math inline">\(i\)</span>的第<span class="math inline">\(j\)</span>个特征被掩码，如果为0则没有被掩码；并记<span class="math inline">\(M\)</span>为掩码数值矩阵，它决定了掩码的位置如何取值。特征掩码的表达式可以记作： <span class="math display">\[
+\mathcal{T}_X(X)=X\odot (1-L)+M\odot L
+\]</span> 对于矩阵<span class="math inline">\(M\)</span>的构造有不同的方法，例如取<span class="math inline">\(M=0\)</span>则代表使用常数作为掩码，取<span class="math inline">\(M\sim N(0,\Sigma)\)</span>则是用高斯噪声替代原始值，而取<span class="math inline">\(M\sim N(X,\Sigma)\)</span>则是在原输入的基础上添加高斯噪声。</p></li>
+<li><p>属性重排：指对特征矩阵进行按行重排操作。这一操作的含义为，数据增强之后的图结构仍然与原结构有着同样的结点，但是这些结点的位置则被打乱，从而使得图具有不同的结构信息。记<span class="math inline">\(idx\)</span>为<span class="math inline">\(1,\dots,|\mathcal{V}|\)</span>的一个随机排列，这一操作的表达式可以被写为： <span class="math display">\[
+\mathcal{T}_X(X)=X[idx,:]
+\]</span></p></li>
+</ul>
+<h3 id="基于结构的方法">基于结构的方法</h3>
+<p>基于结构的数据增强仅仅对邻接矩阵进行操作，即 <span class="math display">\[
+\mathcal{T}(A,X)=(\mathcal{T}_A(A),X)
+\]</span> 常用的办法有：</p>
+<ul>
+<li><p>边干扰：指随机的添加或者去掉一定比例的边。记<span class="math inline">\(L\)</span>为边干扰的位置矩阵，其中所有元素都为0或1，如果<span class="math inline">\(L_{ij}=L_{ji}=1\)</span>则代表结点<span class="math inline">\(v_i,v_j\)</span>被干扰，反之则表示不被干扰。从而这一操作的表达式可以被记作 <span class="math display">\[
+\mathcal{T}_A(A)=A\odot (1-L)+(1-A)\odot L
+\]</span></p></li>
+<li><p>结点插入：这一方法指的是在原来的结点集合<span class="math inline">\(\{v_j\},j=1,\dots,|\mathcal{V}|\)</span>中，添加<span class="math inline">\(K\)</span>个新的结点<span class="math inline">\(\{v_{j&#39;+|\mathcal{V}|}\},j&#39;=1,\dots,K\)</span>，并且同时在集合<span class="math inline">\(\{v_j\}\)</span>和<span class="math inline">\(\{v_{j&#39;+|\mathcal{V}|}\}\)</span>之间加入一些边进行连接。</p></li>
+<li><p>边扩散：指的是根据原始图生成一个具有不同拓扑结构的视角，通用的边扩散可以被定义为下面的表达式 <span class="math display">\[
+\mathcal{T}_A(A)=\sum_{k=0}^\infty \Theta_k S^k
+\]</span> 其中<span class="math inline">\(S\in R^{N\times N}\)</span>为广义的转移矩阵，<span class="math inline">\(\Theta\)</span>为权重系数，满足<span class="math inline">\(\sum_{k=0}^\infty \Theta_k=1,\Theta_k\in[0,1]\)</span>。常用的两个例子包括：</p>
+<ul>
+<li><p>Personalized PageRank： <span class="math display">\[
+\mathcal{T}_{A}^{PPR}(A)=\alpha(I_n-(1-\alpha)D^{-1/2}AD^{1/2})^{-1}
+\]</span></p></li>
+<li><p>Heat Kernel： <span class="math display">\[
+\mathcal{T}_{A}^{heat}(A)=\exp (tAD^{-1}-t)
+\]</span></p></li>
+</ul></li>
+</ul>
+<h3 id="基于样本的方法">基于样本的方法</h3>
+<p>给定一个图<span class="math inline">\(g=(A,X)\)</span>，基于样本的数据增强方法指的是同时对邻接矩阵和特征矩阵做如下操作： <span class="math display">\[
+\tilde{A},\tilde{X}=\mathcal{T}(A,X)=A[\mathcal{S},\mathcal{S}],X[\mathcal{S},:]
+\]</span> 其中<span class="math inline">\(\mathcal{S}\in \mathcal{V}\)</span>，代表从结点集合中采样得到的子集。目前常用的采样方法包括：</p>
+<ul>
+<li><p>均匀采样：按照均匀分布采样给定数量的结点，并且直接丢掉剩余的结点。</p></li>
+<li><p>自我中心网络（ego net）采样：相当于广度优先采样的一个特例。对于每个节点<span class="math inline">\(v_i\)</span>，L-ego net采样<span class="math inline">\(v_i\)</span>为中心，在<span class="math inline">\(L\)</span>跳范围内能够到达的结点，即： <span class="math display">\[
+\mathcal{S}=\{v_j|d(v_i,v_j)\le L\}
+\]</span></p></li>
+<li><p>随机游走采样：从图<span class="math inline">\(g\)</span>的某个结点<span class="math inline">\(v_i\)</span>开始进行随机游走，在每一步的游走中，会按照当前结点所有边的权重（包括连接上一步的结点的边）去计算游走概率。在游走若干步之后停止，得到一个随机游走采样的子集<span class="math inline">\(\mathcal{S}\)</span>。</p></li>
+<li><p>重要性采样：给定一个结点<span class="math inline">\(v_i\)</span>，可以根据它相邻节点的重要性采样出一个子图。其中，重要性得分矩阵被定义为： <span class="math display">\[
+M=\alpha(I_n-(1-\alpha)AD^{-1})
+\]</span> <span class="math inline">\(\alpha\in[0,1]\)</span>为超参数。对于一个给定的结点<span class="math inline">\(v_i\)</span>，采样时会选择它重要性top-<span class="math inline">\(k\)</span>的相邻结点。</p></li>
+<li><p>基于领域知识的采样：指的是将领域知识应用于采样的过程中。</p></li>
+</ul>
+<h3 id="自适应数据增强">自适应数据增强</h3>
+<p>自适应数据增强通常使用注意力得分或者是梯度的值，作为采样时选择结点或边的准则。</p>
+<ul>
+<li><p>基于注意力的方式：首先为结点或者边定义重要性（注意力）得分，然后基于此来做数据增强。</p>
+<p>例如<a href="%5B%5B2010.14945%5D%20Graph%20Contrastive%20Learning%20with%20Adaptive%20Augmentation%20(arxiv.org)%5D(https://arxiv.org/abs/2010.14945)">GCA</a>这一方法保持图中一些重要的结构或者属性不变，只是修改那些可能不太重要的边和特征。具体来说，就是边删除和特征掩码这两种方式应当与它们的重要性密切相关。给定结点中心度的度量<span class="math inline">\(\varphi_c(\cdot):\mathcal{V}\rightarrow R^+\)</span>，它可以被定义为结点的度、特征向量中心度、PageRank中心度等。</p>
+<p>以此定义边的中心度为： <span class="math display">\[
+s_{i,j}=\log \frac{\varphi_c(v_i)+\varphi_c(v_j)}{2}
+\]</span></p>
+<p>从而可以定义边<span class="math inline">\(e_{i,j}\)</span>的重要性得分为： <span class="math display">\[
+p_{i,j}=\min \left(\frac{s_{\max}-s_{i,j}}{s_{\max}-\mu_s}\cdot p_e,p_\tau\right)
+\]</span> 其中，<span class="math inline">\(p_e\)</span>为一个控制全局概率值的超参数，<span class="math inline">\(s_{\max}\)</span>和<span class="math inline">\(\mu_s\)</span>分别为集合<span class="math inline">\(\{s_{i,j}\}\)</span>所有元素的最大值和平均值，<span class="math inline">\(p_\tau&lt;1\)</span>为截断概率值（如果边被删除的概率过高则容易导致图的结构被过度破坏）。</p></li>
+<li><p>基于梯度的方式：例如<a href="%5BTowards%20Robust%20Graph%20Contrastive%20Learning%20(arxiv.org)%5D(https://arxiv.org/pdf/2102.13085.pdf)">GROC</a>这一方法使用边的梯度信息来做基于梯度的数据增强。具体来说，它首先使用两个随机的变换<span class="math inline">\(\mathcal{T}_1(\cdot)\)</span>，<span class="math inline">\(\mathcal{T}_2(\cdot)\)</span>，从而得到图的两个不同的视角，之后以概率<span class="math inline">\(r_1,r_2\)</span>独立地进行结点掩码操作，并计算二者之间的对比损失<span class="math inline">\(\mathcal{L}_{ssl}\)</span>。</p>
+<p>对于结点<span class="math inline">\(v_i\)</span>，它的边删除候选集合被定义为： <span class="math display">\[
+\mathcal{S}^-=\left\{(v_i,v_k)|v_k\in \mathcal{N}_i^{(l)}\right\}
+\]</span> 边添加候选集合被定义为： <span class="math display">\[
+\mathcal{S}^+=\left\{(v_i,v_k)|v_k\in \left(\cup_{v_m\in \mathcal{B}}\mathcal{N}_m^{(l)}\backslash \mathcal{N}_i^{(l)}\right) \right\}
+\]</span> 其中<span class="math inline">\(\mathcal{B}\sub \mathcal{V}\)</span>为一个结点的子集，<span class="math inline">\(\mathcal{S}^+\)</span>中的<span class="math inline">\(v_k\)</span>满足不在<span class="math inline">\(v_i\)</span>的<span class="math inline">\(l\)</span>跳相邻节点中，但是却在另外一个结点<span class="math inline">\(v_m\)</span>的<span class="math inline">\(l\)</span>跳相邻节点中。通过对<span class="math inline">\(\mathcal{L}_{ssl}\)</span>做反向传播，可以得到<span class="math inline">\(\mathcal{S}^+\)</span>和<span class="math inline">\(\mathcal{S}^-\)</span>中每条边的梯度值。之后，便可以利用这些梯度值，进行结点的删除与添加操作。</p></li>
+</ul>
+<h2 id="辅助任务设计">辅助任务设计</h2>
+<p>对比学习的目的是最大化正样本对之间的互信息，但是根据图视角定义的不同，这个视角的尺度也分为结点层级（node-level，或称为local）、子图层级（subgraph-level，或称为contextual）和图层级（graph-level，或称为global）这三种。因此，对比学习又可以根据视角尺度的不同分为两大类，一类是同尺度下的对比学习，另一类是不同尺度下的对比学习。</p>
+<h3 id="同尺度下对比">同尺度下对比</h3>
+<p>同尺度下的对比学习分为下面三类：</p>
+<ol type="1">
+<li><p>global-global</p>
+<p>这类做法中，代表性工作如类似于SimCLR的<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMTAuMTM5MDI=">GraphCL<i class="fa fa-external-link-alt"></i></span>，它设计了四种不同的图数据增强策略：结点删除、边干扰、特征掩码、子图采样。给定一个图结构，随机选取两种不同的方法对其做数据增强，得到图<span class="math inline">\(g_1\)</span>和<span class="math inline">\(g_2\)</span>。在此之后，使用一个共享权重的编码器生成它们图层级的向量<span class="math inline">\(\boldsymbol{h}_{g_1},\boldsymbol{h}_{g_2}\)</span>。对比学习的目标是最大化<span class="math inline">\(\boldsymbol{h}_{g_1},\boldsymbol{h}_{g_2}\)</span>之间的互信息。</p>
+<p>又例如<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIxMDEuMDU0ODY=">Label Contrastive Coding<i class="fa fa-external-link-alt"></i></span>这一工作使用了类似于MoCo的思想。先用编码器<span class="math inline">\(f_k\)</span>对memory bank中的图<span class="math inline">\(g_k\)</span>做编码，并用另一个编码器<span class="math inline">\(f_q\)</span>对query graph <span class="math inline">\(g_q\)</span>做编码。之后，用query graph的编码<span class="math inline">\(\boldsymbol{h}_{g_q}\)</span>与memory bank中图数据的编码<span class="math inline">\(\boldsymbol{h}_{g_k}\)</span>做对比学习。由于这一工作的主要目的是做图分类的下游任务，如果两个图所对应的类别相同为正类，否则为负类。<span class="math inline">\(f_q\)</span>的参数通过对比学习做更新，而<span class="math inline">\(f_k\)</span>的参数<span class="math inline">\(\gamma_k\)</span>则使用动量更新：<span class="math inline">\(\gamma_k\leftarrow \alpha \gamma_k+(1-\alpha)\gamma_q\)</span>。</p></li>
+<li><p>context-context</p>
+<p>代表性工作如<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDYuMDk5NjM=">GCC: Graph Contrastive Coding<i class="fa fa-external-link-alt"></i></span>，它的做法也借鉴了MoCo的思想。首先从一个图中用随机游走的办法生成若干个子图，然后将这些子图放到memory bank中，做对比学习的query graph也使用的是采样出的子图。如果两个子图来源于同一个图就认为是正类，否则为负类。</p></li>
+<li><p>local-local</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDYuMDQxMzE=">GRACE<i class="fa fa-external-link-alt"></i></span>这一工作是对两个结点的特征向量做对比学习。给定一个图结构，使用两种不同的数据增强方法生成两个增强图<span class="math inline">\(g_1,g_2\)</span>，然后使用一个共享权重的编码器对两个图做编码，得到每个结点的特征向量<span class="math inline">\(\boldsymbol{h}_{g_1}^i,\boldsymbol{h}_{g_2}^j\)</span>。在做对比学习的时候，正类为<span class="math inline">\(\boldsymbol{h}_{g_1}^i,\boldsymbol{h}_{g_2}^i\)</span>的点对，负类既包括<span class="math inline">\(\boldsymbol{h}_{g_1}^i,\boldsymbol{h}_{g_1}^j,i\ne j\)</span>的点对，也包括<span class="math inline">\(\boldsymbol{h}_{g_1}^i,\boldsymbol{h}_{g_2}^j,i\ne j\)</span>的点对。</p>
+<p>此外，还有一些工作如借鉴BYOL思想的<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIxMDIuMDY1MTQ=">BGRL<i class="fa fa-external-link-alt"></i></span>，将对比学习拓展到时空图的<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzE5MDQuMDYzMTY=">STGI<i class="fa fa-external-link-alt"></i></span>等。</p></li>
+</ol>
+<h3 id="跨尺度对比">跨尺度对比</h3>
+<p>跨尺度的对比同样也包含三类：</p>
+<ol type="1">
+<li><p>local-global</p>
+<p>例如<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzE4MDkuMTAzNDE=">Deep Graph Infomax<i class="fa fa-external-link-alt"></i></span>这一工作，首先对原始图<span class="math inline">\(g\)</span>做数据增强得到<span class="math inline">\(g&#39;\)</span>，然后将<span class="math inline">\(g,g&#39;\)</span>分别送入两个不同参数的编码器，得到两组不同的结点编码<span class="math inline">\(\boldsymbol{h}_{g}^i,\boldsymbol{h}_{g&#39;}^j\)</span>。在做对比学习的时候，<span class="math inline">\(\boldsymbol{h}_{g}^i\)</span>的正样本对被定义为<span class="math inline">\(\text{Readout}(\boldsymbol{h}_{g&#39;}^j)\)</span>，而负样本对则为<span class="math inline">\(\boldsymbol{h}_{g}^j,j\ne i\)</span>。</p></li>
+<li><p>local-context</p>
+<p>代表性工作如<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDkuMTAyNzM=">Subg-Con<i class="fa fa-external-link-alt"></i></span>，它设计的对比学习目的是想在中心结点和它周围环境的子图之间建立强关联性。对于一个图<span class="math inline">\(g\)</span>，首先选取若干个中心结点，并用重要性采样的方法得到每个中心结点关联的子图<span class="math inline">\(g_i\)</span>。然后用一个共享权重的编码器，得到子图的结点编码<span class="math inline">\(\boldsymbol{h}_{g_i}^k\)</span>和图编码<span class="math inline">\(\boldsymbol{h}_{g_i}\)</span>。对比学习的正样本对定义为<span class="math inline">\(\boldsymbol{h}_{g_i}^k\)</span>和<span class="math inline">\(\boldsymbol{h}_{g_i}\)</span>，负样本对为<span class="math inline">\(\boldsymbol{h}_{g_i}^k\)</span>和<span class="math inline">\(\boldsymbol{h}_{g_j}\)</span>，<span class="math inline">\(j\ne i\)</span>。</p></li>
+<li><p>context-global</p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzE5MDguMDEwMDA=">InfoGraph<i class="fa fa-external-link-alt"></i></span>这一工作就是在子图与整个图做对比学习。对一个图<span class="math inline">\(g\)</span>，首先做数据增强得到<span class="math inline">\(g&#39;\)</span>，然后将它们送入一个<span class="math inline">\(L\)</span>层编码器中，编码器的每一层使用共享权重。从中可以得到每一层的编码<span class="math inline">\(\boldsymbol{H}_{g}^{(\ell)}\)</span>，<span class="math inline">\(\boldsymbol{H}_{g&#39;}^{(\ell)}\)</span>。将每层的编码拼接起来，便得到结点的特征向量<span class="math inline">\(\boldsymbol{h}_{g}^{i}\)</span>和<span class="math inline">\(\boldsymbol{h}_{g&#39;}^{i}\)</span>，以及图的特征向量<span class="math inline">\(\boldsymbol{h}_{g}\)</span>。在做对比学习时，正样本对为<span class="math inline">\(\boldsymbol{h}_{g}\)</span>和<span class="math inline">\(\boldsymbol{h}_{g}^i\)</span>，负样本对为<span class="math inline">\(\boldsymbol{h}_{g}\)</span>和<span class="math inline">\(\boldsymbol{h}_{g&#39;}^i\)</span>。由于图网络的编码器在<span class="math inline">\(L\)</span>层之后的结点编码包含有<span class="math inline">\(L\)</span>跳邻居的信息，因此用结点特征向量与图特征向量做对比学习时，其实也间接地做了子图和全图之间的对比。</p></li>
+</ol>
+<h2 id="对比学习目标">对比学习目标</h2>
+<p>给定一组随机变量<span class="math inline">\((x,y)\)</span>，互信息<span class="math inline">\(\mathcal{I}(x,y)\)</span>用于衡量<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>中共享的信息，即 <span class="math display">\[
+\mathcal{I}(x,y)=D_{KL}(p(x,y)||p(x)p(y)) \\
+=E_{p(x,y)}\left[ \log\frac{p(x,y)}{p(x)p(y)} \right]
+\]</span> 对比学习的目的是最大化同一个图的两个不同视角之间的互信息。在实际计算时，由于概率分布未知，因此通常是通过最大化互信息下界的方式来间接地实现目标。</p>
+<p>常用的估计方法有下面几种：</p>
+<ol type="1">
+<li><p>Donsker-Varadhan： <span class="math display">\[
+\hat{\mathcal{I}}^{(DV)}(\boldsymbol{h}_i,\boldsymbol{h}_j)=E_{(A,X)\sim \mathcal{P}}[\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)]-\log E_{[(A,X),(A&#39;,X&#39;)\sim \mathcal{P}\times \mathcal{P}]}\left[\exp{\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j&#39;)}\right]
+\]</span> 其中，<span class="math inline">\(\boldsymbol{h}_i\)</span>与<span class="math inline">\(\boldsymbol{h}_j\)</span>为正样本对，<span class="math inline">\(\boldsymbol{h}_i\)</span>与<span class="math inline">\(\boldsymbol{h}_j&#39;\)</span>为负样本对。</p>
+<p><span class="math inline">\(\mathcal{D}\)</span>可以具有多种不同的形式，例如向量内积<span class="math inline">\(\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)=\boldsymbol{h}_i^T\boldsymbol{h}_j\)</span>或者带有温度项的变体<span class="math inline">\(\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)=\boldsymbol{h}_i^T\boldsymbol{h}_j/\tau\)</span>，余弦相似度<span class="math inline">\(\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)=\frac{\boldsymbol{h}_i^T\boldsymbol{h}_j}{\|\boldsymbol{h}_i\| \|\boldsymbol{h}_j\|}\)</span>，高斯相似度<span class="math inline">\(\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)=\exp\left(-\frac{\|\boldsymbol{h}_i-\boldsymbol{h}_j\|_2^2}{2\sigma^2}\right)\)</span>。</p></li>
+<li><p>Jensen-Shannon: <span class="math display">\[
+\hat{\mathcal{I}}^{(JS-SP)}(\boldsymbol{h}_i,\boldsymbol{h}_j)=E_{(A,X)\sim \mathcal{P}}[\log \mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)]-\log E_{[(A,X),(A&#39;,X&#39;)\sim \mathcal{P}\times \mathcal{P}]}\left[\log(1-{\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j&#39;))}\right]
+\]</span> 其中，<span class="math inline">\(\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)=\text{sigmoid}(f_i(\boldsymbol{h}_i)^T f_j(\boldsymbol{h}_j))\)</span>，<span class="math inline">\(f_i,f_j\)</span>为可学习的映射函数，如MLP等。一些工作说明了使用映射函数可以显著提高对比学习的表现（例如工作SimCLR，MoCov2）。</p></li>
+<li><p>InfoNCE: <span class="math display">\[
+\hat{\mathcal{I}}^{(NCE)}(\boldsymbol{h}_i,\boldsymbol{h}_j)=E_{[(A,X),K]\sim \mathcal{P}\times \mathcal{P}^N}\left[\log \frac{\exp \mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)}{\sum_{(A&#39;,X&#39;)\in K}\exp \mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j&#39;)} \right]+\log N
+\]</span> 其中<span class="math inline">\(K\)</span>代表从分布<span class="math inline">\(\mathcal{P}\)</span>中独立均匀采样得到的<span class="math inline">\(N\)</span>个样本所构成的集合。</p>
+<p>关于判别器<span class="math inline">\(\mathcal{D}\)</span>的定义，原始的InfoNCE计算两个向量之间的内积，即<span class="math inline">\(\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)=f_i(\boldsymbol{h}_i)^T f_j(\boldsymbol{h}_j)\)</span>。也有一些工作使用了带有超参数<span class="math inline">\(\tau\)</span>的判别函数，即<span class="math inline">\(\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)=f_i(\boldsymbol{h}_i)^T f_j(\boldsymbol{h}_j)/\tau\)</span>；或者是使用带有正则的判别函数<span class="math inline">\(\mathcal{D}(\boldsymbol{h}_i,\boldsymbol{h}_j)=\frac{f_i(\boldsymbol{h}_i)^T f_j(\boldsymbol{h}_j)/\tau}{||f_i(\boldsymbol{h}_i)|| ||f_j(\boldsymbol{h}_j)||}\)</span>。同样地，<span class="math inline">\(f_i,f_j\)</span>代表映射函数。</p></li>
+</ol>
+<h1 id="生成式学习">生成式学习</h1>
+<h2 id="概述-1">概述</h2>
+<p>生成式学习的主要思想是将数据本身中所蕴涵的信息看成是一种自然的监督信号。根据在做图重建时使用的解码器<span class="math inline">\(g_{\omega}(\cdot)\)</span>的不同，生成式模型分为两类：一类是一次性重建的方法，被称为图自编码，另一类是迭代式的重建方法，被称为图自回归。下面将介绍这两类方法中的一些代表性工作。</p>
+<h2 id="图自编码">图自编码</h2>
+<p>图自编码的主要目标是在已知一个图的部分信息的前提下，试图去重建出整个图结构。目前常用的做法包括：</p>
+<ul>
+<li>图补全：首先随机地选取某一个结点，并随机地遮住这个结点的部分特征，然后试图使用周围结点的特征信息来对掩码特征进行补全。</li>
+<li>结点特征掩码：这种做法与图补全比较类似，区别在于可以同时对多个结点做掩码。</li>
+<li>边特征掩码：类似于结点特征掩码，这种方法适用于边上面有特征的情况。</li>
+<li>结点特征去噪：给每个结点特征加入一个随机噪声，然后试图在重建的时候能够去掉这部分噪声。</li>
+<li>邻接矩阵重建：对图中的边做干扰，然后用干扰后的图去试图重建出原始的邻接矩阵。</li>
+</ul>
+<h2 id="图自回归">图自回归</h2>
+<p><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDYuMTU0Mzc=">GPT-GNN<i class="fa fa-external-link-alt"></i></span>这一工作使用自回归的方法对图进行重建，它的自回归主要是包括结点特征生成和边生成。记<span class="math inline">\(t\)</span>时刻的图为<span class="math inline">\(g_t=(A_t,X_t)\)</span>，其中，部分结点的特征被掩码掉，部分边也被删除掉。GPT-GNN使用<span class="math inline">\(g_t\)</span>首先生成其中某个掩码结点的特征，然后生成这个结点的连边，得到图<span class="math inline">\(g_{t+1}\)</span>。重复这一过程，直至图中没有被掩码的结点。</p>
+<h1 id="预测式学习">预测式学习</h1>
+<h2 id="概述-2">概述</h2>
+<p>预测式学习指的是从数据本身中生成监督标签，然后用监督学习的方式去做预训练。根据标签产生的方法，又可以分为结点特征预测、基于结构的预测、自训练、领域知识预测等。</p>
+<h2 id="结点特征预测">结点特征预测</h2>
+<p>在结点特征预测任务中，模型学习的目标是预测图中结点的一些性质，例如结点的度、局部聚集系数等。局部聚集系数的定义为： <span class="math display">\[
+y_i=\Omega(\mathbf{A},\mathbf{X})_{v_i}=\dfrac{2\big|\{(v_m,v_n)|v_m\in\mathcal{N}_i,v_n\in\mathcal{N}_i\}\big|}{|\mathcal{N}_i|\dot{(|\mathcal{N}_i|-1)}}
+\]</span> 它反映了一个结点附近的结点聚集程度。除此之外，任何其它的结点性质以及它们的组合都可以被用到学习任务中。</p>
+<h2 id="基于结构的预测">基于结构的预测</h2>
+<p>这类方法通常是预测子图中所具有的某些性质，例如预测两个结点之间的最短路径，预测两结点之间是否存在某种特定路径，等等。</p>
+<h2 id="自训练">自训练</h2>
+<p>在自训练方法中，每个阶段产生的预测结果会被作为下个阶段的标签信息，从而实现迭代式的自训练。</p>
+<p>例如在<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvcGRmLzE5MDIuMTEwMzh2MS5wZGY=">Multi-Stage Self-training<i class="fa fa-external-link-alt"></i></span>这一工作中，首先会有一组带有标签的数据和另外一组无标签的数据，使用有标签的数据训练模型并且对无标签的数据做预测。在此之后，从预测数据中挑选若干预测置信度最高的，添加到有标签数据中，再重新训练模型。如此重复迭代，从而实现模型的自训练。</p>
+<p>又例如在文章<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDYuMDkxMzY=">When does self-supervision help graph convolutional networks<i class="fa fa-external-link-alt"></i></span>中，第一阶段的任务是使用结点聚类的方法给每个结点生成一个伪标签，即聚类时每个结点所属的团簇。第二阶段则以此作为标签来学习。如果结点本身不带有特征，也可以根据图的拓扑结构，用图分割的方法将结点分成不同的团簇。</p>
+<h2 id="领域知识预测">领域知识预测</h2>
+<p>一些实际领域的图通常要遵循某些特定的领域规则，例如分子图需要遵循共价键的成键规律，文献引用网络中互相引用的文献通常具有类似的领域或者相同的作者。这些知识可以作为先验知识引入到自监督任务的设计中。</p>
+<p>例如在<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDcuMDI4MzU=">Self-Supervised Graph Transformer on Large-Scale Molecular Data<i class="fa fa-external-link-alt"></i></span>这一工作中，作者设计的两个自监督任务包括预测分子中是否存在某种官能团这一图层级任务，以及预测一个原子的k近邻子图中是否存在某种特定的原子-化学键对这一结点层级的任务。</p>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzQyMzU2MDIyNg==">自监督学习与监督学习和无监督学习的区别是什么。自监督在学习过程中需要提供label吗？ - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzMyOTIwMjQzOQ==">深度学习中，自监督(self-supervised)和无监督(unsupervised)有什么区别？ - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li>Self-supervised Learning on Graphs: Contrastive, Generative, or Predictive</li>
+<li>Self-Supervised Learning of Graph Neural Networks: A Unified Review</li>
+<li>Graph Self-Supervised Learning: A Survey</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2022/08/09/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%9B%BE%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/" title="论文笔记-图自监督学习概述">http://lyf35.github.io/2022/08/09/论文笔记-图自监督学习综述/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 图神经网络</a>
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"><i class="fa fa-tag"></i> 论文笔记</a>
+              <a href="/tags/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 自监督学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/12/%E6%A6%82%E7%8E%87%E8%AE%BA-%E5%B8%B8%E8%A7%81%E7%9A%84%E6%A6%82%E7%8E%87%E5%88%86%E5%B8%83/" rel="prev" title="概率论-常见的概率分布">
+      <i class="fa fa-chevron-left"></i> 概率论-常见的概率分布
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="next" title="深度学习-扩散模型">
+      深度学习-扩散模型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'f1e7f5de540df45ab38bb50b424edeb5',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

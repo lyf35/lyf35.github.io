@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="简介 卡尔曼滤波是一种根据线性系统状态方程，通过使用系统的输入输出与观测数据，对系统状态进行最优估计的算法。由于观测数据中包括系统中的噪声和干扰影响，所以最优估计也可以看做是滤波过程。简单地说，卡尔曼滤波要解决的是如何从多个满足高斯分布的不确定性信号中提取相对精确的信号。 举一个简单的例子，考虑平面轨道上面的一个小车，我们要估计它在每个时间步的位置。现在有一个模型，可以通过\(t\)时刻的位置来计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信号处理-卡尔曼滤波">
+<meta property="og:url" content="http://lyf35.github.io/2021/08/17/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86-%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="简介 卡尔曼滤波是一种根据线性系统状态方程，通过使用系统的输入输出与观测数据，对系统状态进行最优估计的算法。由于观测数据中包括系统中的噪声和干扰影响，所以最优估计也可以看做是滤波过程。简单地说，卡尔曼滤波要解决的是如何从多个满足高斯分布的不确定性信号中提取相对精确的信号。 举一个简单的例子，考虑平面轨道上面的一个小车，我们要估计它在每个时间步的位置。现在有一个模型，可以通过\(t\)时刻的位置来计">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175458.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175523.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175545.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175549.png">
+<meta property="article:published_time" content="2021-08-17T13:10:32.000Z">
+<meta property="article:modified_time" content="2021-08-21T09:55:24.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="信号处理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175458.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/08/17/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86-%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>信号处理-卡尔曼滤波 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">基本原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%A8%E5%AF%BC"><span class="nav-number">3.</span> <span class="nav-text">推导</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">最小二乘法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83%E7%9B%B8%E4%B9%98"><span class="nav-number">3.2.</span> <span class="nav-text">正态分布相乘</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">程序示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/08/17/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86-%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          信号处理-卡尔曼滤波
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-17 21:10:32" itemprop="dateCreated datePublished" datetime="2021-08-17T21:10:32+08:00">2021-08-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-21 17:55:24" itemprop="dateModified" datetime="2021-08-21T17:55:24+08:00">2021-08-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">信号处理</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/08/17/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86-%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/" class="post-meta-item leancloud_visitors" data-flag-title="信号处理-卡尔曼滤波" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="简介">简介</h1>
+<p>卡尔曼滤波是一种根据线性系统状态方程，通过使用系统的输入输出与观测数据，对系统状态进行最优估计的算法。由于观测数据中包括系统中的噪声和干扰影响，所以最优估计也可以看做是滤波过程。简单地说，卡尔曼滤波要解决的是如何从多个满足高斯分布的不确定性信号中提取相对精确的信号。</p>
+<p>举一个简单的例子，考虑平面轨道上面的一个小车，我们要估计它在每个时间步的位置。现在有一个模型，可以通过<span class="math inline">\(t\)</span>时刻的位置来计算出<span class="math inline">\(t+1\)</span>​​时刻的位置，但是模型的计算结果仅仅是理论值，实际会受到各种因素的影响；同时有一个传感器，可以用于测量小车在<span class="math inline">\(t+1\)</span>时刻的位置，但是传感器也存在一定的误差。使用卡尔曼滤波，就可以把<span class="math inline">\(t+1\)</span>时刻模型的计算值与传感器的测量值按照一定的权重进行合并，得到一个新的估计值，而这个值又可以用于<span class="math inline">\(t+2\)</span>​时刻的迭代过程。这一过程可以表示为下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175458.png" alt="image-20210815115931666" style="zoom:67%;" /></p>
+<span id="more"></span>
+<h1 id="基本原理">基本原理</h1>
+<p>假设系统在<span class="math inline">\(t\)</span>时刻的状态可以由之前<span class="math inline">\(t-1\)</span>​时刻的状态按照如下公式迭代而得： <span class="math display">\[
+\boldsymbol{x}_t=\boldsymbol{F}_t\boldsymbol{x}_{t-1}+\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{w}_t
+\]</span> 其中，</p>
+<ul>
+<li><span class="math inline">\(\boldsymbol{x}_t\)</span>代表时刻<span class="math inline">\(t\)</span>​​​的状态向量，其中包含了系统的状态。以小车的例子，系统的状态可以是小车的位置、速度、加速度、朝向等信息。</li>
+<li><span class="math inline">\(\boldsymbol{u}_t\)</span>代表时刻<span class="math inline">\(t\)</span>​的控制向量。以小车的例子，控制向量可以包含转向角、进气量的设置、刹车力度等。</li>
+<li><span class="math inline">\(\boldsymbol{F}_t\)</span>代表时刻<span class="math inline">\(t\)</span>​的状态转移矩阵，通过它可以计算<span class="math inline">\(t-1\)</span>​​时刻的状态对于<span class="math inline">\(t\)</span>​时刻状态的影响。以小车的例子来说，<span class="math inline">\(t-1\)</span>时刻的位置和速度会影响到<span class="math inline">\(t\)</span>时刻的位置。</li>
+<li><span class="math inline">\(\boldsymbol{B}_t\)</span>代表时刻<span class="math inline">\(t\)</span>的控制输入矩阵，通过它可以计算<span class="math inline">\(t\)</span>​时刻加入的控制向量对于状态的影响。以小车的例子，就是计算进气量的设置对于小车位置和速度等状态的影响。</li>
+<li><span class="math inline">\(\boldsymbol{w}_t\)</span>代表状态向量中的噪声项，通常假设它服从一个均值为0，协方差矩阵为<span class="math inline">\(\boldsymbol{Q}_t\)</span>的多元正态分布。</li>
+</ul>
+<p>此外，系统的某些测量值也可以通过如下模型计算： <span class="math display">\[
+\boldsymbol{z}_t=\boldsymbol{H}_t\boldsymbol{x}_t+\boldsymbol{v}_t
+\]</span> 其中，</p>
+<ul>
+<li><span class="math inline">\(\boldsymbol{z}_t\)</span>是测量值组成的向量。</li>
+<li><span class="math inline">\(\boldsymbol{H}_t\)</span>代表转移矩阵，它将系统的状态映射为对应的测量值。</li>
+<li><span class="math inline">\(\boldsymbol{v}_t\)</span>代表测量值的噪声项，同样假设它服从一个均值为0，协方差矩阵为<span class="math inline">\(\boldsymbol{R}_t\)</span>的多元正态分布。</li>
+</ul>
+<p>卡尔曼滤波基于上述两个公式，通过对先验知识、系统模型的预测值以及带有噪音的测量值进行融合，从而估计出<span class="math inline">\(t\)</span>时刻的状态向量<span class="math inline">\(\hat{\boldsymbol{x}}_t\)</span>。卡尔曼滤波算法包括两个阶段，第一阶段是预测，第二阶段是使用测量值进行更新。在下文中，下标<span class="math inline">\(t|t-1\)</span>代表预测阶段的先验估计值，下标<span class="math inline">\(t|t\)</span>代表使用测量值更新之后的后验估计。</p>
+<p>在预测阶段，主要是通过状态转移方程来对<span class="math inline">\(t\)</span>时刻的状态进行预测： <span class="math display">\[
+\begin{aligned}
+\hat{\boldsymbol{x}}_{t|t-1}=&amp;\boldsymbol{F}_t\hat{\boldsymbol{x}}_{t-1|t-1}+\boldsymbol{B}_t\boldsymbol{u}_t \\
+\boldsymbol{P}_{t|t-1}=&amp;\boldsymbol{F}_t\boldsymbol{P}_{t-1|t-1}\boldsymbol{F}_t^T+\boldsymbol{Q}_t
+\end{aligned}
+\]</span> 矩阵<span class="math inline">\(\boldsymbol{P}_t\)</span>代表了<span class="math inline">\(t\)</span>时刻状态向量估计值<span class="math inline">\(\hat{\boldsymbol{x}}_t\)</span>的协方差矩阵（或者说估计误差的协方差矩阵，两种表达方式等价），它反映了估计值的可信程度。在<span class="math inline">\(t=0\)</span>对应的初始态，将其直接设为单位矩阵即可，在后续的迭代过程中它会被自动调整。</p>
+<p>在更新阶段，通过测量值对状态转移方程的值进行修正： <span class="math display">\[
+\begin{aligned}
+\hat{\boldsymbol{x}}_{t|t}=&amp;\hat{\boldsymbol{x}}_{t|t-1}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\hat{\boldsymbol{x}}_{t|t-1}) \\
+\boldsymbol{P}_{t|t}=&amp;\boldsymbol{P}_{t|t-1}-\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{P}_{t|t-1}
+\end{aligned}
+\]</span> 其中<span class="math inline">\(\boldsymbol{K}_t\)</span>代表卡尔曼增益，它表征了状态最优估计值中模型预测误差和测量误差的比重。当<span class="math inline">\(\boldsymbol{K}_t=\boldsymbol{0}\)</span>时，代表模型预测误差为0，系统的状态值完全取决于模型预测值；而当<span class="math inline">\(\boldsymbol{K}_t=\boldsymbol{1}\)</span>时，则相当于测量误差为0，系统的状态值完全取决于测量值。卡尔曼增益也是卡尔曼滤波的核心，它的计算公式为： <span class="math display">\[
+\boldsymbol{K}_t=\boldsymbol{P}_{t|t-1}\boldsymbol{H}_t^T(\boldsymbol{H}_t\boldsymbol{P}_{t|t-1}\boldsymbol{H}_t^T+\boldsymbol{R}_t)^{-1}
+\]</span></p>
+<p>下文将详细说明卡尔曼增益矩阵的推导过程。</p>
+<h1 id="推导">推导</h1>
+<h2 id="最小二乘法">最小二乘法</h2>
+<p>我们假设系统在<span class="math inline">\(t\)</span>​​​​​​时刻的真实状态为<span class="math inline">\(\boldsymbol{x}_t\)</span>​​​​​​，真实情况下噪声是无法避免的，因此只能使<span class="math inline">\(t\)</span>​​​​​​时刻的后验状态预测值<span class="math inline">\(\hat{\boldsymbol{x}}_{t|t}\)</span>​​​​​​尽可能的接近<span class="math inline">\(\boldsymbol{x}_t\)</span>​​​​​​。假设误差<span class="math inline">\(\boldsymbol{e}_t=\boldsymbol{x}_t-\hat{\boldsymbol{x}}_{t|t}\)</span>​​​​​​服从多元正态分布<span class="math inline">\(\boldsymbol{e}_t\sim N(\boldsymbol{0},\boldsymbol{P}_t)\)</span>​​​​​​，其中<span class="math inline">\(\boldsymbol{P}_t\)</span>​​​​​​代表协方差矩阵。我们的目标是使得方差最小（其实就是最小二乘法），即协方差矩阵<span class="math inline">\(\boldsymbol{P}_t\)</span>​​​​​​​的迹（即对角线元素之和）最小。</p>
+<p><span class="math inline">\(\boldsymbol{P}_t\)</span>的表达式可以写为： <span class="math display">\[
+\boldsymbol{P}_t=E[(\boldsymbol{x}_t-\hat{\boldsymbol{x}}_{t|t})(\boldsymbol{x}_t-\hat{\boldsymbol{x}}_{t|t})^T]
+\]</span> 我们首先求误差<span class="math inline">\(\boldsymbol{x}_t-\hat{\boldsymbol{x}}_{t|t}\)</span>​的值。将<span class="math inline">\(\hat{\boldsymbol{x}}_{t|t}=\hat{\boldsymbol{x}}_{t|t-1}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\hat{\boldsymbol{x}}_{t|t-1})\)</span>​和<span class="math inline">\(\boldsymbol{z}_t=\boldsymbol{H}_t\boldsymbol{x}_t+\boldsymbol{v}_t\)</span>​代入，可得： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{x}_t-\hat{\boldsymbol{x}}_{t|t}=&amp; \boldsymbol{x}_t -\hat{\boldsymbol{x}}_{t|t-1}-\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\hat{\boldsymbol{x}}_{t|t-1}) \\
+=&amp; \boldsymbol{x}_t -\hat{\boldsymbol{x}}_{t|t-1}-\boldsymbol{K}_t\boldsymbol{z}_t+\boldsymbol{K}_t\boldsymbol{H}_t\hat{\boldsymbol{x}}_{t|t-1} \\
+=&amp; \boldsymbol{x}_t -\hat{\boldsymbol{x}}_{t|t-1}-\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{x}_t-\boldsymbol{K}_t\boldsymbol{v}_t+\boldsymbol{K}_t\boldsymbol{H}_t\hat{\boldsymbol{x}}_{t|t-1} \\
+=&amp; (\boldsymbol{x}_t -\hat{\boldsymbol{x}}_{t|t-1}) -\boldsymbol{K}_t\boldsymbol{H}_t(\boldsymbol{x}_t -\hat{\boldsymbol{x}}_{t|t-1})-\boldsymbol{K}_t\boldsymbol{v}_t \\
+=&amp; (\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)(\boldsymbol{x}_t -\hat{\boldsymbol{x}}_{t|t-1})-\boldsymbol{K}_t\boldsymbol{v}_t
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(\boldsymbol{x}_t -\hat{\boldsymbol{x}}_{t|t-1}\)</span>也被称为先验误差，为了简便起见，我们将其记为<span class="math inline">\(\boldsymbol{e}_{t|t-1}=\boldsymbol{x}_t -\hat{\boldsymbol{x}}_{t|t-1}\)</span>。​则<span class="math inline">\(\boldsymbol{P}_t\)</span>的表达式可以写为： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{P}_t=&amp;E[(\boldsymbol{x}_t-\hat{\boldsymbol{x}}_{t|t})(\boldsymbol{x}_t-\hat{\boldsymbol{x}}_{t|t})^T] \\
+=&amp; E[((\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{e}_{t|t-1}-\boldsymbol{K}_t\boldsymbol{v}_t)((\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{e}_{t|t-1}-\boldsymbol{K}_t\boldsymbol{v}_t)^T] \\
+=&amp; E[(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{e}_{t|t-1}\boldsymbol{e}_{t|t-1}^T(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T-(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{e}_{t|t-1}\boldsymbol{v}_t^T\boldsymbol{K}_t^T-\boldsymbol{K}_t\boldsymbol{v}_t\boldsymbol{e}_{t|t-1}^T(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T+\boldsymbol{K}_t\boldsymbol{v}_t\boldsymbol{v}_t^T\boldsymbol{K}_t^T]\\
+=&amp;E[(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{e}_{t|t-1}\boldsymbol{e}_{t|t-1}^T(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T]-E[(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{e}_{t|t-1}\boldsymbol{v}_t^T\boldsymbol{K}_t^T]-E[\boldsymbol{K}_t\boldsymbol{v}_t\boldsymbol{e}_{t|t-1}^T(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T]+E[\boldsymbol{K}_t\boldsymbol{v}_t\boldsymbol{v}_t^T\boldsymbol{K}_t^T]
+\end{aligned}
+\]</span> 由于<span class="math inline">\(\boldsymbol{K}_t\)</span>，<span class="math inline">\(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t\)</span>为常量，因此有： <span class="math display">\[
+E[(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{e}_{t|t-1}\boldsymbol{v}_t^T\boldsymbol{K}_t^T]=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)E[\boldsymbol{e}_{t|t-1}\boldsymbol{v}_t^T]\boldsymbol{K}_t^T \\
+E[\boldsymbol{K}_t\boldsymbol{v}_t\boldsymbol{e}_{t|t-1}^T(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T]=\boldsymbol{K}_t E[\boldsymbol{v}_t \boldsymbol{e}_{t|t-1}^T](\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T
+\]</span> 测量误差<span class="math inline">\(\boldsymbol{v}_t\)</span>与先验误差<span class="math inline">\(\boldsymbol{e}_{t|t-1}\)</span>相互独立，因此： <span class="math display">\[
+E[\boldsymbol{e}_{t|t-1}\boldsymbol{v}_t^T]=0,~~E[\boldsymbol{v}_t \boldsymbol{e}_{t|t-1}^T]=0
+\]</span> 故<span class="math inline">\(\boldsymbol{P}_t\)</span>的表达式可以进一步写为： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{P}_t=&amp;E[(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{e}_{t|t-1}\boldsymbol{e}_{t|t-1}^T(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T]+E[\boldsymbol{K}_t\boldsymbol{v}_t\boldsymbol{v}_t^T\boldsymbol{K}_t^T] \\
+=&amp;(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t) E[\boldsymbol{e}_{t|t-1}\boldsymbol{e}_{t|t-1}^T](\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T+\boldsymbol{K}_t E[\boldsymbol{v}_t\boldsymbol{v}_t^T]\boldsymbol{K}_t^T
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(E[\boldsymbol{e}_{t|t-1}\boldsymbol{e}_{t|t-1}^T]\)</span>​其实相当于是<span class="math inline">\(\boldsymbol{P}_{t|t-1}\)</span>​​​，即先验估计值（或先验误差）的协方差矩阵，因此上式可以进一步化简为： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{P}_t=&amp;(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t) \boldsymbol{P}_{t|t-1} (\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)^T+\boldsymbol{K}_t \boldsymbol{R}_t\boldsymbol{K}_t^T \\
+=&amp;\boldsymbol{P}_{t|t-1} -\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{P}_{t|t-1}-\boldsymbol{P}_{t|t-1}\boldsymbol{H}_t^T\boldsymbol{K}_t^T+\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{P}_{t|t-1}\boldsymbol{H}_t^T\boldsymbol{K}_t^T+\boldsymbol{K}_t \boldsymbol{R}_t\boldsymbol{K}_t^T
+\end{aligned}
+\]</span> 我们的目标是求矩阵<span class="math inline">\(\boldsymbol{K}_t\)</span>​的值，使得<span class="math inline">\(tr(\boldsymbol{P}_t)\)</span>​最小，这可以看作是对<span class="math inline">\(\boldsymbol{P}_t\)</span>​​​的各个部分分别求迹。此外由于转置操作不改变矩阵对角线的元素，可以对公式做进一步的化简。因此可得： <span class="math display">\[
+tr(\boldsymbol{P}_t)=tr(\boldsymbol{P}_{t|t-1}) -2tr(\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{P}_{t|t-1})+ tr(\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{P}_{t|t-1}\boldsymbol{H}_t^T\boldsymbol{K}_t^T)+tr(\boldsymbol{K}_t \boldsymbol{R}_t\boldsymbol{K}_t^T)
+\]</span> 将上式对<span class="math inline">\(\boldsymbol{K}_t\)</span>​​求偏导，可得： <span class="math display">\[
+\begin{aligned}
+\frac{\partial tr(\boldsymbol{P}_t)}{\partial \boldsymbol{K}_t}=&amp;\frac{\partial [tr(\boldsymbol{P}_{t|t-1}) -2tr(\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{P}_{t|t-1})+ tr(\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{P}_{t|t-1}\boldsymbol{H}_t^T\boldsymbol{K}_t^T)+tr(\boldsymbol{K}_t \boldsymbol{R}_t\boldsymbol{K}_t^T)]}{\partial \boldsymbol{K}_t} \\
+=&amp; 0-2(\boldsymbol{H}_t\boldsymbol{P}_{t|t-1})^T+2(\boldsymbol{K}_t\boldsymbol{H}_t\boldsymbol{P}_{t|t-1}\boldsymbol{H}_t^T)+2(\boldsymbol{K}_t \boldsymbol{R}_t) ~~\left(\text{Accroding to the property that  }\frac{\partial tr(\boldsymbol{A}\boldsymbol{B})}{\partial \boldsymbol{A}}=\boldsymbol{B}^T, \frac{\partial tr(\boldsymbol{A}\boldsymbol{B}\boldsymbol{A}^T)}{\partial \boldsymbol{A}}=2\boldsymbol{A}\boldsymbol{B}\right)
+\end{aligned}
+\]</span> 令上式等于0，可得： <span class="math display">\[
+\boldsymbol{K}_t=\boldsymbol{P}_{t|t-1}^T\boldsymbol{H}_t^T(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{P}_{t|t-1}\boldsymbol{H}_t^T)^{-1}
+\]</span></p>
+<h2 id="正态分布相乘">正态分布相乘</h2>
+<p>由于<span class="math inline">\(t\)</span>​​​​时刻模型的预测值和系统的测量值都满足正态分布，因此一个直接的想法就是把两个正态分布的概率密度函数相乘，从而得到系统的最佳估计。两个正态分布的乘积仍然是一个正态分布，因此卡尔曼滤波过程便可以一直迭代下去。</p>
+<p>以一维为例，我们假设有两个正态分布函数，<span class="math inline">\(y_1\)</span>对应于模型的预测，<span class="math inline">\(y_2\)</span>对应于观测： <span class="math display">\[
+y_1(r;\mu_1,\sigma_1,c)=\frac{1}{\sqrt{2\pi (\frac{\sigma_1}{c})^2}}\exp (-\frac{(r-(\frac{\mu_1}{c}))^2}{2(\frac{\sigma_1}{c})^2}) \\
+y_2(r;\mu_2,\sigma_2)=\frac{1}{\sqrt{2\pi \sigma_2^2}}\exp (-\frac{(r-\mu_2)^2}{2\sigma_2^2}) \\
+\]</span> 其中，参数<span class="math inline">\(c\)</span>是为了将模型预测值对应的函数空间映射到观测值对应的函数空间。二者相乘并归一化之后的概率分布函数为： <span class="math display">\[
+y_{\text{fused}}(r;\mu_{\text{fused}},\sigma_{\text{fused}})=\frac{1}{\sqrt{2\pi \sigma_{\text{fused}}^2}}\exp (-\frac{(r-\mu_{\text{fused}})^2}{2\sigma_{\text{fused}}^2}) \\
+\]</span> 其中， <span class="math display">\[
+\mu_{\text{fused}} = \mu_1 +\left(\frac{\frac{\mu_1^2}{c}}{(\frac{\sigma_1}{c})^2+\sigma_2^2}\right)\left(\mu_2-\frac{\mu_1}{c}\right) \\
+\sigma_{\text{fused}}^2=\sigma_1^2-\left(\frac{\frac{\mu_1^2}{c}}{(\frac{\sigma_1}{c})^2+\sigma_2^2}\right)\frac{\mu_1^2}{c}
+\]</span> 卡尔曼滤波公式中的参数与上式中的对应关系如下： <span class="math display">\[
+\begin{aligned}
+\mu_{\text{fused}} &amp;\rightarrow \hat{\boldsymbol{x}}_{t|t} \\
+\mu_{\text{1}} &amp;\rightarrow \hat{\boldsymbol{x}}_{t|t-1} \\
+\mu_{\text{2}} &amp;\rightarrow {\boldsymbol{z}}_{t} \\
+\sigma_{\text{fused}}^2 &amp;\rightarrow \boldsymbol{P}_{t|t}\\
+\sigma_{\text{1}}^2 &amp;\rightarrow \boldsymbol{P}_{t|t-1}\\
+\sigma_{\text{2}}^2 &amp;\rightarrow \boldsymbol{R}_{t}\\
+\frac{1}{c} &amp;\rightarrow \boldsymbol{H}_t\\
+\left(\frac{\frac{\mu_1^2}{c}}{(\frac{\sigma_1}{c})^2+\sigma_2^2}\right) &amp;\rightarrow \boldsymbol{K}_t\\
+\end{aligned}
+\]</span> 以二维的卡尔曼滤波为例，测量值和模型预测值的正态分布融合过程可以表示为下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175523.png" alt="image-20210820213216696" style="zoom:67%;" /></p>
+<h1 id="程序示例">程序示例</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">KalmanFilter</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, F, B, H, Q, R, x_init</span>):</span><br><span class="line">        self.F=F</span><br><span class="line">        self.B=B</span><br><span class="line">        self.H=H</span><br><span class="line">        self.Q=Q</span><br><span class="line">        self.R=R</span><br><span class="line">        self.P=<span class="number">0.01</span>*np.eye(Q.shape[<span class="number">0</span>])</span><br><span class="line">        self.x=x_init</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">iteration</span>(<span class="params">self, control, measurements</span>):</span><br><span class="line">        self.x=np.matmul(self.F, self.x) + np.matmul(self.B, control)</span><br><span class="line">        self.P=np.matmul(np.matmul(self.F, self.P),np.transpose(self.F))+self.Q</span><br><span class="line">        kalman_gain=np.matmul(np.matmul(self.P,np.transpose(self.H)),np.linalg.inv(np.matmul(np.matmul(self.H, self.P),np.transpose(self.H))+self.R))</span><br><span class="line">        self.x=self.x+np.matmul(kalman_gain, (measurements-np.matmul(self.H,self.x)))</span><br><span class="line">        self.P=self.P-np.matmul(np.matmul(kalman_gain,self.H),np.transpose(self.P))</span><br><span class="line">        <span class="keyword">return</span> self.x</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update_parameter</span>(<span class="params">self, F=<span class="literal">None</span>, B=<span class="literal">None</span>, H=<span class="literal">None</span>, Q=<span class="literal">None</span>, R=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> F <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.F=F</span><br><span class="line">        <span class="keyword">if</span> B <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.B=B</span><br><span class="line">        <span class="keyword">if</span> H <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.H=H</span><br><span class="line">        <span class="keyword">if</span> Q <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.Q=Q</span><br><span class="line">        <span class="keyword">if</span> R <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.R=R</span><br></pre></td></tr></table></figure>
+<p>以一维平面小车的运动为例，小车的状态包括位置、速度和加速度三个量，即<span class="math inline">\(x=\begin{pmatrix}p \\ v \\a \end{pmatrix}\)</span>。根据物理定律，假设时间间隔为1，那么转移矩阵可以写为<span class="math inline">\(F=\begin{pmatrix} 1 &amp; 1 &amp; \frac{1}{2} \\ 0 &amp; 1 &amp; 1 \\0 &amp; 0 &amp; 1 \end{pmatrix}\)</span>。为了简便起见，我们假设测量值只有位置信息，也就是说<span class="math inline">\(H=\begin{pmatrix} 1 &amp; 0 &amp; 0 \end{pmatrix}\)</span>，但是测量值也不一定准确，满足方差确定的正态分布。同时，假设我们可以控制小车的油门和刹车，它们会直接影响小车的加速度。也就是说，矩阵<span class="math inline">\(u=\begin{pmatrix} t \\b \end{pmatrix}\)</span>，<span class="math inline">\(B=\begin{pmatrix} 0 &amp; 0 \\ 0 &amp; 0 \\1 &amp; -1 \end{pmatrix}\)</span>。</p>
+<p>为了简便，我们假设小车的所有阻力为0。此外，我们假设协方差矩阵<span class="math inline">\(Q\)</span>为零矩阵，传感器测量值的噪声标准差为1。小车初始时在原点处静止。</p>
+<p>根据上述内容，我们便可以构造用于获取小车位置的卡尔曼滤波器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">F=np.array(((<span class="number">1.0</span>,<span class="number">1.0</span>,<span class="number">0.5</span>),(<span class="number">0.0</span>,<span class="number">1.0</span>,<span class="number">1.0</span>),(<span class="number">0.0</span>,<span class="number">0.0</span>,<span class="number">1.0</span>)))</span><br><span class="line">H=np.array([[<span class="number">1.0</span>,<span class="number">0.0</span>,<span class="number">0.0</span>]])</span><br><span class="line">B=np.array(((<span class="number">0.0</span>,<span class="number">0.0</span>),(<span class="number">0.0</span>,<span class="number">0.0</span>),(<span class="number">1.0</span>,-<span class="number">1.0</span>)))</span><br><span class="line">Q=np.array(((<span class="number">0.0</span>,<span class="number">0.0</span>,<span class="number">0.0</span>),(<span class="number">0.0</span>,<span class="number">0.0</span>,<span class="number">0.0</span>),(<span class="number">0.0</span>,<span class="number">0.0</span>,<span class="number">0.0</span>)))</span><br><span class="line">R=np.array([[<span class="number">1.0</span>*<span class="number">1.0</span>]])</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">car_kalman_filter=KalmanFilter(F,B,H,Q,R,np.array([[<span class="number">0.0</span>],[<span class="number">0.0</span>],[<span class="number">0.0</span>]]))</span><br></pre></td></tr></table></figure>
+<p>假设在<span class="math inline">\(t=1\)</span>时，我们踩了一下油门，给了小车一个数值为0.5的加速度。但是由于各种因素的影响，在小车身上产生的实际加速度并不是0.5，而是一个在0.5附近的数字。而卡尔曼滤波则会通过并不是很准确的观察值，对加速度的值进行修正。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">status_vector=<span class="built_in">list</span>()</span><br><span class="line">true_position=<span class="built_in">list</span>()</span><br><span class="line">measured_position=<span class="built_in">list</span>()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">acceleration_1=<span class="number">0.5</span>+<span class="number">0.3</span>*np.random.randn(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">acceleration_1</span><br></pre></td></tr></table></figure>
+<pre><code>array([0.20577584])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">position_1=<span class="number">0</span>+<span class="number">2.0</span>*np.random.randn(<span class="number">1</span>) <span class="comment">#位置的测量值</span></span><br><span class="line">status=car_kalman_filter.iteration(np.array([[<span class="number">0.5</span>],[<span class="number">0.0</span>]]),position_1)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">status_vector.append(status)</span><br><span class="line">true_position.append(<span class="number">0.0</span>)</span><br><span class="line">measured_position.append(position_1)</span><br></pre></td></tr></table></figure>
+<p>保持状态不变，迭代20次。从结果中可以看出，虽然卡尔曼滤波器在开始时的加速度并不准确，但是随着迭代过程的进行，滤波器会使用位置的测量信息，对加速度进行修正。在迭代20轮之后，加速度的值已经很接近真实值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>):</span><br><span class="line">    position=<span class="number">0.5</span>*acceleration_1*(i+<span class="number">1</span>)*(i+<span class="number">1</span>)+<span class="number">1.0</span>*np.random.randn(<span class="number">1</span>) <span class="comment">#位置的测量值</span></span><br><span class="line">    status=car_kalman_filter.iteration(np.array([[<span class="number">0.0</span>],[<span class="number">0.0</span>]]),position)</span><br><span class="line">    status_vector.append(status)</span><br><span class="line">    true_position.append(<span class="number">0.5</span>*acceleration_1*(i+<span class="number">1</span>)*(i+<span class="number">1</span>))</span><br><span class="line">    measured_position.append(position)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">figure=plt.figure(figsize=(<span class="number">8</span>,<span class="number">6</span>))</span><br><span class="line">ax=figure.subplots()</span><br><span class="line">ax.plot(np.array(true_position),label=<span class="string">&#x27;True position&#x27;</span>)</span><br><span class="line">ax.scatter(x=np.arange(<span class="number">0</span>,<span class="number">21</span>),y=np.array(measured_position),label=<span class="string">&#x27;Measured position&#x27;</span>)</span><br><span class="line">ax.plot(np.array(status_vector)[:,<span class="number">0</span>],label=<span class="string">&#x27;Position from Kalman filter&#x27;</span>)</span><br><span class="line">ax.set_xlabel(<span class="string">&#x27;Timestep&#x27;</span>)</span><br><span class="line">ax.set_ylabel(<span class="string">&#x27;Position&#x27;</span>)</span><br><span class="line">ax.legend()</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175545.png" alt="png2" /><figcaption aria-hidden="true">png2</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">figure=plt.figure(figsize=(<span class="number">8</span>,<span class="number">6</span>))</span><br><span class="line">ax=figure.subplots()</span><br><span class="line">ax.scatter(x=np.arange(<span class="number">0</span>,<span class="number">21</span>),y=np.array(status_vector)[:,<span class="number">2</span>],label=<span class="string">&#x27;Acceleration from Kalman filter&#x27;</span>)</span><br><span class="line">ax.set_xlabel(<span class="string">&#x27;Timestep&#x27;</span>)</span><br><span class="line">ax.set_ylabel(<span class="string">&#x27;Acceleration&#x27;</span>)</span><br><span class="line">ax.legend()</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210821175549.png" alt="png" /><figcaption aria-hidden="true">png</figcaption>
+</figure>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li>https://courses.engr.illinois.edu/ece420/sp2017/UnderstandingKalmanFilter.pdf</li>
+<li><span class="exturl" data-url="aHR0cDovL3d3dy5iemFyZy5jb20vcC9ob3ctYS1rYWxtYW4tZmlsdGVyLXdvcmtzLWluLXBpY3R1cmVzLw==">How a Kalman filter works, in pictures | Bzarg<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzIzOTcxNjAx">如何通俗并尽可能详细地解释卡尔曼滤波？ - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC82OTUzNDUyMA==">贝叶斯视角下的卡尔曼滤波 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="citation" data-cites="清欢_-CSDN博客">[卡尔曼滤波器详解（三）：数学推导_@清欢_-CSDN博客]</span>(https://blog.csdn.net/weixin_46581517/article/details/107706149)</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/08/17/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86-%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/" title="信号处理-卡尔曼滤波">http://lyf35.github.io/2021/08/17/信号处理-卡尔曼滤波/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> 信号处理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/09/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-How%20Powerful%20are%20Graph%20Neural%20Networks%20(GIN)/" rel="prev" title="论文笔记-How Powerful are Graph Neural Networks">
+      <i class="fa fa-chevron-left"></i> 论文笔记-How Powerful are Graph Neural Networks
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/08/28/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-Physics-informed%20Neural%20Network/" rel="next" title="论文笔记-Physics-informed Neural Network">
+      论文笔记-Physics-informed Neural Network <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'b465e74e5d3948b2f350338bae60d770',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

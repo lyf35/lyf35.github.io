@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="简介 本文汇总了Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations和Physics-informed machine learning这两篇文章中的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记-Physics-informed Neural Network">
+<meta property="og:url" content="http://lyf35.github.io/2021/08/28/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-Physics-informed%20Neural%20Network/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="简介 本文汇总了Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations和Physics-informed machine learning这两篇文章中的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174241.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174234.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174225.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174216.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174207.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174159.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174152.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174149.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174136.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174132.png">
+<meta property="article:published_time" content="2021-08-28T13:59:42.000Z">
+<meta property="article:modified_time" content="2021-09-05T08:23:52.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="论文笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174241.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/08/28/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-Physics-informed%20Neural%20Network/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>论文笔记-Physics-informed Neural Network | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pinn"><span class="nav-number">2.</span> <span class="nav-text">PINN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AEpde%E6%B1%82%E8%BF%91%E4%BC%BC%E5%87%BD%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">根据PDE求近似函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.1.1.</span> <span class="nav-text">连续时间模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.1.2.</span> <span class="nav-text">离散时间模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3pde"><span class="nav-number">3.2.</span> <span class="nav-text">求解PDE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9E%8B-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">连续时间模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9E%8B-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">离散时间模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1%E4%B8%80%E7%BB%B4%E7%83%AD%E4%BC%A0%E5%AF%BC%E6%96%B9%E7%A8%8B"><span class="nav-number">4.1.</span> <span class="nav-text">示例1：一维热传导方程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E6%96%B9%E7%A8%8B"><span class="nav-number">4.2.</span> <span class="nav-text">示例2：拉普拉斯方程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/08/28/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-Physics-informed%20Neural%20Network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记-Physics-informed Neural Network
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-28 21:59:42" itemprop="dateCreated datePublished" datetime="2021-08-28T21:59:42+08:00">2021-08-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 16:23:52" itemprop="dateModified" datetime="2021-09-05T16:23:52+08:00">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/08/28/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-Physics-informed%20Neural%20Network/" class="post-meta-item leancloud_visitors" data-flag-title="论文笔记-Physics-informed Neural Network" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>19k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>17 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="简介">简介</h1>
+<p>本文汇总了<span class="exturl" data-url="aHR0cHM6Ly93d3cuc2NpZW5jZWRpcmVjdC5jb20vc2NpZW5jZS9hcnRpY2xlL3BpaS9TMDAyMTk5OTExODMwNzEyNQ==">Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations<i class="fa fa-external-link-alt"></i></span>和<span class="exturl" data-url="aHR0cHM6Ly93d3cubmF0dXJlLmNvbS9hcnRpY2xlcy9zNDIyNTQtMDIxLTAwMzE0LTUjOn46dGV4dD1QaHlzaWNzLWluZm9ybWVkJTIwbWFjaGluZSUyMGxlYXJuaW5nJTIwaW50ZWdyYXRlcyUyMHNlYW1sZXNzbHklMjBkYXRhJTIwYW5kJTIwbWF0aGVtYXRpY2FsLHJlZ3Jlc3Npb24lMjBtZXRob2RzJTIwb2ZmZXIlMjBlZmZlY3RpdmUlMkMlMjBzaW1wbGUlMjBhbmQlMjBtZXNobGVzcyUyMGltcGxlbWVudGF0aW9ucy4=">Physics-informed machine learning<i class="fa fa-external-link-alt"></i></span>这两篇文章中的主要思想。</p>
+<p>在物理学、工程学等领域，经常会遇到数据难以获取的或者获取成本过高的情况，但是前沿的机器学习算法，尤其是神经网络，又无法保证小样本条件下的鲁棒性。考虑到一些实际问题通常需要满足某种物理规律或者经验公式，因此一个可行的办法是将这些模型引入到神经网络的训练过程中，作为网络的正则化项，从而将神经网络的输出限制到某个比较小的取值空间内，使用少量的数据也可以训练出一个预测较为准确的神经网络。而反过来说，将这些结构化的信息输入到模型中也相当于是对原始数据的信息增益，这样便使得模型可以接收到更多的信息，从而加速模型的收敛过程。</p>
+<span id="more"></span>
+<h1 id="pinn">PINN</h1>
+<p>Physics-Informed Neural Network（PINN）这一工作是使用神经网络来近似求解PDE。它的思想是将神经网络作为万能函数近似器来使用，这样便可以直接处理非线性问题，而不需要做先验假设以及线性化等操作。此外，由于深度学习框架的自动微分特性，也可以很容易地求出偏微分的值。同时，神经网络的输出会受到偏微分方程的约束，这样便可以通过方程的约束，使得神经网络满足对称性、不变性和守恒律等物理规则。</p>
+<p>一个参数化的非线性PDE具有如下的通用表达式： <span class="math display">\[
+u_t+\mathcal{N}(u;\lambda)=0, x\in \Omega, t\in [0,T]
+\]</span> 其中，<span class="math inline">\(u(t,x)\)</span>代表函数表达式，即PDE的解；<span class="math inline">\(\mathcal{N}(\cdot;\lambda)\)</span>是一个以<span class="math inline">\(\lambda\)</span>为参数的非线性运算符；<span class="math inline">\(\Omega\)</span>是<span class="math inline">\(\mathbb{R}^D\)</span>的一个子集。​例如对于一维的Burgers方程<span class="math inline">\(u_t+\lambda_1 u u_x-\lambda_2 u_{xx}=0\)</span>，它对应的<span class="math inline">\(\mathcal{N}(\cdot;\lambda)\)</span>为<span class="math inline">\(\mathcal{N}(u;\lambda)=\lambda_1 u u_x-\lambda_2 u_{xx}\)</span>，<span class="math inline">\(\lambda=[\lambda_1, \lambda_2]\)</span>​。​</p>
+<p>针对于这一表达式，有两个独立的问题。第一个问题是给定<span class="math inline">\(\lambda\)</span>，如何去求解<span class="math inline">\(u\)</span>的近似表达式；而另一个问题则是能够最好的拟合观测数据的参数<span class="math inline">\(\lambda\)</span>应当如何取值。</p>
+<p>以Burgers方程<span class="math inline">\(u_t+uu_x=vu_{xx}\)</span>为例，它的模型与如迭代过程如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174241.png" alt="image-20210828203309483" style="zoom:67%;" /></p>
+<h1 id="应用">应用</h1>
+<h2 id="根据pde求近似函数">根据PDE求近似函数</h2>
+<p>如果我们已知一个PDE的表达式<span class="math inline">\(u_t+\mathcal{N}(u)=0, x\in \Omega, t\in [0,T]\)</span>​​，​以及一组与这个PDE相关的数据，那么便可以用神经网络来求解这个PDE的近似函数。根据时间的连续与离散，可分成两种不同种类的模型。</p>
+<h3 id="连续时间模型">连续时间模型</h3>
+<p>令<span class="math inline">\(f(t,x)=u_t+\mathcal{N}(u)\)</span>，并使用一个输入为<span class="math inline">\((t,x)\)</span>的神经网络去近似<span class="math inline">\(u(t,x)\)</span>，由此得到的<span class="math inline">\(f(t,x)\)</span>便为一个PINN。其中，<span class="math inline">\(f\)</span>的参数与<span class="math inline">\(u\)</span>完全一致，<span class="math inline">\(f\)</span>的表达式可以通过对<span class="math inline">\(u\)</span>的自动微分来构造。</p>
+<p>网络的参数可以通过如下的损失函数来学习： <span class="math display">\[
+MSE=MSE_u+MSE_f
+\]</span> 其中， <span class="math display">\[
+\begin{aligned}
+MSE_u=&amp;\frac{1}{N_u}\sum_{i=1}^{N_u} |u(t_u^i,x_u^i)-u^i|^2 \\
+MSE_f=&amp;\frac{1}{N_f}\sum_{i=1}^{N_f} |f(t_f^i,x_f^i)|^2
+\end{aligned}
+\]</span> 上式中的<span class="math inline">\(\{t_u^i,x_u^i,u^i\}_{i=1}^{N_u}\)</span>​代表<span class="math inline">\(u(t,x)\)</span>​​​的初始条件与边界条件所对应的训练数据，<span class="math inline">\(N_u\)</span>​代表训练数据的数量。<span class="math inline">\(\{t_f^i,x_f^i\}_{i=1}^{N_f}\)</span>​代表方程<span class="math inline">\(f(t,x)\)</span>​的Collocation points，也就是满足<span class="math inline">\(f(t,x)=0\)</span>​​这一约束条件的点。</p>
+<p>当数据量比较小的时候，作者使用L-BFGS这一优化算法去求解神经网络的参数；而对于较大规模的数据集，作者使用mini-batch的梯度下降方法去求解。此外作者也提到，虽然这两种优化方法都无法从理论上保证收敛到全局最小，但是在实际情况中，如果神经网络的表达能力足够强，PDE具有唯一解，同时<span class="math inline">\(N_f\)</span>的值也足够大（即足够的训练样本），那么通常可以获得较高的预测精度。</p>
+<p>例：薛定谔方程</p>
+<p>考虑如下一个复数域上满足周期性边界条件的薛定谔方程： <span class="math display">\[
+\begin{aligned}
+&amp; ih_t+\frac{1}{2}h_{xx}+|h|^2h=0, x\in[-5,5],t\in[0,\frac{\pi}{2}]\\
+&amp; h(0,x)=2 \text{sech}(x) \\
+&amp; h(t,-5)=h(t,5) \\
+&amp; h_x(t,-5)=h_x(t,5) \\
+\end{aligned}
+\]</span> 令<span class="math inline">\(h(t,x)=[u(t,x)~~v(t,x)]\)</span>，其中<span class="math inline">\(u\)</span>代表复数的实部，<span class="math inline">\(v\)</span>代表复数的虚部。通过<span class="math inline">\(h\)</span>我们便可以得到<span class="math inline">\(f(t,x)=ih_t+\frac{1}{2}h_{xx}+|h|^2h\)</span>这一PINN。网络的参数通过优化如下的损失函数来学习： <span class="math display">\[
+MSE=MSE_0+MSE_b+MSE_f
+\]</span> 其中， <span class="math display">\[
+\begin{aligned}
+MSE_0=&amp;\frac{1}{N_0}\sum_{i=1}^{N_0} |h(0,x_0^i)-h_0^i|^2 \\
+MSE_b=&amp;\frac{1}{N_b}\sum_{i=1}^{N_u} (|h^i(t_b^i,-5)-h^i(t_b^i,5)|^2+|h_x^i(t_b^i,-5)-h_x^i(t_b^i,5)|^2) \\
+MSE_f=&amp;\frac{1}{N_f}\sum_{i=1}^{N_f} |f(t_f^i,x_f^i)|^2
+\end{aligned}
+\]</span></p>
+<p>作者在薛定谔方程的实验中，取了50个初始点和50个边界点，以及使用Latin Hypercube采样方法得到的20000个能够覆盖样本空间的Collocation points，使用这些数据训练得到了一个时空维度上都较精确的模型：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174234.png" alt="image-20210826222326927" style="zoom:67%;" /></p>
+<p>对于连续时间模型来说，一个重要的限制就是要求有大量的Collocation points作为训练集，这些点为网络在整个时空维度内都加入了PDE的约束条件。</p>
+<h3 id="离散时间模型">离散时间模型</h3>
+<p>对于<span class="math inline">\(q\)</span>阶的龙格-库塔法求解微分方程，有如下表达式： <span class="math display">\[
+\begin{aligned}
+u^{n+c_i}&amp;=u^n-\Delta t\sum_{j=1}^{q}a_{ij}\mathcal{N}[u^{n+c_j}],~~ i=1,\dots,q \\
+u^{n+1}&amp;=u^n-\Delta t\sum_{j=1}^{q}b_{j}\mathcal{N}[u^{n+c_j}] \\
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(u^{n+c_j}(x)=u(t^n+c_j\Delta t,x),j=1,\dots,q\)</span>。上述的通用表达式中，通过选取不同的参数<span class="math inline">\(\{a_{ij},b_j,c_j\}\)</span>，可使得表达式对应于显式和隐式的两种计算方法。</p>
+<p>上式也可以写成如下更加简洁的形式： <span class="math display">\[
+\begin{aligned}
+&amp;u^n=u_i^n,~~u_i^n=u^{n+c_i}+\Delta t\sum_{j=1}^{q}a_{ij}\mathcal{N}[u^{n+c_j}],~~ i=1,\dots,q \\
+&amp;u^n=u_{q+1}^n,~~u_{q+1}^{n}=u^{n+1}+\Delta t\sum_{j=1}^{q}b_{j}\mathcal{N}[u^{n+c_j}] \\
+\end{aligned}
+\]</span> 对于上述的微分方程，可以构造一个输入为<span class="math inline">\(x\)</span>的PINN，网络的输出为<span class="math inline">\([u_1^{n}(x),\dots,u_q^{n}(x),u_{q+1}^{n}(x)]\)</span>。</p>
+<p>例：Allen-Cahn方程</p>
+<p>Allen-Cahn方程用于描述一个反应-扩散系统，例如在一个合金体系中的相分离过程。考虑如下的周期性边界条件PDE： <span class="math display">\[
+\begin{aligned}
+&amp;u_t-0.0001u_{xx}+5u^3-5u=0,~~x\in[-1,1],t\in[0,1] \\
+&amp;u(0,x)=x^2\cos(\pi x) \\
+&amp;u(t,-1)=u(t,1) \\
+&amp;u_x(t,-1)=u_x(t,1) \\
+\end{aligned}
+\]</span> 这一PDE对应于<span class="math inline">\(\mathcal{N}[u^{n+c_j}]=-0.0001u_{xx}^{n+c_j}+5(u^{n+c_j})^3-5u^{n+c_j}\)</span>。</p>
+<p>对于上述PDE，可以通过最小化<span class="math inline">\(SSE=SSE_{n}+SSE_{b}\)</span>来求解网络参数： <span class="math display">\[
+\begin{aligned}
+&amp;SSE_n=\sum_{j=1}^{q+1}\sum_{i=1}^{N_n}|u_j^n(x^{n,i})-u^{n,i}|^2 \\
+&amp;SSE_b=\sum_{i=1}^{q}|u^{n+c_i}(-1)-u^{n+c_i}(1)|^2+|u^{n+1}(-1)-u^{n+1}(1)|^2+\sum_{i=1}^{q}|u_x^{n+c_i}(-1)-u_x^{n+c_i}(1)|^2+|u_x^{n+1}(-1)-u_x^{n+1}(1)|^2
+\end{aligned}
+\]</span> 其中<span class="math inline">\(\{x^{n,i},u^{n,i}\}_{i=1}^{N_n}\)</span>代表时间步长为<span class="math inline">\(t^n\)</span>时的数据。在传统的数值分析算法中，由于稳定性的限制和计算复杂度的限制，时间步长通常会取的很小，因此要计算到所需的时间则需要迭代计算很多步。但是PINN与传统方法相比，则可以在计算代价很小的情况下取一个比较大的阶数<span class="math inline">\(q\)</span>，这样便可以在保证稳定性与精度的前提下取一个较大的时间步长。</p>
+<p>在作者的实验中，取该PDE在<span class="math inline">\(t=0.1\)</span>时刻的200个精确解，作为训练集。然后将时间步长设置为0.8，龙格-库塔法的阶数设为100，对模型进行训练，便得到了精度较高的模型，如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174225.png" alt="image-20210826221527122" style="zoom:67%;" /></p>
+<h2 id="求解pde">求解PDE</h2>
+<h3 id="连续时间模型-1">连续时间模型</h3>
+<p>对于参数<span class="math inline">\(\lambda\)</span>未知的PDE <span class="math display">\[
+u_t+\mathcal{N}(u;\lambda)=0
+\]</span> PINN的求解思路与<span class="math inline">\(\lambda\)</span>已知的PDE求法类似，同样是构造方程 <span class="math display">\[
+f=u_t+\mathcal{N}(u;\lambda)
+\]</span> 其中<span class="math inline">\(u\)</span>是一个神经网络。此时<span class="math inline">\(\lambda\)</span>为参数，在求解过程中将会与<span class="math inline">\(u\)</span>的参数被一同优化。</p>
+<p>示例：Naiver-Stokes方程</p>
+<p>Naiver-Stokes方程用于描述不可压缩流体的性质。对于一个二维的N-S方程，它的表达式为： <span class="math display">\[
+u_t+\lambda_1(u u_x+v u_y)=-p_x +\lambda_2(u_{xx}+u_{yy}) \\
+v_t+\lambda_1(u v_x+v v_y)=-p_y +\lambda_2(v_{xx}+v_{yy}) \\
+\]</span> 其中，<span class="math inline">\(u(t,x,y)\)</span>代表流速场的<span class="math inline">\(x\)</span>分量，<span class="math inline">\(v(t,x,y)\)</span>代表流速场的<span class="math inline">\(y\)</span>分量，<span class="math inline">\(p(t,x,y)\)</span>代表压强，<span class="math inline">\(\lambda=(\lambda_1,\lambda_2)\)</span>为两个未知参数。由于假设流体不可压缩，需要满足流体的质量守恒条件，故N-S方程的解可以在散度为0的方程集合中搜索，即方程的解要满足条件 <span class="math display">\[
+u_x+v_y=0
+\]</span> 故我们可以假设有一个方程<span class="math inline">\(\psi(t,x,y)\)</span>，满足<span class="math inline">\(u=\psi_y\)</span>，<span class="math inline">\(v=\psi_x\)</span>，直接近似求解<span class="math inline">\(\psi\)</span>便可以自动满足散度为0的约束条件。因此，我们的目标是用一个包含2个输出的神经网络，来同时预测<span class="math inline">\([\psi(t,x,y),~p(t,x,y)]\)</span>。我们定义 <span class="math display">\[
+\begin{aligned}
+f=&amp;u_t+\lambda_1(u u_x+v u_y)+p_x-\lambda_2(u_{xx}+u_{yy})\\
+g=&amp;v_t+\lambda_1(u v_x+v v_y)+p_y-\lambda_2(v_{xx}+v_{yy})\\
+\end{aligned}
+\]</span> 从而便可得到一个PINN <span class="math inline">\([f(t,x,y),~g(t,x,y)]\)</span>。给定一组数据集<span class="math inline">\(\{t^i,x^i,y^i,u^i,v^i\}_{i=1}^N\)</span>，通过最小化如下的损失函数来优化参数<span class="math inline">\(\lambda\)</span>和神经网络模型的参数： <span class="math display">\[
+MSE=\frac{1}{N}\sum_{i=1}^{N}\left(|u(t^i,x^i,y^i)-u^i|^2+|v(t^i,x^i,y^i)-v^i|^2  \right)+\frac{1}{N}\sum_{i=1}^{N}\left(|f(t^i,x^i,y^i)|^2+|g(t^i,x^i,y^i)|^2  \right)
+\]</span> 在作者的实验中，只使用了1%的数据来训练模型，便可得到预测精度较高的<span class="math inline">\(\lambda\)</span>值。下图为作者对原始数据进行采样的示意图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174216.png" alt="image-20210826233315835" style="zoom: 40%;" /></p>
+<p>当数据没有噪声时，对<span class="math inline">\(\lambda_1\)</span>和<span class="math inline">\(\lambda_2\)</span>的预测误差分别为0.078%和4.67%；而对数据加入了1%的高斯噪声之后，模型仍然具有较好的鲁棒性，预测误差分别为0.17%和5.70%。</p>
+<p>此外，作者也提到，即使训练数据中并不包含任何关于压力的信息，模型仍然可以预测出较为准确的压力值，如下图所示。图中的数值尺度不一样是因为N-S方程自身的特性决定的，但是图中可以看出它们的数值分布规律基本类似。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174207.png" alt="image-20210826233656774" style="zoom: 80%;" /></p>
+<h3 id="离散时间模型-1">离散时间模型</h3>
+<p>对于<span class="math inline">\(q\)</span>阶的龙格-库塔法求解微分方程，考虑PDE参数不确定的情况，有如下表达式： <span class="math display">\[
+\begin{aligned}
+u^{n+c_i}&amp;=u^n-\Delta t\sum_{j=1}^{q}a_{ij}\mathcal{N}[u^{n+c_j};\lambda],~~ i=1,\dots,q \\
+u^{n+1}&amp;=u^n-\Delta t\sum_{j=1}^{q}b_{j}\mathcal{N}[u^{n+c_j},\lambda] \\
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(u^{n+c_j}(x)=u(t^n+c_j\Delta t,x),j=1,\dots,q\)</span>。上述的通用表达式中，通过选取不同的参数<span class="math inline">\(\{a_{ij},b_j,c_j\}\)</span>，可使得表达式对应于显式和隐式的两种计算方法。</p>
+<p>上式也可以写成如下更加简洁的形式： <span class="math display">\[
+\begin{aligned}
+&amp;u^n=u_i^n,~~u_i^n=u^{n+c_i}+\Delta t\sum_{j=1}^{q}a_{ij}\mathcal{N}[u^{n+c_j};\lambda],~~ i=1,\dots,q \\
+&amp;u^{n+1}=u_{i}^{n+1},~~u_{i}^{n+1}=u^{n+c_i}+\Delta t\sum_{j=1}^{q}(a_{ij}-b_{i})\mathcal{N}[u^{n+c_j};\lambda],~~ i=1,\dots,q \\
+\end{aligned}
+\]</span> 对于上述的微分方程，可以构造一个神经网络去近似<span class="math inline">\(u\)</span>，从而得到两个共享参数的PINN，它们的输出分别为<span class="math inline">\([u_1^{n}(x),\dots,u_q^{n}(x),u_{q+1}^{n}(x)]\)</span>和<span class="math inline">\([u_1^{n+1}(x),\dots,u_q^{n+1}(x),u_{q+1}^{n+1}(x)]\)</span>。</p>
+<p>如果已知<span class="math inline">\(n\)</span>时刻和<span class="math inline">\(n+1\)</span>时刻的一系列采样点<span class="math inline">\(\{\boldsymbol{x}^n,\boldsymbol{u}^n\}=\{x^{n,i},u^{n,i}\}_{i=1}^{N_n}\)</span>和<span class="math inline">\(\{\boldsymbol{x}^{n+1},\boldsymbol{u}^{n+1}\}=\{x^{n+1,i},u^{n+1,i}\}_{i=1}^{N_{n+1}}\)</span>，便可以使用如下的损失函数对两个网络的参数和PDE的参数<span class="math inline">\(\lambda\)</span>进行同时优化： <span class="math display">\[
+SSE=SSE_n+SSE_{n+1}
+\]</span> 其中， <span class="math display">\[
+\begin{aligned}
+&amp;SSE_n=\sum_{j=1}^{q}\sum_{i=1}^{N_n}|u_j^n(x^{n,i})-u^{n,i}|^2 \\
+&amp;SSE_{n+1}=\sum_{j=1}^{q}\sum_{i=1}^{N_{n+1}}|u_j^{n+1}(x^{n+1,i})-u^{n+1,i}|^2 
+\end{aligned}
+\]</span> 相比于已知参数的PDE，如果<span class="math inline">\(\lambda\)</span>未知的情况下，对于PDE的约束条件便无法加入到网络中。此时，通过使用时间步长为<span class="math inline">\(n\)</span>和<span class="math inline">\(n+1\)</span>时刻的数据，便可以依据PDE的时间关系，从而帮助求解其中的参数<span class="math inline">\(\lambda\)</span>。</p>
+<p>示例：</p>
+<p>以浅水表面的水波为例，它满足Korteweg-de Vries（KdV）方程，这一方程描述了一维波的演化过程，例如晶体中的声波、密度分层的海水波等。它的表达式如下： <span class="math display">\[
+u_t+\lambda_1 uu_x+\lambda_2 u_{xxx}=0
+\]</span> 因此对于KdV方程来说，<span class="math inline">\(\mathcal{N}[u^{n+c_j};\lambda]\)</span>的表达式为 <span class="math display">\[
+\mathcal{N}[u^{n+c_j};\lambda]=\lambda_1 u^{n+c_j}u_x^{n+c_j}+\lambda_2 u_{xxx}^{n+c_j}
+\]</span> 在作者的示例中，取连续方程<span class="math inline">\(u(0,x)=\cos(\pi x)\)</span>作为初始条件，边界满足周期性边界条件，然后进行数值计算得到一系列PDE的离散解。之后，取<span class="math inline">\(t^n=0.2\)</span>和<span class="math inline">\(t^{n+1}=0.8\)</span>，并在这两个时刻分别采样得到199和201个样本点。使用这些样本点拟合出来的参数与真实值的误差不大于0.1%，如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174159.png" alt="image-20210828190855345" style="zoom: 50%;" /></p>
+<h1 id="程序示例">程序示例</h1>
+<h2 id="示例1一维热传导方程">示例1：一维热传导方程</h2>
+<p>一维热传导方程的PDE表达式为： <span class="math display">\[
+\frac{\partial u}{\partial t}+\frac{\partial^2 u}{\partial x^2}=0, (x)\in [0,1]
+\]</span> s.t. <span class="math display">\[
+\begin{aligned}
+u(x,t)|_{t=0}=&amp;\sin(\pi x) \\
+\frac{\partial u(x,t)}{\partial x}|_{x=0}=&amp;\pi \exp(-k\pi^2 t) \\
+\frac{\partial u(x,t)}{\partial x}|_{x=1}=&amp;-\pi \exp(-k\pi^2 t) \\
+\end{aligned}
+\]</span> 方程的解析解为： <span class="math display">\[
+u(x,t)=\sin(\pi {x})\exp(-{k\pi^2 t})
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.optim <span class="keyword">import</span> Adam</span><br><span class="line"><span class="keyword">from</span> torch.optim.lr_scheduler <span class="keyword">import</span> StepLR</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader,TensorDataset</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pi=<span class="number">3.14159265</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">k=<span class="number">0.01</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">t,x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.sin(pi*x)*np.exp(-k*pi*pi*t)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">deriv</span>(<span class="params">t,x</span>):</span><br><span class="line">    <span class="keyword">return</span> pi*np.cos(pi*x)*np.exp(-k*pi*pi*t)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">t_max=<span class="number">3.0</span></span><br><span class="line">sample_points_inner_t=np.random.uniform(low=<span class="number">1e-8</span>,high=t_max,size=(<span class="number">10000</span>,<span class="number">1</span>))</span><br><span class="line">sample_points_inner_x=np.random.uniform(low=<span class="number">1e-8</span>,high=<span class="number">1</span>-<span class="number">1e-8</span>,size=(<span class="number">10000</span>,<span class="number">1</span>))</span><br><span class="line">sample_points_inner=np.concatenate((sample_points_inner_t,sample_points_inner_x),axis=<span class="number">1</span>)</span><br><span class="line">sample_points_init=np.random.uniform(low=<span class="number">0.0</span>,high=<span class="number">1.0</span>,size=(<span class="number">1000</span>,<span class="number">2</span>))</span><br><span class="line">sample_points_init[:,<span class="number">0</span>]=<span class="number">0.0</span></span><br><span class="line">sample_points_bound=np.random.uniform(low=<span class="number">0.0</span>,high=t_max,size=(<span class="number">1000</span>,<span class="number">2</span>))</span><br><span class="line">sample_points_bound[:<span class="number">500</span>,<span class="number">1</span>]=<span class="number">0.0</span></span><br><span class="line">sample_points_bound[<span class="number">500</span>:,<span class="number">1</span>]=<span class="number">1.0</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">true_values_inner=func(sample_points_inner[:,<span class="number">0</span>],sample_points_inner[:,<span class="number">1</span>]).reshape(-<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">true_values_init=func(sample_points_init[:,<span class="number">0</span>],sample_points_init[:,<span class="number">1</span>]).reshape(-<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">true_values_bound=func(sample_points_bound[:,<span class="number">0</span>],sample_points_bound[:,<span class="number">1</span>]).reshape(-<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">true_values_bound_deriv=deriv(sample_points_bound[:,<span class="number">0</span>],sample_points_bound[:,<span class="number">1</span>]).reshape(-<span class="number">1</span>,<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">mlp</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_hidden_layers=<span class="number">4</span>, hidden_layer_dim=<span class="number">64</span>, input_dim=<span class="number">2</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(mlp,self).__init__()</span><br><span class="line">        self.<span class="built_in">input</span>=nn.Linear(input_dim,hidden_layer_dim)</span><br><span class="line">        self.hidden=nn.ModuleList([nn.Linear(hidden_layer_dim,hidden_layer_dim) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num_hidden_layers)])</span><br><span class="line">        self.output=nn.Linear(hidden_layer_dim, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x,y</span>):</span><br><span class="line">        x=self.<span class="built_in">input</span>(torch.cat((x,y),<span class="number">1</span>))</span><br><span class="line">        x=F.tanh(x)</span><br><span class="line">        <span class="keyword">for</span> module <span class="keyword">in</span> self.hidden:</span><br><span class="line">            x=module(x)</span><br><span class="line">            x=F.tanh(x) <span class="comment">#尝试过softplus，但是效果不好，应该是因为PDE的解析解范围就在0-1之间</span></span><br><span class="line">        x=self.output(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pinn=mlp().to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">dataloader_inner=DataLoader(TensorDataset(torch.tensor(sample_points_inner,dtype=torch.float32,requires_grad=<span class="literal">True</span>),torch.tensor(true_values_inner,dtype=torch.float32,requires_grad=<span class="literal">True</span>)),batch_size=<span class="number">128</span>)</span><br><span class="line">dataloader_init=DataLoader(TensorDataset(torch.tensor(sample_points_init,dtype=torch.float32,requires_grad=<span class="literal">True</span>),torch.tensor(true_values_init,dtype=torch.float32,requires_grad=<span class="literal">True</span>)),batch_size=<span class="number">128</span>)</span><br><span class="line">dataloader_bound=DataLoader(TensorDataset(torch.tensor(sample_points_bound,dtype=torch.float32,requires_grad=<span class="literal">True</span>),torch.tensor(true_values_bound,dtype=torch.float32,requires_grad=<span class="literal">True</span>),torch.tensor(true_values_bound_deriv,dtype=torch.float32,requires_grad=<span class="literal">True</span>)),batch_size=<span class="number">128</span>)</span><br><span class="line">optimer=Adam(pinn.parameters(),lr=<span class="number">1e-5</span>) </span><br><span class="line">scheduler=StepLR(optimer,step_size=<span class="number">50</span>,gamma=<span class="number">0.8</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">pinn.train()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    total_loss=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> tx, u_true <span class="keyword">in</span> dataloader_inner:</span><br><span class="line">        tx=tx.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        u_true=u_true.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        t=tx[:,<span class="number">0</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        x=tx[:,<span class="number">1</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        u_pred=pinn(t,x)</span><br><span class="line">        u_t=torch.autograd.grad(u_pred,t,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">        u_x=torch.autograd.grad(u_pred,x,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)</span><br><span class="line">        u_xx=torch.autograd.grad(u_x[<span class="number">0</span>],x,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">        loss=F.mse_loss(u_pred,u_true,reduction=<span class="string">&#x27;sum&#x27;</span>)+F.mse_loss(u_t-k*u_xx,torch.zeros_like(u_xx),reduction=<span class="string">&#x27;sum&#x27;</span>)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimer.step()</span><br><span class="line">        total_loss+=loss.detach().cpu().numpy()</span><br><span class="line">    <span class="keyword">for</span> tx, u_true <span class="keyword">in</span> dataloader_init:</span><br><span class="line">        tx=tx.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        u_true=u_true.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        t=tx[:,<span class="number">0</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        x=tx[:,<span class="number">1</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        u_pred=pinn(t,x)</span><br><span class="line">        u_t=torch.autograd.grad(u_pred,t,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">        u_x=torch.autograd.grad(u_pred,x,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)</span><br><span class="line">        u_xx=torch.autograd.grad(u_x[<span class="number">0</span>],x,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">        loss=F.mse_loss(u_pred,u_true,reduction=<span class="string">&#x27;sum&#x27;</span>)+F.mse_loss(u_t-k*u_xx,torch.zeros_like(u_xx),reduction=<span class="string">&#x27;sum&#x27;</span>)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimer.step()</span><br><span class="line">        total_loss+=loss.detach().cpu().numpy()</span><br><span class="line">    <span class="keyword">for</span> tx, u_true, deriv_true <span class="keyword">in</span> dataloader_bound:</span><br><span class="line">        tx=tx.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        u_true=u_true.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        deriv_true=deriv_true.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        t=tx[:,<span class="number">0</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        x=tx[:,<span class="number">1</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        u_pred=pinn(t,x)</span><br><span class="line">        u_t=torch.autograd.grad(u_pred,t,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">        u_x=torch.autograd.grad(u_pred,x,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)</span><br><span class="line">        u_xx=torch.autograd.grad(u_x[<span class="number">0</span>],x,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">        loss=F.mse_loss(u_pred,u_true,reduction=<span class="string">&#x27;sum&#x27;</span>)+F.mse_loss(u_t-k*u_xx,torch.zeros_like(u_xx),reduction=<span class="string">&#x27;sum&#x27;</span>)+F.mse_loss(u_x[<span class="number">0</span>],deriv_true,reduction=<span class="string">&#x27;sum&#x27;</span>)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimer.step()</span><br><span class="line">        total_loss+=loss.detach().cpu().numpy()</span><br><span class="line">    <span class="built_in">print</span>(total_loss)</span><br><span class="line">    scheduler.step()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_contourf</span>(<span class="params">t,x,z</span>):</span><br><span class="line">    z = z[:-<span class="number">1</span>, :-<span class="number">1</span>]</span><br><span class="line">    levels = matplotlib.ticker.MaxNLocator(nbins=<span class="number">256</span>).tick_values(-<span class="number">0.4</span>,<span class="number">1.4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># pick the desired colormap, sensible levels, and define a normalization</span></span><br><span class="line">    <span class="comment"># instance which takes data values and translates those into levels.</span></span><br><span class="line">    cmap = plt.get_cmap(<span class="string">&#x27;Spectral&#x27;</span>)</span><br><span class="line">    norm = matplotlib.colors.BoundaryNorm(levels, ncolors=cmap.N, clip=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    fig, ax0 = plt.subplots()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># contours are *point* based plots, so convert our bound into point centers</span></span><br><span class="line">    cf = ax0.contourf(t[:-<span class="number">1</span>, :-<span class="number">1</span>] + dt/<span class="number">2.</span>, x[:-<span class="number">1</span>, :-<span class="number">1</span>] + dx/<span class="number">2.</span>, z, levels=levels, cmap=cmap)</span><br><span class="line">    fig.colorbar(cf, ax=ax0)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># adjust spacing between subplots so `ax1` title and `ax0` tick labels</span></span><br><span class="line">    <span class="comment"># don&#x27;t overlap</span></span><br><span class="line">    fig.tight_layout()</span><br></pre></td></tr></table></figure>
+<p>为了验证拟合出的PINN的泛化能力如何，在作图的时候我们取<span class="math inline">\(t\in [0,10]\)</span>，而在训练数据中<span class="math inline">\(t\)</span>的取值范围仅为<span class="math inline">\(t\in [0,3]\)</span>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dt, dx = <span class="number">0.01</span>, <span class="number">0.01</span></span><br><span class="line">t, x = np.mgrid[<span class="built_in">slice</span>(<span class="number">0</span>, t_max+<span class="number">7</span>+dt, dt), <span class="built_in">slice</span>(<span class="number">0</span>, <span class="number">1.0</span>+dx, dx)]</span><br><span class="line">mesh_shape=x.shape</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">true_val=func(t.reshape(-<span class="number">1</span>,<span class="number">1</span>),x.reshape(-<span class="number">1</span>,<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pinn.<span class="built_in">eval</span>()</span><br><span class="line">pinn.to(<span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line">pred_val=pinn(torch.tensor(t.reshape(-<span class="number">1</span>,<span class="number">1</span>),dtype=torch.float32),torch.tensor(x.reshape(-<span class="number">1</span>,<span class="number">1</span>),dtype=torch.float32))</span><br></pre></td></tr></table></figure>
+<p>从近似值和真实值的分布可以看出，在训练数据的区间内，PINN的拟合效果很好。但是在训练数据的区间之外，拟合效果却不是很好。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plot_contourf(t.reshape(mesh_shape),x.reshape(mesh_shape),true_val.reshape(mesh_shape))</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174152.png" alt="output_20_0" /><figcaption aria-hidden="true">output_20_0</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plot_contourf(t.reshape(mesh_shape),x.reshape(mesh_shape),pred_val.detach().numpy().reshape(mesh_shape))</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174149.png" alt="output_21_0" /><figcaption aria-hidden="true">output_21_0</figcaption>
+</figure>
+<h2 id="示例2拉普拉斯方程">示例2：拉普拉斯方程</h2>
+<p>在PINN中举例的PDE都具有<span class="math inline">\(u_t+\mathcal{N}(u;\lambda)=0, x\in \Omega, t\in [0,T]\)</span>的通用形式，但是对于不带有<span class="math inline">\(u_t\)</span>项的PDE也可以采用相同的思路，使用神经网络求近似解。</p>
+<p>我们以如下的拉普拉斯方程为例，来构造神经网络去近似拟合： <span class="math display">\[
+\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=0, (x,y)\in [0,1]\times[0,1]
+\]</span> s.t. <span class="math display">\[
+\begin{aligned}
+&amp; u(x,y)|_{x=0}=sin(\pi y) \\
+&amp; u(x,y)|_{x=1}=0 \\
+&amp; u(x,y)|_{y=0}=0 \\
+&amp; u(x,y)|_{y=1}=0 \\
+\end{aligned}
+\]</span></p>
+<p>该PDE的解析解为 <span class="math display">\[
+u(x,y)=\frac{sin(\pi y)sinh (\pi(1-x))}{sinh (\pi)}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.optim <span class="keyword">import</span> Adam</span><br><span class="line"><span class="keyword">from</span> torch.optim.lr_scheduler <span class="keyword">import</span> StepLR</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader,TensorDataset</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pi=<span class="number">3.14159265</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">x,y</span>):</span><br><span class="line">    <span class="keyword">return</span> np.sin(pi*y)*np.sinh(pi*(<span class="number">1.0</span>-x))/np.sinh(pi)</span><br></pre></td></tr></table></figure>
+<p>经多次尝试，对于拉普拉斯方程来说，需要在PDE的边界处采样更多的样本点，才能使得最终的拟合效果较好。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sample_points_inner=np.random.uniform(low=<span class="number">0.0</span>,high=<span class="number">1.0</span>,size=(<span class="number">2000</span>,<span class="number">2</span>))</span><br><span class="line">sample_points_bound=np.random.uniform(low=<span class="number">0.0</span>,high=<span class="number">1.0</span>,size=(<span class="number">20000</span>,<span class="number">2</span>))</span><br><span class="line">sample_points_bound[:<span class="number">14000</span>,<span class="number">0</span>]=<span class="number">0.0</span></span><br><span class="line">sample_points_bound[<span class="number">14000</span>:<span class="number">16000</span>,<span class="number">0</span>]=<span class="number">1.0</span></span><br><span class="line">sample_points_bound[<span class="number">16000</span>:<span class="number">18000</span>,<span class="number">1</span>]=<span class="number">0.0</span></span><br><span class="line">sample_points_bound[<span class="number">18000</span>:,<span class="number">1</span>]=<span class="number">1.0</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">true_values_inner=func(sample_points_inner[:,<span class="number">0</span>],sample_points_inner[:,<span class="number">1</span>]).reshape(-<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">true_values_bound=func(sample_points_bound[:,<span class="number">0</span>],sample_points_bound[:,<span class="number">1</span>]).reshape(-<span class="number">1</span>,<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">mlp</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_hidden_layers=<span class="number">4</span>, hidden_layer_dim=<span class="number">64</span>, input_dim=<span class="number">2</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(mlp,self).__init__()</span><br><span class="line">        self.<span class="built_in">input</span>=nn.Linear(input_dim,hidden_layer_dim)</span><br><span class="line">        self.hidden=nn.ModuleList([nn.Linear(hidden_layer_dim,hidden_layer_dim) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(num_hidden_layers)])</span><br><span class="line">        self.output=nn.Linear(hidden_layer_dim, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x,y</span>):</span><br><span class="line">        x=self.<span class="built_in">input</span>(torch.cat((x,y),<span class="number">1</span>))</span><br><span class="line">        x=F.tanh(x)</span><br><span class="line">        <span class="keyword">for</span> module <span class="keyword">in</span> self.hidden:</span><br><span class="line">            x=module(x)</span><br><span class="line">            x=F.tanh(x)</span><br><span class="line">        x=self.output(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pinn=mlp().to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">dataloader_inner=DataLoader(TensorDataset(torch.tensor(sample_points_inner,dtype=torch.float32,requires_grad=<span class="literal">True</span>),torch.tensor(true_values_inner,dtype=torch.float32,requires_grad=<span class="literal">True</span>)),batch_size=<span class="number">128</span>)</span><br><span class="line">dataloader_bound=DataLoader(TensorDataset(torch.tensor(sample_points_bound,dtype=torch.float32,requires_grad=<span class="literal">True</span>),torch.tensor(true_values_bound,dtype=torch.float32,requires_grad=<span class="literal">True</span>)),batch_size=<span class="number">128</span>)</span><br><span class="line">optimer=Adam(pinn.parameters(),lr=<span class="number">1e-5</span>) </span><br><span class="line">scheduler=StepLR(optimer,step_size=<span class="number">15</span>,gamma=<span class="number">0.9</span>)</span><br></pre></td></tr></table></figure>
+<p>PINN在训练时波动较大，不太容易训练，因此需要将学习率调得较低一些，并同时使用指数衰减的学习率。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">pinn.train()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    total_loss=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> xy, u_true <span class="keyword">in</span> dataloader_inner:</span><br><span class="line">        xy=xy.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        u_true=u_true.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        x=xy[:,<span class="number">0</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        y=xy[:,<span class="number">1</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        u_pred=pinn(x,y)</span><br><span class="line">        u_x=torch.autograd.grad(u_pred,x,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)</span><br><span class="line">        u_xx=torch.autograd.grad(u_x[<span class="number">0</span>],x,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">        u_y=torch.autograd.grad(u_pred,y,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)</span><br><span class="line">        u_yy=torch.autograd.grad(u_y[<span class="number">0</span>],y,grad_outputs=torch.ones_like(u_pred),create_graph=<span class="literal">True</span>)[<span class="number">0</span>]</span><br><span class="line">        loss=F.mse_loss(u_pred,u_true,reduction=<span class="string">&#x27;sum&#x27;</span>)+F.mse_loss(u_xx+u_yy,torch.zeros_like(u_xx),reduction=<span class="string">&#x27;sum&#x27;</span>)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimer.step()</span><br><span class="line">        total_loss+=loss.detach().cpu().numpy()</span><br><span class="line">    <span class="keyword">for</span> xy, u_true <span class="keyword">in</span> dataloader_bound:</span><br><span class="line">        xy=xy.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        u_true=u_true.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">        x=xy[:,<span class="number">0</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        y=xy[:,<span class="number">1</span>].unsqueeze(<span class="number">1</span>)</span><br><span class="line">        u_pred=pinn(x,y)</span><br><span class="line">        loss=F.mse_loss(u_pred,u_true,reduction=<span class="string">&#x27;sum&#x27;</span>) <span class="comment">#由于函数在边界处不连续，故此处无需满足PDE</span></span><br><span class="line">        loss.backward()</span><br><span class="line">        optimer.step()</span><br><span class="line">        total_loss+=loss.detach().cpu().numpy()</span><br><span class="line">    <span class="built_in">print</span>(total_loss)</span><br><span class="line">    scheduler.step()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dx, dy = <span class="number">0.01</span>, <span class="number">0.01</span></span><br><span class="line">x, y = np.mgrid[<span class="built_in">slice</span>(<span class="number">0</span>, <span class="number">1</span>+dx, dx), <span class="built_in">slice</span>(<span class="number">0</span>, <span class="number">1</span>+dy, dy)]</span><br><span class="line">mesh_shape=y.shape</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">true_val=func(x.reshape(-<span class="number">1</span>,<span class="number">1</span>),y.reshape(-<span class="number">1</span>,<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pinn.<span class="built_in">eval</span>()</span><br><span class="line">pinn.to(<span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line">pred_val=pinn(torch.tensor(x.reshape(-<span class="number">1</span>,<span class="number">1</span>),dtype=torch.float32),torch.tensor(y.reshape(-<span class="number">1</span>,<span class="number">1</span>),dtype=torch.float32))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_contourf</span>(<span class="params">x,y,z</span>):</span><br><span class="line">    z = z[:-<span class="number">1</span>, :-<span class="number">1</span>]</span><br><span class="line">    levels = matplotlib.ticker.MaxNLocator(nbins=<span class="number">256</span>).tick_values(-<span class="number">0.1</span>,<span class="number">1.1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># pick the desired colormap, sensible levels, and define a normalization</span></span><br><span class="line">    <span class="comment"># instance which takes data values and translates those into levels.</span></span><br><span class="line">    cmap = plt.get_cmap(<span class="string">&#x27;Spectral&#x27;</span>)</span><br><span class="line">    norm = matplotlib.colors.BoundaryNorm(levels, ncolors=cmap.N, clip=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    fig, ax0 = plt.subplots()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># contours are *point* based plots, so convert our bound into point centers</span></span><br><span class="line">    cf = ax0.contourf(x[:-<span class="number">1</span>, :-<span class="number">1</span>] + dx/<span class="number">2.</span>, y[:-<span class="number">1</span>, :-<span class="number">1</span>] + dy/<span class="number">2.</span>, z, levels=levels, cmap=cmap)</span><br><span class="line">    fig.colorbar(cf, ax=ax0)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># adjust spacing between subplots so `ax1` title and `ax0` tick labels</span></span><br><span class="line">    <span class="comment"># don&#x27;t overlap</span></span><br><span class="line">    fig.tight_layout()</span><br></pre></td></tr></table></figure>
+<p>下图为根据原函数的真实值和PINN的预测值所做出的图像。从中可以看出，二者还是比较接近的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plot_contourf(x.reshape(mesh_shape),y.reshape(mesh_shape),true_val.reshape(mesh_shape))</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174136.png" alt="output_24_0" /><figcaption aria-hidden="true">output_24_0</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plot_contourf(x.reshape(mesh_shape),y.reshape(mesh_shape),pred_val.detach().numpy().reshape(mesh_shape))</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210905174132.png" alt="output_25_0" /><figcaption aria-hidden="true">output_25_0</figcaption>
+</figure>
+<h1 id="总结">总结</h1>
+<p>PINN是一种在神经网络的训练过程中引入领域知识的方法，通过将PDE的约束加入到损失函数中，从而可以利用有限数据，使得网络所对应的函数表达式能够尽可能地接近PDE原函数所对应的曲面。同时，这种方法只需要知道PDE的约束条件，而无需任何的额外数据。</p>
+<p>在SchNet中将原子力的信息加入到损失函数的方法的思路其实也相当于是加入物理领域知识的额外约束，但是这种方法却需要传入额外的数据（即力的真实值）。因此它与PINN的思路相似，就是将领域知识引入网络的训练过程作为额外约束，但是二者所使用的方法并不相同。总的来说，从这两种方法其实可以得到一种较为通用的思路，即在神经网络的训练中设法引入领域知识。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/08/28/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-Physics-informed%20Neural%20Network/" title="论文笔记-Physics-informed Neural Network">http://lyf35.github.io/2021/08/28/论文笔记-Physics-informed Neural Network/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"><i class="fa fa-tag"></i> 论文笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/17/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86-%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/" rel="prev" title="信号处理-卡尔曼滤波">
+      <i class="fa fa-chevron-left"></i> 信号处理-卡尔曼滤波
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/06/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E5%9B%BE%E5%83%8F%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC/" rel="next" title="深度学习-图像对抗样本">
+      深度学习-图像对抗样本 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '7516245387d36f18ddd7002939b15a41',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

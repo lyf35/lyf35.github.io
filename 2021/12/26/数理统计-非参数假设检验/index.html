@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="非参数统计结构的检验 \(U\)统计量检验 \(U\)统计量 设有样本\(X&#x3D;(X_1,\dots,X_n)\)，并设\(\phi\)为\(X_1,\dots,X_m(m\le n)\)的对称函数，令： \[ U&#x3D;U(X_1,\dots,X_n)&#x3D;\binom{n}{m}^{-1}\cdot \sum \phi(X_{i_1},\dots,X_{i_m}) \] 其中\(1\le i_1&lt;\">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数理统计-非参数假设检验">
+<meta property="og:url" content="http://lyf35.github.io/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="非参数统计结构的检验 \(U\)统计量检验 \(U\)统计量 设有样本\(X&#x3D;(X_1,\dots,X_n)\)，并设\(\phi\)为\(X_1,\dots,X_m(m\le n)\)的对称函数，令： \[ U&#x3D;U(X_1,\dots,X_n)&#x3D;\binom{n}{m}^{-1}\cdot \sum \phi(X_{i_1},\dots,X_{i_m}) \] 其中\(1\le i_1&lt;\">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-26T06:30:21.000Z">
+<meta property="article:modified_time" content="2022-01-19T14:41:53.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="统计学">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数理统计-非参数假设检验 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E5%8F%82%E6%95%B0%E7%BB%9F%E8%AE%A1%E7%BB%93%E6%9E%84%E7%9A%84%E6%A3%80%E9%AA%8C"><span class="nav-number">1.</span> <span class="nav-text">非参数统计结构的检验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#u%E7%BB%9F%E8%AE%A1%E9%87%8F%E6%A3%80%E9%AA%8C"><span class="nav-number">1.1.</span> <span class="nav-text">\(U\)统计量检验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#u%E7%BB%9F%E8%AE%A1%E9%87%8F"><span class="nav-number">1.1.1.</span> <span class="nav-text">\(U\)统计量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E6%A0%B7%E6%9C%ACu%E7%BB%9F%E8%AE%A1%E9%87%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">两样本\(U\)统计量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%A9%E6%A3%80%E9%AA%8C"><span class="nav-number">1.2.</span> <span class="nav-text">秩检验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">1.2.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E7%A7%A9%E5%92%8C%E6%A3%80%E9%AA%8C"><span class="nav-number">1.2.2.</span> <span class="nav-text">符号秩和检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E7%A7%A9%E5%92%8C%E6%A3%80%E9%AA%8C"><span class="nav-number">1.2.3.</span> <span class="nav-text">位置参数秩和检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%BA%E5%BA%A6%E5%8F%82%E6%95%B0%E7%9A%84%E7%A7%A9%E6%A3%80%E9%AA%8C"><span class="nav-number">1.2.4.</span> <span class="nav-text">尺度参数的秩检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E7%A7%A9%E7%BB%9F%E8%AE%A1%E9%87%8F"><span class="nav-number">1.2.5.</span> <span class="nav-text">线性秩统计量</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数理统计-非参数假设检验
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-12-26 14:30:21" itemprop="dateCreated datePublished" datetime="2021-12-26T14:30:21+08:00">2021-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-19 22:41:53" itemprop="dateModified" datetime="2022-01-19T22:41:53+08:00">2022-01-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">统计学</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/" class="post-meta-item leancloud_visitors" data-flag-title="数理统计-非参数假设检验" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="非参数统计结构的检验">非参数统计结构的检验</h1>
+<h2 id="u统计量检验"><span class="math inline">\(U\)</span>统计量检验</h2>
+<h3 id="u统计量"><span class="math inline">\(U\)</span>统计量</h3>
+<p>设有样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>，并设<span class="math inline">\(\phi\)</span>为<span class="math inline">\(X_1,\dots,X_m(m\le n)\)</span>的对称函数，令： <span class="math display">\[
+U=U(X_1,\dots,X_n)=\binom{n}{m}^{-1}\cdot \sum \phi(X_{i_1},\dots,X_{i_m})
+\]</span> 其中<span class="math inline">\(1\le i_1&lt;\dots&lt;i_m\le n\)</span>，<span class="math inline">\(\sum\)</span>代表对所有的组合<span class="math inline">\((i_1,\dots,i_m)\)</span>求和。则<span class="math inline">\(U\)</span>是以<span class="math inline">\(\phi(X_1,\dots,X_m)\)</span>为核的<span class="math inline">\(U\)</span>统计量。</p>
+<span id="more"></span>
+<p>如果令<span class="math inline">\(\theta=E[\phi(X_1,\dots,X_m)]\)</span>，则<span class="math inline">\(U\)</span>统计量的数学期望<span class="math inline">\(E[U]=\theta\)</span>。记<span class="math inline">\(\phi_1(X_1,\dots,X_m)=E[\phi(X_1,\dots,X_m)|X_1=x_1]\)</span>，<span class="math inline">\(\text{Var}[\phi_1(X_1,\dots,X_m)]^2=\sigma^2_1\)</span>，则方差可以表示为<span class="math inline">\(\text{Var}(U)=\frac{m^2}{n}\cdot \sigma_1^2+\Omicron(n^{-2})\)</span>。</p>
+<p><span class="math inline">\(U\)</span>统计量在<span class="math inline">\(n\rightarrow\infty\)</span>时满足渐近正态性： <span class="math display">\[
+\sqrt{n}\cdot(U-\theta)\stackrel{L}\longrightarrow N(0,m^2\sigma_1^2)
+\]</span></p>
+<blockquote>
+<p>例：令<span class="math inline">\(X\)</span>表示某种电子元器件的寿命，如果对任意的<span class="math inline">\(s&gt;0,t&gt;0\)</span>，都有<span class="math inline">\(P(X&gt;s+t|X&gt;t)&lt;P(X&gt;s)\)</span>，则称该元件老化；而如果<span class="math inline">\(P(X&gt;s+t|X&gt;t)=P(X&gt;s)\)</span>，则该元件无老化。</p>
+<p>设<span class="math inline">\(X\)</span>为取非负值的连续随机变量，它的分布函数为<span class="math inline">\(F(x)\)</span>，因此有： <span class="math display">\[
+\begin{aligned}
+&amp;P(X&gt;s+t|X&gt;t)&lt;P(X&gt;s)\Leftrightarrow \bar{F}(s+t)&lt;\bar{F}(s)\cdot \bar{F}(t) \\
+&amp;P(X&gt;s+t|X&gt;t)=P(X&gt;s)\Leftrightarrow \bar{F}(s+t)=\bar{F}(s)\cdot \bar{F}(t)
+\end{aligned}
+\]</span> 其中<span class="math inline">\(\bar{F}(x)=1-F(x)\)</span>。</p>
+<p>令 <span class="math display">\[
+w=\int_{0}^{\infty}\int_{0}^{\infty}[\bar{F}(s)\cdot \bar{F}(t)-\bar{F}(s+t)]dF(s)dF(t)
+\]</span> 则检验问题可以简化为关于参数<span class="math inline">\(w\)</span>的检验问题：原假设<span class="math inline">\(H_0:w=0\)</span>对备择假设<span class="math inline">\(H_1:w&gt;0\)</span>。</p>
+<p>由于 <span class="math display">\[
+\begin{aligned}
+&amp;\int_{0}^{\infty}\int_{0}^{\infty}\bar{F}(s)\cdot \bar{F}(t)dF(s)dF(t)=\int_{0}^{1}\int_{0}^{1}(1-u)\cdot (1-v)dudv=\frac{1}{4} \\
+&amp;\int_{0}^{\infty}\int_{0}^{\infty}\bar{F}(s+t)dF(s)dF(t)=\int_{0}^{\infty}\int_{0}^{\infty}P(X_1&gt;x_2+x_3)dF(x_2)dF(x_3)=P(X_1&gt;X_2+X_3)
+\end{aligned}
+\]</span> 因此<span class="math inline">\(w=\frac{1}{4}-P(X_1&gt;X_2+X_3)\)</span>，其中<span class="math inline">\(X_1,X_2,X_3\)</span>是该元器件寿命试验的任意三次记录。</p>
+<p>令<span class="math inline">\(\theta=P(X_1&gt;X_2+X_3)\)</span>，则上述检验问题进一步简化为：原假设<span class="math inline">\(H_0:\theta=\frac{1}{4}\)</span>对备择假设<span class="math inline">\(H_1:\theta&lt;\frac{1}{4}\)</span>.</p>
+<p>这一问题属于非参数估计问题，设<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>是该元器件寿命试验的<span class="math inline">\(n\)</span>次记录，构造<span class="math inline">\(\theta\)</span>的无偏估计 <span class="math display">\[
+\psi(X_1,X_2,X_3)=
+\begin{cases}
+1,~X_1&gt;X_2+X_3 \\
+0,~X_1\le X_2+X_3
+\end{cases}
+\]</span> 考虑到样本中各个分量的地位相同，因此定义对称函数 <span class="math display">\[
+\phi(X_1,X_2,X_3)=\frac{\sum \psi(X_{i_1},X_{i_2},X_{i_3})}{3!}
+\]</span> 进一步令 <span class="math display">\[
+U(X_1,\dots,X_n)=\frac{\sum \phi(X_{i_1},X_{i_2},X_{i_3})}{\binom{n}{3}}
+\]</span> 容易求得<span class="math inline">\(E(U)=\frac{1}{4}\)</span>，下面计算<span class="math inline">\(\text{Var}(U)\)</span>。根据样本的独立同分布性可得： <span class="math display">\[
+\begin{aligned}
+\phi_1(x_1)=&amp;E[\phi(X_1,X_2,X_3)|X_1=x_1] \\
+=&amp;\frac{1}{3}\cdot P(x_1&gt;X_2+X_3)+\frac{2}{3}\cdot P(X_2&gt;X_3+x_1) \\
+=&amp;\frac{1}{3}\cdot \int_{0}^{x_1}F(x_1-x_3)dF(x_3)+\frac{2}{3}\cdot \int_{0}^{\infty}\bar{F}(x_1+x_3)dF(x_3)
+\end{aligned}
+\]</span> 当原假设成立时，由于对任意的<span class="math inline">\(s,t\)</span>都有<span class="math inline">\(P(X&gt;s+t|X&gt;t)=P(X&gt;s)\Leftrightarrow \bar{F}(s+t)=\bar{F}(s)\cdot \bar{F}(t)\)</span>，故有： <span class="math display">\[
+F(x_1-x_3)=1-\frac{\bar{F}(x_1)}{\bar{F}(x_3)},\bar{F}(x_1+x_3)=\bar{F}(x_1)\cdot \bar{F}(x_3)
+\]</span> 从而有： <span class="math display">\[
+\begin{aligned}
+\phi_1(x_1)=&amp;\frac{1}{3}\cdot \int_{0}^{x_1}[1-\frac{\bar{F}(x_1)}{\bar{F}(x_3)}]dF(x_3)+\frac{2}{3}\cdot \int_{0}^{\infty}\bar{F}(x_1)\cdot \bar{F}(x_3)dF(x_3) \\
+=&amp;\frac{1}{3}\cdot [F(x_1)+\bar{F}(x_1)\cdot \ln \bar{F}(x_1)]+\frac{1}{3}\cdot \bar{F}(x_1) \\
+=&amp;\frac{1}{3}\cdot [1+\bar{F}(x_1)\cdot \ln \bar{F}(x_1)]
+\end{aligned}
+\]</span> 当原假设成立时，有： <span class="math display">\[
+\begin{aligned}
+E[\phi_1(X_1)]=&amp; \frac{1}{4}\\
+E[\phi_1(X_1)]^2=&amp;\frac{1}{9}\cdot \int_{0}^{\infty} [1+\bar{F}(x_1)\cdot \ln \bar{F}(x_1)]^2dF(x_1) \\
+=&amp;\frac{1}{9}\cdot \int_{0}^{1} [1+(1-u)\cdot \ln(1-u)]^2du \\
+=&amp;\frac{31}{486}
+\end{aligned}
+\]</span> 因此<span class="math inline">\(\sigma_1^2=\frac{31}{486}-\frac{1}{16}=\frac{5}{3888}\)</span>，由此可以计算出<span class="math inline">\(\text{Var}[U]=\frac{3^2}{n}\frac{5}{3888}+\omicron(n^{-2})=\frac{5}{432n}+\omicron(n^{-2})\)</span>。</p>
+<p>故在大样本场合下，上述检验问题的拒绝域为： <span class="math display">\[
+U\le \frac{1}{4}+\sqrt{\frac{5}{432n}}\cdot U_{\alpha}
+\]</span> 其中<span class="math inline">\(U_\alpha\)</span>代表标准正态分布的<span class="math inline">\(\alpha\)</span>分位数。</p>
+</blockquote>
+<h3 id="两样本u统计量">两样本<span class="math inline">\(U\)</span>统计量</h3>
+<p>样本<span class="math inline">\(X_1,\dots,X_{n_1}\)</span>和<span class="math inline">\(Y_1,\dots,Y_{n_2}\)</span>分别来自相互独立的总体<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>，设在<span class="math inline">\(X_1,\dots,X_{m_1}\)</span>给定时，<span class="math inline">\(\phi(X_1,\dots,X_{m_1},Y_1,\dots,Y_{m_2})\)</span>为<span class="math inline">\(Y_1,\dots,Y_{m_2}\)</span>的对称函数，而在<span class="math inline">\(Y_1,\dots,Y_{m_2}\)</span>给定时，<span class="math inline">\(\phi(X_1,\dots,X_{m_1},Y_1,\dots,Y_{m_2})\)</span>是<span class="math inline">\(X_1,\dots,X_{m_1}\)</span>的对称函数。令 <span class="math display">\[
+\begin{aligned}
+U=&amp;U(X_1,\dots,X_{m_1},Y_1,\dots,Y_{m_2}) \\
+=&amp;\binom{n_1}{m_1}^{-1}\cdot \binom{n_2}{m_2}^{-1} \cdot \sum \phi(X_{i_1},\dots,X_{i_{m_1}},Y_{j_1},\dots,Y_{j_{m_2}})
+\end{aligned}
+\]</span> 其中<span class="math inline">\(1\le i_1&lt;\dots&lt;i_{m_1}\le n_1\)</span>，<span class="math inline">\(1\le j_1&lt;\dots&lt;j_{m_1}\le n_2\)</span>，<span class="math inline">\(\sum\)</span>代表对所有的组合<span class="math inline">\((i_1,\dots,i_{m_1})\)</span>和<span class="math inline">\((j_1,\dots,j_{m_2})\)</span>求和。称<span class="math inline">\(U\)</span>是以<span class="math inline">\(\phi(X_1,\dots,X_{m_1},Y_1,\dots,Y_{m_2})\)</span>为核的两样本<span class="math inline">\(U\)</span>统计量。</p>
+<p>设<span class="math inline">\(E[\phi(X_1,\dots,X_{m_1},Y_1,\dots,Y_{m_2})]=\theta\)</span>，则<span class="math inline">\(U\)</span>统计量的期望<span class="math inline">\(E[U]=\theta\)</span>。</p>
+<p>令<span class="math inline">\(\phi_{c_1c_2}(x_1,\dots,x_{c_1},y_1,\dots,y_{c_2})=E[\phi(X_1,\dots,X_{m_1},Y_1,\dots,Y_{m_2})|X_1=x_1,\cdots,X_{c_1}=x_{c_1};Y_1=y_1,\cdots,Y_{c_2}=y_{c_2}]\)</span>。其中，<span class="math inline">\(c_1=0,\dots,m_1\)</span>，<span class="math inline">\(c_2=0,\dots,m_2\)</span>，如果取0则代表条件期望中不包含该参数。记<span class="math inline">\(\sigma_{c_1c_2}^2=\text{Var}[\phi_{c_1c_2}]\)</span>，则<span class="math inline">\(U\)</span>统计量的方差为<span class="math inline">\(\text{Var}(U)=\frac{m_1^2}{n_1}\cdot \sigma_{10}^2+\frac{m_2^2}{n_2}\cdot \sigma_{01}^2+\Omicron(n_1^{-2}+n_2^{-2})\)</span>。</p>
+<p>当<span class="math inline">\(n_1\rightarrow \infty,n_2\rightarrow \infty\)</span>时，上述<span class="math inline">\(U\)</span>统计量满足渐近正态性： <span class="math display">\[
+\frac{U-\theta}{\sqrt{\frac{m_1^2}{n_1}\cdot \sigma_{10}^2+\frac{m_2^2}{n_2}\cdot \sigma_{01}^2}}\stackrel{L}\longrightarrow N(0,1)
+\]</span></p>
+<blockquote>
+<p>例：位置参数的Mann-Whitney检验</p>
+<p>样本<span class="math inline">\(X_1,\dots,X_{n_1}\)</span>和<span class="math inline">\(Y_1,\dots,Y_{n_2}\)</span>分别来自相互独立的连续随机变量总体<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>。设<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>的分布函数分别为<span class="math inline">\(F\)</span>和<span class="math inline">\(G\)</span>。考虑检验问题：原假设<span class="math inline">\(H_0:\)</span>对于任意的<span class="math inline">\(x\)</span>都有<span class="math inline">\(F(x)=G(x)\)</span>，备择假设<span class="math inline">\(H_1:\)</span>对于任意的<span class="math inline">\(x\)</span>都有<span class="math inline">\(F(x)&gt;G(x)\)</span>。</p>
+<p>在<span class="math inline">\(G(x)=F(x-a)\)</span>时，这就是关于位置参数<span class="math inline">\(a\)</span>的检验问题，此时原假设为<span class="math inline">\(H_0:a=0\)</span>对备择假设<span class="math inline">\(H_1:a&gt;0\)</span>。这个检验问题常称为位置参数的检验问题。</p>
+<p>当原假设成立时，即对于任意的<span class="math inline">\(x\)</span>，都有<span class="math inline">\(F(x)=G(x)\)</span>时，有如下关系成立： <span class="math display">\[
+P(X&lt;Y)=\int_{-\infty}^{\infty} F(y)dG(y)=0.5
+\]</span> 而在备择假设成立时，有如下关系式成立： <span class="math display">\[
+P(X&lt;Y)=\int_{-\infty}^{\infty} F(y)dG(y)&gt;\int_{-\infty}^{\infty} G(y)dG(y)=0.5
+\]</span> 在<span class="math inline">\(P(X&lt;Y)&gt;0.5\)</span>时，此时我们称<span class="math inline">\(X\)</span>随机地比<span class="math inline">\(Y\)</span>小。令<span class="math inline">\(w=P(X&lt;Y)\)</span>，则检验问题又可变为关于参数<span class="math inline">\(w\)</span>的检测问题，原假设<span class="math inline">\(H_0:w=0.5\)</span>对备择假设<span class="math inline">\(H_1:w&gt;0.5\)</span>。构造对称函数： <span class="math display">\[
+\phi(X_1,Y_1)=
+\begin{cases}
+1,~X_1&lt;Y_1 \\
+0,~X_1\ge Y_1
+\end{cases}
+\]</span> 以此为核构造<span class="math inline">\(U\)</span>统计量： <span class="math display">\[
+U=U(X_1,\dots,X_{n_1};Y_1,\dots,Y_{n_2})=\frac{1}{n_1\cdot n_2}\cdot\sum \phi(X_i;Y_j)
+\]</span> 就是<span class="math inline">\(w\)</span>的无偏估计。这一统计量被称为Mann-Whitney统计量。由于在备择假设为真时<span class="math inline">\(w\)</span>的值较大，因此在<span class="math inline">\(U\ge c\)</span>时拒绝原假设，认为对于任意的<span class="math inline">\(x\)</span>都有<span class="math inline">\(F(x)&gt;G(x)\)</span>成立。</p>
+<p>在原假设成立时，<span class="math inline">\(w=0.5\)</span>，故<span class="math inline">\(E(U)=0.5\)</span>，同时还有： <span class="math display">\[
+\phi_{10}(x_1)=\bar{F}(x_1),~~\phi_{01}(y_1)={F}(y_1)~~\text{备注：经查阅其它资料，这里认为高等数理统计书上的有误}
+\]</span> 因此可以计算得：<span class="math inline">\(\sigma_{01}^2=\sigma_{10}^2=\frac{1}{12}\)</span>，由此可得： <span class="math display">\[
+\begin{aligned}
+\text{Var}(U)=&amp;\frac{1}{n_1}\cdot \sigma^2_{10}+\frac{1}{n_2}\cdot \sigma^2_{01}+\Omicron(n_1^{-2}+n_2^{-2}) \\
+=&amp; \frac{n_1+n_2}{12n_1n_2}+\Omicron(n_1^{-2}+n_2^{-2})~~~~(\text{精确值为}\frac{n_1+n_2+1}{12n_1n_2}) \\
+\end{aligned}
+\]</span> 根据渐近正态性，在大样本场合下的拒绝域可以写为： <span class="math display">\[
+U\ge \frac{1}{2}+\sqrt{\frac{n_1+n_2}{12n_1n_2}}\cdot U_{1-\alpha}
+\]</span></p>
+</blockquote>
+<h2 id="秩检验">秩检验</h2>
+<h3 id="基本思想">基本思想</h3>
+<p>设有独立同分布的样本<span class="math inline">\(x_1,\dots,x_n\)</span>，假设总体<span class="math inline">\(X\)</span>为连续随机变量，从而以概率1保证<span class="math inline">\(x_1,\dots,x_n\)</span>互不相等。将样本从小到大排列为<span class="math inline">\(x_{(1)}&lt;x_{(2)}&lt;\cdots&lt;x_{(n)}\)</span>。如果<span class="math inline">\(x_i=x_{(R_i)}\)</span>，则称<span class="math inline">\(x_i\)</span>在样本<span class="math inline">\(x_1,\dots,x_n\)</span>中的秩为<span class="math inline">\(R_i\)</span>，简称<span class="math inline">\(x_i\)</span>的秩为<span class="math inline">\(R_i\)</span>。<span class="math inline">\(R=(R_1,\dots,R_n)\)</span>以及<span class="math inline">\(R\)</span>任意的可测函数称为秩统计量。</p>
+<p><span class="math inline">\(R\)</span>服从离散分布，可以取<span class="math inline">\(n!\)</span>个值。由于样本<span class="math inline">\(x_1,\dots,x_n\)</span>独立同分布，因此<span class="math inline">\(R\)</span>取任意一组值的概率都相等，也就是说<span class="math inline">\(R\)</span>服从均匀分布。由此可知，秩统计量的分布与总体服从什么样的分布无关。</p>
+<p>由于<span class="math inline">\(R\)</span>服从均匀分布，因此单个的秩<span class="math inline">\(R_i\)</span>也服从均匀分布： <span class="math display">\[
+P(R_i=r)=\frac{1}{n}
+\]</span> 从而可得： <span class="math display">\[
+E(R_i)=\frac{(n+1)}{2} \\
+\text{Var}(R_i)=\frac{(n^2-1)}{12}
+\]</span> &gt;证明： &gt;<span class="math display">\[
+&gt;\begin{aligned}
+&gt;E(R_i)=&amp;\sum_{r=1}^{n} r\cdot P(R_i=r) \\
+&gt;=&amp; \frac{1}{n}\cdot \frac{n(n+1)}{2} \\
+&gt;=&amp; \frac{n+1}{2} \\
+&gt;\text{Var}(R_i)=&amp;\sum_{r=1}^{n} r^2\cdot P(R_i=r)-E(R_i)^2 \\
+&gt;=&amp; \frac{1}{n}\cdot \frac{n(n+1)(2n+1)}{6}-\frac{(n+1)^2}{4} \\
+&gt;=&amp; \frac{n^2-1}{12}
+&gt;\end{aligned}
+&gt;\]</span></p>
+<p>对于任意的<span class="math inline">\(i\ne j\)</span>，<span class="math inline">\(R_i\)</span>和<span class="math inline">\(R_j\)</span>的联合分布也是均匀分布： <span class="math display">\[
+P(R_i=r_1,R_j=r_2)=\frac{1}{n(n-1)}
+\]</span> 从而可得： <span class="math display">\[
+\text{Cov}(R_i,R_j)=-\frac{n+1}{12}
+\]</span> &gt;证明： &gt;<span class="math display">\[
+&gt;\begin{aligned}
+&gt;\text{Cov}(R_i,R_j)=&amp;E[(R_i-E(R_i))(R_j-E(R_j))] \\
+&gt;=&amp; E[R_iR_j]-E(R_i)E(R_j) \\
+&gt;=&amp; \frac{1}{n(n-1)}\sum_{i\ne j} ij-\frac{(n+1)^2}{2} \\
+&gt;=&amp; \frac{1}{n(n-1)}(\sum_{i=1}^n\sum_{j=1}^n ij-\sum_{i=1}^n i^2)-\frac{(n+1)^2}{2}\\
+&gt;=&amp; \frac{1}{n(n-1)}(\frac{n^2(n+1)^2}{4}-\frac{n(n+1)(2n+1)}{6})-\frac{(n+1)^2}{2} \\
+&gt;=&amp; -\frac{n+1}{12}
+&gt;\end{aligned}
+&gt;\]</span></p>
+<p>秩检验的基本思想是，用<span class="math inline">\(x_i\)</span>的秩<span class="math inline">\(R_i\)</span>代替<span class="math inline">\(x_i\)</span>来做统计推断，<span class="math inline">\(R_i\)</span>可以理解为<span class="math inline">\(x_i\)</span>的得分。一般来说，可以定义一个计分函数<span class="math inline">\(a(r)\)</span>，在<span class="math inline">\(x_i\)</span>的秩为<span class="math inline">\(R_i\)</span>时，将<span class="math inline">\(x_i\)</span>的得分定义为<span class="math inline">\(a(R_i)\)</span>。</p>
+<p>类似地，有下面的结论： <span class="math display">\[
+E(a(R_i))=\frac{1}{n}\sum_{i=1}^n a(i)=\bar{a} \\
+\text{Var}(a(R_i))=\frac{1}{n}\sum_{i=1}^{n}(a(i)-\bar{a})^2 \\
+\text{Cov}(a(R_i),a(R_j))=-\frac{1}{n(n-1)}\sum_{i=1}^{n}(a(i)-\bar{a})^2
+\]</span></p>
+<blockquote>
+<p>证明： <span class="math display">\[
+\begin{aligned}
+E(a(R_i))=&amp;\sum_{i=1}^{n} a(i)\cdot P(i) \\
+=&amp; \frac{1}{n} \sum_{i=1}^{n} a(i)
+\end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\text{Var}(a(R_i))=&amp;\sum_{i=1}^{n} [a(i)-E(a(R_i))]^2\cdot P(i) \\
+=&amp; \frac{1}{n} \sum_{i=1}^{n} (a(i)-\bar{a})^2
+\end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\text{Cov}(a(R_i),a(R_j))=&amp;E[(a(R_i)-E(a(R_i)))(a(R_j)-E(a(R_j)))]\\
+=&amp; E[a(R_i)a(R_j)]-E(a(R_i))E(a(R_j)) \\
+=&amp; \frac{1}{n(n-1)}[\sum_{i=1}^{n}\sum_{j=1}^{n}a(i)a(j)-\sum_{i=1}^{n}a(i)^2]-2\bar{a}^2 \\
+=&amp; \frac{1}{n(n-1)}[n^2\bar{a}^2-\sum_{i=1}^{n}a(i)^2-n(n-1)\bar{a}^2] \\
+=&amp; \frac{1}{n(n-1)}[n\bar{a}^2-\sum_{i=1}^{n}a(i)^2] \\
+=&amp; -\frac{1}{n(n-1)}\sum_{i=1}^{n}(a(i)-\bar{a})^2
+\end{aligned}
+\]</span></p>
+</blockquote>
+<h3 id="符号秩和检验">符号秩和检验</h3>
+<p>假设<span class="math inline">\(x_1,\cdots,x_n\)</span>独立同分布，其分布关于<span class="math inline">\(\theta\)</span>对称，同时假设这个对称分布是连续分布，由此可知，以概率1不仅可以保证<span class="math inline">\(x_1,\cdots,x_n\)</span>两两互不相等，而且任何一个<span class="math inline">\(x_i\)</span>都不等于<span class="math inline">\(\theta\)</span>。考虑对称中心<span class="math inline">\(\theta\)</span>的检测问题： <span class="math display">\[
+H_{0}:\theta=0 ~\text{对}~ H_1:\theta&lt;0
+\]</span> 令 <span class="math display">\[
+u_i=\begin{cases}
+1,~~x_i&gt;0\\
+0,~~\text{otherwise}
+\end{cases}
+\\
+s^+=\sum_{u_i}=\#\{x_i&gt;0,i=1,\dots,n\}
+\]</span> 其中记号<span class="math inline">\(\#\)</span>表示计数，上述方法被称为符号检验。这种检验方法只使用了样本是正数还是负数的信息，而没有使用样本数据值大小的信息，它不能有效地解决对称中心是否等于0的检验问题。</p>
+<p>符号秩和检验方法是对符号检验的改进，还用到了样本数据值大小的信息。首先将每个样本都取绝对值<span class="math inline">\(|x_1|,\dots,|x_n|\)</span>，由于总体服从连续分布，同样能够以概率1保证这些样本的绝对值两两互不相等。设<span class="math inline">\(|x_i|\)</span>在<span class="math inline">\(|x_1|,\dots,|x_n|\)</span>中的秩为<span class="math inline">\(R_i\)</span>。符号秩和检验的检验统计量为： <span class="math display">\[
+W^+=\sum_{i=1}^n u_iR_i
+\]</span> 显然<span class="math inline">\(W^+\)</span>不仅有样本数据是正数还是负数的信息，而且还有样本数据值大小的信息。与符号检验类似，在<span class="math inline">\(W^+\)</span>比较小的时候拒绝原假设。</p>
+<p>下面说明当原假设<span class="math inline">\(H_0:\theta=0\)</span>成立，即总体的分布关于原点0对称时，符号秩和检验统计量<span class="math inline">\(W^+\)</span>的分布的性质。</p>
+<p>如果随机变量<span class="math inline">\(X\)</span>的分布关于原点0对称，定义 <span class="math display">\[
+u=\begin{cases}
+1,~~X&gt;0\\
+0,~~\text{otherwise}
+\end{cases}
+\]</span> 那么<span class="math inline">\(|X|\)</span>与<span class="math inline">\(u\)</span>相互独立。</p>
+<blockquote>
+<p>证明：</p>
+<p><span class="math inline">\(u\)</span>的分布律为<span class="math inline">\(P(u=0)=P(u=1)=\frac{1}{2}\)</span>。要证明<span class="math inline">\(|X|\)</span>与<span class="math inline">\(u\)</span>相互独立，也就是证明如下两个等式对于任意的<span class="math inline">\(a&gt;0\)</span>都成立： <span class="math display">\[
+P(|X|\le a,u=1)=P(|X|\le a)\cdot P(u=1) \\
+P(|X|\le a,u=0)=P(|X|\le a)\cdot P(u=0) \\
+\]</span> 下面证明第一个等式，第二个等式的证明方法类似。首先我们有： <span class="math display">\[
+P(|X|\le a,u=1)=P(-a\le X\le a,u=1)=P(0\le X\le a)
+\]</span> 此外，由于<span class="math inline">\(X\)</span>的分布关于原点对称，因此 <span class="math display">\[
+P(|X|\le a)=P(-a\le X\le a)=2P(0\le X\le a)
+\]</span> 从而得证。</p>
+</blockquote>
+<p>由此可知，当样本<span class="math inline">\(x_1,\cdots,x_n\)</span>独立同分布，其分布是关于原点0对称的连续分布时，<span class="math inline">\(|x_1|,u_1,\dots,|x_n|,u_n\)</span>相互独立，且此时<span class="math inline">\(u_1,\dots,u_n\)</span>和<span class="math inline">\((R_1,\dots,R_n)\)</span>相互独立。从而可知，无论<span class="math inline">\(R_1,\dots,R_n\)</span>是否给定，<span class="math inline">\(u_1,\dots,u_n\)</span>总是独立同分布的，而且<span class="math inline">\(u_1\)</span>的分布总是<span class="math inline">\(P(u_1=0)=P(u_1=1)=0.5\)</span>。</p>
+<p><span class="math inline">\(W^+\)</span>服从离散分布，它可以取<span class="math inline">\(0,1,\dots,\frac{n(n+1)}{2}\)</span>各个值。令<span class="math inline">\(t_{n,d}\)</span>表示从<span class="math inline">\(1,2,\dots,n\)</span>这<span class="math inline">\(n\)</span>个数中任取若干个数（包括一个都不取），其和恰好为<span class="math inline">\(d(d=0,1,\dots,\frac{n(n+1)}{2})\)</span>的取法总数（例如<span class="math inline">\(t_{n,0}=1,t_{n,3}=2\)</span>）。因此，在总体的分布是关于原点0对称的连续分布时，<span class="math inline">\(R_1,\dots,R_n\)</span>给定之后<span class="math inline">\(W^+=d\)</span>的条件概率为： <span class="math display">\[
+P(W^+=d|R_1,\dots,R_n)=\frac{t_{n,d}}{2^n}=P(W^+=d)
+\]</span> 从<span class="math inline">\(1,2,\dots,n\)</span>这<span class="math inline">\(n\)</span>个数中任取若干个数（包括一个都不取）其和恰好为<span class="math inline">\(d\)</span>，那么没有取出来的数的和为<span class="math inline">\(\frac{n(n+1)}{2}-d\)</span>，所以由此可得： <span class="math display">\[
+P(W^+=d)=P(W^+=\frac{n(n+1)}{2}-d)
+\]</span> 也就是说，当总体的分布是关于原点0对称的连续分布时，<span class="math inline">\(W^+\)</span>服从对称分布，对称中心为<span class="math inline">\(\frac{n(n+1)}{4}\)</span>，数学期望<span class="math inline">\(E[W^+]=\frac{n(n+1)}{4}\)</span>，方差<span class="math inline">\(\text{Var}(W^+)=\frac{n(n+1)(2n+1)}{24}\)</span>。</p>
+<blockquote>
+<p>证明：</p>
+<p>令<span class="math inline">\(S=\sum_{i=1}^{n}iu_i\)</span>，则<span class="math inline">\(S\)</span>与<span class="math inline">\(W^+\)</span>有相同的概率分布。</p>
+<p>由于 <span class="math display">\[
+E(S)=\sum_{i=1}^{n} E(u_i)E(i) =\frac{1}{2}\sum_{i=1}^{n}i=\frac{n(n+1)}{4}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\text{Var}(S)=\sum_{i=1}^ni^2 \text{Var}(u_i)=\frac{1}{4}\sum_{i=1}^ni^2=\frac{n(n+1)(2n+1)}{24}
+\end{aligned}
+\]</span></p>
+<p>故由<span class="math inline">\(S\)</span>与<span class="math inline">\(W^+\)</span>具有相同的概率分布，可得<span class="math inline">\(W^+\)</span>的数学期望和方差。</p>
+</blockquote>
+<p>此外，当样本容量<span class="math inline">\(n\)</span>趋于无穷大时，<span class="math inline">\(W^+\)</span>有渐进正态性： <span class="math display">\[
+\frac{W^+-E[W^+]}{\sqrt{\text{Var}(W^+)}}\stackrel{L}\longrightarrow N(0,1)
+\]</span> &gt;证明： &gt; &gt;根据李雅普诺夫中心极限定理，如果当<span class="math inline">\(n\rightarrow \infty\)</span>时， &gt;<span class="math display">\[
+&gt;\frac{\sum_{i=1}^n E|x_i-E(x_i)|^3}{B_n^3}\rightarrow 0
+&gt;\]</span> &gt;成立，则有 &gt;<span class="math display">\[
+&gt;\sum_{i=1}^{n}\frac{x_i-E(x_i)}{B_n}\rightarrow N(0,1)
+&gt;\]</span> &gt;其中，<span class="math inline">\(B_n=\sqrt{\sum_{i=1}^{n}\text{Var}(x_i)}\)</span>。 &gt; &gt;同样考虑随机变量<span class="math inline">\(S=\sum_{i=1}^{n}x_i=\sum_{i=1}^{n}iu_i\)</span>，有： &gt;<span class="math display">\[
+&gt;E|x_i-E(x_i)|^3=i^3 E|u_i-\frac{1}{2}|^3=i^3/8
+&gt;\]</span> &gt; &gt;故有 &gt;<span class="math display">\[
+&gt;\sum_{i=1}^nE|x_i-E(x_i)|^3=\frac{1}{8}\sum_{i=1}^{n}i^3=\frac{n^2(n+1)^2}{32}\sim \Omicron(n^4)  \\
+&gt;B_n^3=(\frac{n(n+1)(2n+1)}{24})^{3/2} \sim \Omicron(n^{9/2})
+&gt;\]</span> &gt;从而<span class="math inline">\(S\)</span>满足李雅普诺夫中心极限定理的条件，由此可以进一步得到<span class="math inline">\(W^+\)</span>的渐近正态性。</p>
+<p>这一检验方法也可以进行推广。定义计分函数<span class="math inline">\(a(r)\)</span>，从而可将符号秩和检验统计量<span class="math inline">\(W^+=\sum_{i=1}^n u_iR_i\)</span>推广为<span class="math inline">\(\sum_{i=1}^n u_ia(R_i)\)</span>。计分函数<span class="math inline">\(a(r)=r\)</span>这一特例便为符号秩和检验统计量。此外，还有以下一些特例：</p>
+<ol type="1">
+<li>取<span class="math inline">\(a(r)=1\)</span>，此时便为符号检验</li>
+<li>记标准正态分布<span class="math inline">\(N(0,1)\)</span>分布函数<span class="math inline">\(\Phi(x)\)</span>的反函数为<span class="math inline">\(\Phi^{-1}(x)\)</span>，取<span class="math inline">\(a(r)=\Phi^{-1}[\frac{1}{2}+\frac{r}{2(n+1)}]\)</span>，这个计分函数被称为正态分位计分。</li>
+</ol>
+<h3 id="位置参数秩和检验">位置参数秩和检验</h3>
+<p>位置参数的检验问题也可以用秩方法来解决，这种方法被称为Wilcoxon秩和检验。样本<span class="math inline">\(X_1,\dots,X_{m}\)</span>和<span class="math inline">\(Y_1,\dots,Y_{n}\)</span>分别来自相互独立的连续随机变量总体<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>。设<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>的分布函数分别为<span class="math inline">\(F\)</span>和<span class="math inline">\(G\)</span>，且<span class="math inline">\(G(x)=F(x-a)\)</span>。当<span class="math inline">\(a&gt;0\)</span>时，相当于是将分布函数<span class="math inline">\(F(x)\)</span>向右平移<span class="math inline">\(a\)</span>个单位才得到<span class="math inline">\(G(x)\)</span>，此时如果将合样本<span class="math inline">\((X_1,\dots,X_{m};Y_1,\dots,Y_{n})\)</span>从小到大排列，则<span class="math inline">\(Y_1,\dots,Y_{n}\)</span>倾向于排在右边。从而样本<span class="math inline">\(Y_1,\dots,Y_{n}\)</span>的秩和<span class="math inline">\(W_y=\sum_{j=1}^{n}R_j\)</span>也倾向于取较大的值。与之相反，当<span class="math inline">\(a&lt;0\)</span>时，秩和<span class="math inline">\(W_y\)</span>倾向于取较小的值。</p>
+<p>下面讨论秩和<span class="math inline">\(W_y\)</span>的分布的性质。<span class="math inline">\(W_y\)</span>服从离散分布，它依次取<span class="math inline">\(n(n+1)/2,n(n+1)/2+1,\dots,n(n+1)/2+mn\)</span>各个值。令<span class="math inline">\(t_{m,n}(d)\)</span>表示从<span class="math inline">\(1,2,\dots,N=m+n\)</span>这<span class="math inline">\(N\)</span>个数中任意取<span class="math inline">\(n\)</span>个数字，其和恰好为<span class="math inline">\(d\)</span>的方法总数。由此可将<span class="math inline">\(W_y\)</span>的概率分布写为： <span class="math display">\[
+P(W_y=d)=\frac{t_{m,n}(d)}{\binom{N}{n}}
+\]</span> 由于从<span class="math inline">\(N\)</span>个数中任意取出<span class="math inline">\(n\)</span>个数字，其和为<span class="math inline">\(d\)</span>与其和为<span class="math inline">\(n(N+1)-d\)</span>的方法数相等（<span class="math inline">\(n(n+1)/2+n(n+1)/2+mn=n(N+1)\)</span>），因此<span class="math inline">\(W_y\)</span>服从对称分布，对称中心为<span class="math inline">\(\frac{n(N+1)}{2}\)</span>。</p>
+<p><span class="math inline">\(W_y\)</span>的期望和方差分别为： <span class="math display">\[
+E[W_y]=n(N+1)/2\\
+\text{Var}[W_y]=mn(N+1)/12
+\]</span> &gt;证明： &gt; &gt;根据之前的推导，可得： &gt;<span class="math display">\[
+&gt;E(\sum_{i=1}^{n}a(R_i))=nE(a(R_1))=n\bar{a},~\bar{a}=\frac{1}{N}\sum_{i=1}^N a(r)
+&gt;\]</span> &gt; &gt;<span class="math display">\[
+&gt;\begin{aligned}
+&gt;\text{Var}(\sum_{i=1}^{n}a(R_i))=&amp;n\text{Var}(a(R_i))+n(n-1)\text{Cov}(a(R_1),a(R_2)) \\
+&gt;=&amp; \frac{n}{N}\sum_{i=1}^N (a(r)-\bar{a})^2-\frac{n(n-1)}{N(N-1)}\sum_{i=1}^N (a(r)-\bar{a})^2 \\
+&gt;=&amp; \frac{mn}{N(N-1)}\sum_{i=1}^N (a(r)-\bar{a})^2
+&gt;\end{aligned}
+&gt;\]</span> &gt; &gt;在上述的位置参数秩和检验问题中，<span class="math inline">\(a(r)=r\)</span>，故有 &gt;<span class="math display">\[
+&gt;\begin{aligned}
+&gt;\bar{a}=&amp;\frac{N+1}{2} \\
+&gt;\sum_{i=1}^N (a(r)-\bar{a})^2=&amp;\sum_{i=1}^N a^2(r)-N\bar{a}^2 \\
+&gt;=&amp;\frac{N(N+1)(2N+1)}{6}-\frac{N(N+1)^2}{4} \\
+&gt;=&amp; \frac{N(N+1)(N-1)}{12}
+&gt;\end{aligned}
+&gt;\]</span> &gt;将其代入上式，可得 &gt;<span class="math display">\[
+&gt;E(W_y)=n(N+1)/2 \\
+&gt;\text{Var}(W_y)=mn(N+1)/12
+&gt;\]</span></p>
+<p>在样本容量<span class="math inline">\(m\)</span>和<span class="math inline">\(n\)</span>都趋于无穷大时，<span class="math inline">\(W_y\)</span>有渐进正态性： <span class="math display">\[
+\frac{W_y-E[W_y]}{\sqrt{\text{Var}(W_y)}}\stackrel{L}\longrightarrow N(0,1)
+\]</span></p>
+<h3 id="尺度参数的秩检验">尺度参数的秩检验</h3>
+<p>设样本<span class="math inline">\(X_1,\dots,X_{m}\)</span>和<span class="math inline">\(Y_1,\dots,Y_{n}\)</span>分别来自相互独立的连续随机变量总体<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>，二者的取值范围相同，都是以原点0为对称中心的一个区间。设<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>的分布函数分别为<span class="math inline">\(F\)</span>和<span class="math inline">\(G\)</span>，且<span class="math inline">\(G(x)=F(x/\sigma)\)</span>，其中<span class="math inline">\(\sigma&gt;0\)</span>被称为尺度参数。如果将合样本<span class="math inline">\((X_1,\dots,X_{m};Y_1,\dots,Y_{n})\)</span>从小到大排列，当<span class="math inline">\(\sigma&gt;1\)</span>时，由于正数会变得更大，而负数会变得更小，因此<span class="math inline">\(Y_1,\dots,Y_{n}\)</span>倾向于排在左右两侧。如果记<span class="math inline">\(Y_j\)</span>在合样本中的秩为<span class="math inline">\(R_j\)</span>，那么在<span class="math inline">\(\sigma&gt;1\)</span>时<span class="math inline">\(R_j\)</span>会倾向于比较大或者比较小。当<span class="math inline">\(\sigma&lt;1\)</span>时情况相反。</p>
+<p>对于尺度参数的秩检验问题，计分函数<span class="math inline">\(a(r)\)</span>必须单峰或者单谷，随着<span class="math inline">\(r\)</span>的增加<span class="math inline">\(a(r)\)</span>先上升后下降或者先下降后上升。计分函数通常有以下5种选法：</p>
+<ol type="1">
+<li><p>Mood检验：<span class="math inline">\(a(r)=(r-(N+1)/2)^2\)</span></p></li>
+<li><p>Ansari-Bradley检验： <span class="math display">\[
+N=2k,a(r)=\begin{cases}
+r,r=1,2,\dots,k \\
+N-r+1,r=k+1,k+2,\dots,N \\
+\end{cases}\\
+N=2k+1,a(r)=\begin{cases}
+r,r=1,2,\dots,k+1 \\
+N-r+1,r=k+2,k+3,\dots,N \\
+\end{cases}\\
+\]</span></p></li>
+<li><p>Copan检验：假设<span class="math inline">\(\xi_1,\dots,\xi_N\)</span>为来自标准正态分布的容量为<span class="math inline">\(N\)</span>的样本，将其由小到大排列为<span class="math inline">\(\xi_{(1)},\dots,\xi_{(N)}\)</span>，取<span class="math inline">\(a(r)=E(\xi_{(r)}^2)\)</span>。</p></li>
+<li><p>Klotz检验：记标准正态分布的分布函数为<span class="math inline">\(\Phi(x)\)</span>，其反函数记为<span class="math inline">\(\Phi^{-1}(x)\)</span>，取<span class="math inline">\(a(r)=[\Phi^{-1}(r/(N+1))]^2\)</span></p></li>
+<li><p>Siegel-Turkey检验：取<span class="math inline">\(a(1)=N\)</span>，<span class="math inline">\(a(N)=N-1\)</span>，<span class="math inline">\(a(N-1)=N-2\)</span>，<span class="math inline">\(a(2)=N-3\)</span>，<span class="math inline">\(a(3)=N-4\)</span>，<span class="math inline">\(a(N-2)=N-5\)</span>，……</p></li>
+</ol>
+<h3 id="线性秩统计量">线性秩统计量</h3>
+<p>假设<span class="math inline">\(x_1,x_2,\dots,x_N\)</span>同为连续分布，记<span class="math inline">\(x_i\)</span>在<span class="math inline">\(x_1,x_2,\dots,x_N\)</span>中的秩为<span class="math inline">\(R_i\)</span>，则称<span class="math inline">\(L=\sum_{i=1}^N c(i)a(R_i)\)</span>为线性秩统计量。其中，<span class="math inline">\(c(i)\)</span>是定义在<span class="math inline">\(\{1,2,\dots,N\}\)</span>上的某个特定的函数，又称为回归系数，<span class="math inline">\(a(r)\)</span>为计分函数。例如上述的位置和尺度参数的秩检验就是线性秩统计量。</p>
+<p>对于线性秩统计量，其均值和方差分别为： <span class="math display">\[
+E[L]=N\bar{a}\bar{c} \\
+\text{Var}[L]=\frac{1}{N-1}\sum_{r=1}^N(a(r)-\bar{a})^2\sum_{i=1}^{N}(c(i)-\bar{c})^2 \\
+\]</span> 其中，<span class="math inline">\(\bar{a}=\frac{1}{N}\sum_{r=1}^{N}a(r)\)</span>，<span class="math inline">\(\bar{c}=\frac{1}{N}\sum_{i=1}^{N}c(i)\)</span>。</p>
+<p>线性秩统计量渐进正态性的证明比较复杂，可以按照如下三个步骤：</p>
+<ol type="1">
+<li><p>计算<span class="math inline">\(c(i)\)</span>是否满足条件<span class="math inline">\(N\)</span>，即： <span class="math display">\[
+\frac{\max_{1\le i\le n}(c(i)-\bar{c})^2}{\sum_{i=1}^N (c(i)-\bar{c})^2}\rightarrow 0,~~~N\rightarrow \infty
+\]</span></p></li>
+<li><p>尝试将计分函数<span class="math inline">\(a(r)\)</span>改写为 <span class="math display">\[
+a(r)=b(N)\varphi(\frac{r}{N+1})
+\]</span> 形式，其中<span class="math inline">\(b(N)\)</span>仅与<span class="math inline">\(N\)</span>有关，函数<span class="math inline">\(\varphi(t)\)</span>是<span class="math inline">\((0,1)\)</span>上两个非降平方可积函数之差，且不等于某一常数。如果可以将计分函数写成此形式，则称<span class="math inline">\(a(r)\)</span>为平方可积计分函数。通常可以通过从<span class="math inline">\(a(r)\)</span>的表达式中提取<span class="math inline">\(N+1\)</span>这一公因式来改写，例如秩和检验统计量<span class="math inline">\(W_y\)</span>的计分函数<span class="math inline">\(a(i)=i\)</span>，可以改写为<span class="math inline">\(a(i)=(N+1)\varphi(i/(N+1))\)</span>，其中<span class="math inline">\(\varphi(t)=t\)</span>。通常使用的计分函数往往都是平方可积计分函数。</p></li>
+<li><p>如果前两项都满足，则根据Hajek定理，这一线性秩统计量满足渐进正态性： <span class="math display">\[
+\frac{L-E(L)}{\sqrt{\text{Var}(L)}}\stackrel{L}\longrightarrow N(0,1)
+\]</span></p></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/" title="数理统计-非参数假设检验">http://lyf35.github.io/2021/12/26/数理统计-非参数假设检验/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag"><i class="fa fa-tag"></i> 统计学</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/20/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E7%82%B9%E4%BC%B0%E8%AE%A1/" rel="prev" title="数理统计-点估计">
+      <i class="fa fa-chevron-left"></i> 数理统计-点估计
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/" rel="next" title="数理统计-参数假设检验">
+      数理统计-参数假设检验 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '8e7088eaec289fcc7f73f2371cc8a39b',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

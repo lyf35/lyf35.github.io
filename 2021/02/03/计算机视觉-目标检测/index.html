@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="概述 计算机视觉中关于图像识别有四大类任务：  分类-Classification：解决“是什么？”的问题，即给定一张图片或一段视频判断里面包含什么类别的目标。 定位-Location：解决“在哪里？”的问题，即定位出这个目标的的位置。 检测-Detection：解决“在哪里？是什么？”的问题，即定位出这个目标的位置并且知道目标物是什么。 分割-Segmentation：分为实例的分割（Insta">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机视觉-目标检测">
+<meta property="og:url" content="http://lyf35.github.io/2021/02/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="概述 计算机视觉中关于图像识别有四大类任务：  分类-Classification：解决“是什么？”的问题，即给定一张图片或一段视频判断里面包含什么类别的目标。 定位-Location：解决“在哪里？”的问题，即定位出这个目标的的位置。 检测-Detection：解决“在哪里？是什么？”的问题，即定位出这个目标的位置并且知道目标物是什么。 分割-Segmentation：分为实例的分割（Insta">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214843.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214913.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214920.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214943.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214959.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215016.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215029.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215048.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215116.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215124.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215141.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215154.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215207.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215220.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215243.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215254.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215311">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215413.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215425.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215440.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215459.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215511.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210711184001.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215520.png">
+<meta property="article:published_time" content="2021-02-03T01:26:41.000Z">
+<meta property="article:modified_time" content="2021-02-07T14:02:56.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="计算机视觉">
+<meta property="article:tag" content="目标检测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214843.jpg">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/02/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计算机视觉-目标检测 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%80%99%E9%80%89%E5%8C%BA%E5%9F%9F%E4%BA%A7%E7%94%9F"><span class="nav-number">3.1.</span> <span class="nav-text">候选区域产生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C"><span class="nav-number">3.2.</span> <span class="nav-text">输出结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0"><span class="nav-number">3.3.</span> <span class="nav-text">效果评估</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E6%9E%81%E5%A4%A7%E5%80%BC%E6%8A%91%E5%88%B6"><span class="nav-number">3.4.</span> <span class="nav-text">非极大值抑制</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#two-stage"><span class="nav-number">4.1.</span> <span class="nav-text">Two-stage</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#r-cnn%E7%B3%BB%E5%88%97"><span class="nav-number">4.1.1.</span> <span class="nav-text">R-CNN系列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#r-cnn"><span class="nav-number">4.1.1.1.</span> <span class="nav-text">R-CNN</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">4.1.1.1.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%80%99%E9%80%89%E5%8C%BA%E5%9F%9F%E7%94%9F%E6%88%90"><span class="nav-number">4.1.1.1.2.</span> <span class="nav-text">候选区域生成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">4.1.1.1.3.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E9%A2%84%E6%B5%8B"><span class="nav-number">4.1.1.1.4.</span> <span class="nav-text">模型预测</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fast-r-cnn"><span class="nav-number">4.1.1.2.</span> <span class="nav-text">Fast R-CNN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#faster-r-cnn"><span class="nav-number">4.1.1.3.</span> <span class="nav-text">Faster R-CNN</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#one-stage"><span class="nav-number">4.2.</span> <span class="nav-text">One-stage</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#yolo%E7%B3%BB%E5%88%97"><span class="nav-number">4.2.1.</span> <span class="nav-text">YOLO系列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#yolov1"><span class="nav-number">4.2.1.1.</span> <span class="nav-text">YOLOv1</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-number">4.2.1.1.1.</span> <span class="nav-text">设计思路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84-1"><span class="nav-number">4.2.1.1.2.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">4.2.1.1.3.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E9%A2%84%E6%B5%8B-1"><span class="nav-number">4.2.1.1.4.</span> <span class="nav-text">模型预测</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#yolov2"><span class="nav-number">4.2.1.2.</span> <span class="nav-text">YOLOv2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#yolov3"><span class="nav-number">4.2.1.3.</span> <span class="nav-text">YOLOv3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#yolov4"><span class="nav-number">4.2.1.4.</span> <span class="nav-text">YOLOv4</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#yolov5"><span class="nav-number">4.2.1.5.</span> <span class="nav-text">YOLOv5</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ssd"><span class="nav-number">4.2.2.</span> <span class="nav-text">SSD</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/02/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机视觉-目标检测
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-03 09:26:41" itemprop="dateCreated datePublished" datetime="2021-02-03T09:26:41+08:00">2021-02-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-07 22:02:56" itemprop="dateModified" datetime="2021-02-07T22:02:56+08:00">2021-02-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">计算机视觉</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/02/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" class="post-meta-item leancloud_visitors" data-flag-title="计算机视觉-目标检测" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="概述">概述</h1>
+<p>计算机视觉中关于图像识别有四大类任务：</p>
+<ol type="1">
+<li>分类-Classification：解决“是什么？”的问题，即给定一张图片或一段视频判断里面包含什么类别的目标。</li>
+<li>定位-Location：解决“在哪里？”的问题，即定位出这个目标的的位置。</li>
+<li>检测-Detection：解决“在哪里？是什么？”的问题，即定位出这个目标的位置并且知道目标物是什么。</li>
+<li>分割-Segmentation：分为实例的分割（Instance-level）和场景分割（Scene-level），解决“每一个像素属于哪个目标物或场景”的问题。</li>
+</ol>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214843.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>目标检测（Object Detection）的任务是找出图像中所有感兴趣的目标（物体），并确定它们的类别和位置。所以目标检测是一个分类、回归问题的叠加。</p>
+<span id="more"></span>
+<p>目标检测需要解决的问题包括：</p>
+<ul>
+<li>分类问题：图片中的图像属于哪个类别</li>
+<li>定位问题：目标出现在图像的哪个位置</li>
+<li>大小问题：目标的尺寸如何</li>
+<li>形状问题：目标可能有各种不同的形状</li>
+</ul>
+<h1 id="分类">分类</h1>
+<p>目前主流的目标检测算法主要是基于深度学习模型，大概可以分成两大类别：</p>
+<ol type="1">
+<li>One-Stage目标检测算法，这类检测算法不需要先产生候选区域（Region Proposals），可以通过一个Stage直接产生物体的类别概率和位置坐标值，比较典型的算法有YOLO、SSD和CornerNet等；</li>
+<li>Two-Stage目标检测算法，这类检测算法将检测问题划分为两个阶段，第一个阶段首先产生候选区域，包含目标大概的位置信息，然后第二个阶段对候选区域进行分类和位置精修，这类算法的典型代表有R-CNN，Fast R-CNN，Faster R-CNN等。</li>
+</ol>
+<p>目标检测模型的主要性能指标是检测准确度和速度，其中准确度主要考虑物体的定位以及分类准确度。一般情况下，Two-Stage算法在准确度上有优势，而One-Stage算法在速度上有优势。不过，随着研究的发展，两类算法都在两个方面做改进，均能在准确度以及速度上取得较好的结果。</p>
+<h1 id="原理">原理</h1>
+<h2 id="候选区域产生">候选区域产生</h2>
+<p>一些目标检测技术都会涉及候选框（bounding boxes）的生成，例如RCNN。候选区域的生成有两种方法：</p>
+<ul>
+<li>滑动窗口：对输入图像进行不同窗口大小的滑窗进行从左往右、从上往下的滑动，每次滑动的时候对当前窗口执行分类器（预先训练好），如果当前窗口得到了较高的分类概率则认为检测到了物体。对每个不同窗口大小的滑动窗口都进行检测之后，会得到不同窗口检测到的物体标记，其中一定会存在重复较高的部分，需要使用非极大值抑制的方法进行筛选。这种方法简单易于理解，但是全局搜索会导致效率低下。</li>
+<li>选择性搜索：图像中物体可能存在的区域应该是有某些相似性或者连续性区域的。选择性搜索便利用了这些相似性进行候选框的生成。首先，对输入图像进行分割算法产生许多小的子区域。其次，根据这些子区域之间相似性（相似性标准主要有颜色、纹理、大小等等）进行区域合并，不断的进行区域迭代合并。每次迭代过程中对这些合并的子区域做bounding boxes（外切矩形），这些子区域外切矩形就是通常所说的候选框。</li>
+</ul>
+<h2 id="输出结果">输出结果</h2>
+<p>目标检测的输出结果通常包含两个部分：一部分是检测到目标的边框坐标与置信度，另一部分是目标属于某个类别的概率。</p>
+<p>因此，最终的损失函数也由分类损失和回归损失两部分组成。</p>
+<h2 id="效果评估">效果评估</h2>
+<p>使用IoU（Intersection over Union，交并比）来判断模型的好坏。所谓交并比，是指预测边框、实际边框交集和并集的比率，一般约定0.5为一个可以接收的值。</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214913.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<h2 id="非极大值抑制">非极大值抑制</h2>
+<p>预测结果中，可能多个预测结果间存在重叠部分，需要保留交并比最大的、去掉非最大的预测结果，这就是非极大值抑制（Non-Maximum Suppression，NMS）。如下图所示，对同一个物体预测结果包含三个概率0.8/0.9/0.95，经过非极大值抑制后，仅保留概率最大的预测结果。</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214920.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<h1 id="模型">模型</h1>
+<h2 id="two-stage">Two-stage</h2>
+<h3 id="r-cnn系列">R-CNN系列</h3>
+<h4 id="r-cnn">R-CNN</h4>
+<h5 id="基本思想">基本思想</h5>
+<p>R-CNN借鉴了滑动窗口的思想，采用对区域进行识别的方案。给定一张输入图片，先从图片中提取出约2000个类别独立的候选区域，对于这些区域先使用CNN抽取出一个固定长度的特征向量，然后再对每个区域使用SVM进行目标分类。大致流程如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214943.png" alt="在这里插入图片描述" /><figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<h5 id="候选区域生成">候选区域生成</h5>
+<p>能够生成候选区域的方法有很多，包括滑动窗口、选择性搜索等。R-CNN使用的是选择性搜索算法生成候选区域，这一算法会首先将图像分割成小区域，然后重复对可能性最高的两个区域进行合并（颜色相近、纹理相近、合并后面积小等规则），直到整个图像合并为一个区域位置，最终输出所有曾经存在过的区域。</p>
+<p>为了避免遗漏候选区域，选择性搜索算法会在多个颜色空间内进行，对于所有颜色空间与所有合并规则得到的全部结果，在去除掉重复后全部作为候选区域输出。</p>
+<h5 id="网络结构">网络结构</h5>
+<p>R-CNN使用AlexNet抽取一个4096维的特征向量，网络的输入为227*227。对于不同尺寸的图像，统一将其变换为这个尺寸。</p>
+<h5 id="模型预测">模型预测</h5>
+<p>由于候选区域较多，因此很多会发生重叠。因此需要采取非极大性抑制的方法筛选出最终的检测框。针对于每个类，计算IoU指标，以最高分的区域为基础，剔除掉重叠位置的区域，从而得到最终结果。</p>
+<h4 id="fast-r-cnn">Fast R-CNN</h4>
+<p>R-CNN存在以下几个问题：</p>
+<ol type="1">
+<li>训练分多步，R-CNN的训练先要微调一个预训练的网络，然后针对每个类别都训练一个SVM分类器，最后还要用回归器对候选框进行回归，另外候选区域也要单独用选择性搜索的方式获得，步骤比较繁琐。</li>
+<li>时间和内存消耗比较大，在训练SVM和回归的时候需要用网络训练的特征作为输入，特征保存在磁盘上再读入的时间消耗较大。</li>
+<li>测试的时候比较慢，每张图片的每个候选区域都要做卷积，重复操作过多。</li>
+</ol>
+<p>在Fast R-CNN之前提出的SPPNet算法解决了R-CNN中重复卷积的问题，同时允许各种尺寸的图像作为输入，但是其它缺点仍然存在。因此Fast R-CNN相当于全面改进了原有的这两个算法，使得训练步骤减少，同时训练速度和测试速度都有很大程度的提升。</p>
+<p>Fast R-CNN的改进点包括：</p>
+<ol type="1">
+<li><p>网络结构的改变：Fast R-CNN的网络结构如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207214959.png" alt="img" style="zoom:67%;" /></p>
+<p>Fast R-CNN的输入包括两部分，一部分是待处理的整张图像，另一部分是候选区域。候选区域的提取仍然使用Selective Search算法，并需要把这些候选区域按照空间位置关系映射到最后的卷积特征层。</p>
+<p>Fast R-CNN处理的第一步是对图像进行多次卷积和池化处理来获取卷积特征图。由于存在多个候选区域，系统会有一个甄别，判断出感兴趣区域（Region of Interest, RoI）。</p>
+<p>RoI池化层是SSP（Spatial Pyramid Pooling）层的特殊情况，它可以从特征图中提取一个固定长度的特征向量。SPP Layer对每个候选区域使用了不同大小的金字塔映射，即SPP Layer采用多个尺度的池化层进行池化操作；而RoI Pooling Layer只需将不同尺度的特征图下采样到一个固定的尺度，即RoI Pooling Layer只采用单一尺度进行池化。它们的区别如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215016.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>每个特征向量都会被输送到全连接层序列中，全连接层会分支为两个同级输出层。其中一层的功能是进行分类，对目标关于K个对象类（包括全部”背景background”类）输出每一个RoI的概率分布，也就是产生softmax概率估计；另一层是为了输出K个对象中每一个类的四个实数值（bbox regression），每4个值编码K个类中的每个类的精确边界框（bounding-box）位置。整个结构是使用多任务损失的端到端训练。</p></li>
+<li><p>Fast R-CNN统一了类别输出任务和候选框回归任务，有两个损失函数：分类损失和回归损失。分类采用softmax代替SVM进行分类，共输出N（类别）+1（背景）类。softmax由于引入了类间竞争，所以分类效果优于SVM。回归损失输出的是4*N（类别），4表示的是候选框的中心坐标和宽、高共四个属性。</p></li>
+<li><p>为了提高运算速度，用奇异值分解对全连接层进行变换来提高运算速度。一个大的矩阵可以近似分解为三个小矩阵的乘积，分解后的矩阵的元素数目远小于原始矩阵的元素数目，从而达到减少计算量的目的。</p></li>
+</ol>
+<h4 id="faster-r-cnn">Faster R-CNN</h4>
+<p>Faster R-CNN做出的改进包括：</p>
+<ol type="1">
+<li><p>网络结构的改变。Faster RCNN将特征抽取，备选区域提取，目标边框的回归与物体分类都整合在了一个网络中，使得综合性能有较大提高，在检测速度方面尤为明显。整体的网络结构如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215029.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>对于一幅任意大小P*Q的图像，首先将其缩放至固定大小M*N，然后将其输入到一个CNN网络中得到Feature Map。在此之后网络分为两个分支：一个分支被直接输送到RoI池化层，另一个分支则需要经过一个Region Proposal Network（RPN）网络生成备选区域之后再被输送到RoI池化层。最终，经过全连接层之后对识别出的物体进行分类以及检测框的位置修正。</p>
+<p>相比于R-CNN方法，抛弃了使用选择性搜索生成候选区域的方法，而是直接使用RPN网络生成检测框，这使得Faster R-CNN的检测框生成速度得到极大的提升。</p></li>
+<li><p>使用RPN网络生成备选区域。首先，为Feature Map的每一个点都设定了9个大小不同的锚框作为初始的检测框。如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215048.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>由于这些锚框的数量很多，因此需要经过一个Softmax操作提取出包含物体的锚框作为候选区域。这一操作对应于网络结构中的如下部分，其中输出大小18对应于9个锚框以及每个锚框的正/负分类（即锚框是否包含目标）。</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215116.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>同时，另一条分支对锚框的位置进行调整，图中的36对应于9个锚框以及每个锚框的4个尺寸变换属性。</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215124.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>最终，两条分支被汇总到Proposal Layer，计算出精准的备选框位置与尺寸，然后送入到RoI池化层。Proposal Layer会进行如下的处理：筛选出正样本得分排名靠前的锚框，并计算出它们的修正后位置；之后，将锚框的尺寸约束到图像内部；最终剔除尺寸很小的锚框并且对剩下的锚框做NMS从而得到最终的备选框。</p></li>
+<li><p>网络的训练过程如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215141.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure></li>
+</ol>
+<h2 id="one-stage">One-stage</h2>
+<h3 id="yolo系列">YOLO系列</h3>
+<p>YOLO意思是You Only Look Once，相比于Two-stage的R-CNN系列模型，将候选区和对象识别这两个阶段合二为一。实际上，YOLO并没有真正去掉候选区，而是采用了预定义的候选区（准确点说应该是预测区，因为并不是Faster RCNN所采用的Anchor）。也就是将图片划分为 多个网格（grid），每个网格允许预测出若干个边框（bounding box，包含某个对象的矩形框）。可以理解为候选区通过这种方式产生，它们很粗略的覆盖了图片的整个区域。</p>
+<p>YOLO的目标检测速度较快，但是准确率比起R-CNN系列要稍差。</p>
+<h4 id="yolov1">YOLOv1</h4>
+<h5 id="设计思路">设计思路</h5>
+<p>整体来看，YOLO1采用一个单独的CNN网络实现end-to-end的目标检测。首先将输入图片resize到448x448，然后送入CNN网络，最后处理网络预测结果得到检测的目标。相比于R-CNN算法，其是一个统一的框架，因此速度更快，且网络训练更方便。下图为YOLO1检测系统的示意图：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215154.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>具体来说，YOLO的CNN网络将输入的图片分割为<span class="math inline">\(S\times S\)</span>大小的网格，然后每个网格负责去检测那些中心点落在该格子内的目标。如下图所示，可以看到狗这个目标的中心落在左下角的一个单元格内，那么这个单元格负责预测这只狗。也就是说，这个目标中心（即图中的红点）所在单元格对应的输出中，狗的概率为1，其它物体的概率都为0；而在其它网格对应的输出中，狗的概率也都为0。图中的汽车和自行车也按照同样的方法进行标记。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215207.jpg" alt="img" style="zoom: 33%;" /></p>
+<p>每个单元格会预测<span class="math inline">\(B\)</span>个边界框及它们的置信度。边界框的大小和位置使用一个四元向量<span class="math inline">\((x,y,w,h)\)</span>来表示，其中<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>对应边界框的中心坐标，<span class="math inline">\(w\)</span>和<span class="math inline">\(h\)</span>对应于边界框的宽与高。需要说明的是，置信度既包含边界框含有目标的可能性大小信息，记作<span class="math inline">\(\text{Pr(object)}\)</span>；也包含这个边界框的准确度信息，边界框的准确度可以用预测框与实际框的IoU来表征，记作<span class="math inline">\(\text{IoU}_{\text{pred}}^{\text{truth}}\)</span>。因此置信度可以定义为：<span class="math inline">\(c=\text{Pr(object)}* \text{IoU}_{\text{pred}}^{\text{truth}}\)</span>。因此，每个边界框的预测值其实是一个包含边界框信息及其置信度的五元向量<span class="math inline">\((x,y,w,h,c)\)</span>。</p>
+<p>对于每一个单元格，还要给出它预测出的<span class="math inline">\(C\)</span>个类别的概率值，这些值表示由该单元格负责预测的边界框属于各个类别的概率。这些概率值其实是在各个边界框置信度下的条件概率<span class="math inline">\(\text{Pr}(\text{class}_i|\text{Object})\)</span>。但是YOLO1算法的一个缺点是，无论一个单元格预测多少个边界框，它只能输出一组概率值。</p>
+<p>我们也可以计算出各个边界框的类别置信度：<span class="math inline">\(\text{Pr}(\text{class}_i|\text{Object})*\text{Pr(object)}* \text{IoU}_{\text{pred}}^{\text{truth}}\)</span>，它表示的是该边界框中目标属于各个类别的可能性大小以及边界框匹配目标的效果好坏。一般会根据类别置信度来过滤网络的预测框从而得到最终结果。因此，模型的计算过程可以使用下图来说明：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215220.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>总结起来的话，每个单元格需要预测<span class="math inline">\((5B+C)\)</span>个值，如果将输入图片划分为<span class="math inline">\(S\times S\)</span>的网格，那么最终预测值为<span class="math inline">\(S\times S\times (5B+C)\)</span>大小的张量。</p>
+<h5 id="网络结构-1">网络结构</h5>
+<p>YOLO1使用CNN来提取特征，然后使用全连接层得到预测值，网络结构可参考GoogLeNet模型。在使用PASCAL VOC数据训练网络时，网络的最终输出是一个<span class="math inline">\(7\times 7\times 30\)</span>大小的张量。因此整个网络结构如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215243.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>对于这个<span class="math inline">\(7\times 7\times 30\)</span>大小的张量，它的<span class="math inline">\(7\times 7\)</span>部分代表对图像划分的网格数目，而在每一个网格所对应的长为30的维度上，前20个元素代表每个类别的概率值，紧接着的2个元素代表边界框的置信度，最后8个元素代表边界框的<span class="math inline">\((x,y,w,h)\)</span>信息。可以用下图来直观地展示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215254.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<h5 id="损失函数">损失函数</h5>
+<p>首先写出是YOLO损失函数的表达式： <span class="math display">\[
+\begin{aligned}
+loss=~~&amp;~\lambda_{coord}\sum_{i=0}^{S^2}\sum_{j=0}^{B}\mathbb{I}_{ij}^{obj}[(x_i-\hat{x}_i)^2+(y_i-\hat{y}_i)^2] \\
++&amp;~\lambda_{coord}\sum_{i=0}^{S^2}\sum_{j=0}^{B}\mathbb{I}_{ij}^{obj}[(\sqrt{w_i}-\sqrt{\hat{w}_i})^2+(\sqrt{h_i}-\sqrt{\hat{h}_i})^2] \\
++&amp;~\sum_{i=0}^{S^2}\sum_{j=0}^{B}\mathbb{I}_{ij}^{obj}(C_i-\hat{C}_i)^2 \\
++&amp;~\lambda_{noobj}\sum_{i=0}^{S^2}\sum_{j=0}^{B}\mathbb{I}_{ij}^{noobj}(C_i-\hat{C}_i)^2 \\
++&amp;~\sum_{i=0}^{S^2}\mathbb{I}_{i}^{obj}\sum_{c\in classes}(p_i(c)-\hat{p}_i(c))^2
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(\lambda_{coord}\)</span>和<span class="math inline">\(\lambda_{noobj}\)</span>为两个超参数；<span class="math inline">\(\mathbb{I}_{ij}^{obj}\)</span>指的是第<span class="math inline">\(i\)</span>个单元格存在目标，且该单元格的第<span class="math inline">\(j\)</span>个边界框负责预测该目标时，该值为1，否则为0，其余与之类似的符号可以按此推理。</p>
+<p>在上述的损失函数中，每一项的含义如下：</p>
+<ul>
+<li>第一项代表边界框中心坐标的误差项；</li>
+<li>第二项代表边界框的宽与高的误差项；</li>
+<li>第三项是包含目标的边界框的置信度误差项；</li>
+<li>第四项是不包含目标的边界框的置信误差项；</li>
+<li>最后一项是包含目标的单元格的分类误差项。</li>
+</ul>
+<p>需要注意的是，由于每个单元格预测多个边界框，但是其对应类别只有一个。那么在训练时，如果该单元格内确实存在目标，那么只选择与ground truth的IoU最大的那个边界框认为其中存在目标，而其它边界框认为不存在目标。</p>
+<h5 id="模型预测-1">模型预测</h5>
+<p>在网络进行预测的时候，可能会出现对同一个目标多次检测的情况，此时便需要使用非极大值抑制算法（NMS）对检测结果进行过滤。首先从所有的检测框中找到置信度最大的那个框，然后挨个计算其与剩余框的IOU，如果其值大于一定阈值（重合度过高），那么就将该框剔除；然后对剩余的检测框重复上述过程，直到处理完所有的检测框。</p>
+<h4 id="yolov2">YOLOv2</h4>
+<p>YOLOv2相比于YOLOv1做了下面的改进：</p>
+<ol type="1">
+<li><p>使用了Batch Normalization。</p></li>
+<li><p>在训练过程中，先使用低分辨率图像（224*224）对模型进行分类模型预训练，再使用高分辨率样本（448*448）对分类模型进行微调，在这之后才使用448*448的检测样本进行训练。通过这种方式缓解了分辨率突然切换造成的影响。</p></li>
+<li><p>网络架构：将网络的基本架构改为DarkNet-19，其中只有卷积层和池化层。因此可以处理不同分辨率的输入。</p></li>
+<li><p>借鉴了Faster R-CNN的思想，使用锚框去预测检测框，来代替使用全连接层预测检测框，通过这种方式以获得更多的空间信息。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215311" alt="这里写图片描述" style="zoom:67%;" /></p>
+<p>同时，为了让后面产生的卷积特征图的宽和高都为奇数，输入的规模变为416*416，这样使得网络最后的输出变为13*13。假设每个网格产生9个锚框，那么总共会预测出13*13*9个边框，而类别的预测也与锚框绑定在一起。</p>
+<p><strong>但是需要注意的是，在YOLOv2的原始论文中，作者最终得出的模型并没有使用这一技术，只是在其中做了一些尝试性的工作。</strong></p></li>
+<li><p>对锚框进行聚类，来寻找先验框的尺寸。Faster-RCNN中锚框的个数和宽高维度往往是手动选择的先验框，因此如果一开始就选择了更好的、更有代表性的先验框尺寸，那么网络就应该更容易学到准确的预测位置。解决办法就是统计学习中的K-means聚类方法，通过对数据集中的真实边界框做聚类，找到这些边框的统计规律。最终，以聚类个数k作为先验框的个数，以k个聚类中心的尺寸作为先验框的尺寸。</p>
+<p>由于我们的目的是产生具有好的IoU得分的边界框，因此距离的度量不是使用欧式距离，而是使用如下的公式：<span class="math inline">\(d(\text{box,centroid})=1-\text{IoU}(\text{box,centroid})\)</span>。</p></li>
+<li><p>直接预测相对位置：模型在输出边框的位置特征时，实际上是先验框与真值框之间的偏移量<span class="math inline">\((t_x,t_y,t_w,t_h,t_o)\)</span>，而实际的边界框位置<span class="math inline">\((b_x,b_y,b_w,b_h)\)</span>通过如下的表达式进行转换： <span class="math display">\[
+\begin{aligned}
+b_x=&amp;\sigma(t_x)+c_x\\
+b_y=&amp;\sigma(t_y)+c_y\\
+b_w=&amp;p_we^{t_w}\\
+b_h=&amp;p_he^{t_h}
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(\sigma(x)=\frac{e^x}{1+e^{x}}\)</span>​，<span class="math inline">\(c_x\)</span>​和<span class="math inline">\(c_y\)</span>​是边界框的中心所在格点的位置（以左上角为基点），<span class="math inline">\(p_w\)</span>​和<span class="math inline">\(p_h\)</span>​为先验框的宽和高。<span class="math inline">\((b_x,b_y,b_w,b_h)\)</span>​的取值范围是<span class="math inline">\([0,\text{conv-width}]\)</span>​，其中conv-width指的是模型最终输出特征图的宽度（假设输出宽高相等）。</p></li>
+<li><p>细粒度特征：为了检测一些小目标，YOLOv2加入了一个passthrough layer，将浅层特征图（分辨率26*26）连接到深层特征图。passthrough layer把高低分辨率的特征图做连结，叠加到不同的通道。这个方法将26*26*512的特征叠加为13*13*2048大小的特征图，然后与网络中的深层特征图连接</p></li>
+<li><p>多尺度训练：为了让网络对不同尺寸的图片具有鲁棒性，在训练时每经过10轮，就会随机选择一个新的图片尺寸。这种机制使得网络可以更好地预测不同尺寸的图片，同一个网络可以完成不同分辨率的检测任务。</p></li>
+<li><p>为了检测更多对象，YOLOv2通过对名词对象进行层级分类（即从大类到小类），建立了WordTree，从而大大扩展了检测对象的类型。</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215413.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure></li>
+</ol>
+<h4 id="yolov3">YOLOv3</h4>
+<p>YOLOv3相比于v2做了如下的改进：</p>
+<ol type="1">
+<li><p>网络结构的改变：YOLOv3使用了Darknet-53的网络结构。在这个网络结构中，是没有池化层和全连接层的。在YOLOv3前向传播的过程中，张量的尺寸是通过改变卷积核的步长来实现的，而在YOLOv2中是通过最大池化来进行的，二者的尺寸变换操作都是5次。</p>
+<p>YOLOv3的网络结构如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215425.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure></li>
+<li><p>输出张量的改变：YOLOv3输出了3个不同尺度的feature map。这一点借鉴了FPN（feature pyramid networks），采用多尺度来对不同尺寸的目标进行检测，越精细的网格（如52*52）就可以检测出越精细的物体。</p>
+<p>YOLOv3设定的是每个网格单元预测3个边框，而每个边框对应于80个类别（COCO数据集）以及5个边框尺寸的参数，这便是输出中255的来历。</p></li>
+<li><p>同样使用聚类得到先验框的大小，但是这些先验框会根据它们的大小不同，被分别用在3个不同尺度的feature map，如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215440.png" alt="在这里插入图片描述" /><figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<p>图中的蓝色框代表聚类得到的先验框尺寸，黄色框为ground truth，红色框为检测目标中心点所在的网格。</p></li>
+<li><p>损失函数的改变：不再对分类的结果做softmax处理，对图像中检测到的目标做多标签分类。损失函数包括四部分：xy的损失、wh的损失、置信度的损失和分类的损失。除了wh的损失使用平方误差之外，其余损失使用二值交叉熵。</p></li>
+</ol>
+<h4 id="yolov4">YOLOv4</h4>
+<p>YOLOv4算法是在原有YOLO目标检测架构的基础上，使用了近些年CNN领域中各种优秀的优化策略，从数据处理、主干网络、网络训练、激活函数、损失函数等各个方面都有着不同程度的尝试与优化，文章如同于目标检测的trick综述。</p>
+<p>YOLOv4在如下几个方面进行了优化：</p>
+<ol type="1">
+<li><p>网络结构方面，相比于YOLOv3，将主干网络修改为CSPDarknet53，使用PANet作为Neck部分。同时在网络中使用了Mish激活函数和DropBlock（去除掉局部区域，而不是像Dropout一样随机去除）等手段。</p>
+<p>YOLOv4的网络结构如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215459.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure></li>
+<li><p>在输入端使用各种方式进行改进，包括Mosaic数据增强、Mixup数据增强、cmBN、SAT自对抗训练等，其中Mosaic数据增强的手段对于训练效果影响很大。</p></li>
+<li><p>对于边框的回归问题，使用了CIoU损失，解决了边界框不重合的问题，并将边界框中心点距离以及宽高比的尺度信息也考虑进去。</p></li>
+<li><p>使用遗传算法对超参数进行选择</p></li>
+</ol>
+<blockquote>
+<p>备注：</p>
+<ol type="1">
+<li>YOLOv4的论文中将目标检测的网络框架分成如下图所示的结构</li>
+</ol>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215511.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ol start="2" type="1">
+<li>论文中将训练中使用到的一些技巧分为两种类型：
+<ul>
+<li>Bag of Freebies，指的是可以提高精度但是不增加训练时间的设计，包括：
+<ul>
+<li>数据增广的方法：图像几何变换、CutOut、MixUp、CutMix、GAN等</li>
+<li>网络正则化的方法：Dropout、DropBlock等</li>
+<li>类别不平衡的处理方法</li>
+<li>难例挖掘方法</li>
+<li>损失函数的设计</li>
+</ul></li>
+<li>Bag of Specials，指的是稍许增加推断代价，但是可以提高模型精度的办法，包括：
+<ul>
+<li>增大模型感受野的办法：SPP、ASPP、RFB等</li>
+<li>注意力机制：SE、SAM等</li>
+<li>特征集成方法：SFAM、ASFF、BiFPN等</li>
+<li>改进的激活函数：Swish、Mish等</li>
+<li>后处理方法：soft NMS、DIoU NMS等</li>
+</ul></li>
+</ul></li>
+</ol>
+</blockquote>
+<h4 id="yolov5">YOLOv5</h4>
+<p>相比于YOLOv4，YOLOv5主要是网络结构上的变化：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210711184001.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>YOLOv5在模型训练时同样使用到了上文中提到的一些方法，故此处不再赘述。在工程上，GitHub仓库<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3VsdHJhbHl0aWNzL3lvbG92NQ==">ultralytics/yolov5: YOLOv5 🚀 in PyTorch &gt; ONNX &gt; CoreML &gt; TFLite (github.com)<i class="fa fa-external-link-alt"></i></span>中已经给出了PyTorch实现的YOLOv5代码以及预训练模型，可以方便地使用。</p>
+<h3 id="ssd">SSD</h3>
+<p>SSD具有如下主要特点：</p>
+<ol type="1">
+<li>从YOLO中继承了将detection转化为regression的思路，同时一次即可完成网络训练</li>
+<li>基于Faster RCNN中的anchor，提出了相似的prior box；</li>
+<li>加入基于特征金字塔（Pyramidal Feature Hierarchy）的检测方式，相当于半个FPN思路</li>
+</ol>
+<p>SSD的网络结构如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210207215520.png" alt="在这里插入图片描述" /><figcaption aria-hidden="true">在这里插入图片描述</figcaption>
+</figure>
+<p>SSD的网络框架以VGG16为基础做了一些修改，抽取不同卷积层的特征图并在上面的每一个点都构造出备选框，最终将这些备选框合起来，并使用非最大值抑制的方法删除部分重叠或者不正确的备选框，从而生成最终的检测结果。由于不同大小的特征图具有不同的感受野，因此在多个卷积层上进行检测时，从理论上来说可以取得更好的检测效果。</p>
+<p>在特征图的每个位置预测K个bbox，对于每一个bbox需要预测C个类别得分，以及相对于Default box的4个偏移量值，因此总共需要 <strong>(C+4)×K</strong>个预测器，在m×n的feature map上面将会产生 <strong>(C+4)×K×m×n</strong>个预测值。</p>
+<p>SSD的损失函数分为两部分：第一部分为位置回归损失，使用的是平滑的L1损失函数；第二部分为置信度损失，使用softmax损失函数。</p>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3llZ2VsaS9hcnRpY2xlL2RldGFpbHMvMTA5ODYxODY3">目标检测（Object Detection）_yegeli的博客-CSDN博客_目标检测<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2YyOTAxMzE2NjUvYXJ0aWNsZS9kZXRhaWxzLzgxMDEyNTU2">目标检测（Object Detection）入门概要_hyfine-CSDN博客<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC80NjU5NTg0Ng==">目标检测最新进展总结与展望 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8xODMyNjE5NzQ=">你一定从未看过如此通俗易懂的YOLO系列(从v1到v5)模型解读 (上) - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2MyMDA4MTA1Mi9hcnRpY2xlL2RldGFpbHMvODAyMzYwMTU=">【深度学习YOLO V1】深刻解读YOLO V1（图解）_c20081052的专栏-CSDN博客_yolov1<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8zMjUyNTIzMQ==">目标检测|YOLO原理与实现 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vZnlkZWJsb2cvcC8xMDQ0Nzg3NS5odG1s">目标检测综述 - FANG_YANG - 博客园 (cnblogs.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC80NjhlMDhmNzM5YmQ=">超全面目标检测算法综述 - 简书 (jianshu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/46691043"><机器爱学习>YOLO v1深入理解 - 知乎 (zhihu.com)</a></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2plc3NlX214L2FydGljbGUvZGV0YWlscy81MzkyNTM1Ng==">YOLOv2 论文笔记_Jesse_Mx的博客-CSDN博客_yolov2论文<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8yNTE2NzE1Mw==">YOLO2 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdHQxZS9hcnRpY2xlL2RldGFpbHMvODg5MDc1NDI=">一文看懂YOLO v3_litt1e的博客-CSDN博客_yolov3<i class="fa fa-external-link-alt"></i></span></li>
+<li>https://arxiv.org/pdf/1506.02640.pdf</li>
+<li>https://arxiv.org/pdf/1612.08242v1.pdf</li>
+<li>https://pjreddie.com/media/files/papers/YOLOv3.pdf</li>
+<li>https://arxiv.org/pdf/2004.10934.pdf</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8xNDM3NDcyMDY=">深入浅出Yolo系列之Yolov3&amp;Yolov4&amp;Yolov5核心基础知识完整讲解 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8xMzczOTM0NTA=">一文了解YOLO-v4目标检测 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8xNzIxMjEzODA=">深入浅出Yolo系列之Yolov5核心基础知识完整讲解 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC8zMzE0ZDY5N2ZlNjE=">R-CNN - 简书 (jianshu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2JyaWJsdWUvYXJ0aWNsZS9kZXRhaWxzLzgyMDEyNTc1">【深度学习】R-CNN 论文解读及个人理解_frank 的专栏-CSDN博客<i class="fa fa-external-link-alt"></i></span></li>
+<li>https://arxiv.org/abs/1311.2524</li>
+<li>https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NoZW54aWFvbHUxOTg0L2FydGljbGUvZGV0YWlscy81MTAzNjY3Nw==">【目标检测】Fast RCNN算法详解_shenxiaolu1984的专栏-CSDN博客<i class="fa fa-external-link-alt"></i></span></li>
+<li>https://arxiv.org/abs/1506.01497</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8zMTQyNjQ1OA==">一文读懂Faster RCNN - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li>https://arxiv.org/abs/1512.02325</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3RoaXNpc3pkeS9hcnRpY2xlL2RldGFpbHMvODk1NzYzODk=">目标检测之SSD_thisiszdy的博客-CSDN博客_ssd目标检测<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIwMjIvYXJ0aWNsZS9kZXRhaWxzLzc5ODMzNzg2">目标检测算法之SSD_小白将-CSDN博客_ssd算法<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/02/03/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" title="计算机视觉-目标检测">http://lyf35.github.io/2021/02/03/计算机视觉-目标检测/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" rel="tag"><i class="fa fa-tag"></i> 计算机视觉</a>
+              <a href="/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" rel="tag"><i class="fa fa-tag"></i> 目标检测</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="prev" title="深度学习-卷积神经网络">
+      <i class="fa fa-chevron-left"></i> 深度学习-卷积神经网络
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="next" title="深度学习-循环神经网络">
+      深度学习-循环神经网络 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '391ef67678a05a52eb8b483d5da4051e',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

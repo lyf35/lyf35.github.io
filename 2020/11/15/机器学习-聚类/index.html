@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="概述 聚类（Clustering）算法是一种无监督学习算法，它试图将数据集中的样本划分为若干个不相交的子集，每一个子集被称为一个“簇（Cluster，或被称为类）”。通过这样的划分，每个簇可能对应于一些潜在的概念，但是这些概念对于聚类算法而言事先是未知的，聚类过程仅仅能够自动形成簇结构，这些簇所对应的概念需要通过人工来把握。 使用数学语言，聚类算法可以描述为如下的形式：假设样本集\(D&#x3D;\{\bo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习-聚类">
+<meta property="og:url" content="http://lyf35.github.io/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%81%9A%E7%B1%BB/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="概述 聚类（Clustering）算法是一种无监督学习算法，它试图将数据集中的样本划分为若干个不相交的子集，每一个子集被称为一个“簇（Cluster，或被称为类）”。通过这样的划分，每个簇可能对应于一些潜在的概念，但是这些概念对于聚类算法而言事先是未知的，聚类过程仅仅能够自动形成簇结构，这些簇所对应的概念需要通过人工来把握。 使用数学语言，聚类算法可以描述为如下的形式：假设样本集\(D&#x3D;\{\bo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210308225753.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210308225718.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210309230150.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402073931.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402073901.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210310211308.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20180725173312977?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h1YWNoYV9f/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402073130.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402073151.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210310221448.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210310221955.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402074243.png">
+<meta property="article:published_time" content="2020-11-15T15:09:52.000Z">
+<meta property="article:modified_time" content="2021-04-02T00:36:30.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="无监督学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210308225753.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%81%9A%E7%B1%BB/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>机器学习-聚类 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B7%9D%E7%A6%BB%E8%AE%A1%E7%AE%97"><span class="nav-number">2.</span> <span class="nav-text">距离计算</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#k%E5%9D%87%E5%80%BC%E8%81%9A%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">K均值聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">算法原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A8%E8%AE%BA"><span class="nav-number">3.2.</span> <span class="nav-text">讨论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.2.1.</span> <span class="nav-text">对比高斯混合模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#k%E5%80%BC%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">3.2.2.</span> <span class="nav-text">K值的选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.3.</span> <span class="nav-text">代码示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dbscan"><span class="nav-number">4.</span> <span class="nav-text">DBSCAN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="nav-number">4.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4"><span class="nav-number">4.2.</span> <span class="nav-text">算法步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9%E5%88%86%E6%9E%90"><span class="nav-number">4.3.</span> <span class="nav-text">优缺点分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">4.3.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">4.3.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-1"><span class="nav-number">4.4.</span> <span class="nav-text">代码示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E8%81%9A%E7%B1%BB"><span class="nav-number">5.</span> <span class="nav-text">层次聚类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86-1"><span class="nav-number">5.1.</span> <span class="nav-text">算法原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-2"><span class="nav-number">5.2.</span> <span class="nav-text">代码示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%81%9A%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习-聚类
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-15 23:09:52" itemprop="dateCreated datePublished" datetime="2020-11-15T23:09:52+08:00">2020-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-02 08:36:30" itemprop="dateModified" datetime="2021-04-02T08:36:30+08:00">2021-04-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%81%9A%E7%B1%BB/" class="post-meta-item leancloud_visitors" data-flag-title="机器学习-聚类" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="概述">概述</h1>
+<p>聚类（Clustering）算法是一种无监督学习算法，它试图将数据集中的样本划分为若干个不相交的子集，每一个子集被称为一个“簇（Cluster，或被称为类）”。通过这样的划分，每个簇可能对应于一些潜在的概念，但是这些概念对于聚类算法而言事先是未知的，聚类过程仅仅能够自动形成簇结构，这些簇所对应的概念需要通过人工来把握。</p>
+<p>使用数学语言，聚类算法可以描述为如下的形式：假设样本集<span class="math inline">\(D=\{\boldsymbol{x}_1,\boldsymbol{x}_2,\dots,\boldsymbol{x}_m\}\)</span>包含<span class="math inline">\(m\)</span>个无标记样本，每个样本<span class="math inline">\(\boldsymbol{x}_i=\{x_{i1},x_{i2},\dots,x_{in}\}\)</span>是一个<span class="math inline">\(n\)</span>维的特征向量。聚类算法将样本集<span class="math inline">\(D\)</span>划分为<span class="math inline">\(k\)</span>个（<span class="math inline">\(k\)</span>的值为手动设定）不相交的簇<span class="math inline">\(\{C_l|l=1,2,\dots,k\}\)</span>，其中<span class="math inline">\(C_{l&#39;}\cap_{l&#39;\ne l}C_l=\empty\)</span>且<span class="math inline">\(D=\cup_{l=1}^{k}C_l\)</span>。如果我们用<span class="math inline">\(\lambda_j\in \{1,2,\dots,k\}\)</span>表示样本<span class="math inline">\(\boldsymbol{x}_j\)</span>的“簇标记”（即<span class="math inline">\(\boldsymbol{x}_j \in C_{\lambda_j}\)</span>），则聚类结果可以使用包含<span class="math inline">\(m\)</span>个元素的簇标记向量<span class="math inline">\(\boldsymbol{\lambda}=(\lambda_1,\lambda_2,\dots,\lambda_m)\)</span>表示。聚类算法具有多种不同类型，它们的区别在于将样本划分到不同的簇时所使用的策略不同。</p>
+<span id="more"></span>
+<p>聚类既可以作为一个单独过程，用于找寻数据内在的分布结构，也可以作为分类等其他学习任务的前驱过程。例如在商业应用中需要对新用户的类型进行判别，但是定义“用户类型”对商家来说可能不太容易。此时可以先使用已有的用户数据进行聚类，根据聚类结果为每个簇定义一个类，然后基于这些类训练分类模型，用于判断新用户的类型。</p>
+<h1 id="距离计算">距离计算</h1>
+<p>在聚类算法中，如何计算样本<span class="math inline">\(i,j\)</span>之间的距离<span class="math inline">\(d_{ij}\)</span>是一个核心问题，它直接影响了聚类的结果。常用的距离度量方式包括：</p>
+<ul>
+<li><p>闵可夫斯基距离（闵氏距离）： <span class="math display">\[
+d_{ij}=\left(\sum_{u=1}^n|x_{iu}-x_{ju}|^p\right)^{\frac{1}{p}},p\ge 1
+\]</span></p>
+<ul>
+<li><span class="math inline">\(p=1\)</span>时被称为曼哈顿距离<span class="math inline">\(d_{ij}=\left(\sum_{u=1}^n|x_{iu}-x_{ju}|\right)\)</span></li>
+<li><span class="math inline">\(p=2\)</span>时被称为欧氏距离<span class="math inline">\(d_{ij}=\left(\sum_{u=1}^n|x_{iu}-x_{ju}|^2\right)^{\frac{1}{2}}\)</span></li>
+<li><span class="math inline">\(p=\infty\)</span>时被称为切比雪夫距离<span class="math inline">\(d_{ij}=\max_{u}|x_{iu}-x_{ju}|\)</span></li>
+</ul>
+<p>需要注意的是，如果特征<span class="math inline">\(u\)</span>为一个有序属性（连续值，或者有序的离散数值），计算距离的时候便可以直接取其值进行计算；但是如果为无序属性（无序的离散数值、或者类别型变量），则需要使用VDM（Value Difference Metric）来计算。假设<span class="math inline">\(x_{iu}\)</span>的值为<span class="math inline">\(a\)</span>，<span class="math inline">\(x_{ju}\)</span>的值为<span class="math inline">\(b\)</span>，那么VDM的计算公式可以写成如下形式： <span class="math display">\[
+|x_{iu}-x_{ju}|^p=\sum_{c=1}^{k}\left| \frac{m_{u,a,c}}{m_{u,a}}-\frac{m_{u,b,c}}{m_{u,b}} \right|^p
+\]</span> 其中，<span class="math inline">\(m_{u,a,c}\)</span>指的是在第<span class="math inline">\(c\)</span>个簇中，属性<span class="math inline">\(u\)</span>上取值为<span class="math inline">\(a\)</span>的样本数；<span class="math inline">\(m_{u,a}\)</span>指的是属性<span class="math inline">\(u\)</span>上取值为<span class="math inline">\(a\)</span>的样本数；<span class="math inline">\(m_{u,b,c}\)</span>指的是在第<span class="math inline">\(c\)</span>个簇中，属性<span class="math inline">\(u\)</span>上取值为<span class="math inline">\(b\)</span>的样本数；<span class="math inline">\(m_{u,b}\)</span>指的是属性<span class="math inline">\(u\)</span>上取值为<span class="math inline">\(b\)</span>的样本数。</p>
+<p>如果样本空间中不同属性的重要性不同，可以使用如下的加权闵可夫斯基距离： <span class="math display">\[
+d_{ij}=\left(\sum_{u=1}^nw_u|x_{iu}-x_{ju}|^p\right)^{\frac{1}{p}},p\ge 1,\sum_{u=1}^{n}w_u=1
+\]</span></p>
+<blockquote>
+<p>注意：在使用闵氏距离时，每个特征的取值范围最好接近甚至完全相同（可以通过正则化、归一化等手段进行转化）。否则在计算距离时，如果某个特征的数值过大便会对距离的计算结果影响很大，而如果某个特征的数值过小则对距离几乎没有影响。当然从另一个角度考虑，也可以把不同特征的数值范围当成是一种特殊的权重。</p>
+</blockquote></li>
+<li><p>马哈拉诺比斯距离（马氏距离）： <span class="math display">\[
+d_{ij}=\left[ (\boldsymbol{x}_i-\boldsymbol{x}_j)S^{-1}(\boldsymbol{x}_i-\boldsymbol{x}_j)^T \right]^{\frac{1}{2}}
+\]</span> 其中<span class="math inline">\(S\)</span>代表样本矩阵<span class="math inline">\(X=\begin{bmatrix}\boldsymbol{x}_1 \\ \boldsymbol{x}_2 \\ \vdots \\ \boldsymbol{x}_m \end{bmatrix}\)</span>的协方差矩阵。</p>
+<p>马氏距离越大，则两个样本之间的相似度越小，反之则相似度越大。</p></li>
+<li><p>相关系数： <span class="math display">\[
+r_{ij}=\frac{\sum_{k=1}^{n}(x_{ik}-\bar{x}_i)(x_{jk}-\bar{x}_j)}{\left[ \sum_{k=1}^{n}(x_{ik}-\bar{x}_i)^2\sum_{k=1}^{n}(x_{jk}-\bar{x}_j)^2 \right]^{\frac{1}{2}}}
+\]</span> 其中<span class="math inline">\(\bar{x}_i=\frac{1}{n}\sum_{k=1}^{n}x_{ik}\)</span>，<span class="math inline">\(\bar{x}_j=\frac{1}{n}\sum_{k=1}^{n}x_{jk}\)</span>。</p>
+<p>相关系数的绝对值越接近于1代表样本越相似，越接近于0则代表样本越不相似。</p></li>
+<li><p>夹角余弦： <span class="math display">\[
+s_{ij}=\frac{\sum_{k=1}^n x_{ik}x_{jk}}{[\sum_{k=1}^n x_{ik}^2\sum_{k=1}^n x_{jk}^2]^{\frac{1}{2}}}
+\]</span> 夹角余弦的绝对值值越接近于1，代表两个样本越相似，越接近于0则代表越不相似。</p></li>
+</ul>
+<p>需要注意的是，使用不同的度量标准所得到的结果可能并不一致，需要根据实际问题的特点进行合理选择。</p>
+<h1 id="k均值聚类">K均值聚类</h1>
+<h2 id="算法原理">算法原理</h2>
+<p>给定样本集<span class="math inline">\(D=\{\boldsymbol{x}_1,\boldsymbol{x}_2,\dots,\boldsymbol{x}_m\}\)</span>，K均值（<span class="math inline">\(k\)</span>-means）聚类算法针对于聚类所得到的簇划分<span class="math inline">\(\mathcal{C}=\{C_1,C_2,\dots,C_k\}\)</span>，最小化如下的平方误差表达式： <span class="math display">\[
+E=\sum_{i=1}^{k}\sum_{\boldsymbol{x}\in C_i}||\boldsymbol{x}-\boldsymbol{\mu}_i||_2^2
+\]</span> 其中<span class="math inline">\(\boldsymbol{\mu}_i=\frac{1}{|C_i|}\sum_{\boldsymbol{x}\in C_i}\boldsymbol{x}\)</span>代表了簇<span class="math inline">\(C_i\)</span>的均值向量。</p>
+<p>从定性角度去分析，上述的平方误差表达式刻画了簇内样本围绕簇均值向量的紧密程度，<span class="math inline">\(E\)</span>的值越小也就意味着簇内样本的相似度越高。</p>
+<p>如果要找到其全局最优解，则需要分析样本集<span class="math inline">\(D\)</span>所有可能的簇划分，因此求解这一平方误差表达式是一个NP难问题。故实际中通常使用如下的贪心算法去求一个近似解：</p>
+<ol type="1">
+<li>从样本集<span class="math inline">\(D\)</span>中随机选取<span class="math inline">\(k\)</span>个样本，作为<span class="math inline">\(k\)</span>个簇的初始均值向量<span class="math inline">\(\{\boldsymbol{\mu}_1,\boldsymbol{\mu}_2,\dots,\boldsymbol{\mu}_k\}\)</span></li>
+<li>计算每个样本<span class="math inline">\(\boldsymbol{x}_j\)</span>与各个均值向量<span class="math inline">\(\boldsymbol{\mu}_i\)</span>之间的距离<span class="math inline">\(d_{ij}=||\boldsymbol{x}_j-\boldsymbol{\mu}_i||_2\)</span>，然后更新样本<span class="math inline">\(\boldsymbol{x}_j\)</span>的簇标记为<span class="math inline">\(\lambda_j=\text{arg}\min_{i\in\{1,2,\dots,k\}}d_{ij}\)</span>（即选择与该样本最近的那个均值向量所对应的簇）</li>
+<li>为每个簇更新均值向量<span class="math inline">\(\boldsymbol{\mu}_i&#39;=\frac{1}{|C_i|}\sum_{\boldsymbol{x}\in C_i}\boldsymbol{x}\)</span></li>
+<li>重复2和3，直到所有的均值向量都没有被更新</li>
+</ol>
+<p>下图所示为K均值聚类的迭代过程：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210308225753.png" alt="k均值聚类" style="zoom:67%;" /></p>
+<h2 id="讨论">讨论</h2>
+<h3 id="对比高斯混合模型">对比高斯混合模型</h3>
+<p>K均值聚类可以看作是高斯混合模型的一种特殊情况。首先，我们分析当高斯分布中的<span class="math inline">\(\sigma\)</span>变化时，会对高斯混合模型有什么影响。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210308225718.png" alt="image-20210308225628217" style="zoom: 33%;" /></p>
+<p>在上图中，左边代表<span class="math inline">\(\sigma\)</span>取不同值时，两个<span class="math inline">\(\mu\)</span>值不同的高斯分布<span class="math inline">\(g_0(x)\)</span>和<span class="math inline">\(g_1(x)\)</span>所对应的概率密度分布图；右边代表两模型相对密度<span class="math inline">\(\frac{g_0(x)}{g_0(x)+g_1(x)}\)</span>和<span class="math inline">\(\frac{g_1(x)}{g_0(x)+g_1(x)}\)</span>随着变量<span class="math inline">\(x\)</span>的变化趋势。</p>
+<p>从中可以看出，当<span class="math inline">\(\sigma\)</span>的值较大时，两个高斯模型会为图中绿色虚线处所对应的数据点赋予一个较“软”的分类准则，即这个数据点属于这两个高斯模型的概率差别不大，两个模型所对应的<span class="math inline">\(E(\gamma_{jk})\)</span>的值也相差不大（此处可以回顾EM算法和高斯混合模型的相关内容）；而当<span class="math inline">\(\sigma\)</span>的值减小时，这个分类准则会逐渐变“硬”，即两个模型所对应的<span class="math inline">\(E(\gamma_{jk})\)</span>的值也会相差的越来越大，最终结果倾向于该数据点来自于其中的某一个高斯模型。</p>
+<p>我们考虑最极端的情况，即<span class="math inline">\(\sigma=0\)</span>的情形，此时高斯分布会变为<span class="math inline">\(\delta\)</span>分布（狄拉克<span class="math inline">\(\delta\)</span>函数），而此时的高斯混合模型也会变为K均值聚类。因为此时在计算<span class="math inline">\(E(\gamma_{jk})\)</span>的时候，它的值要么为1要么为0，从而导致计算<span class="math inline">\(\mu\)</span>的时候变成了聚类的计算方式。</p>
+<h3 id="k值的选择">K值的选择</h3>
+<p>在实际使用聚类算法时，选择合适的K值对于最终得到的结果有很大影响。如果选择的K值过小，则每个簇中的数据点过于分散；而K值过大时，虽然每个簇中的数据点会相对集中，但是也会因此而出现一些比较相似的簇（两个簇中心之间的距离很小）。因此需要选择一个合适的K值。常用确定K的方法有下面两种：</p>
+<ol type="1">
+<li><p>手肘法（Elbow method）</p>
+<p>手肘法以如下的误差平方和（Sum of the Squared Errors）作为核心指标： <span class="math display">\[
+E=\sum_{i=1}^{k}\sum_{\boldsymbol{x}\in C_i}||\boldsymbol{x}-\boldsymbol{\mu}_i||_2^2
+\]</span> 这一方法的思想是，随着聚类数K的增大，样本的划分会更加精细，每个簇的聚合程度会逐渐提高，从而导致误差平方和的值逐渐变小。当K小于真实聚类数时，随着K的增大误差平方和的值会快速下降；而当K到达真实聚类数之后，再增加K时，每个簇内聚合程度的增加便没有那么明显，也就是说误差平方和的下降幅度会骤减。</p>
+<p>因此总的来看，误差平方和与K的关系图会形成一个形似手肘的形状，而这个“肘部”对应的K值便是最合适的聚类数（理论上更接近数据的真实聚类数）。如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210309230150.png" alt="手肘法" /><figcaption aria-hidden="true">手肘法</figcaption>
+</figure></li>
+<li><p>轮廓系数法</p>
+<p>轮廓系数法以的轮廓系数（Silhouette Coefficient）作为核心指标。某个样本点<span class="math inline">\(\boldsymbol{x}_j\in C_i\)</span>的轮廓系数按照如下公式进行计算： <span class="math display">\[
+S=\frac{b-a}{\max(a,b)}
+\]</span> 其中，<span class="math inline">\(a\)</span>代表<span class="math inline">\(\boldsymbol{x}_j\)</span>与同簇其它样本的平均距离，即<span class="math inline">\(a=\frac{1}{|C_i-1|}\sum_{\boldsymbol{x}\in C_i}||\boldsymbol{x}-\boldsymbol{x}_j||_2\)</span>，称为凝聚度；<span class="math inline">\(b\)</span>代表<span class="math inline">\(\boldsymbol{x}_j\)</span>与除自身所在簇之外的最近簇中所有样本的平均距离，即<span class="math inline">\(b=\min_{C_k}(\frac{1}{|C_k|}\sum_{\boldsymbol{x}\in C_k}||\boldsymbol{x}-\boldsymbol{x}_j||_2),k\ne i\)</span>，称为分离度。</p>
+<p>求出所有样本的轮廓系数之后再计算平均值即可得到平均轮廓系数。轮廓系数的值在<span class="math inline">\([-1,1]\)</span>之间，数值越大代表聚类效果越好，反之则说明聚类效果越差。</p></li>
+</ol>
+<h2 id="代码示例">代码示例</h2>
+<p>我们使用Sklearn自带的make_blobs函数来人工生成数据，来演示如何使用sklearn中的K-Means聚类。给定簇的数量以及每个簇内的元素个数，make_blobs函数会按照多元高斯分布为每一个簇生成数据。其中每个簇的中心可以自己定义，也可以随机生成；每个簇的标准差也可以自己定义或者是全部使用相同的标准差。</p>
+<p>我们使用随机生成的簇中心以及标准差来生成6个簇，然后对这些簇使用K-Means。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> make_blobs</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x,y=make_blobs(</span><br><span class="line">    n_samples=[<span class="number">100</span>,<span class="number">180</span>,<span class="number">200</span>,<span class="number">150</span>,<span class="number">120</span>,<span class="number">80</span>], </span><br><span class="line">    n_features=<span class="number">2</span>,</span><br><span class="line">    centers=(np.random.rand(<span class="number">6</span>,<span class="number">2</span>)-<span class="number">0.5</span>)*<span class="number">20</span>,</span><br><span class="line">    cluster_std=(np.random.rand(<span class="number">6</span>,<span class="number">1</span>)+<span class="number">1</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> KMeans</span><br></pre></td></tr></table></figure>
+<p><code>KMeans</code>类在初始化时的关键参数有：</p>
+<ul>
+<li>n_clusters：代表将数据聚集为多少个簇，默认值为8</li>
+<li>init：初始化方式，默认使用'k-means++'，也可以使用'random'；或是传入一个list；还可以传入一个函数，这个函数以数据集和簇个数为输入，输出为初始化的簇中心</li>
+<li>n_init：生成多少组初始簇，最终结果从这些结果中选取最佳值。默认为10</li>
+</ul>
+<p>首先我们使用手肘法，找出最优的簇数目：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">elbow_method</span>(<span class="params">x,max_clusters=<span class="number">12</span></span>):</span><br><span class="line">    clusters=[]</span><br><span class="line">    inertias=[]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(max_clusters):</span><br><span class="line">        kmeans=KMeans(n_clusters=i+<span class="number">1</span>,n_init=<span class="number">50</span>)</span><br><span class="line">        kmeans.fit_predict(x)</span><br><span class="line">        clusters.append(i+<span class="number">1</span>)</span><br><span class="line">        inertias.append(kmeans.inertia_/x.shape[<span class="number">0</span>])</span><br><span class="line">        </span><br><span class="line">    fig=plt.figure(figsize=(<span class="number">5</span>,<span class="number">4</span>))</span><br><span class="line">    axes=fig.subplots(<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">    axes.plot(clusters,inertias)</span><br><span class="line">    axes.set_xlabel(<span class="string">&#x27;Number of Clusters&#x27;</span>)</span><br><span class="line">    axes.set_ylabel(<span class="string">&#x27;Mean Squared Distance from Nearest Center&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">elbow_method(x)</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402073931.png" alt="手肘法-代码示例" /><figcaption aria-hidden="true">手肘法-代码示例</figcaption>
+</figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">colorlists=[<span class="string">&#x27;tab:gray&#x27;</span>,<span class="string">&#x27;tab:purple&#x27;</span>,<span class="string">&#x27;tab:blue&#x27;</span>,<span class="string">&#x27;tab:green&#x27;</span>,<span class="string">&#x27;tab:orange&#x27;</span>,<span class="string">&#x27;tab:red&#x27;</span>]</span><br><span class="line">colormaps=[<span class="string">&#x27;Greys&#x27;</span>,<span class="string">&#x27;Purples&#x27;</span>,<span class="string">&#x27;Blues&#x27;</span>,<span class="string">&#x27;Greens&#x27;</span>,<span class="string">&#x27;Oranges&#x27;</span>,<span class="string">&#x27;Reds&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_kmeans</span>(<span class="params">model,fig,axes,x,clusters</span>):</span><br><span class="line">    X_mesh,Y_mesh=np.meshgrid(np.linspace(-<span class="number">15</span>,<span class="number">15</span>,<span class="number">1000</span>),np.linspace(-<span class="number">15</span>,<span class="number">15</span>,<span class="number">1000</span>))</span><br><span class="line">    XY_mesh=np.concatenate([X_mesh.reshape(-<span class="number">1</span>,<span class="number">1</span>),Y_mesh.reshape(-<span class="number">1</span>,<span class="number">1</span>)],axis=<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    mu=model.cluster_centers_</span><br><span class="line">    mesh_pred=model.predict(XY_mesh)</span><br><span class="line">    y_pred=model.predict(x)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(clusters):</span><br><span class="line">        axes.contourf(X_mesh,Y_mesh,mesh_pred.reshape(X_mesh.shape),cmap=<span class="string">&#x27;Pastel1&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(clusters):</span><br><span class="line">        axes.scatter(x[y_pred==i,<span class="number">0</span>],x[y_pred==i,<span class="number">1</span>],c=colorlists[i])</span><br><span class="line">    </span><br><span class="line">    axes.plot(mu[:,<span class="number">0</span>],mu[:,<span class="number">1</span>],c=<span class="string">&#x27;black&#x27;</span>,marker=<span class="string">&#x27;*&#x27;</span>,markersize=<span class="number">15</span>,linewidth=<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    axes.set_xlim(-<span class="number">12</span>,<span class="number">12</span>)</span><br><span class="line">    axes.set_ylim(-<span class="number">12</span>,<span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kmeans=KMeans(n_clusters=<span class="number">4</span>,n_init=<span class="number">50</span>)</span><br><span class="line">kmeans.fit(x)</span><br><span class="line"></span><br><span class="line">fig=plt.figure(figsize=(<span class="number">8</span>,<span class="number">6</span>))</span><br><span class="line">axes=fig.subplots(<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">plot_kmeans(kmeans,fig,axes,x,<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402073901.png" alt="K-Means结果" /><figcaption aria-hidden="true">K-Means结果</figcaption>
+</figure>
+<h1 id="dbscan">DBSCAN</h1>
+<h2 id="概述-1">概述</h2>
+<p>DBSCAN（Density-Based Spatial Clustering of Applications with Noise）是一种著名的密度聚类算法，这类算法假设聚类结构能够通过样本分布的紧密程度确定。通常情况下，密度聚类算法从样本密度的角度来考察样本之间的可连接性，并基于可连接样本不断扩展聚类簇从而获得最终的聚类结果。</p>
+<p>为了介绍DBSCAN算法，首先我们在给定数据集<span class="math inline">\(D=\{\boldsymbol{x}_1,\boldsymbol{x}_2,\dots,\boldsymbol{x}_m\}\)</span>的条件下，引入如下的几个概念：</p>
+<ul>
+<li><span class="math inline">\(\epsilon\)</span>-邻域：对<span class="math inline">\(\boldsymbol{x}_j\in D\)</span>，其<span class="math inline">\(\epsilon\)</span>-邻域包含样本集<span class="math inline">\(D\)</span>中与<span class="math inline">\(\boldsymbol{x}_j\)</span>的距离不大于<span class="math inline">\(\epsilon\)</span>的样本，即<span class="math inline">\(N_{\epsilon}(\boldsymbol{x}_j)=\{\boldsymbol{x}_i\in D|\text{dist}(\boldsymbol{x}_i,\boldsymbol{x}_j)\le \epsilon \}\)</span></li>
+<li>核心对象：如果<span class="math inline">\(\boldsymbol{x}_j\)</span>的<span class="math inline">\(\epsilon\)</span>-邻域至少包含<span class="math inline">\(MinPts\)</span>个样本，即<span class="math inline">\(|N_{\epsilon}(\boldsymbol{x}_j)|\ge MinPts\)</span>，则<span class="math inline">\(\boldsymbol{x}_j\)</span>是一个核心对象（也被称为核心点）</li>
+<li>密度直达：如果<span class="math inline">\(\boldsymbol{x}_j\)</span>位于<span class="math inline">\(\boldsymbol{x}_i\)</span>的<span class="math inline">\(\epsilon\)</span>-邻域，且<span class="math inline">\(\boldsymbol{x}_i\)</span>为核心对象，则称<span class="math inline">\(\boldsymbol{x}_j\)</span>由<span class="math inline">\(\boldsymbol{x}_i\)</span>密度直达</li>
+<li>密度可达：对于<span class="math inline">\(\boldsymbol{x}_i\)</span>和<span class="math inline">\(\boldsymbol{x}_j\)</span>，如果存在一组样本序列<span class="math inline">\(\boldsymbol{p}_1,\boldsymbol{p}_2,\dots,\boldsymbol{p}_n\)</span>，其中<span class="math inline">\(\boldsymbol{p}_1=\boldsymbol{x}_i,\boldsymbol{p}_n=\boldsymbol{x}_j\)</span>，且<span class="math inline">\(\boldsymbol{p}_{i+1}\)</span>由<span class="math inline">\(\boldsymbol{p}_i\)</span>密度直达，则称<span class="math inline">\(\boldsymbol{x}_j\)</span>由<span class="math inline">\(\boldsymbol{x}_i\)</span>密度可达</li>
+<li>密度相连：对于<span class="math inline">\(\boldsymbol{x}_i\)</span>和<span class="math inline">\(\boldsymbol{x}_j\)</span>，如果存在<span class="math inline">\(\boldsymbol{x}_k\)</span>使得<span class="math inline">\(\boldsymbol{x}_i\)</span>和<span class="math inline">\(\boldsymbol{x}_j\)</span>均由<span class="math inline">\(\boldsymbol{x}_k\)</span>密度可达，则称<span class="math inline">\(\boldsymbol{x}_i\)</span>与<span class="math inline">\(\boldsymbol{x}_j\)</span>密度相连</li>
+</ul>
+<p>基于上述这些概念，DBSCAN将簇定义为：由密度可达关系导出的最大密度相连样本集合。用数学语言可以描述为，给定邻域参数<span class="math inline">\((\epsilon,MinPts)\)</span>，簇<span class="math inline">\(C\subseteq D\)</span>是满足连接性与最大性的非空样本子集。其中，连接性指的是对于<span class="math inline">\(\boldsymbol{x}_i,\boldsymbol{x}_j\in C\)</span>，<span class="math inline">\(\boldsymbol{x}_i,\boldsymbol{x}_j\)</span>之间密度相连；最大性指的是如果<span class="math inline">\(\boldsymbol{x}_i\in C\)</span>，同时<span class="math inline">\(\boldsymbol{x}_j\)</span>由<span class="math inline">\(\boldsymbol{x}_i\)</span>密度可达，那么<span class="math inline">\(\boldsymbol{x}_j\in C\)</span>。</p>
+<p>需要注意的是，使用DBSCAN算法时，最终会有一些点不属于任何的簇，这些簇被定义为噪音点或者离群点。</p>
+<h2 id="算法步骤">算法步骤</h2>
+<p>DBSCAN在生成聚类簇时的主要操作步骤如下：</p>
+<ol type="1">
+<li>根据给定的邻域参数<span class="math inline">\((\epsilon,MinPts)\)</span>，找到所有的核心对象</li>
+<li>任意选择一个核心对象作为出发点，寻找所有与其密度可达的点组成聚类簇</li>
+<li>重复第2步，直到所有的核心对象均被访问过为止</li>
+</ol>
+<p>下图为DBSCAN生成聚类簇的过程：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210310211308.png" alt="DBSCAN步骤" /><figcaption aria-hidden="true">DBSCAN步骤</figcaption>
+</figure>
+<h2 id="优缺点分析">优缺点分析</h2>
+<h3 id="优点">优点</h3>
+<ul>
+<li><p>不需要事先设定簇的数目</p></li>
+<li><p>可以发现任意形状的簇，正如下图所示的DBSCAN聚类的结果图</p>
+<p><img data-src="https://img-blog.csdn.net/20180725173312977?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h1YWNoYV9f/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img" style="zoom: 25%;" /></p></li>
+<li><p>能够找出数据中的噪音，且对噪音不敏感</p></li>
+<li><p>聚类结果几乎不依赖于结点的遍历顺序</p></li>
+</ul>
+<h3 id="缺点">缺点</h3>
+<ul>
+<li>聚类质量依赖于距离公式的选取，对于高维数据而言，可能存在维度灾难的问题</li>
+<li>算法不适用于数据集内密度差异或很大的情形，因为此时很难确定模型的参数</li>
+</ul>
+<h2 id="代码示例-1">代码示例</h2>
+<p>我们同样使用Sklearn自带的make_blobs函数来人工生成数据，来演示如何使用sklearn中的DBSCAN算法。使用随机生成的簇中心以及标准差来生成6个簇，然后对这些簇使用DBSCAN。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x <span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> make_blobs</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x,y=make_blobs(</span><br><span class="line">    n_samples=[<span class="number">100</span>,<span class="number">180</span>,<span class="number">200</span>,<span class="number">150</span>,<span class="number">120</span>,<span class="number">80</span>], </span><br><span class="line">    n_features=<span class="number">2</span>,</span><br><span class="line">    centers=(np.random.rand(<span class="number">6</span>,<span class="number">2</span>)-<span class="number">0.5</span>)*<span class="number">20</span>,</span><br><span class="line">    cluster_std=(np.random.rand(<span class="number">6</span>,<span class="number">1</span>)+<span class="number">1</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.scatterplot(x[:,<span class="number">0</span>],x[:,<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402073130.png" alt="DBSCAN-1" /><figcaption aria-hidden="true">DBSCAN-1</figcaption>
+</figure>
+<p><code>DBSCAN</code>类在初始化时的关键参数有：</p>
+<ul>
+<li>eps：两点被当成相邻的最小距离，它是DBSCAN中的重要参数。默认为0.5</li>
+<li>min_samples：中心点的周围至少要有多少个点与它相邻</li>
+<li>metric：距离计算方式，默认为'euclidean'，也可以传入一个函数</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> DBSCAN</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbscan=DBSCAN(eps=<span class="number">0.2</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y_pred=dbscan.fit_predict(x)</span><br></pre></td></tr></table></figure>
+<p>我们将DBSCAN找出的中心点、密度相连点和离群点使用不同的颜色标记出来，可以得到下图。可以看到，DBSCAN的结果与我们选择的<span class="math inline">\(\epsilon\)</span>值有很大关系。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_dbscan</span>(<span class="params">fig,axes,x,epsilon</span>):</span><br><span class="line">    dbscan_model=DBSCAN(eps=epsilon)</span><br><span class="line">    y_pred=dbscan_model.fit_predict(x)</span><br><span class="line">    max_val=np.<span class="built_in">max</span>(y_pred)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(max_val+<span class="number">1</span>):</span><br><span class="line">        axes.scatter(x[y_pred==i,<span class="number">0</span>],x[y_pred==i,<span class="number">1</span>],c=<span class="string">&#x27;tab:olive&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">    axes.scatter(x[dbscan_model.core_sample_indices_,<span class="number">0</span>],x[dbscan_model.core_sample_indices_,<span class="number">1</span>],c=<span class="string">&#x27;tab:green&#x27;</span>,marker=<span class="string">&#x27;*&#x27;</span>)</span><br><span class="line">    axes.scatter(x[y_pred==-<span class="number">1</span>,<span class="number">0</span>],x[y_pred==-<span class="number">1</span>,<span class="number">1</span>],c=<span class="string">&#x27;tab:red&#x27;</span>,s=<span class="number">7</span>)</span><br><span class="line">    axes.set_xlim(-<span class="number">12</span>,<span class="number">12</span>)</span><br><span class="line">    axes.set_ylim(-<span class="number">12</span>,<span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fig=plt.figure(figsize=(<span class="number">24</span>,<span class="number">6</span>))</span><br><span class="line">axes=fig.subplots(<span class="number">1</span>,<span class="number">3</span>)</span><br><span class="line">plot_dbscan(fig,axes[<span class="number">0</span>],x,<span class="number">0.2</span>)</span><br><span class="line">plot_dbscan(fig,axes[<span class="number">1</span>],x,<span class="number">0.5</span>)</span><br><span class="line">plot_dbscan(fig,axes[<span class="number">2</span>],x,<span class="number">1.0</span>)</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402073151.png" alt="DBSCAN-2" /><figcaption aria-hidden="true">DBSCAN-2</figcaption>
+</figure>
+<h1 id="层次聚类">层次聚类</h1>
+<h2 id="算法原理-1">算法原理</h2>
+<p>层次聚类试图在不同的层次上对数据集进行划分，从而形成树形的聚类结构。数据集的划分可采取自底向上的聚合策略，也可采取自顶向下的分拆策略。</p>
+<p>AGNES是一种采用自底向上聚合策略的层次聚类算法，它先将数据集中的每一个样本当成一个初始聚类簇，然后在算法运行的每一步中找出距离最近的两个聚类簇进行合并。重复以上过程，直至达到预设的聚类簇个数。最终会形成一个类似于树状图一样的结果。</p>
+<p>实际上，每个簇是一个样本集合。给定聚类簇<span class="math inline">\(C_i\)</span>和<span class="math inline">\(C_j\)</span>，可以通过下面的方法来衡量两个簇之间的距离：</p>
+<ul>
+<li>最小距离：<span class="math inline">\(d_{\min}(C_i,C_j)=\min_{\boldsymbol{x}\in C_i,\boldsymbol{z}\in C_j} \text{dist}(\boldsymbol{x},\boldsymbol{z})\)</span></li>
+<li>最大距离：<span class="math inline">\(d_{\max}(C_i,C_j)=\max_{\boldsymbol{x}\in C_i,\boldsymbol{z}\in C_j} \text{dist}(\boldsymbol{x},\boldsymbol{z})\)</span></li>
+<li>平均距离：<span class="math inline">\(d_{\text{avg}}(C_i,C_j)=\frac{1}{|C_i||C_j|}\sum_{\boldsymbol{x}\in C_i} \sum_{\boldsymbol{z}\in C_j} \text{dist}(\boldsymbol{x},\boldsymbol{z})\)</span></li>
+</ul>
+<p>当聚类簇距离分别由<span class="math inline">\(d_{\min},d_{\max},d_{\text{avg}}\)</span>计算时，AGNES算法被相应地称为“单链接”（Single-linkage）、“全链接”（Complete-linkage）或“均链接”（Average-linkage）算法。下图所示便为同一数据集使用这三种不同的计算公式所得到的层次聚类结果：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210310221448.png" alt="image-20210310221448018" /><figcaption aria-hidden="true">image-20210310221448018</figcaption>
+</figure>
+<p>在层次聚类树状图的特定层次上进行分割，可以得到相应的簇划分结果。如下图所示便为不同层次上分割时所得到的不同聚类结果：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210310221955.png" alt="image-20210310221955331" /><figcaption aria-hidden="true">image-20210310221955331</figcaption>
+</figure>
+<h2 id="代码示例-2">代码示例</h2>
+<p>同样地，我们使用Sklearn自带的make_blobs函数来人工生成数据，来演示如何在sklearn中使用层次聚类。</p>
+<p><code>AgglomerativeClustering</code>类在初始化时的关键参数有：</p>
+<ul>
+<li>n_clusters：最终得到多少个簇，默认值为2</li>
+<li>affinity：计算簇之间连接性的指标，可以使用"euclidean"（默认）, "l1", "l2", "manhattan", "cosine"或"precomputed".</li>
+<li>linkage：簇之间连接性的计算方式，可以使用"ward"（默认）, "complete", "average", "single"。ward选择合并后方差最小的两个簇进行合并，后面三个分别代表取两簇中样本距离的最大值、平均值、最小值作为判断标准。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> AgglomerativeClustering</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_agg_cluster</span>(<span class="params">fig,axes,x,clusters,linkage_type</span>):</span><br><span class="line">    agg_cluster_model=AgglomerativeClustering(n_clusters=clusters,linkage=linkage_type)</span><br><span class="line">    y_pred=agg_cluster_model.fit_predict(x)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(clusters):</span><br><span class="line">        axes.scatter(x[y_pred==i,<span class="number">0</span>],x[y_pred==i,<span class="number">1</span>])</span><br><span class="line">    axes.set_xlim(-<span class="number">12</span>,<span class="number">12</span>)</span><br><span class="line">    axes.set_ylim(-<span class="number">12</span>,<span class="number">12</span>)</span><br><span class="line">    axes.set_title(<span class="string">&#x27;linkage=&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(linkage_type))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">linkages=[<span class="string">&quot;ward&quot;</span>,<span class="string">&quot;complete&quot;</span>,<span class="string">&quot;average&quot;</span>,<span class="string">&quot;single&quot;</span>]</span><br><span class="line">fig=plt.figure(figsize=(<span class="number">30</span>,<span class="number">5</span>))</span><br><span class="line">axes=fig.subplots(<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">    plot_agg_cluster(fig,axes[i],x,<span class="number">4</span>,linkages[i])</span><br></pre></td></tr></table></figure>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210402074243.png" alt="层次聚类-代码示例" /><figcaption aria-hidden="true">层次聚类-代码示例</figcaption>
+</figure>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li>机器学习，周志华</li>
+<li>The Elements of Statistical Learning</li>
+<li>https://blog.csdn.net/sxllllwd/article/details/82151996</li>
+<li>https://blog.csdn.net/zhouxianen1987/article/details/68945844</li>
+<li>https://blog.csdn.net/itplus/article/details/10088625</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%81%9A%E7%B1%BB/" title="机器学习-聚类">http://lyf35.github.io/2020/11/15/机器学习-聚类/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+              <a href="/tags/%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 无监督学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%86%B3%E7%AD%96%E6%A0%91/" rel="prev" title="机器学习-决策树">
+      <i class="fa fa-chevron-left"></i> 机器学习-决策树
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/15/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-EM%E7%AE%97%E6%B3%95/" rel="next" title="机器学习-EM算法">
+      机器学习-EM算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'e0ccf34cc06930999c537de659650c56',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

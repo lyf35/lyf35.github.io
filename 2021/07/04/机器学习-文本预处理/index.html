@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="引言 在使用机器学习算法对语言文字进行处理的时候，我们需要对文字做一些预处理，将其变为算法可以识别的数据格式（即向量）。在下文中，我们假设已经从某些渠道获取到了一些文本（如网页爬虫、日志记录、文本语料库、等等），接下来对这些文本进行预处理的过程主要为如下几个步骤：  数据清洗：去掉非文本部分、停用词，分词，进行大小写转换，拼写纠错，等等 标准化：词干提取、词型还原等 特征提取：tf-idf，wor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习-文本预处理">
+<meta property="og:url" content="http://lyf35.github.io/2021/07/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="引言 在使用机器学习算法对语言文字进行处理的时候，我们需要对文字做一些预处理，将其变为算法可以识别的数据格式（即向量）。在下文中，我们假设已经从某些渠道获取到了一些文本（如网页爬虫、日志记录、文本语料库、等等），接下来对这些文本进行预处理的过程主要为如下几个步骤：  数据清洗：去掉非文本部分、停用词，分词，进行大小写转换，拼写纠错，等等 标准化：词干提取、词型还原等 特征提取：tf-idf，wor">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210712201938.com%2526app%253D2002%2526size%253Df9999%252C10000%2526q%253Da80%2526n%253D0%2526g%253D0n%2526fmt%253Djpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210712201938.com%2526app%253D2002%2526size%253Df9999%252C10000%2526q%253Da80%2526n%253D0%2526g%253D0n%2526fmt%253Djpeg">
+<meta property="article:published_time" content="2021-07-04T01:53:24.000Z">
+<meta property="article:modified_time" content="2021-07-04T14:52:55.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210712201938.com%2526app%253D2002%2526size%253Df9999%252C10000%2526q%253Da80%2526n%253D0%2526g%253D0n%2526fmt%253Djpeg">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/07/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>机器学习-文本预处理 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97"><span class="nav-number">2.</span> <span class="nav-text">数据清洗</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%BB%E6%8E%89%E6%97%A0%E7%94%A8%E9%83%A8%E5%88%86"><span class="nav-number">2.1.</span> <span class="nav-text">去掉无用部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%BB%E9%99%A4%E9%9D%9E%E6%96%87%E6%9C%AC"><span class="nav-number">2.1.1.</span> <span class="nav-text">去除非文本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E8%AF%8D"><span class="nav-number">2.1.2.</span> <span class="nav-text">分词</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E5%B0%8F%E5%86%99%E8%BD%AC%E6%8D%A2%E4%B8%8E%E6%8B%BC%E5%86%99%E7%BA%A0%E9%94%99"><span class="nav-number">2.1.3.</span> <span class="nav-text">大小写转换与拼写纠错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%BB%E6%8E%89%E5%81%9C%E7%94%A8%E8%AF%8D"><span class="nav-number">2.1.4.</span> <span class="nav-text">去掉停用词</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">标准化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%8D%E5%B9%B2%E6%8F%90%E5%8F%96"><span class="nav-number">3.1.</span> <span class="nav-text">词干提取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%8D%E5%BD%A2%E8%BF%98%E5%8E%9F"><span class="nav-number">3.2.</span> <span class="nav-text">词形还原</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96"><span class="nav-number">4.</span> <span class="nav-text">特征提取</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">4.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E8%A1%A8%E7%A4%BA"><span class="nav-number">4.2.</span> <span class="nav-text">离散表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#word2vec"><span class="nav-number">4.3.</span> <span class="nav-text">Word2Vec</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B-1"><span class="nav-number">4.3.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cbow%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.3.2.</span> <span class="nav-text">CBOW模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#skip-gram%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.3.3.</span> <span class="nav-text">Skip-Gram模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.3.4.</span> <span class="nav-text">示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/07/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习-文本预处理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-04 09:53:24 / 修改时间：22:52:55" itemprop="dateCreated datePublished" datetime="2021-07-04T09:53:24+08:00">2021-07-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">工程实践</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/07/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/" class="post-meta-item leancloud_visitors" data-flag-title="机器学习-文本预处理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>23k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>21 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="引言">引言</h1>
+<p>在使用机器学习算法对语言文字进行处理的时候，我们需要对文字做一些预处理，将其变为算法可以识别的数据格式（即向量）。在下文中，我们假设已经从某些渠道获取到了一些文本（如网页爬虫、日志记录、文本语料库、等等），接下来对这些文本进行预处理的过程主要为如下几个步骤：</p>
+<ol type="1">
+<li>数据清洗：去掉非文本部分、停用词，分词，进行大小写转换，拼写纠错，等等</li>
+<li>标准化：词干提取、词型还原等</li>
+<li>特征提取：tf-idf，word2vec等</li>
+</ol>
+<p>对于中文与英文来说，它们的处理过程大致都符合上述流程，但是各自存在一些特殊性，在下文将进行详细说明。</p>
+<span id="more"></span>
+<h1 id="数据清洗">数据清洗</h1>
+<h2 id="去掉无用部分">去掉无用部分</h2>
+<h3 id="去除非文本">去除非文本</h3>
+<p>在原始数据中，通常包含一些HTML标签、标点符号或者特殊符号等非文本内容，这些符号并未包含任何信息，故可以直接删除。少量的非文本内容可以直接使用Python的正则表达式删除，复杂的可以使用<code>beautifulsoup</code>库来帮助去除。</p>
+<p>例如我们使用正则表达式去除汉语中的非文本内容：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">find_chinese</span>(<span class="params">raw_data</span>):</span><br><span class="line">    pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;[^\u4e00-\u9fa5]&#x27;</span>)</span><br><span class="line">    chinese = re.sub(pattern, <span class="string">&#x27;&#x27;</span>, raw_data)</span><br><span class="line">    <span class="keyword">return</span> chinese</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">raw_sentence_chinese=<span class="string">r&quot;高德纳（音译：唐纳德·尔文·克努斯，1938年1月10日—），出生于美国密尔沃基，著名计算机科学家，斯坦福大学计算机系荣誉退休教授。高德纳教授为现代计算机科学的先驱人物，创造了算法分析的领域，在数个理论计算机科学的分支做出基石一般的贡献。在计算机科学及数学领域发表了多部具广泛影响的论文和著作。&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentence_chinese=find_chinese(raw_sentence_chinese)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentence_chinese</span><br></pre></td></tr></table></figure>
+<pre><code>&#39;高德纳音译唐纳德尔文克努斯年月日出生于美国密尔沃基著名计算机科学家斯坦福大学计算机系荣誉退休教授高德纳教授为现代计算机科学的先驱人物创造了算法分析的领域在数个理论计算机科学的分支做出基石一般的贡献在计算机科学及数学领域发表了多部具广泛影响的论文和著作&#39;</code></pre>
+<p>在英文文本中，通常我们要去除所有除了a-z和A-Z之外的文字。下面是除去英文中非文本内容的示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">find_english</span>(<span class="params">raw_data</span>):</span><br><span class="line">    pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;[^a-zA-Z]&#x27;</span>)</span><br><span class="line">    english = re.sub(pattern, <span class="string">&#x27; &#x27;</span>, raw_data)</span><br><span class="line">    <span class="keyword">return</span> english</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">raw_sentence_english=<span class="string">&#x27;&#x27;&#x27;THE recent success of neural networks has boosted research</span></span><br><span class="line"><span class="string">on pattern recognition and data mining. Many</span></span><br><span class="line"><span class="string">machine learning tasks such as object detection [1], [2],</span></span><br><span class="line"><span class="string">machine translation [3], [4], and speech reconition [5], which</span></span><br><span class="line"><span class="string">once heavily relied on handcrafted feature engineering to</span></span><br><span class="line"><span class="string">extract informative feature sets, has recently been revolutionized</span></span><br><span class="line"><span class="string">by various end-to-end deep learning paradigms, e.g.,</span></span><br><span class="line"><span class="string">convolutional neural networks (CNNs) [6], recurrent neural</span></span><br><span class="line"><span class="string">networks (RNNs) [7], and autoencoders [8].&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentence_english=find_english(raw_sentence_english)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentence_english</span><br></pre></td></tr></table></figure>
+<pre><code>&#39;THE recent success of neural networks has boosted research on pattern recognition and data mining  Many machine learning tasks such as object detection           machine translation           and speech reconition      which once heavily relied on handcrafted feature engineering to extract informative feature sets  has recently been revolutionized by various end to end deep learning paradigms  e g   convolutional neural networks  CNNs       recurrent neural networks  RNNs       and autoencoders     &#39;</code></pre>
+<h3 id="分词">分词</h3>
+<p>由于英文单词中间以空格分隔，因此英文文本的分词很容易。我们以上文中已经去掉非文本的英文句子为例进行分词：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">splited_sentence_english = sentence_english.split()</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(splited_sentence_english)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;THE&#39;, &#39;recent&#39;, &#39;success&#39;, &#39;of&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;has&#39;, &#39;boosted&#39;, &#39;research&#39;, &#39;on&#39;, &#39;pattern&#39;, &#39;recognition&#39;, &#39;and&#39;, &#39;data&#39;, &#39;mining&#39;, &#39;Many&#39;, &#39;machine&#39;, &#39;learning&#39;, &#39;tasks&#39;, &#39;such&#39;, &#39;as&#39;, &#39;object&#39;, &#39;detection&#39;, &#39;machine&#39;, &#39;translation&#39;, &#39;and&#39;, &#39;speech&#39;, &#39;reconition&#39;, &#39;which&#39;, &#39;once&#39;, &#39;heavily&#39;, &#39;relied&#39;, &#39;on&#39;, &#39;handcrafted&#39;, &#39;feature&#39;, &#39;engineering&#39;, &#39;to&#39;, &#39;extract&#39;, &#39;informative&#39;, &#39;feature&#39;, &#39;sets&#39;, &#39;has&#39;, &#39;recently&#39;, &#39;been&#39;, &#39;revolutionized&#39;, &#39;by&#39;, &#39;various&#39;, &#39;end&#39;, &#39;to&#39;, &#39;end&#39;, &#39;deep&#39;, &#39;learning&#39;, &#39;paradigms&#39;, &#39;e&#39;, &#39;g&#39;, &#39;convolutional&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;CNNs&#39;, &#39;recurrent&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;RNNs&#39;, &#39;and&#39;, &#39;autoencoders&#39;]</code></pre>
+<p>而对于汉语来说，汉语的每个词语之间并没有任何的分隔符，因此需要借助一些特定的函数库来帮助我们完成这件事。例如可以使用<code>jieba</code>函数库来完成：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jieba</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">chinese_splitwords</span>(<span class="params">sentence_chinese, suggestions_list=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">if</span> suggestions_list <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> suggestions_list:</span><br><span class="line">            jieba.add_word(item)</span><br><span class="line">    splited_chinese=[item <span class="keyword">for</span> item <span class="keyword">in</span> jieba.cut(sentence_chinese)]</span><br><span class="line">    <span class="keyword">return</span> splited_chinese</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">splited_sentence_chinese=chinese_splitwords(sentence_chinese)</span><br></pre></td></tr></table></figure>
+<pre><code>Building prefix dict from the default dictionary ...
+Loading model from cache C:\Users\Yufei Luo\AppData\Local\Temp\jieba.cache
+Loading model cost 0.562 seconds.
+Prefix dict has been built successfully.</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(splited_sentence_chinese)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;高&#39;, &#39;德纳&#39;, &#39;音译&#39;, &#39;唐纳德&#39;, &#39;尔文克&#39;, &#39;努斯&#39;, &#39;年月日&#39;, &#39;出&#39;, &#39;生于&#39;, &#39;美国&#39;, &#39;密尔沃基&#39;, &#39;著名&#39;, &#39;计算机&#39;, &#39;科学家&#39;, &#39;斯坦福大学&#39;, &#39;计算机系&#39;, &#39;荣誉&#39;, &#39;退休&#39;, &#39;教授&#39;, &#39;高&#39;, &#39;德纳&#39;, &#39;教授&#39;, &#39;为&#39;, &#39;现代&#39;, &#39;计算机科学&#39;, &#39;的&#39;, &#39;先驱&#39;, &#39;人物&#39;, &#39;创造&#39;, &#39;了&#39;, &#39;算法&#39;, &#39;分析&#39;, &#39;的&#39;, &#39;领域&#39;, &#39;在&#39;, &#39;数个&#39;, &#39;理论&#39;, &#39;计算机科学&#39;, &#39;的&#39;, &#39;分支&#39;, &#39;做出&#39;, &#39;基石&#39;, &#39;一般&#39;, &#39;的&#39;, &#39;贡献&#39;, &#39;在&#39;, &#39;计算机科学&#39;, &#39;及&#39;, &#39;数学&#39;, &#39;领域&#39;, &#39;发表&#39;, &#39;了&#39;, &#39;多部&#39;, &#39;具&#39;, &#39;广泛&#39;, &#39;影响&#39;, &#39;的&#39;, &#39;论文&#39;, &#39;和&#39;, &#39;著作&#39;]</code></pre>
+<p>在上述的分词结果中，有一些分词不对的地方，比如人名、专属名词等。此时，我们可以将它们手动加入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">splited_sentence_chinese=chinese_splitwords(sentence_chinese, [<span class="string">&#x27;高德纳&#x27;</span>, <span class="string">&#x27;尔文&#x27;</span>, <span class="string">&#x27;克努斯&#x27;</span>, <span class="string">&#x27;出生于&#x27;</span>, <span class="string">&#x27;算法分析&#x27;</span>, <span class="string">&#x27;理论计算机科学&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(splited_sentence_chinese)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;高德纳&#39;, &#39;音译&#39;, &#39;唐纳德&#39;, &#39;尔文&#39;, &#39;克努斯&#39;, &#39;年月日&#39;, &#39;出生于&#39;, &#39;美国&#39;, &#39;密尔沃基&#39;, &#39;著名&#39;, &#39;计算机&#39;, &#39;科学家&#39;, &#39;斯坦福大学&#39;, &#39;计算机系&#39;, &#39;荣誉&#39;, &#39;退休&#39;, &#39;教授&#39;, &#39;高德纳&#39;, &#39;教授&#39;, &#39;为&#39;, &#39;现代&#39;, &#39;计算机科学&#39;, &#39;的&#39;, &#39;先驱&#39;, &#39;人物&#39;, &#39;创造&#39;, &#39;了&#39;, &#39;算法分析&#39;, &#39;的&#39;, &#39;领域&#39;, &#39;在&#39;, &#39;数个&#39;, &#39;理论计算机科学&#39;, &#39;的&#39;, &#39;分支&#39;, &#39;做出&#39;, &#39;基石&#39;, &#39;一般&#39;, &#39;的&#39;, &#39;贡献&#39;, &#39;在&#39;, &#39;计算机科学&#39;, &#39;及&#39;, &#39;数学&#39;, &#39;领域&#39;, &#39;发表&#39;, &#39;了&#39;, &#39;多部&#39;, &#39;具&#39;, &#39;广泛&#39;, &#39;影响&#39;, &#39;的&#39;, &#39;论文&#39;, &#39;和&#39;, &#39;著作&#39;]</code></pre>
+<h3 id="大小写转换与拼写纠错">大小写转换与拼写纠错</h3>
+<p>在大部分情况下，英文单词的大写与小写表示的是同一个意思。因此，为了方便后续的处理，通常需要将所有的大写单词都变为小写。同时，英文单词中也可能存在一些拼写错误的情况，需要对其进行纠错。</p>
+<p>大小写转换可以直接使用Python自带的<code>lower()</code>函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">splited_sentence_english=[item.lower() <span class="keyword">for</span> item <span class="keyword">in</span> splited_sentence_english]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(splited_sentence_english)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;the&#39;, &#39;recent&#39;, &#39;success&#39;, &#39;of&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;has&#39;, &#39;boosted&#39;, &#39;research&#39;, &#39;on&#39;, &#39;pattern&#39;, &#39;recognition&#39;, &#39;and&#39;, &#39;data&#39;, &#39;mining&#39;, &#39;many&#39;, &#39;machine&#39;, &#39;learning&#39;, &#39;tasks&#39;, &#39;such&#39;, &#39;as&#39;, &#39;object&#39;, &#39;detection&#39;, &#39;machine&#39;, &#39;translation&#39;, &#39;and&#39;, &#39;speech&#39;, &#39;reconition&#39;, &#39;which&#39;, &#39;once&#39;, &#39;heavily&#39;, &#39;relied&#39;, &#39;on&#39;, &#39;handcrafted&#39;, &#39;feature&#39;, &#39;engineering&#39;, &#39;to&#39;, &#39;extract&#39;, &#39;informative&#39;, &#39;feature&#39;, &#39;sets&#39;, &#39;has&#39;, &#39;recently&#39;, &#39;been&#39;, &#39;revolutionized&#39;, &#39;by&#39;, &#39;various&#39;, &#39;end&#39;, &#39;to&#39;, &#39;end&#39;, &#39;deep&#39;, &#39;learning&#39;, &#39;paradigms&#39;, &#39;e&#39;, &#39;g&#39;, &#39;convolutional&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;cnns&#39;, &#39;recurrent&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;rnns&#39;, &#39;and&#39;, &#39;autoencoders&#39;]</code></pre>
+<p>而对于拼写检查与纠错，则可以使用<code>pyenchant</code>函数库来完成。但是它仅仅会给出一些修改建议，仍需要自己去手动去决定是否修改。基本用法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> enchant</span><br><span class="line">enchant_dict=enchant.<span class="type">Dict</span>(<span class="string">&#x27;en_US&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> splited_sentence_english:</span><br><span class="line">    <span class="keyword">if</span> enchant_dict.check(item) <span class="keyword">is</span> <span class="literal">False</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;original word: &#x27;</span>,item, <span class="string">&#x27; suggested words: &#x27;</span>, enchant_dict.suggest(item))</span><br></pre></td></tr></table></figure>
+<pre><code>original word:  reconition  suggested words:  [&#39;recondition&#39;, &#39;recognition&#39;, &#39;reconnection&#39;, &#39;reconception&#39;, &#39;reconsecration&#39;, &#39;premonition&#39;]
+original word:  convolutional  suggested words:  [&#39;convolution al&#39;, &#39;convolution-al&#39;, &#39;convolution&#39;, &#39;involutional&#39;, &#39;convocational&#39;, &#39;coevolutionary&#39;]
+original word:  cnns  suggested words:  [&#39;conns&#39;, &#39;inns&#39;, &#39;cans&#39;, &#39;cons&#39;, &#39;CNS&#39;]
+original word:  rnns  suggested words:  [&#39;inns&#39;, &#39;runs&#39;, &#39;scorns&#39;]
+original word:  autoencoders  suggested words:  [&#39;auto encoders&#39;, &#39;auto-encoders&#39;, &#39;encoders&#39;]</code></pre>
+<h3 id="去掉停用词">去掉停用词</h3>
+<p>在文本中，通常包含有一些无效的词语，例如虚词、代词、没有特定含义的动词等，这些单词被称为停用词。去掉这些单词之后，对于理解整个句子的语义没有任何影响。</p>
+<p>对于英文文本来说，我们可以直接使用<code>NLTK</code>提供的英文停用词表：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> nltk</span><br><span class="line"><span class="keyword">from</span> nltk.corpus <span class="keyword">import</span> stopwords</span><br><span class="line">stop=stopwords.words(<span class="string">&#x27;english&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(stop)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;i&#39;, &#39;me&#39;, &#39;my&#39;, &#39;myself&#39;, &#39;we&#39;, &#39;our&#39;, &#39;ours&#39;, &#39;ourselves&#39;, &#39;you&#39;, &quot;you&#39;re&quot;, &quot;you&#39;ve&quot;, &quot;you&#39;ll&quot;, &quot;you&#39;d&quot;, &#39;your&#39;, &#39;yours&#39;, &#39;yourself&#39;, &#39;yourselves&#39;, &#39;he&#39;, &#39;him&#39;, &#39;his&#39;, &#39;himself&#39;, &#39;she&#39;, &quot;she&#39;s&quot;, &#39;her&#39;, &#39;hers&#39;, &#39;herself&#39;, &#39;it&#39;, &quot;it&#39;s&quot;, &#39;its&#39;, &#39;itself&#39;, &#39;they&#39;, &#39;them&#39;, &#39;their&#39;, &#39;theirs&#39;, &#39;themselves&#39;, &#39;what&#39;, &#39;which&#39;, &#39;who&#39;, &#39;whom&#39;, &#39;this&#39;, &#39;that&#39;, &quot;that&#39;ll&quot;, &#39;these&#39;, &#39;those&#39;, &#39;am&#39;, &#39;is&#39;, &#39;are&#39;, &#39;was&#39;, &#39;were&#39;, &#39;be&#39;, &#39;been&#39;, &#39;being&#39;, &#39;have&#39;, &#39;has&#39;, &#39;had&#39;, &#39;having&#39;, &#39;do&#39;, &#39;does&#39;, &#39;did&#39;, &#39;doing&#39;, &#39;a&#39;, &#39;an&#39;, &#39;the&#39;, &#39;and&#39;, &#39;but&#39;, &#39;if&#39;, &#39;or&#39;, &#39;because&#39;, &#39;as&#39;, &#39;until&#39;, &#39;while&#39;, &#39;of&#39;, &#39;at&#39;, &#39;by&#39;, &#39;for&#39;, &#39;with&#39;, &#39;about&#39;, &#39;against&#39;, &#39;between&#39;, &#39;into&#39;, &#39;through&#39;, &#39;during&#39;, &#39;before&#39;, &#39;after&#39;, &#39;above&#39;, &#39;below&#39;, &#39;to&#39;, &#39;from&#39;, &#39;up&#39;, &#39;down&#39;, &#39;in&#39;, &#39;out&#39;, &#39;on&#39;, &#39;off&#39;, &#39;over&#39;, &#39;under&#39;, &#39;again&#39;, &#39;further&#39;, &#39;then&#39;, &#39;once&#39;, &#39;here&#39;, &#39;there&#39;, &#39;when&#39;, &#39;where&#39;, &#39;why&#39;, &#39;how&#39;, &#39;all&#39;, &#39;any&#39;, &#39;both&#39;, &#39;each&#39;, &#39;few&#39;, &#39;more&#39;, &#39;most&#39;, &#39;other&#39;, &#39;some&#39;, &#39;such&#39;, &#39;no&#39;, &#39;nor&#39;, &#39;not&#39;, &#39;only&#39;, &#39;own&#39;, &#39;same&#39;, &#39;so&#39;, &#39;than&#39;, &#39;too&#39;, &#39;very&#39;, &#39;s&#39;, &#39;t&#39;, &#39;can&#39;, &#39;will&#39;, &#39;just&#39;, &#39;don&#39;, &quot;don&#39;t&quot;, &#39;should&#39;, &quot;should&#39;ve&quot;, &#39;now&#39;, &#39;d&#39;, &#39;ll&#39;, &#39;m&#39;, &#39;o&#39;, &#39;re&#39;, &#39;ve&#39;, &#39;y&#39;, &#39;ain&#39;, &#39;aren&#39;, &quot;aren&#39;t&quot;, &#39;couldn&#39;, &quot;couldn&#39;t&quot;, &#39;didn&#39;, &quot;didn&#39;t&quot;, &#39;doesn&#39;, &quot;doesn&#39;t&quot;, &#39;hadn&#39;, &quot;hadn&#39;t&quot;, &#39;hasn&#39;, &quot;hasn&#39;t&quot;, &#39;haven&#39;, &quot;haven&#39;t&quot;, &#39;isn&#39;, &quot;isn&#39;t&quot;, &#39;ma&#39;, &#39;mightn&#39;, &quot;mightn&#39;t&quot;, &#39;mustn&#39;, &quot;mustn&#39;t&quot;, &#39;needn&#39;, &quot;needn&#39;t&quot;, &#39;shan&#39;, &quot;shan&#39;t&quot;, &#39;shouldn&#39;, &quot;shouldn&#39;t&quot;, &#39;wasn&#39;, &quot;wasn&#39;t&quot;, &#39;weren&#39;, &quot;weren&#39;t&quot;, &#39;won&#39;, &quot;won&#39;t&quot;, &#39;wouldn&#39;, &quot;wouldn&#39;t&quot;]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filtered_splited_sentence_english=[item <span class="keyword">for</span> item <span class="keyword">in</span> splited_sentence_english <span class="keyword">if</span> item <span class="keyword">not</span> <span class="keyword">in</span> stop]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(filtered_splited_sentence_english)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;recent&#39;, &#39;success&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;boosted&#39;, &#39;research&#39;, &#39;pattern&#39;, &#39;recognition&#39;, &#39;data&#39;, &#39;mining&#39;, &#39;many&#39;, &#39;machine&#39;, &#39;learning&#39;, &#39;tasks&#39;, &#39;object&#39;, &#39;detection&#39;, &#39;machine&#39;, &#39;translation&#39;, &#39;speech&#39;, &#39;reconition&#39;, &#39;heavily&#39;, &#39;relied&#39;, &#39;handcrafted&#39;, &#39;feature&#39;, &#39;engineering&#39;, &#39;extract&#39;, &#39;informative&#39;, &#39;feature&#39;, &#39;sets&#39;, &#39;recently&#39;, &#39;revolutionized&#39;, &#39;various&#39;, &#39;end&#39;, &#39;end&#39;, &#39;deep&#39;, &#39;learning&#39;, &#39;paradigms&#39;, &#39;e&#39;, &#39;g&#39;, &#39;convolutional&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;cnns&#39;, &#39;recurrent&#39;, &#39;neural&#39;, &#39;networks&#39;, &#39;rnns&#39;, &#39;autoencoders&#39;]</code></pre>
+<p>而中文去停用词则需要先下载停用词表，可以从https://github.com/yinzm/ChineseStopWords 中下载。之后的处理方法与英文类似，此处不再演示。</p>
+<h1 id="标准化">标准化</h1>
+<p>标准化这一步骤特指的是对英文单词进行处理。由于一个英语单词可能会通过增加前后缀等方式变为不同的形式，但是它们的含义相同。通过标准化处理可以将它们进行简化，从而方便做后续的文本向量化。常用的办法为词干提取和词形还原。</p>
+<h2 id="词干提取">词干提取</h2>
+<p>词干提取（Stemming）指的是去除单词的前后缀得到词干的过程。常见的前后词缀包括名词复数、进行时、过去分词等。这一方法通常依赖于规则变化，粒度较粗，通常被用于信息检索。</p>
+<p>下面为使用nltk做词干提取的例子。从结果也可以看出，词干提取得到的结果比较粗糙：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> nltk.stem <span class="keyword">import</span> SnowballStemmer</span><br><span class="line">stemmer=SnowballStemmer(<span class="string">&#x27;english&#x27;</span>)</span><br><span class="line">stemmed_sentence_english=[stemmer.stem(item) <span class="keyword">for</span> item <span class="keyword">in</span> filtered_splited_sentence_english]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(stemmed_sentence_english)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;recent&#39;, &#39;success&#39;, &#39;neural&#39;, &#39;network&#39;, &#39;boost&#39;, &#39;research&#39;, &#39;pattern&#39;, &#39;recognit&#39;, &#39;data&#39;, &#39;mine&#39;, &#39;mani&#39;, &#39;machin&#39;, &#39;learn&#39;, &#39;task&#39;, &#39;object&#39;, &#39;detect&#39;, &#39;machin&#39;, &#39;translat&#39;, &#39;speech&#39;, &#39;reconit&#39;, &#39;heavili&#39;, &#39;reli&#39;, &#39;handcraft&#39;, &#39;featur&#39;, &#39;engin&#39;, &#39;extract&#39;, &#39;inform&#39;, &#39;featur&#39;, &#39;set&#39;, &#39;recent&#39;, &#39;revolution&#39;, &#39;various&#39;, &#39;end&#39;, &#39;end&#39;, &#39;deep&#39;, &#39;learn&#39;, &#39;paradigm&#39;, &#39;e&#39;, &#39;g&#39;, &#39;convolut&#39;, &#39;neural&#39;, &#39;network&#39;, &#39;cnns&#39;, &#39;recurr&#39;, &#39;neural&#39;, &#39;network&#39;, &#39;rnns&#39;, &#39;autoencod&#39;]</code></pre>
+<h2 id="词形还原">词形还原</h2>
+<p>词形还原（Lemmatization）则相比于词干提取更复杂一些，它要求还原得到词的原型。这不仅要做词缀转化，还要做词性的识别。因此，这更加依赖于词典，需要在词典中进行搜索并寻找到有效词。因此，这一方法通常被用于更细粒度的文本分析和表达，如文本挖掘、自然语言处理等。</p>
+<p>下面为使用nltk做词形还原的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> nltk.stem <span class="keyword">import</span> WordNetLemmatizer</span><br><span class="line">lemmatizer=WordNetLemmatizer()</span><br><span class="line">lemmatized_sentence_english=[lemmatizer.lemmatize(item) <span class="keyword">for</span> item <span class="keyword">in</span> filtered_splited_sentence_english]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(lemmatized_sentence_english)</span><br></pre></td></tr></table></figure>
+<pre><code>[&#39;recent&#39;, &#39;success&#39;, &#39;neural&#39;, &#39;network&#39;, &#39;boosted&#39;, &#39;research&#39;, &#39;pattern&#39;, &#39;recognition&#39;, &#39;data&#39;, &#39;mining&#39;, &#39;many&#39;, &#39;machine&#39;, &#39;learning&#39;, &#39;task&#39;, &#39;object&#39;, &#39;detection&#39;, &#39;machine&#39;, &#39;translation&#39;, &#39;speech&#39;, &#39;reconition&#39;, &#39;heavily&#39;, &#39;relied&#39;, &#39;handcrafted&#39;, &#39;feature&#39;, &#39;engineering&#39;, &#39;extract&#39;, &#39;informative&#39;, &#39;feature&#39;, &#39;set&#39;, &#39;recently&#39;, &#39;revolutionized&#39;, &#39;various&#39;, &#39;end&#39;, &#39;end&#39;, &#39;deep&#39;, &#39;learning&#39;, &#39;paradigm&#39;, &#39;e&#39;, &#39;g&#39;, &#39;convolutional&#39;, &#39;neural&#39;, &#39;network&#39;, &#39;cnns&#39;, &#39;recurrent&#39;, &#39;neural&#39;, &#39;network&#39;, &#39;rnns&#39;, &#39;autoencoders&#39;]</code></pre>
+<p>为了方便起见，我们可以将上述的这些步骤写成一个统一的函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">preprocess_english_sentence</span>(<span class="params">raw_english_sentence, </span></span><br><span class="line"><span class="params">                    stop_words=nltk.corpus.stopwords.words(<span class="params"><span class="string">&#x27;english&#x27;</span></span>), </span></span><br><span class="line"><span class="params">                    lemmatizer=nltk.stem.WordNetLemmatizer(<span class="params"></span>)</span>):</span><br><span class="line">    pattern = re.<span class="built_in">compile</span>(<span class="string">r&#x27;[^a-zA-Z]&#x27;</span>)</span><br><span class="line">    processed_sentence = re.sub(pattern, <span class="string">&#x27; &#x27;</span>, raw_english_sentence)</span><br><span class="line">    processed_sentence = processed_sentence.lower()</span><br><span class="line">    processed_sentence = processed_sentence.split()</span><br><span class="line">    processed_sentence = [item <span class="keyword">for</span> item <span class="keyword">in</span> processed_sentence <span class="keyword">if</span> item <span class="keyword">not</span> <span class="keyword">in</span> stop]</span><br><span class="line">    processed_sentence = [lemmatizer.lemmatize(item) <span class="keyword">for</span> item <span class="keyword">in</span> processed_sentence]</span><br><span class="line">    <span class="keyword">return</span> processed_sentence</span><br></pre></td></tr></table></figure>
+<h1 id="特征提取">特征提取</h1>
+<h2 id="简介">简介</h2>
+<p>在上述步骤进行完成之后，得到的基本就是干净的文本，后面就可以从文本中提取特征向量。下面介绍几种常用的方法。为了方便演示，我们使用如下的英文句子，并对文本进行初步的处理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">raw_sentences=[<span class="string">r&#x27;Reinforcement learning is learning what to do—how to map situations to actions—so as to maximize a numerical reward signal.&#x27;</span>, <span class="string">r&#x27;The learner is not told which actions to take, but instead must discover which actions yield the most reward by trying them.&#x27;</span>, <span class="string">r&#x27;In the most interesting and challenging cases, actions may a↵ect not only the immediate reward but also the next situation and, through that, all subsequent rewards.&#x27;</span>, <span class="string">r&#x27;These two characteristics—trial-and-error search and delayed reward—are the two most important distinguishing features of reinforcement learning.&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">processed_sentences=[preprocess_english_sentence(item) <span class="keyword">for</span> item <span class="keyword">in</span> raw_sentences]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(processed_sentences)</span><br></pre></td></tr></table></figure>
+<pre><code>[[&#39;reinforcement&#39;, &#39;learning&#39;, &#39;learning&#39;, &#39;map&#39;, &#39;situation&#39;, &#39;action&#39;, &#39;maximize&#39;, &#39;numerical&#39;, &#39;reward&#39;, &#39;signal&#39;], [&#39;learner&#39;, &#39;told&#39;, &#39;action&#39;, &#39;take&#39;, &#39;instead&#39;, &#39;must&#39;, &#39;discover&#39;, &#39;action&#39;, &#39;yield&#39;, &#39;reward&#39;, &#39;trying&#39;], [&#39;interesting&#39;, &#39;challenging&#39;, &#39;case&#39;, &#39;action&#39;, &#39;may&#39;, &#39;ect&#39;, &#39;immediate&#39;, &#39;reward&#39;, &#39;also&#39;, &#39;next&#39;, &#39;situation&#39;, &#39;subsequent&#39;, &#39;reward&#39;], [&#39;two&#39;, &#39;characteristic&#39;, &#39;trial&#39;, &#39;error&#39;, &#39;search&#39;, &#39;delayed&#39;, &#39;reward&#39;, &#39;two&#39;, &#39;important&#39;, &#39;distinguishing&#39;, &#39;feature&#39;, &#39;reinforcement&#39;, &#39;learning&#39;]]</code></pre>
+<h2 id="离散表示">离散表示</h2>
+<p>一种基于规则和统计的向量化方式，常用的方法包括词集模型和词袋模型，都是基于词之间保持独立性、没有关联为前提，将所有文本中单词形成一个字典，然后根据字典来统计单词出现频数。不同的是，在词集模型中，只要单个文本中单词出现在字典中，就将其置为1，不管出现多少次；而对于词袋模型，只要单个文本中单词出现在字典中，就将其向量值加1，出现多少次就加多少次。</p>
+<p>其基本的特点是忽略了文本信息中的语序信息和语境信息，仅将其反映为若干维度的独立概念，这种情况有着因为模型本身原因而无法解决的问题，比如主语和宾语的顺序问题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<p>下面的示例是对句子做One-hot编码，这种编码方式对于重复出现的词只计算一次：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">generate_one_hot_encoding</span>(<span class="params">sentences</span>):</span><br><span class="line">    token_index=&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> sentence <span class="keyword">in</span> sentences:</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> sentence:</span><br><span class="line">            <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> token_index:</span><br><span class="line">                token_index[word]=<span class="built_in">len</span>(token_index)</span><br><span class="line">    results=np.zeros((<span class="built_in">len</span>(sentences),<span class="built_in">len</span>(token_index)))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(sentences)):</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> sentences[i]:</span><br><span class="line">            results[i,token_index[word]]=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> results</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(generate_one_hot_encoding(processed_sentences))</span><br></pre></td></tr></table></figure>
+<pre><code>[[1. 1. 1. 1. 1. 1. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 1. 0. 0. 1. 0. 1. 1. 1. 1. 1. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 1. 1. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 1. 1. 1. 1.
+  1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [1. 1. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 1. 1. 1. 1. 1. 1. 1. 1. 1.]]</code></pre>
+<p>下面的示例是对句子做Bag of Words编码，相比于One-hot编码，它加入了对词频的统计信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">generate_bag_of_words_encoding</span>(<span class="params">sentences</span>):</span><br><span class="line">    token_index=&#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> sentence <span class="keyword">in</span> sentences:</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> sentence:</span><br><span class="line">            <span class="keyword">if</span> word <span class="keyword">not</span> <span class="keyword">in</span> token_index:</span><br><span class="line">                token_index[word]=<span class="built_in">len</span>(token_index)</span><br><span class="line">    results=np.zeros((<span class="built_in">len</span>(sentences),<span class="built_in">len</span>(token_index)))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(sentences)):</span><br><span class="line">        <span class="keyword">for</span> word <span class="keyword">in</span> sentences[i]:</span><br><span class="line">            results[i,token_index[word]]+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> results</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(generate_bag_of_words_encoding(processed_sentences))</span><br></pre></td></tr></table></figure>
+<pre><code>[[1. 2. 1. 1. 1. 1. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 2. 0. 0. 1. 0. 1. 1. 1. 1. 1. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 1. 1. 0. 0. 2. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 1. 1. 1. 1.
+  1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [1. 1. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+  0. 0. 2. 1. 1. 1. 1. 1. 1. 1. 1.]]</code></pre>
+<p>另一种指标是TF-IDF。假设我们有N个句子，对其中的某一个句子D，它的TF-IDF定义如下：TF（Term Frequency）指的是单词<span class="math inline">\(x\)</span>在D中出现的次数；而IDF（Inverse Document Frequency）使用如下公式计算： <span class="math display">\[
+\text{IDF}(x)=\log \frac{N+1}{N(x)+1}+1
+\]</span> 其中<span class="math inline">\(N\)</span>代表语料库中文本的总数，<span class="math inline">\(N(x)\)</span>代表语料库中包含单词<span class="math inline">\(x\)</span>的文本总数；而<span class="math inline">\(\text{ TF-IDF}(x)=\text{TF}(x)\cdot \text{IDF}(x)\)</span>。</p>
+<p>Sklearn提供了直接生成TF-IDF的类，可以直接使用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> TfidfVectorizer</span><br><span class="line">tf_idf_vec=TfidfVectorizer(stop_words=nltk.corpus.stopwords.words(<span class="string">&#x27;english&#x27;</span>),).fit_transform(raw_sentences)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(tf_idf_vec.toarray())</span><br></pre></td></tr></table></figure>
+<pre><code>[[0.21531714 0.         0.         0.         0.         0.
+  0.         0.         0.         0.         0.         0.
+  0.         0.         0.         0.         0.53191902 0.33733591
+  0.33733591 0.         0.         0.         0.33733591 0.26595951
+  0.17603587 0.         0.         0.33733591 0.         0.33733591
+  0.         0.         0.         0.         0.         0.
+  0.        ]
+ [0.40568172 0.         0.         0.         0.         0.
+  0.31778941 0.         0.         0.         0.         0.
+  0.         0.31778941 0.         0.31778941 0.         0.
+  0.         0.         0.31778941 0.         0.         0.
+  0.1658357  0.         0.         0.         0.         0.
+  0.         0.31778941 0.31778941 0.         0.31778941 0.
+  0.31778941]
+ [0.18676679 0.29260626 0.29260626 0.29260626 0.         0.
+  0.         0.         0.29260626 0.         0.         0.29260626
+  0.         0.         0.29260626 0.         0.         0.
+  0.         0.29260626 0.         0.29260626 0.         0.
+  0.15269409 0.29260626 0.         0.         0.29260626 0.
+  0.29260626 0.         0.         0.         0.         0.
+  0.        ]
+ [0.         0.         0.         0.         0.27200938 0.27200938
+  0.         0.27200938 0.         0.27200938 0.27200938 0.
+  0.27200938 0.         0.         0.         0.21445532 0.
+  0.         0.         0.         0.         0.         0.21445532
+  0.14194578 0.         0.27200938 0.         0.         0.
+  0.         0.         0.         0.27200938 0.         0.54401876
+  0.        ]]</code></pre>
+<h2 id="word2vec">Word2Vec</h2>
+<h3 id="简介-1">简介</h3>
+<p>Word2Vec属于词嵌入（Word Embedding）方式的一种，它指的是将自然语言中的词语嵌入到一个数学空间中去，从而可以表达为词向量的形式。</p>
+<p>Word Embedding的原理是用一个低维的稠密向量表示一个词语，这个词语可以表示一个书名、一个商品、或是一部电影等等。这个向量的性质是能够使得距离相近的向量所对应的词语具有相近的含义。例如，“复仇者联盟”和“钢铁侠”之间的距离比较接近，而“复仇者联盟”和“乱世佳人”之间的距离就会相应的远一些。此外，embedding甚至还可以具有一些属性运算的关系。例如<span class="math inline">\(\text{Vec(Woman) }- \text{Vec(Man)}\approx \text{Vec(Queen)}-\text{Vec(King)}\)</span>。</p>
+<p>因此，这种可以用低维稠密向量来对词语编码并且还保留其含义的特点非常适合深度学习（深度学习不适合高维稀疏特征向量的处理，这样会导致模型过大且不利于收敛）。目前这一思想已经不止被运用在词嵌入中，也被用于推荐系统中商品的Embedding、图结构中结点的Embedding等。</p>
+<p>由于Word2Vec模型得到的是词向量，如果要用它来表示句子的话，可以将每个句子中的词向量相加再取平均，即使用每个句子的平均词向量来作为整个句子的向量。</p>
+<p>Word2Vec的实现有两种不同的模型：Skip-Gram和CBOW。下面对其分别进行介绍。</p>
+<h3 id="cbow模型">CBOW模型</h3>
+<p>CBOW模型指的是使用一个词语的上下文作为输入，来预测这个词语本身。例如我们要使用“The quick brown fox jumps over the lazy dog”这一句话来训练得到单词"fox"的词嵌入，以“fox”前后的各3个单词作为输入，则模型的输入则为“The, quick, brown, jumps, over, the”这六个词。模型结构如下图，其中相邻的两层之间都为全连接层：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210712201938.com%2526app%253D2002%2526size%253Df9999%252C10000%2526q%253Da80%2526n%253D0%2526g%253D0n%2526fmt%253Djpeg" alt="image-20210705205602082" style="zoom:67%;" /></p>
+<p>在下面的推导过程中，我们使用<span class="math inline">\(V\)</span>来表示词汇表的大小，<span class="math inline">\(N\)</span>表示隐藏层的大小，网络的输入共有<span class="math inline">\(C\)</span>个；网络的输入记作向量<span class="math inline">\(\boldsymbol{x}_1,\boldsymbol{x}_2 \dots,\boldsymbol{x}_C\)</span>，它们都为One-hot编码的词向量，也就是说<span class="math inline">\(\boldsymbol{x}_i\)</span>的V个元素<span class="math inline">\(\{x_{i1},x_{i2},\dots,x_{iV}\}\)</span>中只有一个为1，其余全部为0；输入层与隐藏层之间的权重矩阵记为<span class="math inline">\(W_{V\times N}\)</span>（不同输入使用同一个矩阵进行运算），由于输入为One-hot形式的编码，因此矩阵的每个行向量<span class="math inline">\(\boldsymbol{v}_i\)</span>也就对应于第<span class="math inline">\(i\)</span>个词语的向量表示；隐藏层与输出层之间的权重矩阵记为<span class="math inline">\(W&#39;_{N\times V}\)</span>，它第<span class="math inline">\(i\)</span>列的向量可以记作<span class="math inline">\(\boldsymbol{v}&#39;_i\)</span>；网络的输出记作向量<span class="math inline">\(\boldsymbol{y}\)</span>。</p>
+<p>在网络的计算过程中，隐藏层输出可以表示为： <span class="math display">\[
+\boldsymbol{h}=\frac{1}{C}W(\boldsymbol{x}_1+\boldsymbol{x}_2+\dots+\boldsymbol{x}_C)=\frac{1}{C}\sum_{i=1}^{C}\boldsymbol{v}_i
+\]</span> 而输出层则需要在矩阵运算之后再经过Softmax层的处理，因此输出<span class="math inline">\(\boldsymbol{y}\)</span>中的元素<span class="math inline">\(y_i\)</span>可以表示为： <span class="math display">\[
+y_i=\frac{\exp(\boldsymbol{h}\cdot \boldsymbol{v}_i&#39;)}{\sum_{j=1}^{N} \exp(\boldsymbol{h}\cdot \boldsymbol{v}_i&#39;)}
+\]</span> 之后，则需要将输出结果与实际要预测的词语对比并计算损失函数，来进行网络参数的优化。在模型训练完成之后，我们即可直接取<span class="math inline">\(W_{V\times N}\)</span>作为词向量的查询表。</p>
+<h3 id="skip-gram模型">Skip-Gram模型</h3>
+<p>Skip-Gram模型指的是用一个词语作为输入，来预测它周围的上下文。例如我们要使用“The quick brown fox jumps over the lazy dog”这一句话来训练得到单词"fox"的词嵌入。模型的输入为单词“fox”，而模型的输出则为“fox”前后的各3个单词，即“The, quick, brown, jumps, over, the”这六个词。模型结构如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210712201938.com%2526app%253D2002%2526size%253Df9999%252C10000%2526q%253Da80%2526n%253D0%2526g%253D0n%2526fmt%253Djpeg" alt="img" style="zoom:67%;" /></p>
+<p>其中，<span class="math inline">\(V\)</span>来表示词汇表的大小，<span class="math inline">\(N\)</span>表示隐藏层的大小，网络的输出共有<span class="math inline">\(C\)</span>个；网络的输入记作向量<span class="math inline">\(\boldsymbol{x}\)</span>，它为One-hot编码的词向量；输入层与隐藏层之间的权重矩阵记为<span class="math inline">\(W_{V\times N}\)</span>，由于输入为One-hot形式的编码，因此矩阵的每个行向量<span class="math inline">\(\boldsymbol{v}_i\)</span>也就对应于输入词语的向量表示；隐藏层与输出层之间的权重矩阵记为<span class="math inline">\(W&#39;_{N\times V}\)</span>（不同的输出使用同一个矩阵），它第<span class="math inline">\(i\)</span>列的向量可以记作<span class="math inline">\(\boldsymbol{v}&#39;_i\)</span>；网络的输出记作向量<span class="math inline">\(\boldsymbol{y}_1,\boldsymbol{y}_2 \dots,\boldsymbol{y}_C\)</span>，同样需要经过Softmax函数的操作之后得到最后的输出。</p>
+<h3 id="示例">示例</h3>
+<p>下面的程序是使用<code>gensim</code>来做Word2Vec的简单示例。使用这一工具，只需要提前准备好已经做完分词的语料库，便可以方便地得到词向量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> gensim.models <span class="keyword">import</span> Word2Vec</span><br><span class="line"><span class="keyword">from</span> gensim.models.word2vec <span class="keyword">import</span> LineSentence</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentences=LineSentence(<span class="string">&#x27;lyrics.txt&#x27;</span>) <span class="comment">#传入一个文件名，文件中为一系列句子组成的语料库，一行代表一句。要求这些句子已经使用空格做好了分词</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model=Word2Vec(sentences, vector_size=<span class="number">32</span>, window=<span class="number">5</span>, min_count=<span class="number">1</span>, workers=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model.wv[<span class="string">&#x27;Earth&#x27;</span>] <span class="comment">#训练完成之后，便可以查看一个词的向量表示</span></span><br></pre></td></tr></table></figure>
+<pre><code>array([-0.00666012, -0.01481392,  0.0269256 ,  0.01354416,  0.01357177,
+        0.02895457, -0.02626695,  0.0164796 ,  0.00615305,  0.01287159,
+        0.00542354,  0.01383927,  0.01400239,  0.01892557, -0.00990492,
+       -0.01417832, -0.0012459 ,  0.00806731, -0.01026401,  0.01915038,
+        0.01341161,  0.02472899,  0.00842807,  0.02517772, -0.00420819,
+        0.02525247,  0.01139648, -0.02486438, -0.01205918, -0.00779674,
+        0.01509896, -0.00250713], dtype=float32)</code></pre>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC81MzI3NzcyMw==">NLP入门-- 文本预处理Pre-processing - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vcGluYXJkL3AvNjc0NDA1Ni5odG1s">中文文本挖掘预处理流程总结 - 刘建平Pinard - 博客园 (cnblogs.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vcGluYXJkL3AvNjc1NjUzNC5odG1s">英文文本挖掘预处理流程总结 - 刘建平Pinard - 博客园 (cnblogs.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vbG9va2ZvcjQwNC9wLzk3ODQ2MzAuaHRtbA==">中文文本预处理流程(带你分析每一步) - 炼己者 - 博客园 (cnblogs.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9weWVuY2hhbnQuZ2l0aHViLmlvL3B5ZW5jaGFudC9pbmRleC5odG1s">PyEnchant — PyEnchant 3.2.1 documentation<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuamlhbnNodS5jb20vcC9mNzNhOGM2MzljZmU=">自然语言处理 | 文本向量化 - 简书 (jianshu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC80MzczNjE2OQ==">word2vec 从原理到实现 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC81MzE5NDQwNw==">万物皆Embedding，从经典的word2vec到深度学习基本操作item2vec - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvcGRmLzE0MTEuMjczOHYzLnBkZg==">1411.2738v3.pdf (arxiv.org)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9yYWRpbXJlaHVyZWsuY29tL2dlbnNpbS8=">Gensim: Topic modelling for humans (radimrehurek.com)<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/07/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/" title="机器学习-文本预处理">http://lyf35.github.io/2021/07/04/机器学习-文本预处理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/01/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Transformer/" rel="prev" title="深度学习-Transformer">
+      <i class="fa fa-chevron-left"></i> 深度学习-Transformer
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/07/12/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A6%82%E8%BF%B0/" rel="next" title="深度学习-图神经网络概述">
+      深度学习-图神经网络概述 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'c6b356798e39f93751466e05511491b1',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="简介 扩散模型是受非平衡热力学的启发提出的一种生成模型，最早出现于2015年的文章Deep Unsupervised Learning using Nonequilibrium Thermodynamics。它定义了一个扩散步骤的马尔可夫链，逐渐向数据添加随机噪声，然后学习逆扩散过程，从噪声中构建所需的数据样本。 目前所使用的扩散模型大都是基于2020年的去噪扩散概率模型（Denoising Di">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习-扩散模型">
+<meta property="og:url" content="http://lyf35.github.io/2022/11/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="简介 扩散模型是受非平衡热力学的启发提出的一种生成模型，最早出现于2015年的文章Deep Unsupervised Learning using Nonequilibrium Thermodynamics。它定义了一个扩散步骤的马尔可夫链，逐渐向数据添加随机噪声，然后学习逆扩散过程，从噪声中构建所需的数据样本。 目前所使用的扩散模型大都是基于2020年的去噪扩散概率模型（Denoising Di">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205409.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205418.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205431.png">
+<meta property="article:published_time" content="2022-11-07T06:57:23.000Z">
+<meta property="article:modified_time" content="2022-11-07T15:35:42.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="生成模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205409.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2022/11/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深度学习-扩散模型 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="nav-number">2.</span> <span class="nav-text">背景知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#elbo"><span class="nav-number">2.1.</span> <span class="nav-text">ELBO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E5%88%86%E8%87%AA%E7%BC%96%E7%A0%81%E5%99%A8"><span class="nav-number">2.2.</span> <span class="nav-text">变分自编码器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%82%E7%BA%A7vae"><span class="nav-number">2.3.</span> <span class="nav-text">层级VAE</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E5%90%8E%E5%90%91%E8%BF%87%E7%A8%8B"><span class="nav-number">3.1.</span> <span class="nav-text">前向过程与后向过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">3.2.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%89%E4%BB%B7%E5%BD%A2%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">等价形式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%BE%97%E5%88%86%E5%8C%B9%E9%85%8D"><span class="nav-number">4.</span> <span class="nav-text">扩散模型与得分匹配</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%89%E4%BB%B7%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">4.1.</span> <span class="nav-text">等价损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sde%E4%B8%8B%E7%9A%84%E7%BB%9F%E4%B8%80%E6%A1%86%E6%9E%B6"><span class="nav-number">4.2.</span> <span class="nav-text">SDE下的统一框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%8A%E8%97%A4%E6%96%B9%E7%A8%8B"><span class="nav-number">4.2.1.</span> <span class="nav-text">伊藤方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sde%E4%B8%8Eddpm"><span class="nav-number">4.2.2.</span> <span class="nav-text">SDE与DDPM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sde%E4%B8%8Esmld"><span class="nav-number">4.2.3.</span> <span class="nav-text">SDE与SMLD</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E6%B5%81ode"><span class="nav-number">4.3.</span> <span class="nav-text">概率流ODE</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%AF%E6%8E%A7%E7%94%9F%E6%88%90"><span class="nav-number">5.</span> <span class="nav-text">可控生成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">5.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E6%8C%87%E5%AF%BC"><span class="nav-number">5.2.</span> <span class="nav-text">加入指导</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2022/11/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习-扩散模型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-07 14:57:23 / 修改时间：23:35:42" itemprop="dateCreated datePublished" datetime="2022-11-07T14:57:23+08:00">2022-11-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/11/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" class="post-meta-item leancloud_visitors" data-flag-title="深度学习-扩散模型" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>40k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>37 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="简介">简介</h1>
+<p>扩散模型是受非平衡热力学的启发提出的一种生成模型，最早出现于2015年的文章<span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzE1MDMuMDM1ODU=">Deep Unsupervised Learning using Nonequilibrium Thermodynamics<i class="fa fa-external-link-alt"></i></span>。它定义了一个扩散步骤的马尔可夫链，逐渐向数据添加随机噪声，然后学习逆扩散过程，从噪声中构建所需的数据样本。</p>
+<p>目前所使用的扩散模型大都是基于2020年的去噪扩散概率模型（Denoising Diffusion Probabilistic Model，DDPM）这一工作，它对之前的扩散模型进行了简化，并通过变分推断来进行建模。本文主要内容为DDPM的相关知识，不涉及在此基础上的改进工作。</p>
+<span id="more"></span>
+<h1 id="背景知识">背景知识</h1>
+<h2 id="elbo">ELBO</h2>
+<p>在贝叶斯体系中，通常假设观测到的数据<span class="math inline">\(\boldsymbol{x}\)</span>是由隐变量<span class="math inline">\(\boldsymbol{z}\)</span>来控制生成的，可以用一个联合概率分布<span class="math inline">\(p(\boldsymbol{x},\boldsymbol{z})\)</span>来描述。如果想求出所有观测数据的概率<span class="math inline">\(p(\boldsymbol{x})\)</span>，可以有两种方式，一种办法是计算积分</p>
+<p><span class="math display">\[
+p(\boldsymbol{x})=\int p(\boldsymbol{x},\boldsymbol{z})d\boldsymbol{z}
+\]</span></p>
+<p>另一种办法是使用条件概率公式</p>
+<p><span class="math display">\[
+p(\boldsymbol{x})=\frac{p(\boldsymbol{x},\boldsymbol{z})}{p(\boldsymbol{z}|\boldsymbol{x})}
+\]</span></p>
+<p>如果要使用精确推断的方法计算出<span class="math inline">\(p(\boldsymbol{x})\)</span>，或是需要对所有的隐变量<span class="math inline">\(\boldsymbol{z}\)</span>进行积分，又或者是能够知道<span class="math inline">\(p(\boldsymbol{z}|\boldsymbol{x})\)</span>。对于复杂模型来说这两种办法都不可取，但是从这两个公式中都可以推导出证据下界（Evidence Lower Bound，ELBO），从而使用近似推断的方式求解。</p>
+<blockquote>
+<p>在贝叶斯体系中，推断（Inference）指的是利用已知变量推测未知变量的分布，即我们在已经输入变量<span class="math inline">\(\boldsymbol{x}\)</span>后，如何获得未知变量<span class="math inline">\(\boldsymbol{z}\)</span>的分布<span class="math inline">\(p(\boldsymbol{z}|\boldsymbol{x})\)</span>。精确推断方法指的是准确地计算<span class="math inline">\(p(\boldsymbol{z}|\boldsymbol{x})\)</span>，但往往需要很大的计算开销或者很难实现，现实应用中近似推断更为常用。</p>
+<p>近似推断的方法往往分为两大类，第一类是采样，常见的是MCMC方法，第二类是使用另一个分布近似<span class="math inline">\(p(\boldsymbol{z}|\boldsymbol{x})\)</span>，典型代表就是变分推断。变分推断（Variational Inference）是近似推断方法的一种，是一大类通过简单分布来近似复杂分布，从而求解推断问题方法的总称。</p>
+</blockquote>
+<p>从上面两个公式都可以推导出如下的不等式，其中不等号右侧为证据下界：</p>
+<p><span class="math display">\[
+\log p(\boldsymbol{x}) \geq \mathbb{E}_{q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\right]
+\]</span></p>
+<p>不等式的推导过程分别如下：</p>
+<p><span class="math display">\[
+\begin{aligned} 
+\log p(\boldsymbol{x}) &amp; =\log \int p(\boldsymbol{x}, \boldsymbol{z}) d \boldsymbol{z} \\ 
+&amp; =\log \int \frac{p(\boldsymbol{x}, \boldsymbol{z}) q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})} d \boldsymbol{z} \\
+&amp; =\log \mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} \mid \boldsymbol{x})}\left[\frac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\right] \\
+&amp; \geq \mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} \mid \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} |\boldsymbol{x})}\right]
+\end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned} 
+\log p(\boldsymbol{x}) &amp; =\log p(\boldsymbol{x}) \int q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x}) dz ~~\left(\int q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x}) dz=1 \right)\\ 
+&amp; =\int q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})(\log p(\boldsymbol{x})) d z \\ 
+&amp; =\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}[\log p(\boldsymbol{x})] \\ 
+&amp; =\mathbb{E}_{q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{x}, \boldsymbol{z})}{p(\boldsymbol{z} | \boldsymbol{x})}\right] \\ 
+&amp; =\mathbb{E}_{q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{x}, \boldsymbol{z}) q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}{p(\boldsymbol{z} | \boldsymbol{x}) q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}\right] \\ 
+&amp; =\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\right]+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}{p(\boldsymbol{z} | \boldsymbol{x})}\right] \\ 
+&amp; =\mathbb{E}_{q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\right]+D_{\mathrm{KL}}\left(q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x}) \| p(\boldsymbol{z} | \boldsymbol{x})\right) \\ 
+&amp; \geq \mathbb{E}_{q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\right]~~\left( \text{KL Divergence always} \ge 0\right)
+\end{aligned}
+\]</span></p>
+<p>从上述推导过程可以看出，证据即<span class="math inline">\(\log p(\boldsymbol{x})\)</span>可以被分解为ELBO加上估计后验概率<span class="math inline">\(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{x})\)</span>和真实后验概率<span class="math inline">\(p(\boldsymbol{z}|\boldsymbol{x})\)</span>之间的KL散度。由于KL散度总为非负数，加之<span class="math inline">\(\log p(\boldsymbol{x})\)</span>关于<span class="math inline">\(\phi\)</span>为一个常数，因此如果最大化ELBO，其实也就是等价于最小化估计后验概率和真实后验概率之间的KL散度，这样便可以间接使得估计后验概率尽可能地接近真实后验概率。</p>
+<h2 id="变分自编码器">变分自编码器</h2>
+<p>变分自编码器（Variational Autoencoder，VAE）的训练目标就是直接最大化ELBO。这里的变分指的是从一系列以<span class="math inline">\(\phi\)</span>作为参数的后验分布族中优化得到最优的后验分布<span class="math inline">\(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{x})\)</span>；而自编码器则指的是采用了传统自编码器的框架，后验分布<span class="math inline">\(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{x})\)</span>对应于编码器，它将观测数据转化为隐变量的概率分布；同时，<span class="math inline">\(p_{\boldsymbol{\theta}}(\boldsymbol{x}|\boldsymbol{z})\)</span>对应于一个确定性的解码器，它将一个给定的隐变量解码为观测数据。</p>
+<p>ELBO可以进一步被写为如下形式：</p>
+<p><span class="math display">\[
+\begin{aligned} 
+\mathbb{E}_{q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{x}, \boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\right] &amp; =\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p_{\boldsymbol{\theta}}(\boldsymbol{x} |\boldsymbol{z}) p(\boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\right] \\ 
+&amp; =\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\left[\log p_{\boldsymbol{\theta}}(\boldsymbol{x} |\boldsymbol{z})\right]+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\left[\log \frac{p(\boldsymbol{z})}{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\right] \\ 
+&amp; =\mathbb{E}_{q_{\phi}(\boldsymbol{z} | \boldsymbol{x})}\left[\log p_{\boldsymbol{\theta}}(\boldsymbol{x} | \boldsymbol{z})\right]-D_{\mathrm{KL}}\left(q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x}) \| p(\boldsymbol{z})\right)
+\end{aligned}
+\]</span></p>
+<p>其中第一项<span class="math inline">\(\mathbb{E}_{q_{\phi}(\boldsymbol{z}|\boldsymbol{x})}\left[\log p_{\boldsymbol{\theta}}(\boldsymbol{x}|\boldsymbol{z})\right]\)</span>代表重建项，用于衡量解码器从隐变量重建数据的概率似然，目的是保证编码器能够学习到有效的隐变量分布；第二项<span class="math inline">\(D_{\mathrm{KL}}\left(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{x})\| p(\boldsymbol{z})\right)\)</span>代表先验匹配项，用于衡量学到的隐变量分布与先验假设之间的相似程度，最小化这一项希望模型能够真正地学到一个概率分布而不是坍缩为狄拉克分布。</p>
+<p>通常来说，VAE的编码器试图去学习一个协方差矩阵为对角阵的多变量高斯分布，而先验分布通常被选择为一个标准的多变量高斯分布：</p>
+<p><span class="math display">\[
+\begin{aligned} 
+q_{\phi}(\boldsymbol{z} | \boldsymbol{x}) &amp; =\mathcal{N}\left(\boldsymbol{z} ; \boldsymbol{\mu}_{\phi}(\boldsymbol{x}), \boldsymbol{\sigma}_{\boldsymbol{\phi}}^{2}(\boldsymbol{x}) \mathbf{I}\right) \\ 
+p(\boldsymbol{z}) &amp; =\mathcal{N}\left(\boldsymbol{z} ; \mathbf{0}, \mathbf{I}\right)
+\end{aligned} 
+\]</span></p>
+<p>但是如果直接从隐变量分布中随机采样，则会导致整个计算过程不可微分。因此，通常使用如下的重参数化技巧：</p>
+<p><span class="math display">\[
+\boldsymbol{z}=\boldsymbol{\mu}_{\phi}(\boldsymbol{x})+\boldsymbol{\sigma}_{\phi}(\boldsymbol{x}) \odot \boldsymbol{\epsilon} ,~ \boldsymbol{\epsilon} \sim \mathcal{N}(\boldsymbol{\epsilon} ; \mathbf{0}, \mathbf{I})
+\]</span></p>
+<p>也就是说，VAE的编码器试图将数据<span class="math inline">\(\boldsymbol{x}\)</span>编码为正态分布的均值和方差<span class="math inline">\(\boldsymbol{\mu}_{\phi}(\boldsymbol{x}),\boldsymbol{\sigma}_{\phi}(\boldsymbol{x})\)</span>，解码器则尝试从这个正态分布的采样中还原数据<span class="math inline">\(\boldsymbol{x}\)</span>。此时，ELBO中的KL散度可以被直接计算出来，而重建损失则可以使用蒙特卡洛采样来代替计算期望，从而训练目标可以写为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\underset{\boldsymbol{\phi}, \boldsymbol{\theta}}{\arg \max } \mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x})}\left[\log p_{\boldsymbol{\theta}}(\boldsymbol{x} | \boldsymbol{z})\right]-D_{\mathrm{KL}}\left(q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x}) \| p(\boldsymbol{z})\right) \\
+\approx &amp; \underset{\boldsymbol{\phi}, \boldsymbol{\theta}}{\arg \max } \sum_{l=1}^{L} \log p_{\boldsymbol{\theta}}\left(\boldsymbol{x} | \boldsymbol{z}^{(l)}\right)-D_{\mathrm{KL}}\left(q_{\boldsymbol{\phi}}(\boldsymbol{z} | \boldsymbol{x}) \| p(\boldsymbol{z})\right)
+\end{aligned}
+\]</span></p>
+<h2 id="层级vae">层级VAE</h2>
+<p>层级VAE（Hierarchical Variational Autoencoder，HVAE）是VAE的泛化形式，它将VAE堆叠为多层，从而构建了多层级的隐变量。也就是说，浅层的隐变量被看作是从深层更抽象的隐变量中采样而得。</p>
+<p>在HVAE中，第<span class="math inline">\(t\)</span>层的隐变量可以构造成<span class="math inline">\(1\sim t-1\)</span>层所有隐变量的条件概率的形式，即<span class="math inline">\(p(\boldsymbol{z}_t|\boldsymbol{z}_1,\dots,\boldsymbol{z}_{t-1})\)</span>。为简便起见，下面讨论马尔可夫HVAE这一简单情形，即HVAE的每一层具有马尔可夫性，它可以理解为将多个VAE简单地堆叠起来，如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205409.png" alt="image-20221207163001095" style="zoom: 67%;" /></p>
+<p>此时，联合概率分布和隐变量的分布可以写成下面的形式：</p>
+<p><span class="math display">\[
+\begin{aligned} 
+p\left(\boldsymbol{x}, \boldsymbol{z}_{1: T}\right) &amp; =p\left(\boldsymbol{z}_{T}\right) p_{\boldsymbol{\theta}}\left(\boldsymbol{x} | \boldsymbol{z}_{1}\right) \prod_{t=2}^{T} p_{\boldsymbol{\theta}}\left(\boldsymbol{z}_{t-1} | \boldsymbol{z}_{t}\right) \\ 
+q_{\boldsymbol{\phi}}\left(\boldsymbol{z}_{1: T} | \boldsymbol{x}\right) &amp; =q_{\boldsymbol{\phi}}\left(\boldsymbol{z}_{1} | \boldsymbol{x}\right) \prod_{t=2}^{T} q_{\boldsymbol{\phi}}\left(\boldsymbol{z}_{t} | \boldsymbol{z}_{t-1}\right)
+\end{aligned}
+\]</span></p>
+<p>从而ELBO也可以写为：</p>
+<p><span class="math display">\[
+\log p(\boldsymbol{x})\geq \mathbb{E}_{q_{\phi}\left(\boldsymbol{z}_{1: T} | \boldsymbol{x}\right)}\left[\log \frac{p\left(\boldsymbol{x}, \boldsymbol{z}_{1: T}\right)}{q_{\boldsymbol{\phi}}\left(\boldsymbol{z}_{1: T} | \boldsymbol{x}\right)}\right]
+\]</span></p>
+<h1 id="原理">原理</h1>
+<h2 id="前向过程与后向过程">前向过程与后向过程</h2>
+<p>在HVAE模型的基础之上，加上如下的三条限制，便可以得到扩散模型：</p>
+<ol type="1">
+<li>隐变量的维度与数据的维度完全相同</li>
+<li>编码器是预先定义好的高斯分布，不再包含可学习参数</li>
+<li>通过精心设计编码器中高斯分布的参数，使得最后一层变为标准的正态分布</li>
+</ol>
+<p>由此，便可以给出扩散模型的数学表述：</p>
+<p>扩散模型是具有形式<span class="math inline">\(p_{\theta}(\boldsymbol{x}_0):=\int p_\theta(\boldsymbol{x}_{0:T})d\boldsymbol{x}_{1:T}\)</span>的隐变量模型，其中<span class="math inline">\(\boldsymbol{x}_1,\dots,\boldsymbol{x}_T\)</span>是与数据<span class="math inline">\(\boldsymbol{x}_0\)</span>具有相同维度的隐变量。联合概率分布<span class="math inline">\(p_\theta(\boldsymbol{x}_{0:T})\)</span>被称为反向过程（Reverse Process），它被定义为一个具有高斯转移概率的马尔可夫链：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp; p(\boldsymbol{x}_T)=\mathcal{N}(\boldsymbol{x}_T;\boldsymbol{0},\boldsymbol{I}) \\
+&amp; p_\theta(\boldsymbol{x}_{0:T}):=p(\boldsymbol{x}_T)\prod_{t=1}^{T}p_\theta(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t) \\
+&amp; p_\theta(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t):=\mathcal{N}(\boldsymbol{x}_{t-1};\boldsymbol{\mu}_{\theta}(\boldsymbol{x}_t,t),\boldsymbol{\Sigma}_{\theta}(\boldsymbol{x}_t,t))
+\end{aligned}
+\]</span></p>
+<p>而相应的近似先验概率分布<span class="math inline">\(q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)\)</span>被称为前向过程（Forward Process）或者扩散过程，它是一个固定的马尔可夫链，按照一系列的方差系数<span class="math inline">\(\beta_1,\dots,\beta_T\)</span>逐渐向数据中添加高斯噪声，直到最终的概率分布已经完全等同于高斯白噪声：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp; q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0):= \prod_{t=1}^{T} q(\boldsymbol{x}_t|\boldsymbol{x}_{t-1}) \\
+&amp; q(\boldsymbol{x}_{t}|\boldsymbol{x}_{t-1}):=\mathcal{N}(\boldsymbol{x}_{t};\sqrt{1-\beta_t}\boldsymbol{x}_{t-1},\beta_t\boldsymbol{I})
+\end{aligned}
+\]</span></p>
+<p>其中<span class="math inline">\(\beta_t\)</span>通常被设置为常数（当然也可以设置为可学习参数），而且通常会适当选取使得隐变量的方差处于一个相近的尺度。这样的编码过程具有方差保持性（Variance-preserving）。</p>
+<p>因此，扩散模型的训练目标就是学习反向过程中条件概率分布<span class="math inline">\(p_{\theta}(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t})\)</span>的参数。在模型训练完成之后，就可以从高斯噪声中采样，然后不断地使用<span class="math inline">\(p_{\theta}(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t})\)</span>进行<span class="math inline">\(T\)</span>步的去噪，从而生成样本<span class="math inline">\(\boldsymbol{x}_{0}\)</span>。</p>
+<p>仿照HVAE，扩散模型可以被简单地表示为下图所示的形式：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205418.png" alt="image-20221204153348386" style="zoom:80%;" /></p>
+<h2 id="损失函数">损失函数</h2>
+<p>模型的训练过程为最小化如下的变分上界：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;-\log p_{\theta}\left(\boldsymbol{x}_{0}\right) \\
+=&amp; -\log \int p_\theta(\boldsymbol{x}_{0:T})d\boldsymbol{x}_{1:T} \\
+=&amp; -\log \int \frac{p_\theta(\boldsymbol{x}_{0:T})q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)}{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)}d\boldsymbol{x}_{1:T}\\
+=&amp; -\log \mathbb{E}_q \left[\frac{p_\theta(\boldsymbol{x}_{0:T})}{q(\boldsymbol{x}_{1:T}|\boldsymbol{x}_0)}\right] \\
+\leq &amp;\mathbb{E}_{q}\left[-\log \frac{p_{\theta}\left(\boldsymbol{x}_{0: T}\right)}{q\left(\boldsymbol{x}_{1: T} | \boldsymbol{x}_{0}\right)}\right] ~~(\text{Jenson&#39;s formula}) \\
+=&amp; \mathbb{E}_{q}\left[-\log \frac{p\left(\boldsymbol{x}_{T}\right)\prod_{t=1}^T p_{\theta}\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t}\right)}{\prod_{t=1}^T q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right)}\right]\\
+=&amp; \mathbb{E}_{q}\left[-\log p\left(\boldsymbol{x}_{T}\right)-\sum_{t \geq 1} \log \frac{p_{\theta}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}\right)}{q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right)}\right]
+\end{aligned}
+\]</span></p>
+<p>为简便起见，定义：</p>
+<p><span class="math display">\[
+L:=\mathbb{E}_{q}\left[-\log p\left(\boldsymbol{x}_{T}\right)-\sum_{t \geq 1} \log \frac{p_{\theta}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}\right)}{q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right)}\right]
+\]</span></p>
+<p>前向过程的一个重要性质是它允许采样任意时刻<span class="math inline">\(t\)</span>的数据<span class="math inline">\(\boldsymbol{x}_t\)</span>。记<span class="math inline">\(\alpha_t:=1-\beta_t\)</span>，<span class="math inline">\(\bar{\alpha}_t:=\prod_{s=1}^t \alpha_s\)</span>，有</p>
+<p><span class="math display">\[
+q(\boldsymbol{x}_t|\boldsymbol{x}_0)=\mathcal{N}(\boldsymbol{x}_t;\sqrt{\bar{\alpha}_0}\boldsymbol{x}_0,(1-\bar{\alpha}_t)\boldsymbol{I})
+\]</span></p>
+<p>根据<span class="math inline">\(q(\boldsymbol{x}_{t}|\boldsymbol{x}_{t-1}):=\mathcal{N}(\boldsymbol{x}_{t};\sqrt{1-\beta_t}\boldsymbol{x}_{t-1},\beta_t\boldsymbol{I})\)</span>的定义，可得：</p>
+<p><span class="math display">\[
+\boldsymbol{x}_{t}=\sqrt{1-\beta_t}\boldsymbol{x}_{t-1}+\sqrt{\beta_t}\boldsymbol{\epsilon}, ~\boldsymbol{\epsilon}\sim \mathcal{N}(0,\boldsymbol{I})
+\]</span></p>
+<p>进一步将<span class="math inline">\(\boldsymbol{x}_{t-1}\)</span>替换为<span class="math inline">\(\boldsymbol{x}_{t-2},\dots,\boldsymbol{x}_0\)</span>，有</p>
+<p><span class="math display">\[
+\begin{aligned}
+\boldsymbol{x}_{t}=&amp;\sqrt{1-\beta_t}\boldsymbol{x}_{t-1}+\sqrt{\beta_t}\boldsymbol{\epsilon} \\
+=&amp; \sqrt{1-\beta_t}(\sqrt{1-\beta_{t-1}}\boldsymbol{x}_{t-2}+\sqrt{\beta_{t-1}}\boldsymbol{\epsilon})+\sqrt{\beta_t}\boldsymbol{\epsilon} \\
+=&amp; \sqrt{(1-\beta_t)(1-\beta_{t-1})}\boldsymbol{x}_{t-2}+\sqrt{\sqrt{(1-\beta_t)\beta_{t-1}}^2+\sqrt{\beta_t}^2}\boldsymbol{\epsilon} ~~(\text{The additivity of Gaussian dist.})\\
+=&amp; \sqrt{(1-\beta_t)(1-\beta_{t-1})}\boldsymbol{x}_{t-2}+\sqrt{(1-\beta_t)\beta_{t-1}+\beta_t}\boldsymbol{\epsilon}\\ 
+=&amp; \sqrt{(1-\beta_t)(1-\beta_{t-1})}\boldsymbol{x}_{t-2}+\sqrt{1-(1-\beta_t)(1-\beta_{t-1})}\boldsymbol{\epsilon} \\
+=&amp;\cdots \\
+=&amp;\sqrt{\prod_{i=1}^t (1-\beta_i)}\boldsymbol{x}_0+\sqrt{1-\prod_{i=1}^t(1-\beta_i)}\boldsymbol{\epsilon} \\
+=&amp; \sqrt{\bar{\alpha}_t}\boldsymbol{x}_0+\sqrt{1-\bar{\alpha}_t}\boldsymbol{\epsilon} ~\sim \mathcal{N}(\boldsymbol{x}_{t};\sqrt{\bar{\alpha}_t}\boldsymbol{x}_0,(1-\bar{\alpha}_t)\boldsymbol{I})
+\end{aligned}
+\]</span></p>
+<p>为了方便使用梯度下降的方法进行训练，可以使用上述结论将<span class="math inline">\(L\)</span>进一步改写为：</p>
+$$
+<span class="math display">\[\begin{aligned}
+L:=&amp;\mathbb{E}_{q}\left[-\log p\left(\boldsymbol{x}_{T}\right)-\sum_{t \geq 1} \log \frac{p_{\theta}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}\right)}{q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right)}\right] \\
+
+=&amp;\mathbb{E}_{q}\left[-\log p\left(\boldsymbol{x}_{T}\right)-\sum_{t \geq 1} \log \frac{p_{\theta}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}\right)}{q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1},\boldsymbol{x}_{0}\right)}\right]~~ \left(q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right)=q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1},\boldsymbol{x}_{0}\right)\right) \\
+
+=&amp;\mathbb{E}_{q}\left[-\log p\left(\boldsymbol{x}_{T}\right)-\sum_{t &gt; 1} \log \frac{p_{\theta}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}\right)}{q\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t},\boldsymbol{x}_{0}\right)}\cdot \frac{q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_0\right)}{q\left(\boldsymbol{x}_{t} |\boldsymbol{x}_0\right)} - \log \frac{p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)}{q\left(\boldsymbol{x}_{1}|\boldsymbol{x}_{0}\right)}\right]~~\left(q\left(\boldsymbol{x}_{t}|\boldsymbol{x}_{t-1},\boldsymbol{x}_0\right)=\frac{q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t},\boldsymbol{x}_0\right)q\left(\boldsymbol{x}_{t}|\boldsymbol{x}_0\right)}{q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_0\right)}\right) \\
+
+=&amp; \mathbb{E}_{q}\left[-\log p\left(\boldsymbol{x}_{T}\right)-\log \prod_{t&gt;1} \frac{p_{\theta}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}\right)}{q\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t},\boldsymbol{x}_{0}\right)}\cdot \frac{q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_0\right)}{q\left(\boldsymbol{x}_{t} |\boldsymbol{x}_0\right)} - \log {p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)}\right] \\
+
+=&amp; \mathbb{E}_{q}\left[-\log \frac{p\left(\boldsymbol{x}_{T}\right)}{q(\boldsymbol{x}_{T}|\boldsymbol{x}_{0})}-\sum_{t &gt; 1} \log \frac{p_{\theta}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}\right)}{q\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t},\boldsymbol{x}_{0}\right)} - \log {p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)}\right] \left(\prod_{t&gt;1}\frac{q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_0\right)}{q\left(\boldsymbol{x}_{t} |\boldsymbol{x}_0\right)}=\frac{q\left(\boldsymbol{x}_{1}|\boldsymbol{x}_0\right)}{q\left(\boldsymbol{x}_{T} |\boldsymbol{x}_0\right)} \right) \\
+
+=&amp; \mathbb{E}_{q} \left[ D_{KL}(q(\boldsymbol{x}_T|\boldsymbol{x}_0)\|p(\boldsymbol{x}_T))+ \sum_{t&gt;1} D_{KL}(q(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{x}_0)\|p_\theta(\boldsymbol{x}_{t-1} |\boldsymbol{x}_{t}))-  \log {p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)}\right]
+\end{aligned}\]</span>
+<p>$$</p>
+<p>其中，第一项为先验匹配项，即最终产生的加噪样本<span class="math inline">\(\boldsymbol{x}_T\)</span>与标准正态分布有多接近；第二项代表去噪匹配项，也就是衡量两个相邻步<span class="math inline">\(t\)</span>和<span class="math inline">\(t-1\)</span>去噪结果的匹配程度；第三项可以被解释为重建项，也就是从带噪样本<span class="math inline">\(\boldsymbol{x}_1\)</span>重建得到去噪样本<span class="math inline">\(\boldsymbol{x}_0\)</span>的效果。</p>
+<blockquote>
+<p>在上面的推导过程中使用了贝叶斯公式<span class="math inline">\(q\left(\boldsymbol{x}_{t}|\boldsymbol{x}_{t-1},\boldsymbol{x}_0\right)=\frac{q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t},\boldsymbol{x}_0\right)q\left(\boldsymbol{x}_{t}|\boldsymbol{x}_0\right)}{q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_0\right)}\)</span>，至于为什么要这样替换，首先在不使用贝叶斯公式的情况下进行推导：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\mathbb{E}_{q}\left[-\log \frac{p\left(\boldsymbol{x}_{T}\right)\prod_{t=1}^T p_{\theta}\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t}\right)}{\prod_{t=1}^T q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right)}\right] \\
+=&amp; \mathbb{E}_{q}\left[-\log \frac{p\left(\boldsymbol{x}_{T}\right)p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)\prod_{t=1}^{T-1} p_{\theta}\left(\boldsymbol{x}_{t}|\boldsymbol{x}_{t+1}\right)}{q\left(\boldsymbol{x}_{T} | \boldsymbol{x}_{T-1}\right)\prod_{t=1}^{T-1} q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right)}\right]\\
+=&amp; \mathbb{E}_{q}\left[-\log p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)- \log\frac{p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)}{q\left(\boldsymbol{x}_{T} | \boldsymbol{x}_{T-1}\right)} -\log\frac{\prod_{t=1}^{T-1} p_{\theta}\left(\boldsymbol{x}_{t}|\boldsymbol{x}_{t+1}\right)}{\prod_{t=1}^{T-1} q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right)}\right] \\
+=&amp; -\mathbb{E}_{q}\left[\log p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)\right]+\mathbb{E}_{q}\left[D_{\mathrm{KL}}\left(q\left(\boldsymbol{x}_{T} | \boldsymbol{x}_{T-1}\right) \| p\left(\boldsymbol{x}_{T}\right)\right)\right]+ \sum_{t=1}^{T-1} {\mathbb{E}_{q}\left[D_{\mathrm{KL}}\left(q\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t-1}\right) \| p_{\theta}\left(\boldsymbol{x}_{t} | \boldsymbol{x}_{t+1}\right)\right)\right]}
+\end{aligned}
+\]</span></p>
+<p>其中第一项可以被看成重建项，与VAE中的处理方法类似；第二项可以被看成先验匹配项，衡量最终的加噪样本与标准正态分布有多接近；最后一项可以被看作一致性衡量项，它试图让<span class="math inline">\(\boldsymbol{x}_t\)</span>在前向加噪和后向去噪过程中的概率分布尽可能地一致。</p>
+<p>但是在最后一项中，同时包含有两个随机变量<span class="math inline">\(\boldsymbol{x}_{t-1}\)</span>和<span class="math inline">\(\boldsymbol{x}_{t+1}\)</span>，这样会导致用蒙特卡洛采样方法计算期望时，这一项的方差可能会偏大。尤其是在<span class="math inline">\(T\)</span>的值较大时，方差会进一步地累加。而如果使用贝叶斯公式进行替换，则只需要使用一个随机变量，从而使得方差降低。</p>
+</blockquote>
+<p>上式中出现了概率<span class="math inline">\(q(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{x}_0)\)</span>，它可以通过使用贝叶斯公式转换为如下公式计算而得：</p>
+$$
+<span class="math display">\[\begin{aligned}
+q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t},\boldsymbol{x}_0\right)= &amp; \frac{q\left(\boldsymbol{x}_{t}|\boldsymbol{x}_{t-1},\boldsymbol{x}_0\right)q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_0\right)}{q\left(\boldsymbol{x}_{t}|\boldsymbol{x}_0\right)} \\
+
+= &amp; \frac{\mathcal{N}(\boldsymbol{x}_{t};\sqrt{\alpha_t}\boldsymbol{x}_{t-1},(1-\alpha_t)\boldsymbol{I})\cdot \mathcal{N}(\boldsymbol{x}_{t-1};\sqrt{\bar{\alpha}_{t-1}}\boldsymbol{x}_{0},(1-\bar{\alpha}_{t-1})\boldsymbol{I})}{\mathcal{N}(\boldsymbol{x}_{t};\sqrt{\bar{\alpha}_{t}}\boldsymbol{x}_{0},(1-\bar{\alpha}_{t})\boldsymbol{I})} \\
+
+\propto &amp; \exp\left\{-\left[ \frac{(\boldsymbol{x}_{t}-\sqrt{\alpha_t}\boldsymbol{x}_{t-1})^2}{2(1-\alpha_t)}+ \frac{(\boldsymbol{x}_{t-1}-\sqrt{\bar{\alpha}_{t-1}}\boldsymbol{x}_{0})^2}{2(1-\bar{\alpha}_{t-1})}-\frac{(\boldsymbol{x}_{t}-\sqrt{\bar{\alpha}_{t}}\boldsymbol{x}_{0})^2}{2(1-\bar{\alpha}_{t})}\right]\right\} \\
+
+=&amp; \cdots \\
+
+=&amp; \exp \left\{-\frac{1}{2}\left(\frac{1}{\frac{\left(1-\alpha_{t}\right)\left(1-\bar{\alpha}_{t-1}\right)}{1-\bar{\alpha}_{t}}}\right)\left[\boldsymbol{x}_{t-1}^{2}-2 \frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}\left(1-\alpha_{t}\right) \boldsymbol{x}_{0}}{1-\bar{\alpha}_{t}} \boldsymbol{x}_{t-1}\right]\right\} \\
+
+\propto &amp; \mathcal{N}\left(\boldsymbol{x}_{t-1} ; \frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}\left(1-\alpha_{t}\right) \boldsymbol{x}_{0}}{1-\bar{\alpha}_{t}}, \frac{\left(1-\alpha_{t}\right)\left(1-\bar{\alpha}_{t-1}\right)}{1-\bar{\alpha}_{t}} \boldsymbol{I}\right)
+\end{aligned}\]</span>
+<p>$$</p>
+<p>为方便起见，记<span class="math inline">\(\tilde{\mu}_t(\boldsymbol{x}_t,\boldsymbol{x}_0):=\frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}\left(1-\alpha_{t}\right) \boldsymbol{x}_{0}}{1-\bar{\alpha}_{t}}\)</span>，<span class="math inline">\(\tilde{\beta}_t:=\frac{\left(1-\alpha_{t}\right)\left(1-\bar{\alpha}_{t-1}\right)}{1-\bar{\alpha}_{t}}\)</span>。</p>
+<p><span class="math inline">\(L\)</span>中的三项处理方式分布如下：</p>
+<ol type="1">
+<li><p>先验匹配项<span class="math inline">\(D_{KL}(q(\boldsymbol{x}_T|\boldsymbol{x}_0)\|p(\boldsymbol{x}_T))\)</span></p>
+<p>当假设<span class="math inline">\(\beta_t\)</span>都为固定值时，前向过程没有可训练参数，因此这部分为常数，可以将其忽略掉。</p></li>
+<li><p>去噪匹配项<span class="math inline">\(\sum_{t&gt;1} D_{KL}(q(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{x}_0)\|p_\theta(\boldsymbol{x}_{t-1} |\boldsymbol{x}_{t}))\)</span></p>
+<p>由于</p>
+<p><span class="math display">\[
+q\left(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t},\boldsymbol{x}_0\right)\propto \mathcal{N}\left(\boldsymbol{x}_{t-1} ; \frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}\left(1-\alpha_{t}\right) \boldsymbol{x}_{0}}{1-\bar{\alpha}_{t}}, \frac{\left(1-\alpha_{t}\right)\left(1-\bar{\alpha}_{t-1}\right)}{1-\bar{\alpha}_{t}} \boldsymbol{I}\right) \\
+p_\theta(\boldsymbol{x}_{t-1}|\boldsymbol{x}_{t})=\mathcal{N}\left(\boldsymbol{x}_{t-1};\mathbf{\mu}_0(\boldsymbol{x}_{t},t),\sigma^2_t\mathbf{I}\right)
+\]</span></p>
+<p>因此</p>
+<p><span class="math display">\[
+D_{KL}(q(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{x}_0)\|p_\theta(\boldsymbol{x}_{t-1} |\boldsymbol{x}_{t}))=\mathbb{E}_q\left[\frac{1}{2\sigma_t^2}\| \tilde{\boldsymbol{\mu}}_t(\boldsymbol{x}_t,\boldsymbol{x}_0)-\boldsymbol{\mu}_\theta(\boldsymbol{x}_t,t) \|^2 \right]+C
+\]</span></p>
+<p>进一步地，我们可以使用<span class="math inline">\(\boldsymbol{x}_t(\boldsymbol{x}_0,\boldsymbol{\epsilon})=\sqrt{\bar{\alpha}_t}\boldsymbol{x}_0+\sqrt{1-\bar{\alpha}_t}\boldsymbol{\epsilon},~\boldsymbol{\epsilon}\sim \mathcal{N}(\boldsymbol{0},\boldsymbol{I})\)</span>，以及<span class="math inline">\(\tilde{\mu}_t(\boldsymbol{x}_t,\boldsymbol{x}_0)\)</span>和<span class="math inline">\(\tilde{\beta}_t\)</span>的表达式，得到下面的结果：</p>
+<p>$$</p>
+<span class="math display">\[\begin{aligned}
+&amp; \mathbb{E}_q\left[\frac{1}{2\sigma_t^2}\| \tilde{\boldsymbol{\mu}}_t(\boldsymbol{x}_t,\boldsymbol{x}_0)-\boldsymbol{\mu}_\theta(\boldsymbol{x}_t,t) \|^2 \right] \\
+
+= &amp; \mathbb{E}_{\boldsymbol{x}_0,\boldsymbol{\epsilon}}\left[ \frac{1}{2\sigma_t^2}\| \tilde{\boldsymbol{\mu}}_t(\boldsymbol{x}_t,\boldsymbol{x}_0)-\boldsymbol{\mu}_\theta(\boldsymbol{x}_t,t) \|^2 \right] \\
+
+=&amp; \mathbb{E}_{\boldsymbol{x}_{0}, \boldsymbol{\epsilon}}\left[\frac{1}{2 \sigma_{t}^{2}}\left\|\tilde{\boldsymbol{\mu}}_{t}\left(\boldsymbol{x}_{t}\left(\boldsymbol{x}_{0}, \boldsymbol{\epsilon}\right), \frac{1}{\sqrt{\bar{\alpha}_{t}}}\left(\boldsymbol{x}_{t}\left(\boldsymbol{x}_{0}, \boldsymbol{\epsilon}\right)-\sqrt{1-\bar{\alpha}_{t}} \boldsymbol{\epsilon}\right)\right)-\boldsymbol{\mu}_{\theta}\left(\boldsymbol{x}_{t}\left(\boldsymbol{x}_{0}, \boldsymbol{\epsilon}\right), t\right)\right\|^{2}\right] \\
+
+=&amp; \mathbb{E}_{\boldsymbol{x}_{0}, \boldsymbol{\epsilon}}\left[\frac{1}{2 \sigma_{t}^{2}}\left\|\frac{1}{\sqrt{\alpha_{t}}}\left(\boldsymbol{x}_{t}\left(\boldsymbol{x}_{0}, \boldsymbol{\epsilon}\right)-\frac{\beta_{t}}{\sqrt{1-\bar{\alpha}_{t}}} \boldsymbol{\epsilon}\right)-\boldsymbol{\mu}_{\theta}\left(\boldsymbol{x}_{t}\left(\boldsymbol{x}_{0}, \boldsymbol{\epsilon}\right), t\right)\right\|^{2}\right] 
+\end{aligned}\]</span>
+<p>$$</p>
+<p>也就是说，给定<span class="math inline">\(\boldsymbol{x}_t\)</span>之后，<span class="math inline">\(\boldsymbol{\mu}_\theta\)</span>需要能够预测<span class="math inline">\(\frac{1}{\sqrt{\alpha_{t}}}\left(\boldsymbol{x}_{t}-\frac{\beta_{t}}{\sqrt{1-\bar{\alpha}_{t}}} \boldsymbol{\epsilon}\right)\)</span>的值。因此可以考虑将参数化的模型构造为如下形式：</p>
+<p><span class="math display">\[
+\boldsymbol{\mu}_\theta=\frac{1}{\sqrt{\alpha_{t}}}\left(\boldsymbol{x}_{t}-\frac{\beta_{t}}{\sqrt{1-\bar{\alpha}_{t}}} \boldsymbol{\epsilon}_\theta(\boldsymbol{x}_{t},t)\right)
+\]</span></p>
+<p>也就是说，让<span class="math inline">\(\boldsymbol{\epsilon}_\theta\)</span>从<span class="math inline">\(\boldsymbol{x}_t\)</span>中去预测加入的噪声<span class="math inline">\(\boldsymbol{\epsilon}\)</span>。按照这一定义，损失函数可以进一步优化为：</p>
+<p><span class="math display">\[
+\mathbb{E}_{\boldsymbol{x}_{0}, \boldsymbol{\epsilon}}\left[\frac{\beta_t^2}{2\sigma_t^2\alpha_t(1-\bar{\alpha}_t)}\left\|\boldsymbol{\epsilon}-\boldsymbol{\epsilon}_\theta\left(\sqrt{\bar{\alpha}_t}\boldsymbol{x}_0+\sqrt{1-\bar{\alpha}_t}\boldsymbol{\epsilon},t\right)\right\|^2\right]
+\]</span></p>
+<p>或者是使用一个更加简单的形式：</p>
+<p><span class="math display">\[
+\mathbb{E}_{\boldsymbol{x}_{0}, \boldsymbol{\epsilon},t}\left[\left\|\boldsymbol{\epsilon}-\boldsymbol{\epsilon}_\theta\left(\sqrt{\bar{\alpha}_t}\boldsymbol{x}_0+\sqrt{1-\bar{\alpha}_t}\boldsymbol{\epsilon},t\right)\right\|^2\right]
+\]</span></p>
+<p>这一表达式的形式十分接近于去噪得分匹配模型。</p></li>
+<li><p>重建项<span class="math inline">\(\log {p_{\theta}\left(\boldsymbol{x}_{0}|\boldsymbol{x}_{1}\right)}\)</span></p>
+<p>这一项与VAE中的重建误差类似，可以用相同的方法计算。简便起见有时也可以将其并入到去噪匹配项中（即<span class="math inline">\(t=1\)</span>）</p></li>
+</ol>
+<h2 id="等价形式">等价形式</h2>
+<p>关于扩散模型的损失函数，也可以等价地构造为从任意噪声水平恢复原始图像，这是因为去噪匹配项可以等价地构造成如下的形式：</p>
+$$
+<span class="math display">\[\begin{aligned}
+&amp;D_{KL}(q(\boldsymbol{x}_{t-1}|\boldsymbol{x}_t,\boldsymbol{x}_0)\|p_\theta(\boldsymbol{x}_{t-1} |\boldsymbol{x}_{t})) \\
+
+=&amp;\mathbb{E}_q\left[\frac{1}{2\sigma_t^2}\| \tilde{\boldsymbol{\mu}}_t(\boldsymbol{x}_t,\boldsymbol{x}_0)-\boldsymbol{\mu}_\theta(\boldsymbol{x}_t,t) \|^2 \right]+C \\
+
+=&amp;\mathbb{E}_q\left[\frac{1}{2\sigma_t^2}\left\| \frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}\left(1-\alpha_{t}\right) \boldsymbol{x}_{0}}{1-\bar{\alpha}_{t}}-\frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}\left(1-\alpha_{t}\right) \hat{\boldsymbol{x}}_{\theta}(\boldsymbol{x}_t,t)}{1-\bar{\alpha}_{t}} \right\|^2 \right]+C \\
+
+=&amp;\mathbb{E}_q\left[ \frac{1}{2\sigma_t^2}\cdot \frac{\bar{\alpha}_{t-1}\left(1-\alpha_{t}\right)^2}{(1-\bar{\alpha}_{t})^2}\left\| \boldsymbol{x}_{0}-\hat{\boldsymbol{x}}_{\theta}(\boldsymbol{x}_t,t) \right\|^2 \right]+C \\
+
+\end{aligned}\]</span>
+<p>$$</p>
+<p>其中，<span class="math inline">\(\hat{\boldsymbol{x}}_{\theta}(\boldsymbol{x}_t,t)\)</span>是一个参数化的神经网络，用于从噪声图像中预测原始图像。</p>
+<h1 id="扩散模型与得分匹配">扩散模型与得分匹配</h1>
+<p>得分匹配结合朗之万动力学（Score matching with Langevin dynamics，SMLD）的生成方法指的是用模型估计每个噪声尺度下的得分（对数概率密度在数据点处的梯度值），然后基于这一模型使用朗之万动力学不断减小噪声尺度来进行采样。去噪扩散概率模型（Denoising diffusion probabilistic modeling，DDPM）指的是训练一个概率模型序列，使之能够对不断给数据添加高斯噪声对数据进行破坏的正向过程做去噪的反向建模。这二者是从不同角度出发得到的生成模型，但是可以被放在一个统一的框架下去看待。</p>
+<h2 id="等价损失函数">等价损失函数</h2>
+<p>Tweedie公式说明，给定一个指数族分布以及一组来自该分布的样本，概率分布的均值可以由样本均值加上一个修正项来估计。例如给定一个高斯分布的样本$  ( ; <em>{z}, </em>{z}) $，Tweedie公式可以表示为如下形式：</p>
+<p><span class="math display">\[
+\mathbb{E}\left[\boldsymbol{\mu}_{z} |\boldsymbol{z}\right]=\boldsymbol{z}+\boldsymbol{\Sigma}_{z} \nabla_{\boldsymbol{z}} \log p(\boldsymbol{z})
+\]</span></p>
+<p>其中，<span class="math inline">\(\nabla_{\boldsymbol{z}} \log p(\boldsymbol{z})\)</span>通常被称为得分函数。</p>
+<p>在扩散模型的推导过程中，有：</p>
+<p><span class="math display">\[
+q(\boldsymbol{x}_t|\boldsymbol{x}_0)=\mathcal{N}(\boldsymbol{x}_t;\sqrt{\bar{\alpha}_0}\boldsymbol{x}_0,(1-\bar{\alpha}_t)\boldsymbol{I})
+\]</span></p>
+<p>而对于<span class="math inline">\(\boldsymbol{x}_t\)</span>，使用Tweedie公式可以得到均值<span class="math inline">\(\boldsymbol{\mu}_{\boldsymbol{x}_t}=\sqrt{\bar{\alpha}_0}\boldsymbol{x}_0\)</span>的期望：</p>
+<p><span class="math display">\[
+\mathbb{E}\left[\boldsymbol{\mu}_{\boldsymbol{x}_t} |\boldsymbol{x}_t\right]=\boldsymbol{x}_t+(1-\bar{\alpha}_t)\nabla_{\boldsymbol{x}_t} \log p(\boldsymbol{x}_t)
+\]</span></p>
+<p>因此有：</p>
+<p><span class="math display">\[
+\boldsymbol{x}_t+(1-\bar{\alpha}_t)\nabla_{\boldsymbol{x}_t} \log p(\boldsymbol{x}_t)=\sqrt{\bar{\alpha}_0}\boldsymbol{x}_0
+\]</span></p>
+<p>将上式代入到扩散模型中<span class="math inline">\(\tilde{\mu}_t(\boldsymbol{x}_t,\boldsymbol{x}_0)\)</span>的表达式中，有：</p>
+$$
+<span class="math display">\[\begin{aligned}
+\tilde{\mu}_t(\boldsymbol{x}_t,\boldsymbol{x}_0)=&amp;\frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}\left(1-\alpha_{t}\right) \boldsymbol{x}_{0}}{1-\bar{\alpha}_{t}} \\
+
+=&amp;\frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\sqrt{\bar{\alpha}_{t-1}}\left(1-\alpha_{t}\right) \frac{\boldsymbol{x}_{t}+\left(1-\bar{\alpha}_{t}\right) \nabla \log p\left(\boldsymbol{x}_{t}\right)}{\sqrt{\bar{\alpha}_{t}}}}{1-\bar{\alpha}_{t}} \\
+
+=&amp;\frac{\sqrt{\alpha_{t}}\left(1-\bar{\alpha}_{t-1}\right) \boldsymbol{x}_{t}+\left(1-\alpha_{t}\right) \frac{\boldsymbol{x}_{t}+\left(1-\bar{\alpha}_{t}\right) \nabla \log p\left(\boldsymbol{x}_{t}\right)}{\sqrt{\alpha_{t}}}}{1-\bar{\alpha}_{t}} \\
+
+=&amp; \cdots \\
+
+=&amp; \frac{1}{\sqrt{\alpha_{t}}} \boldsymbol{x}_{t}+\frac{1-\alpha_{t}}{\sqrt{\alpha_{t}}} \nabla \log p\left(\boldsymbol{x}_{t}\right) 
+\end{aligned}\]</span>
+<p>$$</p>
+<p>因此，同样可以定义<span class="math inline">\(\boldsymbol{\mu}_\theta(\boldsymbol{x}_t,t)\)</span>为如下形式：</p>
+<p><span class="math display">\[
+\boldsymbol{\mu}_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t}, t\right)=\frac{1}{\sqrt{\alpha_{t}}} \boldsymbol{x}_{t}+\frac{1-\alpha_{t}}{\sqrt{\alpha_{t}}} \boldsymbol{s}_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t}, t\right)
+\]</span></p>
+<p>从而扩散模型中的去噪匹配项可以写成：</p>
+<p><span class="math display">\[
+\begin{aligned} 
+ &amp;\underset{\boldsymbol{\theta}}{\arg \min } D_{\mathrm{KL}}\left(q\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}, \boldsymbol{x}_{0}\right) \| p_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}\right)\right) \\ 
+ =&amp; \underset{\boldsymbol{\theta}}{\arg \min } D_{\mathrm{KL}}\left(\mathcal{N}\left(\boldsymbol{x}_{t-1} ; \boldsymbol{\mu}_{q}, \boldsymbol{\Sigma}_{q}(t)\right) \| \mathcal{N}\left(\boldsymbol{x}_{t-1} ; \boldsymbol{\mu}_{\boldsymbol{\theta}}, \boldsymbol{\Sigma}_{q}(t)\right)\right) \\
+ =&amp; \underset{\boldsymbol{\theta}}{\arg \min } \frac{1}{2 \sigma_{q}^{2}(t)}\left[\left\|\frac{1}{\sqrt{\alpha_{t}}} \boldsymbol{x}_{t}+\frac{1-\alpha_{t}}{\sqrt{\alpha_{t}}} \boldsymbol{s}_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t}, t\right)-\frac{1}{\sqrt{\alpha_{t}}} \boldsymbol{x}_{t}-\frac{1-\alpha_{t}}{\sqrt{\alpha_{t}}} \nabla \log p\left(\boldsymbol{x}_{t}\right)\right\|_{2}^{2}\right] \\
+ = &amp;\underset{\boldsymbol{\theta}}{\arg \min } \frac{1}{2 \sigma_{q}^{2}(t)} \frac{\left(1-\alpha_{t}\right)^{2}}{\alpha_{t}}\left[\left\|\boldsymbol{s}_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t}, t\right)-\nabla \log p\left(\boldsymbol{x}_{t}\right)\right\|_{2}^{2}\right]\\
+ \end{aligned}
+\]</span></p>
+<p>其中<span class="math inline">\(\boldsymbol{s}_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t}, t\right)\)</span>为一个参数化的网络，它被用于估计得分函数的值。</p>
+<p>由于</p>
+<p><span class="math display">\[
+\boldsymbol{x}_{0}=\frac{\boldsymbol{x}_{t}+\left(1-\bar{\alpha}_{t}\right) \nabla \log p\left(\boldsymbol{x}_{t}\right)}{\sqrt{\bar{\alpha}_{t}}}=\frac{\boldsymbol{x}_{t}-\sqrt{1-\bar{\alpha}_{t}} \boldsymbol{\epsilon}_{0}}{\sqrt{\bar{\alpha}_{t}}}
+\]</span></p>
+<p>因此有</p>
+<p><span class="math display">\[
+\nabla \log p\left(\boldsymbol{x}_{t}\right)=-\frac{1}{\sqrt{1-\bar{\alpha}_{t}}} \boldsymbol{\epsilon}_{0}
+\]</span></p>
+<p>得分函数的含义是如何在数据空间中移动以取得最大概率，因此去噪的过程也可以理解为将数据往概率密度较高的方向移动。</p>
+<p>在去噪得分匹配中，损失函数的表达式为：</p>
+<p><span class="math display">\[
+\underset{\boldsymbol{\theta}}{\arg \min } \sum_{t=1}^{T} \lambda(t) \mathbb{E}_{p_{\sigma_{t}}\left(\boldsymbol{x}_{t}\right)}\left[\left\|\boldsymbol{s}_{\boldsymbol{\theta}}(\boldsymbol{x}, t)-\nabla \log p_{\sigma_{t}}\left(\boldsymbol{x}_{t}\right)\right\|_{2}^{2}\right]
+\]</span></p>
+<p>它与上面推导得到的扩散模型中的去噪匹配项具有相近的格式。此外，在SMLD的框架下，数据的生成使用的是带有退火的朗之万动力学，即采样的过程中逐步降低噪声等级<span class="math inline">\(t\)</span>，从而生成的样本会逐步接近真实样本，这也与扩散模型的采样过程有类似之处。</p>
+<h2 id="sde下的统一框架">SDE下的统一框架</h2>
+<h3 id="伊藤方程">伊藤方程</h3>
+<p>在连续的状态空间中，DDPM的训练目标中暗含了在不同的噪声等级上面计算得分，因此它与SMLD可以被统称为基于得分的生成模型（Score-based generative models）。它们可以用伊藤随机微分方程（SDE）构造为一个统一的框架：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205431.png" alt="image-20221128101113630" /><figcaption aria-hidden="true">image-20221128101113630</figcaption>
+</figure>
+<p>给定一个扩散过程<span class="math inline">\(\{\boldsymbol{x}_{t}\}_{t=0}^T\)</span>​，其中<span class="math inline">\(t\in [0,T]\)</span>​为一个连续的时间变量，<span class="math inline">\(\boldsymbol{x}_0\sim p_0\)</span>​代表初始概率分布，<span class="math inline">\(\boldsymbol{x}_T\sim p_T\)</span>​代表一个先验分布。通常来说，<span class="math inline">\(p_T\)</span>是一个非结构化的先验分布，并且不包含关于<span class="math inline">\(p_0\)</span>的任何信息，例如固定均值和方差的高斯分布。扩散过程可以用伊藤方程来描述，即如下的随机微分方程：</p>
+<p><span class="math display">\[
+d\boldsymbol{x}=\boldsymbol{f}(\boldsymbol{x},t)dt+g(t)d\boldsymbol{w}
+\]</span></p>
+<p>其中<span class="math inline">\(\boldsymbol{w}\)</span>是一个标准的维纳过程，即布朗运动；<span class="math inline">\(\boldsymbol{f}(\cdot,t):\mathbb{R}^d\rightarrow \mathbb{R}^d\)</span>是一个向量函数，被称为<span class="math inline">\(\boldsymbol{x}_{t}\)</span>的漂移系数；<span class="math inline">\(g(\cdot):\mathbb{R}\rightarrow \mathbb{R}\)</span>是一个标量函数，被称为<span class="math inline">\(\boldsymbol{x}_{t}\)</span>的扩散系数，此处为了简便起见，假设扩散系数是个标量，而且与<span class="math inline">\(\boldsymbol x\)</span>无关。如果SDE的系数在状态<span class="math inline">\(\boldsymbol{x}\)</span>和时间<span class="math inline">\(t\)</span>上都满足全局Lipschitz性，则它有唯一的强解。</p>
+<p>如果从<span class="math inline">\(\boldsymbol{x}_T\sim p_T\)</span>开始，将上述的扩散过程反过来进行，可以得到样本<span class="math inline">\(\boldsymbol{x}_0\sim p_0\)</span>。这样的反过程同样是个扩散过程，可以用反向时间的SDE来描述：</p>
+<p><span class="math display">\[
+d\boldsymbol{x}=[\boldsymbol{f}(\boldsymbol{x},t)-g(t)^2\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x})]dt+g(t)d\bar{\boldsymbol{w}}
+\]</span></p>
+<p>其中<span class="math inline">\(\bar{\boldsymbol{w}}\)</span>是一个标准的反向维纳过程，对应于时间反向从<span class="math inline">\(T\)</span>到0的过程；<span class="math inline">\(dt\)</span>是一个无限小的负时间步长。此时，如果知道所有时间<span class="math inline">\(t\)</span>的得分<span class="math inline">\(\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x})\)</span>，就可以从反向SDE中对<span class="math inline">\(p_0\)</span>进行采样。</p>
+<h3 id="sde与ddpm">SDE与DDPM</h3>
+<p>对于DDPM，它的条件概率分布<span class="math inline">\(\{p_{\alpha_i}(\boldsymbol{x}|\boldsymbol{x}_0)\}_{i=1}^N\)</span>对应于如下的离散马尔可夫链：</p>
+<p><span class="math display">\[
+\boldsymbol{x}_i=\sqrt{1-\beta_i}\boldsymbol{x}_{i-1}+\sqrt{\beta_i}\boldsymbol{z}_{i-1},i=1,\dots,N
+\]</span></p>
+<p>定义<span class="math inline">\(\bar{\beta}_i=N\beta_i\)</span>，上式可以改写为：</p>
+<p><span class="math display">\[
+\boldsymbol{x}_i=\sqrt{1-\frac{\bar{\beta}}{N}}\boldsymbol{x}_{i-1}+\sqrt{\frac{\bar{\beta}}{N}}\boldsymbol{z}_{i-1},i=1,\dots,N
+\]</span></p>
+<p>当<span class="math inline">\(N\rightarrow \infty\)</span>时，<span class="math inline">\(\bar{\beta}_i\)</span>就变为了一个自变量为<span class="math inline">\(t\in [0,1]\)</span>的函数<span class="math inline">\(\beta(t)\)</span>，即<span class="math inline">\(\beta(\frac{i}{N})=\bar{\beta}_i\)</span>。此外令<span class="math inline">\(\boldsymbol{x}(\frac{i}{N})=\boldsymbol{x}_i\)</span>，<span class="math inline">\(\boldsymbol{z}(\frac{i}{N})=\boldsymbol{z}_i\)</span>，上式可以进一步变为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+\boldsymbol{x}(t+\Delta t) =&amp; \sqrt{1-\beta(t+\Delta t)\Delta t}\boldsymbol{x}(t)+\sqrt{\beta(t+\Delta t)\Delta t}\boldsymbol{z}(t) \\
+\approx &amp; \boldsymbol{x}(t)-\frac{1}{2}\beta(t+\Delta t)\Delta t\boldsymbol{x}(t)+\sqrt{\beta(t+\Delta t)\Delta t}\boldsymbol{z}(t) \\
+\approx &amp; \boldsymbol{x}(t)-\frac{1}{2}\beta(t)\Delta t\boldsymbol{x}(t)+\sqrt{\beta(t)\Delta t}\boldsymbol{z}(t)
+\end{aligned}
+\]</span></p>
+<p>当<span class="math inline">\(N\rightarrow \infty\)</span>即<span class="math inline">\(\Delta t\rightarrow 0\)</span>时，表达式变为下面的SDE：</p>
+<p><span class="math display">\[
+d\boldsymbol{x}=-\frac{1}{2}\beta(t)\boldsymbol{x}dt+\sqrt{\beta(t)}d\boldsymbol{w}
+\]</span></p>
+<p>如果初始状态的方差为1，上述的SDE会得到一个方差不变的过程，因此也被称为保持方差（Variance Preserving）的SDE。</p>
+<h3 id="sde与smld">SDE与SMLD</h3>
+<p>使用去噪得分匹配的方法训练一个时间相关的得分模型<span class="math inline">\(\boldsymbol{s_\theta}(\boldsymbol{x},t)\)</span>就可以对<span class="math inline">\(\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x})\)</span>进行估计，模型的训练目标为：</p>
+<p><span class="math display">\[
+\boldsymbol{\theta}^*=\arg\min_{\boldsymbol{\theta}} \mathbb{E}_t\left\{ \lambda(t)\mathbb{E}_{\boldsymbol{x}_0}\mathbb{E}_{\boldsymbol{x}_t|\boldsymbol{x}_0}\left[ \left\| \boldsymbol{s_\theta}(\boldsymbol{x}_t,t)-\nabla_{\boldsymbol{x}_t}\log_{p_{0t}}(\boldsymbol{x}_t|\boldsymbol{x}_0) \right\|_2^2 \right] \right\}
+\]</span></p>
+<p>其中<span class="math inline">\(\lambda:[0,T]\rightarrow \mathbb{R}^+\)</span>是一个函数值为正的权重函数，<span class="math inline">\(t\)</span>在<span class="math inline">\([0,T]\)</span>上均匀采样，<span class="math inline">\(\boldsymbol{x}_{0}\sim p_0(\boldsymbol{x})\)</span>，<span class="math inline">\(\boldsymbol{x}_{t}\sim p_{0t}(\boldsymbol{x}_{t}|\boldsymbol{x}_{0})\)</span>。通常来说，<span class="math inline">\(p_{0t}(\boldsymbol{x}_{t}|\boldsymbol{x}_{0})\)</span>要求是一个已知的概率分布。如果<span class="math inline">\(\boldsymbol{f}(\cdot,t)\)</span>为一个仿射函数，那么这个概率分布总是正态分布，它的均值和方差具有闭式解。</p>
+<p>基于训练好的得分模型，可以用朗之万动力学的方法做采样来生成数据。使用<span class="math inline">\(N\)</span>个不同的噪声等级<span class="math inline">\(\sigma_i,i=1,\dots,N\)</span>，每个不同的噪声等级所对应的干扰样本<span class="math inline">\(\boldsymbol{x}_i\)</span>及其条件概率<span class="math inline">\(p_{\sigma_i}(\boldsymbol{x}|\boldsymbol{x}_0)\)</span>满足如下的马尔可夫链：</p>
+<p><span class="math display">\[
+\boldsymbol{x}_i=\boldsymbol{x}_{i-1}+\sqrt{\sigma_i^2-\sigma_{i-1}^2}\boldsymbol{z}_{i-1},i=1,\dots,N
+\]</span></p>
+<p>其中，<span class="math inline">\(\boldsymbol{z}_{i-1}\sim \mathcal{N}(0,I)\)</span>。此外为了简便起见，假设<span class="math inline">\(\sigma_0=0\)</span>。当<span class="math inline">\(N\rightarrow \infty\)</span>时，使用连续变量<span class="math inline">\(t\in[0,1]\)</span>代替下标<span class="math inline">\(i\)</span>，此时<span class="math inline">\(\{\sigma_i\}_{i=1}^N\)</span>就变为函数<span class="math inline">\(\sigma(t)\)</span>，<span class="math inline">\(\boldsymbol{z}_i\)</span>变为<span class="math inline">\(\boldsymbol{z}(t)\)</span>，上述的马尔可夫链也就变成了连续的随机过程<span class="math inline">\(\{\boldsymbol{x}_{t}\}_{t=0}^1\)</span>。</p>
+<p>记<span class="math inline">\(\boldsymbol{x}(\frac{i}{N})=\boldsymbol{x}_i\)</span>，<span class="math inline">\(\sigma(\frac{i}{N})=\sigma(t)\)</span>，<span class="math inline">\(\boldsymbol{z}(\frac{i}{N})=\boldsymbol{z}_i\)</span>，令<span class="math inline">\(\Delta t=\frac{1}{N}\)</span>，上述马尔可夫链可以改写为：</p>
+<p><span class="math display">\[
+\boldsymbol{x}(t+\Delta t)=\boldsymbol{x}(t)+\sqrt{\sigma^2(t+\Delta t)-\sigma^2(t)}\boldsymbol{z}(t) \approx \boldsymbol{x}(t)+\sqrt{\frac{d[\sigma^2(t)]}{dt}\Delta t}\boldsymbol{z}(t)
+\]</span></p>
+<p>当<span class="math inline">\(N\rightarrow \infty\)</span>时，也就是<span class="math inline">\(\Delta t\rightarrow 0\)</span>时，就变为下面的SDE：</p>
+<p><span class="math display">\[
+d\boldsymbol{x}=\sqrt{\frac{d[\sigma^2(t)]}{dt}}d\boldsymbol{w}
+\]</span></p>
+<p>当<span class="math inline">\(t\rightarrow \infty\)</span>时，这一SDE对应于一个方差爆炸的过程，因此被称为方差爆炸（Variance Exploding）的SDE。</p>
+<h2 id="概率流ode">概率流ODE</h2>
+<p>考虑一个一般形式的SDE：</p>
+<p><span class="math display">\[
+d\boldsymbol{x}=\boldsymbol{f}(\boldsymbol{x},t)dt+\boldsymbol{G}(\boldsymbol{x},t)d\boldsymbol{w}
+\]</span></p>
+<p>其中<span class="math inline">\(\boldsymbol{f}(\cdot,t):\mathbb{R}^d\rightarrow \mathbb{R}^d\)</span>，<span class="math inline">\(\boldsymbol{G}(\cdot,t):\mathbb{R}^d\rightarrow \mathbb{R}^{d\times d}\)</span>。边际概率密度函数<span class="math inline">\(p_t(\boldsymbol{x}_{t})\)</span>的演化服从Fokker-Planck方程（推导过程可以参考<span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC81MzU2ODg5MzE=">Fokker-Planck方程 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span>）：</p>
+<p><span class="math display">\[
+\begin{aligned}
+\frac{\partial p_t(\boldsymbol{x})}{\partial t}=&amp;-\sum_{i=1}^d \frac{\partial}{\partial x_i}[f_i(\boldsymbol{x},t)p_t(\boldsymbol{x})]+\frac{1}{2}\sum_{i=1}^d\sum_{j=1}^d\frac{\partial^2}{\partial x_i \partial x_j}\left[\sum_{k=1}^d G_{ik}(\boldsymbol{x},t)G_{jk}(\boldsymbol{x},t)p_t(\boldsymbol{x})\right] \\
+=&amp; -\sum_{i=1}^d \frac{\partial}{\partial x_i}[f_i(\boldsymbol{x},t)p_t(\boldsymbol{x})]+\frac{1}{2}\sum_{i=1}^d\frac{\partial}{\partial x_i }\left[ \sum_{j=1}^d\frac{\partial}{\partial x_j}\left[\sum_{k=1}^d G_{ik}(\boldsymbol{x},t)G_{jk}(\boldsymbol{x},t)p_t(\boldsymbol{x})\right]\right]
+\end{aligned}
+\]</span></p>
+<p>其中，</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp; \sum_{j=1}^d\frac{\partial}{\partial x_j}\left[\sum_{k=1}^d G_{ik}(\boldsymbol{x},t)G_{jk}(\boldsymbol{x},t)p_t(\boldsymbol{x})\right] \\
+=&amp; \sum_{j=1}^d\frac{\partial}{\partial x_j}\left[\sum_{k=1}^d G_{ik}(\boldsymbol{x},t)G_{jk}(\boldsymbol{x},t)\right]p_t(\boldsymbol{x}) + \sum_{j=1}^d\sum_{k=1}^d G_{ik}(\boldsymbol{x},t)G_{jk}(\boldsymbol{x},t)p_t(\boldsymbol{x})\frac{\partial}{\partial x_j} \log p_t(\boldsymbol{x}) \\
+=&amp; p_t(\boldsymbol{x}) \nabla\cdot [\boldsymbol{G}(\boldsymbol{x},t)\boldsymbol{G}(\boldsymbol{x},t)^T]+p_t(\boldsymbol{x})\boldsymbol{G}(\boldsymbol{x},t)\boldsymbol{G}(\boldsymbol{x},t)^T\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x})
+\end{aligned}
+\]</span></p>
+<p>从而有</p>
+<p><span class="math display">\[
+\frac{\partial p_t(\boldsymbol{x})}{\partial t}=-\sum_{i=1}^{d}\frac{\partial}{\partial x_i}\left\{ f_i(\boldsymbol{x},t)p_t(\boldsymbol{x})-\frac{1}{2}p_t(\boldsymbol{x})\left[ \nabla\cdot [\boldsymbol{G}(\boldsymbol{x},t)\boldsymbol{G}(\boldsymbol{x},t)^T]+\boldsymbol{G}(\boldsymbol{x},t)\boldsymbol{G}(\boldsymbol{x},t)^T\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x})\right]\right\}
+\]</span></p>
+<p>定义</p>
+<p><span class="math display">\[
+\tilde{\boldsymbol{f}}(\boldsymbol{x},t):= \boldsymbol{f}(\boldsymbol{x},t)-\frac{1}{2}\nabla\cdot [\boldsymbol{G}(\boldsymbol{x},t)\boldsymbol{G}(\boldsymbol{x},t)^T]+\boldsymbol{G}(\boldsymbol{x},t)\boldsymbol{G}(\boldsymbol{x},t)^T\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x})
+\]</span></p>
+<p>从而可以得到一个形式更简单的ODE：</p>
+<p><span class="math display">\[
+d\boldsymbol{x}=\tilde{\boldsymbol{f}}(\boldsymbol{x},t)dt
+\]</span></p>
+<p>这也就是说，对于任意的扩散过程，都对应于一个确定性的ODE，它的轨迹与SDE有着同样的概率密度<span class="math inline">\(\{p_t(\boldsymbol{x})\}_{t=0}^T\)</span>。上述方程被称为概率流ODE（Probability flow ODE），通过它可以实现很多功能：</p>
+<ul>
+<li><p>可以计算出任意输入数据的概率似然。即：</p>
+<p><span class="math display">\[
+\log p_0(\boldsymbol{x}(0))=\log p_T(\boldsymbol{x}(T))+\int_{0}^{T} \nabla\cdot \tilde{\boldsymbol{f}}(\boldsymbol{x}(t),t)dt
+\]</span></p></li>
+<li><p>通过积分可以实现隐变量到数据的解码，因此可以对隐变量进行修改从而实现图像插值等图像编辑操作。</p></li>
+<li><p>由于前向SDE中并没有可训练参数，因此如果得分估计完全准确，概率流ODE就可以产生完全相同的轨迹。这也就是说，当训练数据、模型表示能力、优化精度都充足的情况下，对于数据的编码也是唯一的。</p></li>
+<li><p>使用ODE求解器，可以实现高效采样。</p></li>
+</ul>
+<h1 id="可控生成">可控生成</h1>
+<h2 id="定义">定义</h2>
+<p>可控生成指的是从一个条件概率分布<span class="math inline">\(p_0(\boldsymbol{x}_{0}|\boldsymbol{y})\)</span>中进行采样。例如从黑白图像生成彩色图像，这里的条件就是黑白图像；生成特定类别的图像，这里的条件就是类别；从被损坏的图像中复原出完整图像，这里的条件就是被损坏的图像；使用文本生成图片任务中，这里的条件就是文本的特征向量；等等。</p>
+<p>在扩散模型中，可控生成可以通过简单地在每个转移步中加上条件<span class="math inline">\(\boldsymbol{y}\)</span>来实现：</p>
+<p><span class="math display">\[
+p\left(\boldsymbol{x}_{0: T} | y\right)=p\left(\boldsymbol{x}_{T}\right) \prod_{t=1}^{T} p_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t-1} | \boldsymbol{x}_{t}, y\right)
+\]</span></p>
+<p>根据上面的推导，此时同样有如下三种等价的模型实现方式：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\hat{\boldsymbol{x}}_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t}, t, y\right) \approx \boldsymbol{x}_{0}\\ 
+&amp;\hat{\boldsymbol{\epsilon}}_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t}, t, y\right) \approx \boldsymbol{\epsilon}_{0}\\
+&amp;\boldsymbol{s}_{\boldsymbol{\theta}}\left(\boldsymbol{x}_{t}, t, y\right) \approx \nabla \log p\left(\boldsymbol{x}_{t} | y\right) 
+\end{aligned}
+\]</span></p>
+<p>以及对应的SDE：</p>
+<p><span class="math display">\[
+d\boldsymbol{x}=\left\{\boldsymbol{f}(\boldsymbol{x},t)-g(t)^2\nabla_\boldsymbol{x}\log p_t(\boldsymbol{x}|\boldsymbol{y})\right\}dt+g(t)d\boldsymbol{w}
+\]</span></p>
+<p>但是这种直接实现的方法泛化性较差，因此通常会使用指导（Guidance）的方式来显式地控制模型中的条件。</p>
+<h2 id="加入指导">加入指导</h2>
+<p>根据贝叶斯公式</p>
+<p><span class="math display">\[
+p_t(\boldsymbol{x}_t|\boldsymbol{y})=\frac{ p_t(\boldsymbol{x}_t)p(\boldsymbol{y}|\boldsymbol{x}_t)}{p(\boldsymbol{y})}
+\]</span></p>
+<p>可以得到得分函数的一个等价形式：</p>
+<p><span class="math display">\[
+\nabla_{\boldsymbol{x}_t}\log p_t(\boldsymbol{x}_t|\boldsymbol{y})=\nabla_{\boldsymbol{x}_t}\log p_t(\boldsymbol{x}_t)+\nabla_{\boldsymbol{x}_t}\log p_t(\boldsymbol{y}|\boldsymbol{x}_t)
+\]</span></p>
+<p>由此可得对应的SDE：</p>
+<p><span class="math display">\[
+d\boldsymbol{x}=\left\{\boldsymbol{f}(\boldsymbol{x},t)-g(t)^2[\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x})+\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{y}|\boldsymbol{x})]\right\}dt+g(t)d\bar{\boldsymbol{w}}
+\]</span></p>
+<p>上式中的<span class="math inline">\(\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{y}|\boldsymbol{x})\)</span>可以使用另外一个独立的模型去估计，或者是借助一个得分函数来近似计算，即<span class="math inline">\(\nabla_\boldsymbol{x}\log p_t(\boldsymbol{x}_{t}|\boldsymbol{y})\approx \boldsymbol{s_{\theta^*}}(\boldsymbol{x}_{t},t)+\nabla_{\boldsymbol{x}}\log p_t(\hat{\boldsymbol{y}}(t)|\boldsymbol{x}_{t})\)</span>，其中<span class="math inline">\(\hat{\boldsymbol{y}}(t)\)</span>是从<span class="math inline">\(p(\boldsymbol{y}(t)|\boldsymbol{y})\)</span>中采集到的一个样本。</p>
+<blockquote>
+<p>使用得分函数近似计算的推导过程：</p>
+<p>假设有一个通过SDE对<span class="math inline">\(\boldsymbol{x}\)</span>不断做干扰所得到的一个扩散过程<span class="math inline">\(\{\boldsymbol{x}_{t}\}_{t=0}^T\)</span>，以及一个训练好的得分模型<span class="math inline">\(\boldsymbol{s_{\boldsymbol{\theta}^*}}(\boldsymbol{x}_{t},t)\)</span>。</p>
+<p>根据贝叶斯定理，有</p>
+<p><span class="math display">\[
+\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x}(t)|\boldsymbol{y})=\nabla_{\boldsymbol{x}}\log \int p_t(\boldsymbol{x}(t)|\boldsymbol{y}(t),\boldsymbol{y})p(\boldsymbol{y}(t)|\boldsymbol{y})d\boldsymbol{y}(t)
+\]</span></p>
+<p>其中<span class="math inline">\(\boldsymbol{y}(t)\)</span>由<span class="math inline">\(\boldsymbol{x}_{t}\)</span>和前向过程<span class="math inline">\(p(\boldsymbol{y}(t)|\boldsymbol{x}_{t})\)</span>共同定义。</p>
+<p>假设如下两个条件成立：</p>
+<ol type="1">
+<li><span class="math inline">\(p(\boldsymbol{y}(t)|\boldsymbol{y})\)</span>是可追踪的。这个概率分布通常可以从前向过程和SDE之间的交互来推导出来。</li>
+<li><span class="math inline">\(p_t(\boldsymbol{x}_{t}|\boldsymbol{y}(t),\boldsymbol{y})\approx p_t(\boldsymbol{x}_{t}|\boldsymbol{y}(t))\)</span>。对于较小的<span class="math inline">\(t\)</span>，<span class="math inline">\(\boldsymbol{y}(t)\)</span>几乎与<span class="math inline">\(\boldsymbol{y}\)</span>相同，因此近似成立；而对于较大的<span class="math inline">\(t\)</span>，<span class="math inline">\(\boldsymbol{y}\)</span>将会与<span class="math inline">\(\boldsymbol{x}_{t}\)</span>远离，从而对于<span class="math inline">\(\boldsymbol{x}_{t}\)</span>的影响很小。此外，对于较大的<span class="math inline">\(t\)</span>，近似误差在最后的采样结果中也影响较小，因为它在采样过程的早期就已经被使用。</li>
+</ol>
+<p>在这两个假设下，有</p>
+<p><span class="math display">\[
+\begin{aligned}
+\nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x}(t)|\boldsymbol{y})&amp; \approx \nabla_{\boldsymbol{x}}\log \int p_t(\boldsymbol{x}(t)|\boldsymbol{y}(t))p(\boldsymbol{y}(t)|\boldsymbol{y})d\boldsymbol{y} \\
+&amp; \approx \nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x}(t)|\hat{\boldsymbol{y}}(t)) \\
+&amp; = \nabla_{\boldsymbol{x}}\log p_t(\boldsymbol{x}(t))+\nabla_{\boldsymbol{x}}\log p_t(\hat{\boldsymbol{y}}(t)|\boldsymbol{x}(t)) \\
+&amp; \approx \boldsymbol{s_{\boldsymbol{\theta}^*}}(\boldsymbol{x}(t),t)+\nabla_{\boldsymbol{x}}\log p_t(\hat{\boldsymbol{y}}(t)|\boldsymbol{x}(t))
+\end{aligned}
+\]</span></p>
+</blockquote>
+<h1 id="参考文献">参考文献</h1>
+<ol type="1">
+<li><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDYuMTEyMzk=">Denoising Diffusion Probabilistic Models (arxiv.org)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIyMDguMTE5NzA=">Understanding Diffusion Models: A Unified Perspective (arxiv.org)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMTEuMTM0NTY=">Score-Based Generative Modeling through Stochastic Differential Equations (arxiv.org)<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2022/11/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" title="深度学习-扩散模型">http://lyf35.github.io/2022/11/07/深度学习-扩散模型/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
+              <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag"><i class="fa fa-tag"></i> 生成模型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/09/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%9B%BE%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%BB%BC%E8%BF%B0/" rel="prev" title="论文笔记-图自监督学习概述">
+      <i class="fa fa-chevron-left"></i> 论文笔记-图自监督学习概述
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83/" rel="next" title="论文笔记-分子图预训练">
+      论文笔记-分子图预训练 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : 'f86178688956cf911dd851564800a68c',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

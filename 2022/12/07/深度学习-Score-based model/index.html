@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="得分函数 定义 假设\(\{\boldsymbol x_i\in \mathbb{R}^D\}_{i&#x3D;1}^N\)是从未知的数据分布\(p_{\text{data}}(\boldsymbol x)\)中采集到的一组独立同分布的数据集，定义得分函数（score function）\(\boldsymbol s (\boldsymbol x)&#x3D;\nabla_{\boldsymbol x}\log p(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习-Score-Based model">
+<meta property="og:url" content="http://lyf35.github.io/2022/12/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Score-based%20model/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="得分函数 定义 假设\(\{\boldsymbol x_i\in \mathbb{R}^D\}_{i&#x3D;1}^N\)是从未知的数据分布\(p_{\text{data}}(\boldsymbol x)\)中采集到的一组独立同分布的数据集，定义得分函数（score function）\(\boldsymbol s (\boldsymbol x)&#x3D;\nabla_{\boldsymbol x}\log p(">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205249.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205303.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205307.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205325.png">
+<meta property="article:published_time" content="2022-12-07T06:57:23.000Z">
+<meta property="article:modified_time" content="2022-12-07T15:35:42.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="生成模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205249.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2022/12/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Score-based%20model/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深度学习-Score-Based model | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%97%E5%88%86%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">得分函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%97%E5%88%86%E5%8C%B9%E9%85%8D"><span class="nav-number">1.2.</span> <span class="nav-text">得分匹配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%97%E4%B9%8B%E4%B8%87%E5%8A%A8%E5%8A%9B%E5%AD%A6%E9%87%87%E6%A0%B7"><span class="nav-number">1.3.</span> <span class="nav-text">朗之万动力学采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%99%AA%E5%A3%B0%E5%BE%97%E5%88%86"><span class="nav-number">1.4.</span> <span class="nav-text">条件噪声得分</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E4%B8%8E%E6%94%B9%E8%BF%9B"><span class="nav-number">2.</span> <span class="nav-text">实践与改进</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%99%AA%E5%A3%B0%E7%AD%89%E7%BA%A7"><span class="nav-number">2.1.</span> <span class="nav-text">噪声等级</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%99%AA%E5%A3%B0%E5%B0%BA%E5%BA%A6"><span class="nav-number">2.1.1.</span> <span class="nav-text">初始噪声尺度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E5%99%AA%E5%A3%B0%E5%B0%BA%E5%BA%A6"><span class="nav-number">2.1.2.</span> <span class="nav-text">其它噪声尺度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E5%99%AA%E5%A3%B0%E4%BF%A1%E6%81%AF"><span class="nav-number">2.1.3.</span> <span class="nav-text">合并噪声信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%97%E4%B9%8B%E4%B8%87%E5%8A%A8%E5%8A%9B%E5%AD%A6"><span class="nav-number">2.2.</span> <span class="nav-text">朗之万动力学</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%95%BF%E8%AE%BE%E7%BD%AE"><span class="nav-number">2.2.1.</span> <span class="nav-text">步长设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%9D%E5%A4%96%E5%8E%BB%E5%99%AA%E6%AD%A5"><span class="nav-number">2.2.2.</span> <span class="nav-text">额外去噪步</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8%E5%B9%B3%E5%9D%87"><span class="nav-number">2.3.</span> <span class="nav-text">移动平均</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2022/12/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Score-based%20model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习-Score-Based model
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-12-07 14:57:23 / 修改时间：23:35:42" itemprop="dateCreated datePublished" datetime="2022-12-07T14:57:23+08:00">2022-12-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/12/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Score-based%20model/" class="post-meta-item leancloud_visitors" data-flag-title="深度学习-Score-Based model" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>20k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>18 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="得分函数">得分函数</h1>
+<h2 id="定义">定义</h2>
+<p>假设<span class="math inline">\(\{\boldsymbol x_i\in \mathbb{R}^D\}_{i=1}^N\)</span>是从未知的数据分布<span class="math inline">\(p_{\text{data}}(\boldsymbol x)\)</span>中采集到的一组独立同分布的数据集，定义得分函数（score function）<span class="math inline">\(\boldsymbol s (\boldsymbol x)=\nabla_{\boldsymbol x}\log p(\boldsymbol x)\)</span>，即概率密度的对数函数在数据点<span class="math inline">\(\boldsymbol x\)</span>处的梯度。也就是说，得分函数对应于一个向量场，它指出了概率密度增长最大的方向。</p>
+<p>得分函数通常表示为<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta} (\boldsymbol x)=\nabla_{\boldsymbol x}\log p(\boldsymbol x)\)</span>的形式，也就是用一个神经网络来对得分函数进行近似，其中<span class="math inline">\(\boldsymbol \theta\)</span>表示神经网络的参数。</p>
+<span id="more"></span>
+<h2 id="得分匹配">得分匹配</h2>
+<p>训练得分函数的过程被称为得分匹配（score matching），它的训练目标为最小化如下表达式： <span class="math display">\[
+\frac{1}{2}E_{p_{\text{data}}(\boldsymbol x)}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)-\nabla_{\boldsymbol x}\log p_{\text{data}}(\boldsymbol x)||_2^2 \right]
+\]</span> 但是在这一公式中<span class="math inline">\(p_{\text{data}}(\boldsymbol x)\)</span>未知，因此可以通过求解等价问题，即最小化下面的表达式来求解： <span class="math display">\[
+E_{p_{\text{data}}(\boldsymbol x)}\left[\text{tr}(\nabla_{\boldsymbol x} \boldsymbol s_{\boldsymbol \theta}(\boldsymbol x))+ \frac{1}{2}||\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)||_2^2 \right]
+\]</span></p>
+<blockquote>
+<p>注：上述两个问题等价的推导 <span class="math display">\[
+\begin{aligned}
+&amp; E_{p_{\text{data}}(\boldsymbol x)}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)-\nabla_{\boldsymbol x}\log p_{\text{data}}(\boldsymbol x)||_2^2 \right] \\
+=&amp; \int p_{\text{data}}(\boldsymbol x)\cdot \left[ ||\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)||_2^2+ ||\nabla_{\boldsymbol x}\log p_{\text{data}}(\boldsymbol x)||_2^2 -2\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)^T \nabla_{\boldsymbol x}\log p_{\text{data}}(\boldsymbol x)  \right]d\boldsymbol x \\
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(||\nabla_{\boldsymbol x}\log p_{\text{data}}(\boldsymbol x)||_2^2\)</span>与参数<span class="math inline">\(\boldsymbol \theta\)</span>无关，可以省略掉。</p>
+<p>而<span class="math inline">\(\int p_{\text{data}}(\boldsymbol x)\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)^T \nabla_{\boldsymbol x}\log p_{\text{data}}(\boldsymbol x)d\boldsymbol x\)</span>这一项可以化简为： <span class="math display">\[
+\begin{aligned}
+&amp;\int p_{\text{data}}(\boldsymbol x)\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)^T \nabla_{\boldsymbol x}\log p_{\text{data}}(\boldsymbol x)d\boldsymbol x \\
+=&amp; \int p_{\text{data}}(\boldsymbol x) \sum_{i=1}^{n}s_{\boldsymbol \theta}(\boldsymbol x)_i \frac{\nabla_{x_i} p_{\text{data}}(\boldsymbol x)}{p_{\text{data}}(\boldsymbol x)}d\boldsymbol x \\
+=&amp; \sum_{i=1}^{n}\int s_{\boldsymbol \theta}(\boldsymbol x)_i \nabla_{x_i} p_{\text{data}}(\boldsymbol x)d\boldsymbol x \\
+=&amp; \sum_{i=1}^{n}\left(s_{\boldsymbol \theta}(\boldsymbol x)_i\cdot p_{\text{data}}(\boldsymbol x)\bigg|_{-\infty}^{\infty}-\int \nabla_{\boldsymbol x_i} (s_{\boldsymbol \theta}(\boldsymbol x)_i)\cdot p_{\text{data}}(\boldsymbol x) d\boldsymbol x\right)
+\end{aligned}
+\]</span> 第一项<span class="math inline">\(s_{\boldsymbol \theta}(\boldsymbol x)_i\cdot p_{\text{data}}(\boldsymbol x)\big|_{-\infty}^{\infty}\)</span>在积分的上下界都为0（这里假设当<span class="math inline">\(\boldsymbol x\)</span>取负无穷或者正无穷时，对应的概率<span class="math inline">\(p_{\text{data}}(\boldsymbol x)\)</span>为0）；第二项中的<span class="math inline">\(\sum_{i=1}^{n} \nabla_{\boldsymbol x_i} s_{\boldsymbol \theta}(\boldsymbol x)_i\)</span>是矩阵<span class="math inline">\(\nabla_{\boldsymbol x}\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)\)</span>中所有对角线元素的和，等于<span class="math inline">\(\text{tr}(\nabla_{\boldsymbol x} \boldsymbol s_{\boldsymbol \theta}(\boldsymbol x))\)</span>。</p>
+<p>因此，可以得到两个优化问题等价的结论。</p>
+</blockquote>
+<p>但是上述优化问题中对于<span class="math inline">\(\text{tr}(\nabla_{\boldsymbol x} \boldsymbol s_{\boldsymbol \theta}(\boldsymbol x))\)</span>这一项的开销很大，尤其是对于高维输入以及深层网络来说。</p>
+<p>因此对于<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta} (\boldsymbol x)\)</span>的训练，通常使用下面两种方法：</p>
+<ol type="1">
+<li><p>去噪得分匹配（denoising score matching）</p>
+<p>这一方法完全绕过了计算<span class="math inline">\(\text{tr}(\nabla_{\boldsymbol x} \boldsymbol s_{\boldsymbol \theta}(\boldsymbol x))\)</span>。它首先使用一个预先定义好的噪声分布<span class="math inline">\(q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)\)</span>生成干扰后的数据<span class="math inline">\(\tilde{\boldsymbol x}\)</span>，然后再计算<span class="math inline">\(\tilde{\boldsymbol x}\)</span>的得分。<span class="math inline">\(\tilde{\boldsymbol x}\)</span>的概率分布被定义为<span class="math inline">\(q_\sigma(\tilde{\boldsymbol x})=\int q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)p_{\text{data}}(\boldsymbol x)d\boldsymbol x\)</span>，因此优化目标如下： <span class="math display">\[
+\frac{1}{2}E_{q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)p_{\text{data}}(\boldsymbol x)}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})-\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)||_2^2 \right]
+\]</span></p>
+<blockquote>
+<p>这一优化目标的推导过程（主要参考了<span class="exturl" data-url="aHR0cHM6Ly93d3cuaXJvLnVtb250cmVhbC5jYS9+dmluY2VudHAvUHVibGljYXRpb25zL0Rlbm9pc2luZ1Njb3JlTWF0Y2hpbmdfTmV1cmFsQ29tcDIwMTEucGRm">DenoisingScoreMatching_NeuralComp2011<i class="fa fa-external-link-alt"></i></span>的附录部分）：</p>
+<p>原始的优化目标： <span class="math display">\[
+\frac{1}{2}E_{q_\sigma(\tilde{\boldsymbol x})}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})-\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x})||_2^2 \right]
+\]</span> 将上式展开有： <span class="math display">\[
+\begin{aligned}
+&amp;E_{q_\sigma(\tilde{\boldsymbol x})}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})-\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x})||_2^2 \right] \\
+=&amp; E_{q_\sigma(\tilde{\boldsymbol x})}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})||^2+||\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x})||^2 -2\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x}) \right]
+\end{aligned}
+\]</span> 上式中的第二项与参数<span class="math inline">\(\boldsymbol \theta\)</span>无关，第一项<span class="math inline">\(E_{q_\sigma(\tilde{\boldsymbol x})} [\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})]\)</span>可以做如下变换： <span class="math display">\[
+\begin{aligned}
+&amp; E_{q_\sigma(\tilde{\boldsymbol x})} [\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})] \\
+=&amp; \int q_\sigma(\tilde{\boldsymbol x})\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})d\tilde{\boldsymbol x} \\
+=&amp;\int \left( \int q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)p_{\text{data}}(\boldsymbol x)d\boldsymbol x\right) \boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})d\tilde{\boldsymbol x}  \\
+=&amp; \iint q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)p_{\text{data}}(\boldsymbol x)\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})d\boldsymbol x d\tilde{\boldsymbol x} \\
+=&amp; E_{q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)p_{\text{data}}(\boldsymbol x)}[s_{\boldsymbol \theta}(\tilde{\boldsymbol x})]
+\end{aligned}
+\]</span> 第三项<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x})\)</span>可以对其做如下变换： <span class="math display">\[
+\begin{aligned}
+&amp;E_{q_\sigma(\tilde{\boldsymbol x})}\left[ \boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x})\right ] \\
+=&amp; \int q_\sigma(\tilde{\boldsymbol x})\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x}) d\tilde{\boldsymbol x} \\
+=&amp; \int \boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T\nabla_{\tilde{\boldsymbol x}} q_\sigma(\tilde{\boldsymbol x}) d\tilde{\boldsymbol x} \\
+=&amp; \int \boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T\nabla_{\tilde{\boldsymbol x}} \left(\int q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)\cdot p_{\text{data}}(\boldsymbol x)d\boldsymbol x \right) d\tilde{\boldsymbol x} \\
+=&amp; \int \boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T \left(\int \left(\nabla_{\tilde{\boldsymbol x}}q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)\right)\cdot p_{\text{data}}(\boldsymbol x)d\boldsymbol x \right) d\tilde{\boldsymbol x} \\
+=&amp; \int \boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T \left(\int \left(\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)\right)\cdot q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)\cdot p_{\text{data}}(\boldsymbol x)d\boldsymbol x \right) d\tilde{\boldsymbol x} \\
+=&amp;\iint \left( q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)\cdot p_{\text{data}}(\boldsymbol x)\right) \cdot \boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T \left(\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)\right) d\boldsymbol x d\tilde{\boldsymbol x} \\
+=&amp; E_{q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)p_{\text{data}}(\boldsymbol x)}\left[ \boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})^T \nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)\right]
+\end{aligned}
+\]</span> 也就是说，优化目标<span class="math inline">\(\frac{1}{2}E_{q_\sigma(\tilde{\boldsymbol x})}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})-\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x})||_2^2 \right]\)</span>和<span class="math inline">\(\frac{1}{2}E_{q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)p_{\text{data}}(\boldsymbol x)}\left[ ||\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x})-\nabla_{\tilde{\boldsymbol x}}\log q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)||_2^2 \right]\)</span>只相差了一个常数，因此两个优化目标等价。</p>
+</blockquote></li>
+<li><p>切片得分匹配（sliced score matching）</p>
+<p>这一方法使用随机投影去估算<span class="math inline">\(\text{tr}(\nabla_{\boldsymbol x} \boldsymbol s_{\boldsymbol \theta}(\boldsymbol x))\)</span>的值，也就是优化目标变为： <span class="math display">\[
+E_{p_\boldsymbol{v}}E_{p_{\text{data}}(\boldsymbol x)}\left[\boldsymbol v^T\nabla_{\boldsymbol x} \boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)\boldsymbol v + \frac{1}{2}\|\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)\|_2^2 \right]
+\]</span> 其中<span class="math inline">\(p_{\boldsymbol v}\)</span>代表随机向量分布。</p>
+<p>详细可以参考https://arxiv.org/pdf/1905.07088.pdf</p></li>
+</ol>
+<h2 id="朗之万动力学采样">朗之万动力学采样</h2>
+<p>在得分函数训练完成之后，便可以使用朗之万动力学采样的方法得到一个采样自<span class="math inline">\(p(\boldsymbol x)\)</span>的一个样本。</p>
+<p>给定一个固定的步长<span class="math inline">\(\epsilon&gt;0\)</span>，初始值<span class="math inline">\(\tilde{\boldsymbol x}_0\sim \pi(\boldsymbol x)\)</span>（其中<span class="math inline">\(\pi\)</span>代表先验概率分布），朗之万动力学方法递归地执行下面的表达式： <span class="math display">\[
+\tilde{\boldsymbol x}_t=\tilde{\boldsymbol x}_{t-1}+\frac{\epsilon}{2}\nabla_{\boldsymbol x}\log p(\tilde{\boldsymbol x}_{t-1})+\sqrt{\epsilon}\boldsymbol z_t
+\]</span> 其中<span class="math inline">\(\boldsymbol z_t\sim \mathcal{N}(0,I)\)</span>。</p>
+<p>当<span class="math inline">\(\epsilon\rightarrow 0\)</span>以及<span class="math inline">\(T\rightarrow \infty\)</span>时，<span class="math inline">\(\tilde{\boldsymbol x}_T\)</span>的概率分布就等于<span class="math inline">\(p(\boldsymbol x)\)</span>。当然实际中这样的条件很难达到，但是当<span class="math inline">\(\epsilon\)</span>比较小以及<span class="math inline">\(T\)</span>比较大的情况下，其中的误差通常可以被忽略。</p>
+<blockquote>
+<p>备注：上述公式中，如果去掉最后的高斯项，那么其实就等同于梯度上升的过程，相当于是让样本往概率密度较大的方向移动。而高斯项则用于在优化过程中随机加入一些噪声。</p>
+<p>另一个角度是将<span class="math inline">\(\nabla_{\boldsymbol x}\log p(\tilde{\boldsymbol x})\)</span>理解为概率密度的势场，最后的<span class="math inline">\(\boldsymbol z_t\)</span>项理解为热涨落的过程，这样就相当于是模拟粒子在势能和热涨落中运动。</p>
+</blockquote>
+<h2 id="条件噪声得分">条件噪声得分</h2>
+<p>上面提出的模型在实际应用中会面临如下的两个问题：</p>
+<ol type="1">
+<li><p>流形假设</p>
+<p>这一假设指的是真实世界中的数据会更倾向于分布在高维空间内的一个低维流形上。在这一假设下，得分模型则会遇到两个困难：一是由于得分函数是在高维空间中计算的梯度，因此如果<span class="math inline">\(\boldsymbol x\)</span>被局限在低维流形上面，则相当于计算得到的梯度没有意义；二是对于上述定义的得分匹配这一训练目标，只有当数据分布的支撑（相当于概率不为0处）是整个空间时，训练得到的得分函数才具有一致性。</p>
+<p>例如作者在自己的实验中，在CIFAR-10数据集上训练得分模型，在不给训练数据加噪声的情况下模型的训练过程会一直震荡，而在加入了很小的噪声之后，模型的训练则会最终收敛。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205249.png" alt="image-20221029151648516" style="zoom: 50%;" /></p></li>
+<li><p>低概率密度区域</p>
+<p>在概率密度较低的区域会遇到两个问题，一是得分函数的估计会不准确，二是朗之万动力学的采样也很难复原出真实的概率分布。</p>
+<p>对于第一个问题，由于训练得分函数使用的是一组采集自<span class="math inline">\(p_{\text{data}}\)</span>的独立同分布样本，因此相应地概率密度较低的区域所采集到的数据也会很少。没有足够的样本便很难训练出一个准确的得分函数。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205303.png" alt="image-20221029153139333" style="zoom:50%;" /></p>
+<p>而对于第二个问题，作者用了一个简单的例子来说明。假设数据的概率分布<span class="math inline">\(p\)</span>服从一个混合模型<span class="math inline">\(p=\pi p_1+(1-\pi)p_2\)</span>，其中<span class="math inline">\(p_1\)</span>和<span class="math inline">\(p_2\)</span>的支撑集不相交。但是得分函数<span class="math inline">\(\nabla \log p=\nabla \log p_1+\nabla \log p_2\)</span>，是一个与<span class="math inline">\(\pi\)</span>无关的表达式。此时，除非使用很小的步长以及很大的迭代步数才能产生正确的采样。</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205307.png" alt="image-20221029153247477" style="zoom:67%;" /></p></li>
+</ol>
+<p>因此，作者提出了两个改进方法：</p>
+<p>第一个改进是使用噪声条件得分网络（Noise Conditional Score Networks）。设<span class="math inline">\(\{\sigma_i\}_{i=1}^L\)</span>是一个等比数列，满足<span class="math inline">\(\sigma_i/\sigma_{i-1}&gt;1\)</span>，并且<span class="math inline">\(\sigma_1\)</span>的值足够大（指的是能够解决上述提到的两个问题），<span class="math inline">\(\sigma_L\)</span>的值足够小（对数据造成的干扰尽可能小）。定义<span class="math inline">\(q_\sigma(\tilde{\boldsymbol x})=\int \mathcal{N}(\tilde{\boldsymbol x}| \boldsymbol x,\sigma^2I)p_{\text{data}}(\boldsymbol x)d\boldsymbol x\)</span>为干扰后的数据分布，其中<span class="math inline">\(q_\sigma(\tilde{\boldsymbol x}| \boldsymbol x)=\mathcal{N}(\tilde{\boldsymbol x}| \boldsymbol x,\sigma^2I)\)</span>相当于为原始数据添加高斯噪声。我们的目标是训练如下的噪声条件得分网络： <span class="math display">\[
+\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x,\sigma)\approx \nabla_{\boldsymbol x} \log q_\sigma(\boldsymbol x), ~\forall \sigma\in \{\sigma_i\}_{i=1}^L
+\]</span> 使用上文去噪得分匹配的训练目标，对于一个给定的<span class="math inline">\(\sigma\)</span>，优化目标可以写为： <span class="math display">\[
+\ell(\boldsymbol \theta,\sigma)=\frac{1}{2}E_{\boldsymbol p_{\text{data}}(\boldsymbol x)}E_{\tilde{\boldsymbol x}\sim\mathcal{N}(\boldsymbol x,\sigma^2 I)}\left[ \left\|\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x},\sigma)+\frac{\tilde{\boldsymbol x} - \boldsymbol x}{\sigma^2}\right\|_2^2 \right]
+\]</span> 因此，考虑所有的<span class="math inline">\(\sigma\)</span>，可以得到最终的优化目标： <span class="math display">\[
+\mathcal{L}(\boldsymbol \theta)=\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\ell(\boldsymbol \theta;\sigma_i)
+\]</span> 其中<span class="math inline">\(\lambda(\sigma_i)&gt;0\)</span>是一个系数方程。</p>
+<p>假设模型具有足够强大的近似能力，则当且仅当<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta^*}(\boldsymbol x,\sigma_i)= \nabla_{\boldsymbol x} \log q_{\sigma_i}(\boldsymbol x)\)</span>对于<span class="math inline">\(\forall \sigma\in \{\sigma_i\}_{i=1}^L,\forall i\in\{1,\dots,L\}\)</span>都成立时，<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta^*}(\boldsymbol x,\sigma)\)</span>使得上式取最小值。</p>
+<p><span class="math inline">\(\lambda(\cdot)\)</span>的取值方法有很多种，在理想情况下希望<span class="math inline">\(\forall \sigma\in \{\sigma_i\}_{i=1}^L,\forall i\in\{1,\dots,L\}\)</span>，<span class="math inline">\(\lambda(\sigma_i)\ell(\boldsymbol \theta;\sigma_i)\)</span>的值大致都为一个量级。从经验来看，当得分网络训练完成之后，大致可以得到<span class="math inline">\(\| \boldsymbol s_{\boldsymbol \theta}(\boldsymbol x,\sigma)\propto 1/\sigma \|\)</span>，因此通常取<span class="math inline">\(\lambda(\sigma)=\sigma^2\)</span>。</p>
+<p>而在<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x,\sigma)\)</span>训练完成之后，便可以使用带有退火的朗之万动力学方法采样： <span class="math display">\[
+\tilde{\boldsymbol x}_t=\tilde{\boldsymbol x}_{t-1}+\frac{\alpha_i}{2}\boldsymbol s_{\boldsymbol \theta}(\tilde{\boldsymbol x}_{t-1},\sigma_i)+\sqrt{\alpha_i}\boldsymbol z_t
+\]</span> 其中，<span class="math inline">\(\alpha_i=\epsilon\cdot \sigma_i^2/\sigma_L^2\)</span>为迭代步长。在采样时，<span class="math inline">\(t=1,\dots,T\)</span>为内层循环，代表在概率分布<span class="math inline">\(q_{\sigma_i}\)</span>上采样；<span class="math inline">\(i=1,\dots,L\)</span>为外层循环，代表在<span class="math inline">\(q_{\sigma_i}\)</span>上采样点的基础上，减小步长并在<span class="math inline">\(q_{\sigma_{i+1}}\)</span>上采样。通过这样的循环，最终得到<span class="math inline">\(q_{\sigma_L}\)</span>上的采样点。由于<span class="math inline">\(\sigma_L\)</span>足够小，因此可以认为最终是近似在<span class="math inline">\(p_{\text{data}}\)</span>上采样。</p>
+<h1 id="实践与改进">实践与改进</h1>
+<h2 id="噪声等级">噪声等级</h2>
+<p>关于噪声等级的改进主要包括三部分：</p>
+<h3 id="初始噪声尺度">初始噪声尺度</h3>
+<p>假设数据集<span class="math inline">\(\{\boldsymbol{x}_1,\boldsymbol{x}_2,\dots,\boldsymbol{x}_N\}\)</span>是采样自<span class="math inline">\(p_{\text{data}}(\boldsymbol{x})\)</span>的独立同分布样本，并且<span class="math inline">\(N\)</span>足够大，此时我们有<span class="math inline">\(\hat{p}_{\text{data}}(\boldsymbol{x})=\frac{1}{N}\sum_{i=1}^{N}\delta(\boldsymbol{x}=\boldsymbol{x}_i)\approx p_{\text{data}}(\boldsymbol{x})\)</span>，其中<span class="math inline">\(\delta(\cdot)\)</span>代表狄拉克分布。当使用分布<span class="math inline">\(\mathcal{N}(0,\sigma_1^2I)\)</span>对数据做干扰时，经验分布就变成了<span class="math inline">\(\hat{p}_{\sigma_1}(\boldsymbol{x})=\frac{1}{N}\sum_{i=1}^{N}p_i(\boldsymbol{x})\)</span>，其中<span class="math inline">\(p_i(\boldsymbol x)=\mathcal{N}(\boldsymbol x|\boldsymbol x_i,\sigma_1^2I)\)</span>。</p>
+<p>记<span class="math inline">\(r_i(\boldsymbol x)=p_i(\boldsymbol x)/\sum_{k=1}^N p_k(\boldsymbol x)\)</span>，则得分函数<span class="math inline">\(\nabla_{\boldsymbol x}\log \hat{p}_{\sigma_1}(\boldsymbol{x})=\sum_{i=1}^N r_i(\boldsymbol x)\nabla_{\boldsymbol x}\log p_i(\boldsymbol x)\)</span>，而且有如下结论成立： <span class="math display">\[
+E_{p_i(\boldsymbol x)}[r_j(\boldsymbol x)]\le \frac{1}{2}\exp\left( -\frac{\|\boldsymbol x_i-\boldsymbol x_j\|_2^2}{8\sigma_i^2} \right)
+\]</span></p>
+<blockquote>
+<p>上述不等式的证明： <span class="math display">\[
+\begin{aligned}
+&amp;E_{p_i(\boldsymbol x)}[r_j(\boldsymbol x)] \\
+=&amp; \int \frac{p_i(\boldsymbol x)p_j(\boldsymbol x)}{\sum_{k=1}^N p_k(\boldsymbol x)}d\boldsymbol x 
+\le \int \frac{p_i(\boldsymbol x)p_j(\boldsymbol x)}{p_i(\boldsymbol x)+p_j(\boldsymbol x)} d\boldsymbol x\\
+=&amp;\frac{1}{2}\int \frac{2}{\frac{1}{p_i(\boldsymbol x)}+\frac{1}{p_j(\boldsymbol x)}} d\boldsymbol x 
+\le  \frac{1}{2} \int \sqrt{p_i(\boldsymbol x)p_j(\boldsymbol x)} d\boldsymbol x \\
+=&amp;\frac{1}{2\cdot(2\pi \sigma_1^2)^{D/2}}\int \exp \left( -\frac{1}{4\sigma_1^2}\left( \|\boldsymbol x-\boldsymbol x_i\|_2^2+\|\boldsymbol x-\boldsymbol x_j\|_2^2 \right) \right) d\boldsymbol x \\
+=&amp;\frac{1}{2\cdot(2\pi \sigma_1^2)^{D/2}}\int \exp \left( -\frac{1}{4\sigma_1^2}\left( \|\boldsymbol x-\boldsymbol x_i\|_2^2+\|\boldsymbol x-\boldsymbol x_i+\boldsymbol x_i-\boldsymbol x_j\|_2^2 \right) \right) d\boldsymbol x \\
+=&amp;\frac{1}{2\cdot(2\pi \sigma_1^2)^{D/2}}\int \exp \left( -\frac{1}{2\sigma_1^2}\left( \|\boldsymbol x-\boldsymbol x_i+\frac{\boldsymbol x_i-\boldsymbol x_j}{2}\|_2^2+\frac{\|\boldsymbol x_i-\boldsymbol x_j\|_2^2}{4} \right) \right) d\boldsymbol x \\
+=&amp; \frac{1}{2}\exp\left( -\frac{\|\boldsymbol x_i-\boldsymbol x_j\|_2^2}{8\sigma_1^2} \right) \frac{1}{(2\pi \sigma_1^2)^{D/2}}\int \exp \left( -\frac{1}{2\sigma_1^2}\left( \|\boldsymbol x-\boldsymbol x_i+\frac{\boldsymbol x_i-\boldsymbol x_j}{2}\|_2^2 \right) \right)d\boldsymbol x \\
+=&amp;\frac{1}{2}\exp\left( -\frac{\|\boldsymbol x_i-\boldsymbol x_j\|_2^2}{8\sigma_1^2} \right)
+\end{aligned}
+\]</span></p>
+</blockquote>
+<p>根据这一结论，在使用朗之万动力学采样从<span class="math inline">\(p_i(\boldsymbol x)\)</span>过渡到<span class="math inline">\(p_j(\boldsymbol x)\)</span>时，如果要使得这一过程更容易发生，则需要尽量使<span class="math inline">\(E_{p_i(\boldsymbol x)}[r_j(\boldsymbol x)]\)</span>尽可能地大，也就是让<span class="math inline">\(\sigma_1\)</span>的值与<span class="math inline">\(\|\boldsymbol x_i-\boldsymbol x_j\|_2^2\)</span>基本处于一个量级。否则因为这一期望值过小，会导致朗之万动力学采样时，生成样本的多样性会减小。</p>
+<p>考虑训练集中所有的数据都要满足这一条件，因此<span class="math inline">\(\sigma_1\)</span>的选取原则是，与所有训练数据之间欧氏距离的最大值处于同一量级。</p>
+<p>作者在CIFAR-10数据集上进行实验，这一数据集上样本欧氏距离的中位数是18，取<span class="math inline">\(\sigma_1=1\)</span>和<span class="math inline">\(\sigma_1=50\)</span>分别进行实验，结果显示<span class="math inline">\(\sigma_1=50\)</span>的时候生成的图像更多样化：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20230205205325.png" alt="image-20221030110740344" style="zoom: 80%;" /></p>
+<h3 id="其它噪声尺度">其它噪声尺度</h3>
+<p>在设置好<span class="math inline">\(\sigma_L\)</span>和<span class="math inline">\(\sigma_1\)</span>之后，还需要选取<span class="math inline">\(L\)</span>的值以及其余的<span class="math inline">\(\{\sigma_i\}_{i=1}^L\)</span>。在设置这些<span class="math inline">\(\sigma_i\)</span>的值时，出发点是在从<span class="math inline">\(p_{\sigma_{i-1}}(\boldsymbol x)\)</span>中采样之后，这一样本接下来设置为<span class="math inline">\(p_{\sigma_i}(\boldsymbol x)\)</span>朗之万动力学采样的初始化值时能够生成合理的梯度值。</p>
+<p>考虑一个简单的情形，数据集中只包含有一个数据点，即<span class="math inline">\(p_{\sigma_i}(\boldsymbol x)=\mathcal{N}(\boldsymbol x|\boldsymbol 0,\sigma_i^2 I)\)</span>。为了更好地理解高维空间内的概率分布，将这一概率分布分解为超球坐标下的表示<span class="math inline">\(p(\phi)p_{\sigma_i}(r)\)</span>，其中<span class="math inline">\(\phi\)</span>和<span class="math inline">\(r\)</span>分别代表<span class="math inline">\(\boldsymbol x\)</span>的角度坐标和径向坐标。由于<span class="math inline">\(p_{\sigma_i}(\boldsymbol x)\)</span>是一个各向同性的高斯分布，因此<span class="math inline">\(p(\phi)\)</span>对于所有的噪声尺度<span class="math inline">\(\sigma_i\)</span>都是一样的。</p>
+<p>设<span class="math inline">\(\boldsymbol x\in R^D\sim \mathcal{N}(\boldsymbol 0,\sigma^2I)\)</span>，<span class="math inline">\(r=\|\boldsymbol x\|_2\)</span>，有下面的结论： <span class="math display">\[
+p(r)=\frac{1}{2^{D/2-1}\Gamma(D/2)}\frac{r^{D-1}}{\sigma^D}\exp\left( -\frac{r^2}{2\sigma^2} \right)
+\]</span> 而且当<span class="math inline">\(D\rightarrow \infty\)</span>时，有<span class="math inline">\(r-\sqrt{D}\sigma\stackrel{d}\longrightarrow \mathcal{N}(0,\sigma^2/2)\)</span>。</p>
+<blockquote>
+<p>第一个结论的证明：</p>
+<p>根据假设<span class="math inline">\(\boldsymbol x\in R^D\sim \mathcal{N}(\boldsymbol 0,\sigma^2I)\)</span>，可得<span class="math inline">\(s\triangleq \|\boldsymbol x\|_2^2/\sigma^2\sim \chi^2_D\)</span>，也就是 <span class="math display">\[
+p_s(s)=\frac{1}{2^{D/2}\Gamma(D/2)}s^{D/2-1}e^{-s/2}
+\]</span> 由于<span class="math inline">\(r=\|\boldsymbol x\|_2=\sigma\sqrt{s}\)</span>，可以使用换元法进一步得到第一个结论。</p>
+<p>第二个结论的证明：</p>
+<p>如果<span class="math inline">\(x\sim \mathcal{N}(0,\sigma^2)\)</span>，则<span class="math inline">\(x^2/\sigma^2\sim \chi_1^2\)</span>，从而有<span class="math inline">\(E[x^2]=\sigma^2,Var[x^2]=2\sigma^4\)</span>。因此，如果<span class="math inline">\(x_1,\dots,x_D\stackrel{i.i.d.}\sim \mathcal{N}(0,\sigma^2)\)</span>，根据大数定律和中心极限定理，可得： <span class="math display">\[
+\sqrt{D}\left(\frac{\sum_{i=1}^D x_i^2}{D}-\sigma^2  \right)\stackrel{d} \longrightarrow \mathcal{N}(0,2\sigma^4)
+\]</span> 等价地有 <span class="math display">\[
+\sqrt{D}\left(\frac{r^2}{D}-\sigma^2  \right)\stackrel{d} \longrightarrow \mathcal{N}(0,2\sigma^4)
+\]</span> 根据概率论中的按分布收敛的性质，可以进一步得到： <span class="math display">\[
+\sqrt{D}\left(\frac{r}{\sqrt{D}}-\sigma  \right)\stackrel{d} \longrightarrow \mathcal{N}(0,\sigma^2/2)
+\]</span></p>
+</blockquote>
+<p>如果是图像数据的话，它的维度可以达到几十万到百万维，足够使得<span class="math inline">\(p(r)\approx \mathcal{N}(r|\sqrt{D}\sigma,\sigma^2/2)\)</span>成立。</p>
+<p>因此，如果想要<span class="math inline">\(p_{\sigma_{i-1}}(\boldsymbol x)\)</span>到<span class="math inline">\(p_{\sigma_i}(\boldsymbol x)\)</span>能够很好地过渡，则它们的径向部分<span class="math inline">\(p(r)\)</span>最好有较大的重叠部分。根据正态分布中的<span class="math inline">\(3\sigma\)</span>原则，一个自然的选择是取<span class="math inline">\(\Phi(\sqrt{2D}(\gamma_i-1)+3\gamma_i)-\Phi(\sqrt{2D}(\gamma_i-1)-3\gamma_i)=C\)</span>。其中<span class="math inline">\(C\)</span>是一个大于0的较大的常数，且对于所有的<span class="math inline">\(1&lt; i \le L\)</span>都使用同样的<span class="math inline">\(C\)</span>；而<span class="math inline">\(\gamma_i\triangleq \sigma_{i-1}/\sigma_i\)</span>；<span class="math inline">\(\Phi(\cdot)\)</span>代表标准高斯分布的分布函数。这也就是意味着<span class="math inline">\(\gamma_2=\gamma_3=\cdots=\gamma_l\)</span>，即<span class="math inline">\(\{\sigma_i\}_{i=1}^L\)</span>是一个等比数列。此外，作者推荐使用<span class="math inline">\(C=0.5\)</span>。</p>
+<h3 id="合并噪声信息">合并噪声信息</h3>
+<p>在构造条件噪声得分网络<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x,\sigma)\)</span>时，作者最开始的做法是在标准化层为每一个噪声等级都构造一组独立的参数。但是这样的话需要消耗大量的内存，而且当网络中没有标准化层时这一方法也变得不可行。</p>
+<p>按照假设<span class="math inline">\(p_{\sigma_i}(\boldsymbol x)=\mathcal{N}(\boldsymbol x|\boldsymbol 0,\sigma_i^2 I)\)</span>，可以得到<span class="math inline">\(E[\|\nabla_{\boldsymbol x}\log p_\sigma(\boldsymbol x)\|_2]\approx \sqrt{D}/\sigma\)</span>，而且在实际数据上对条件噪声得分网络训练完成之后，也可以发现<span class="math inline">\(\| \boldsymbol s_{\boldsymbol \theta}(\boldsymbol x,\sigma)\propto 1/\sigma \|\)</span>的结果。这也就是说，可以考虑使用噪声信息来对一个非条件得分网络<span class="math inline">\(\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)\)</span>的输出进行重新放缩，即定义 <span class="math display">\[
+\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x,\sigma)=\boldsymbol s_{\boldsymbol \theta}(\boldsymbol x)/\sigma
+\]</span> 这样定义的条件噪声得分网络更加容易训练，而且可以处理更多不同的噪声等级（即使是连续的情形）。</p>
+<h2 id="朗之万动力学">朗之万动力学</h2>
+<h3 id="步长设置">步长设置</h3>
+<p>在使用带有退火的朗之万动力学采样时，需要根据噪声等级的设定，来设置步长<span class="math inline">\(\epsilon\)</span>和采样步数<span class="math inline">\(T\)</span>这两个参数。下面首先从理论角度寻找一些依据。</p>
+<p>仍然考虑数据集中只包含有一个数据点，即<span class="math inline">\(p_{\sigma_i}(\boldsymbol x)=\mathcal{N}(\boldsymbol x|\boldsymbol 0,\sigma_i^2 I)\)</span>这一简单假设。带有退火的朗之万动力学使用<span class="math inline">\(p_{\sigma_{i-1}}(\boldsymbol x)\)</span>中的采样结果来作为<span class="math inline">\(p_{\sigma_i}(\boldsymbol x)\)</span>的采样过程的初始化，从而将两个相邻的噪声等级<span class="math inline">\(\sigma_{i-1}&gt;\sigma_i\)</span>联系起来。</p>
+<p>在<span class="math inline">\(p_{\sigma_i}(\boldsymbol x)\)</span>的采样过程中，有<span class="math inline">\(\boldsymbol x_{t+1}\leftarrow \boldsymbol x_t+\alpha \nabla_{\boldsymbol x}\log p_{\sigma_i}(\boldsymbol x_t)+\sqrt{2\alpha}\boldsymbol z_t\)</span>，其中<span class="math inline">\(\boldsymbol x_0\sim p_{\sigma_{i-1}}(\boldsymbol x)\)</span>，<span class="math inline">\(\boldsymbol z_t\sim \mathcal{N}(\boldsymbol 0,I)\)</span>，<span class="math inline">\(\alpha=\epsilon\cdot \sigma_i^2/\sigma_L^2\)</span>。由此可得： <span class="math display">\[
+\boldsymbol x_T\sim \mathcal{N}(\boldsymbol 0,s_T^2I)
+\]</span> 其中 <span class="math display">\[
+\frac{s_T^2}{\sigma_i^2}=\left( 1-\frac{\epsilon}{\sigma_L^2} \right)^{2T}\left( \gamma^2-\frac{2\epsilon}{\sigma_L^2-\sigma_L^2\left(1-\frac{\epsilon}{\sigma_L^2}\right)^2} \right)+\frac{2\epsilon}{\sigma_L^2-\sigma_L^2\left(1-\frac{\epsilon}{\sigma_L^2}\right)^2}
+\]</span> 从中可以看出，由于<span class="math inline">\(\{\sigma_i\}\)</span>为等比数列，对于所有的<span class="math inline">\(1&lt;i\le T\)</span>都有同样的<span class="math inline">\(\gamma\)</span>，从而<span class="math inline">\(s_T^2/\sigma_i^2\)</span>的值也保持不变，而且它的取值与<span class="math inline">\(\boldsymbol x\)</span>的维度<span class="math inline">\(D\)</span>无关。</p>
+<p>因此，为了使退火朗之万动力学采样中的每个噪声等级之间能够更好地过渡，最好是选取合适的<span class="math inline">\(\epsilon\)</span>使得<span class="math inline">\(s_T^2/\sigma_i^2\approx 1\)</span>。但是这样很可能会使得<span class="math inline">\(T\)</span>变得很大。考虑到计算开销，实际操作中常常选择一个最大计算开销之内的<span class="math inline">\(T\)</span>，然后选取<span class="math inline">\(\epsilon\)</span>让<span class="math inline">\(s_T^2/\sigma_i^2\)</span>的值尽可能地接近1。</p>
+<h3 id="额外去噪步">额外去噪步</h3>
+<p>在朗之万动力学采样完成之后，再添加一个额外的去噪步骤，返回<span class="math inline">\(\boldsymbol x_T+\sigma_T^2\boldsymbol{s_\theta}(\boldsymbol x_T,\sigma_T)\)</span>，相当于是最后把噪声<span class="math inline">\(\mathcal{N}(0,\sigma_T^2I)\)</span>去掉。</p>
+<h2 id="移动平均">移动平均</h2>
+<p>在训练得分网络时，常常会遇到训练曲线剧烈变化的情况，而且生成样本的质量也不稳定。这种情况可以使用移动平均技术来缓解，即每一步参数更新使用下面的表达式： <span class="math display">\[
+\boldsymbol{\theta}&#39;\leftarrow m \boldsymbol{\theta}&#39;+(1-m)\boldsymbol{\theta}_i
+\]</span> 其中<span class="math inline">\(\boldsymbol{\theta}_i\)</span>指的是第<span class="math inline">\(i\)</span>轮训练完成之后的模型参数，<span class="math inline">\(\boldsymbol{\theta}&#39;\)</span>指的是当前模型参数的一个副本。模型训练完成之后，使用<span class="math inline">\(\boldsymbol{\theta}&#39;\)</span>作为最终的模型参数。</p>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzE5MDcuMDU2MDA=">Generative Modeling by Estimating Gradients of the Data Distribution (arxiv.org)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9hcnhpdi5vcmcvYWJzLzIwMDYuMDkwMTE=">Improved Techniques for Training Score-Based Generative Models (arxiv.org)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzM0ODQ4Mzg4MQ==">抽样理论中有哪些令人印象深刻(有趣)的结论? - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8zNjkzOTY4OTk=">朗之万方程，机器学习与液体中的粒子运动，一个意想不到的联系 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuaXJvLnVtb250cmVhbC5jYS9+dmluY2VudHAvUHVibGljYXRpb25zL0Rlbm9pc2luZ1Njb3JlTWF0Y2hpbmdfTmV1cmFsQ29tcDIwMTEucGRm">DenoisingScoreMatching_NeuralComp2011<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2022/12/07/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-Score-based%20model/" title="深度学习-Score-Based model">http://lyf35.github.io/2022/12/07/深度学习-Score-based model/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
+              <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag"><i class="fa fa-tag"></i> 生成模型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/12/02/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-2D%E5%88%86%E5%AD%90%E5%9B%BE%E9%A2%84%E8%AE%AD%E7%BB%83%E7%9A%84%E6%95%88%E6%9E%9C%E8%AF%84%E4%BC%B0/" rel="prev" title="论文笔记-2D分子图预训练的效果评估">
+      <i class="fa fa-chevron-left"></i> 论文笔记-2D分子图预训练的效果评估
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/12/11/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0-%E7%AD%89%E5%8F%98%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="next" title="论文笔记-等变图神经网络">
+      论文笔记-等变图神经网络 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '3ef73582fb3580fc93717a621adbd46f',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

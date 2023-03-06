@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="基本概念 假设 设\((\mathscr{X},\mathscr{B},\mathscr{P})\)为一统计结构，则\(\mathscr{P}\)的非空子集称为假设，在\(\mathscr{P}\)为参数分布族\(\mathscr{P}&#x3D;\{P_\theta;\theta\in \Theta\}\)的情况下，\(\Theta\)的非空子集称为假设。 在一个假设检验问题中，通常涉及两个假设：所要检验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数理统计-参数假设检验">
+<meta property="og:url" content="http://lyf35.github.io/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="基本概念 假设 设\((\mathscr{X},\mathscr{B},\mathscr{P})\)为一统计结构，则\(\mathscr{P}\)的非空子集称为假设，在\(\mathscr{P}\)为参数分布族\(\mathscr{P}&#x3D;\{P_\theta;\theta\in \Theta\}\)的情况下，\(\Theta\)的非空子集称为假设。 在一个假设检验问题中，通常涉及两个假设：所要检验">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-26T06:30:21.000Z">
+<meta property="article:modified_time" content="2022-01-30T05:59:42.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="统计学">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数理统计-参数假设检验 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%87%E8%AE%BE"><span class="nav-number">1.1.</span> <span class="nav-text">假设</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E9%AA%8C"><span class="nav-number">1.2.</span> <span class="nav-text">检验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E7%B1%BB%E9%94%99%E8%AF%AF"><span class="nav-number">1.3.</span> <span class="nav-text">两类错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%BF%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">势函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E9%AA%8C%E6%B0%B4%E5%B9%B3"><span class="nav-number">1.5.</span> <span class="nav-text">检验水平</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E9%AA%8C%E5%87%BD%E6%95%B0"><span class="nav-number">1.6.</span> <span class="nav-text">检验函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%85%E5%88%86%E6%80%A7%E5%8E%9F%E5%88%99"><span class="nav-number">1.7.</span> <span class="nav-text">充分性原则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%81%87%E8%AE%BE"><span class="nav-number">2.</span> <span class="nav-text">简单假设</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BC%98%E5%8A%BF%E6%A3%80%E9%AA%8C"><span class="nav-number">2.1.</span> <span class="nav-text">最优势检验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n-p%E5%9F%BA%E6%9C%AC%E5%BC%95%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">N-P基本引理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%8D%E5%90%88%E5%81%87%E8%AE%BE"><span class="nav-number">3.</span> <span class="nav-text">复合假设</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%9C%80%E4%BC%98%E5%8A%BF%E6%A3%80%E9%AA%8C"><span class="nav-number">3.1.</span> <span class="nav-text">一致最优势检验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">3.1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E8%BE%B9%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C"><span class="nav-number">3.1.2.</span> <span class="nav-text">单边假设检验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%9C%80%E4%BC%98%E5%8A%BF%E6%97%A0%E5%81%8F%E6%A3%80%E9%AA%8C"><span class="nav-number">3.2.</span> <span class="nav-text">一致最优势无偏检验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E8%BE%B9%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C"><span class="nav-number">3.2.2.</span> <span class="nav-text">双边假设检验</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E5%8F%82%E6%95%B0%E6%8C%87%E6%95%B0%E5%9E%8B%E5%88%86%E5%B8%83%E6%97%8F"><span class="nav-number">4.</span> <span class="nav-text">多参数指数型分布族</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">4.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C"><span class="nav-number">4.2.</span> <span class="nav-text">假设检验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E6%80%81%E6%80%BB%E4%BD%93%E5%8F%82%E6%95%B0%E7%9A%84%E6%A3%80%E9%AA%8C%E9%97%AE%E9%A2%98"><span class="nav-number">4.3.</span> <span class="nav-text">正态总体参数的检验问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%BC%E7%84%B6%E6%AF%94%E6%A3%80%E9%AA%8C"><span class="nav-number">5.</span> <span class="nav-text">似然比检验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89-2"><span class="nav-number">5.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%8E%9F%E5%81%87%E8%AE%BE%E7%9A%84%E6%A3%80%E9%AA%8C%E9%97%AE%E9%A2%98"><span class="nav-number">5.2.</span> <span class="nav-text">简单原假设的检验问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%90%88%E5%8E%9F%E5%81%87%E8%AE%BE%E7%9A%84%E6%A3%80%E9%AA%8C%E9%97%AE%E9%A2%98"><span class="nav-number">5.3.</span> <span class="nav-text">复合原假设的检验问题</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数理统计-参数假设检验
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-12-26 14:30:21" itemprop="dateCreated datePublished" datetime="2021-12-26T14:30:21+08:00">2021-12-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-30 13:59:42" itemprop="dateModified" datetime="2022-01-30T13:59:42+08:00">2022-01-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">统计学</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/" class="post-meta-item leancloud_visitors" data-flag-title="数理统计-参数假设检验" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>49k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>45 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="基本概念">基本概念</h1>
+<h2 id="假设">假设</h2>
+<p>设<span class="math inline">\((\mathscr{X},\mathscr{B},\mathscr{P})\)</span>为一统计结构，则<span class="math inline">\(\mathscr{P}\)</span>的非空子集称为假设，在<span class="math inline">\(\mathscr{P}\)</span>为参数分布族<span class="math inline">\(\mathscr{P}=\{P_\theta;\theta\in \Theta\}\)</span>的情况下，<span class="math inline">\(\Theta\)</span>的非空子集称为假设。</p>
+<p>在一个假设检验问题中，通常涉及两个假设：所要检验的假设被称为原假设，记作<span class="math inline">\(H_0\)</span>；而与<span class="math inline">\(H_0\)</span>不相容的假设被称为备择假设，记为<span class="math inline">\(H_1\)</span>。关于统计结构<span class="math inline">\((\mathscr{X},\mathscr{B},\mathscr{P})\)</span>的原假设和备择假设分分别记为： <span class="math display">\[
+H_0:P\in \mathscr{P}_0,~~H_1:P\in \mathscr{P}_1
+\]</span> <span class="math inline">\(\mathscr{P}_0\)</span>和<span class="math inline">\(\mathscr{P}_1\)</span>为<span class="math inline">\(\mathscr{P}\)</span>的两个互不相交的非空子集。而</p>
+<p>对于参数分布族的场合，原假设和备择假设又可分别写为： <span class="math display">\[
+H_0:\theta \in \Theta_0,~~H_1:\theta \in \Theta_1
+\]</span> 其中<span class="math inline">\(\Theta_0\)</span>和<span class="math inline">\(\Theta_1\)</span>是<span class="math inline">\(\Theta\)</span>的两个互不相交的非空子集。</p>
+<p>如果一个假设中只含有一个元素，则称该假设为简单假设，否则被称为复合假设。</p>
+<span id="more"></span>
+<h2 id="检验">检验</h2>
+<p>给定<span class="math inline">\(H_0\)</span>和<span class="math inline">\(H_1\)</span>之后，就等于给定了一个检验问题<span class="math inline">\((H_0,H_1)\)</span>。<span class="math inline">\((\Theta_0,\Theta_1)\)</span>称为参数假设检验问题，其它称为非参数假设检验问题。</p>
+<p>在检验问题<span class="math inline">\((H_0,H_1)\)</span>中，检验法则（简称检验法或检验）就是设法将样本空间划分为互不相交的两个可测集<span class="math inline">\(\mathscr{X}=W+\bar{W}\)</span>，并且规定：</p>
+<ul>
+<li>当观测值<span class="math inline">\(x\in W\)</span>时，就拒绝原假设，认为备择假设成立。</li>
+<li>当观测值<span class="math inline">\(x\in \bar{W}\)</span>时，不拒绝原假设。</li>
+</ul>
+<p>这里的<span class="math inline">\(W\)</span>被称为拒绝域。</p>
+<p>为了确定拒绝域，通常从问题的背景出发，寻找一个统计量，使得在原假设<span class="math inline">\(H_0\)</span>成立和备择假设<span class="math inline">\(H_1\)</span>成立时，该统计量的值有差异，从而可以根据这个统计量的值的大小选定拒绝域。这个能够从样本空间中划分出拒绝域的统计量被称为检验统计量。</p>
+<h2 id="两类错误">两类错误</h2>
+<p>在假设检验问题中，检验法可能会犯如下的两种错误：</p>
+<ol type="1">
+<li><p>第一类错误：原假设<span class="math inline">\(H_0\)</span>成立时，样本观测值却落在拒绝域<span class="math inline">\(W\)</span>中，从而拒绝了原假设。犯第一类错误的概率是： <span class="math display">\[
+\alpha=P(X\in W),~P\in \mathscr{P}_0 \\
+\alpha(\theta)=P_\theta(X\in W),~\theta\in \Theta_0 \\
+\]</span></p></li>
+<li><p>第二类错误：原假设<span class="math inline">\(H_0\)</span>不成立时，样本观测值却没有落在拒绝域<span class="math inline">\(W\)</span>中，从而没有拒绝原假设。犯第二类错误的概率是： <span class="math display">\[
+\beta=P(X\notin W)=1-P(X\in W),~P\in \mathscr{P}_1 \\
+\beta(\theta)=P_\theta(X\notin W)=1-P_\theta(X\in W),~\theta\in \Theta_1 \\
+\]</span></p></li>
+</ol>
+<h2 id="势函数">势函数</h2>
+<p>检验的势函数指的是样本观察值落在拒绝域的概率，记为 <span class="math display">\[
+g(\theta)=P_\theta(X\in W),~\theta \in \Theta
+\]</span> 在<span class="math inline">\(\theta \in \Theta_0\)</span>时，<span class="math inline">\(g(\theta)=\alpha(\theta)\)</span>，<span class="math inline">\(g(\theta)\)</span>对应于犯第一类错误的概率；在<span class="math inline">\(\theta \in \Theta_1\)</span>时，<span class="math inline">\(g(\theta)=1-\beta(\theta)\)</span>，<span class="math inline">\(1-g(\theta)\)</span>则对应于检验犯第二类错误的概率。</p>
+<h2 id="检验水平">检验水平</h2>
+<p>在检验问题中，当样本容量<span class="math inline">\(n\)</span>固定时，一般无法使得犯两类错误的概率都减小。因为如果要使犯第一类错误的概率减小，就要缩小拒绝域，从而使得犯第二类错误的概率增大；同理，如果要使犯第二类错误的概率增大，就要扩大拒绝域，从而使得犯第一类错误的概率增大。因此，需要采用某种妥协方案。</p>
+<p>Neyman和Pearson的假设检验理论的基本思想，就是使得<strong>犯第一类错误的概率被限制在某一个范围内，然后寻找使犯第二类错误的概率尽可能小</strong>的检验。在这种思想的指导下，寻找一个好的检验法就是对选定的一个较小的数<span class="math inline">\(\alpha(0&lt;\alpha&lt;1)\)</span>，在满足 <span class="math display">\[
+g(\theta)=P_{\theta}(X\in W)\le \alpha,~~\theta\in \Theta_0
+\]</span> 的检验中，寻找这样的检验，使得在<span class="math inline">\(\theta\in \Theta_1\)</span>时，<span class="math inline">\(g(\theta)\)</span>尽可能的大。此时，犯第二类错误的概率<span class="math inline">\(1-g(\theta)\)</span>尽可能地小。但是需要注意的是，由于检验犯第二类错误的概率并未受到限制，仅要求它尽可能地小，因此备择假设为真时，样本观测值没有落入拒绝域可能不是一个小概率事件（尤其是在<span class="math inline">\(\Theta_1\)</span>和<span class="math inline">\(\Theta_2\)</span>的边界附近）。</p>
+<p>在<span class="math inline">\(\theta \in \Theta_0\)</span>时，<span class="math inline">\(g(\theta)\le \alpha\)</span>的检验被称为水平为<span class="math inline">\(\alpha\)</span>的检验，记为<span class="math inline">\((\alpha,\Theta_0,\Theta_1)\)</span>检验。其中，<span class="math inline">\(\alpha\)</span>是事先选定的。由于<span class="math inline">\(\alpha\)</span>的大小反映了检验犯第一类错误的概率的大小，所以常常选取一个较小的数，或者是依赖于假设的先验信息。</p>
+<h2 id="检验函数">检验函数</h2>
+<p>设<span class="math inline">\(\phi(x)\)</span>为定义在<span class="math inline">\(\mathscr{X}\)</span>上的可测函数，满足条件<span class="math inline">\(0\le \phi(x) \le 1\)</span>，则称<span class="math inline">\(\phi(x)\)</span>为检验函数，简称检验。在<span class="math inline">\(\phi(x)\)</span>仅取0和1两个值时，被称为非随机化检验，反之则为随机化检验。其势函数为<span class="math inline">\(g(\theta)=E_\theta(\phi(X))\)</span>。</p>
+<h2 id="充分性原则">充分性原则</h2>
+<p>设<span class="math inline">\(\phi_1(x)\)</span>和<span class="math inline">\(\phi_2(x)\)</span>都是某个检验问题<span class="math inline">\((H_0,H_1)\)</span>的检验函数，如果它们的势函数相同，即<span class="math inline">\(E_\theta[\phi_1(X)]=E_\theta[\phi_2(X)],\theta\in \Theta\)</span>，则称检验函数<span class="math inline">\(\phi_1(x)\)</span>和<span class="math inline">\(\phi_2(x)\)</span>等价。也就是说，检验函数的统计性质完全取决于其势函数，势函数相同就认为两个检验函数等价。</p>
+<p>设<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>是来自于分布族<span class="math inline">\(\mathscr{P}=\{P_\theta;\theta\in \Theta\}\)</span>的样本，<span class="math inline">\(T(X)\)</span>是关于<span class="math inline">\(\theta\)</span>的充分统计量，则对于任意一个检验函数<span class="math inline">\(\phi(x)\)</span>，存在另一个只依赖于<span class="math inline">\(T(X)\)</span>的检验函数，它与<span class="math inline">\(\phi(x)\)</span>相互等价。（证明：条件期望<span class="math inline">\(\varphi(t)=E[\phi(X)|T=t]\)</span>与<span class="math inline">\(\theta\)</span>无关，且<span class="math inline">\(E_\theta[\varphi(T(X))]=E_\theta[E[\phi(X)|T]]=E_\theta(\phi(X))\)</span>，故<span class="math inline">\(\varphi(t)\)</span>和<span class="math inline">\(\phi(x)\)</span>具有相同的势函数，二者相互等价）。</p>
+<p>也就是说，当<span class="math inline">\(\theta\)</span>的充分统计量存在时，关于<span class="math inline">\(\theta\)</span>的任何假设检验问题，都可以在充分统计量构成的检验函数中去寻找，这就是假设检验中的充分性原则。</p>
+<h1 id="简单假设">简单假设</h1>
+<h2 id="最优势检验">最优势检验</h2>
+<p>在检验问题<span class="math inline">\((\Theta_0,\Theta_1)\)</span>中，设<span class="math inline">\(\phi(x)\)</span>为水平为<span class="math inline">\(\alpha\)</span>的检验，如果对任意一个水平为<span class="math inline">\(\alpha\)</span>的检验<span class="math inline">\(\phi_1(x)\)</span>，都有<span class="math inline">\(E_{\theta_1}[\phi(X)]\ge E_{\theta_1}[\phi_1(X)]\)</span>成立，则称检验<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的最优势检验（Most Powerful Test， MPT）。</p>
+<h2 id="n-p基本引理">N-P基本引理</h2>
+<p>设<span class="math inline">\(P_{\theta_0}\)</span>和<span class="math inline">\(P_{\theta_1}\)</span>是可测空间<span class="math inline">\((\mathscr{X},\mathscr{B})\)</span>上两个不同的概率测度，关于某个<span class="math inline">\(\sigma\)</span>有限的测度<span class="math inline">\(\mu\)</span>，有<span class="math inline">\(p(x;\theta_0)=\frac{dP_{\theta_0}}{d\mu}\)</span>和<span class="math inline">\(p(x;\theta_1)=\frac{dP_{\theta_1}}{d\mu}\)</span>，则在简单原假设<span class="math inline">\(H_0:\theta=\theta_0\)</span>对简单备择假设<span class="math inline">\(H_1:\theta=\theta_1\)</span>的检验问题中，满足：</p>
+<ol type="1">
+<li><p>对于给定的<span class="math inline">\(\alpha(0&lt;\alpha&lt;1)\)</span>，存在一个检验函数<span class="math inline">\(\phi(x)\)</span>及常数<span class="math inline">\(k\ge 0\)</span>，使得： <span class="math display">\[
+E_{\theta_0}[\phi(X)]=\alpha\\
+\phi(x)=
+\begin{cases}
+1, ~p(x;\theta_1)&gt;k\cdot p(x;\theta_0) \\
+0, ~p(x;\theta_1)&lt;k\cdot p(x;\theta_0) \\
+\end{cases}
+\]</span> 满足这一条件的检验函数<span class="math inline">\(\phi(x)\)</span>通常被称为似然比检验函数，在集合<span class="math inline">\(\{x:p(x;\theta_0)&gt;0~\text{or}~p(x;\theta_1)&gt;0\}\)</span>上，似然比检验函数的定义如下： <span class="math display">\[
+\lambda(x)=\frac{p(x;\theta_1)}{p(x;\theta_0)}
+\]</span> 在<span class="math inline">\(\lambda(x)\)</span>的值比较大时，<span class="math inline">\(p(x;\theta_1)\)</span>的值比较大，此时原假设<span class="math inline">\(H_0\)</span>为真时观察到样本点<span class="math inline">\(x\)</span>的可能性比备择假设<span class="math inline">\(H_1\)</span>为真时观察到样本点<span class="math inline">\(x\)</span>的可能性小。而当<span class="math inline">\(\lambda(x)\)</span>的值比较小则反之。因此，当<span class="math inline">\(\lambda(x)\)</span>的值较大时，拒绝原假设；而当<span class="math inline">\(\lambda(x)\)</span>较小的时候，接受原假设。</p></li>
+<li><p>由上式确定的检验函数<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的MPT。反之，如果<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的MPT，则一定存在常数<span class="math inline">\(k\ge 0\)</span>满足上式。</p></li>
+</ol>
+<blockquote>
+<p>证明：</p>
+<p>首先证明1，对于任一实数<span class="math inline">\(\lambda\)</span>，令 <span class="math display">\[
+G(\lambda)=P_{\theta_0}\{p(X;\theta_1)&gt;\lambda\cdot p(X;\theta_0)\}
+\]</span> 这个概率是在<span class="math inline">\(P_{\theta_0}\)</span>下计算的，也就是在集合<span class="math inline">\(\{x:p(x;\theta_0)\}\)</span>上（即参数为<span class="math inline">\(\theta_0\)</span>时，随机变量<span class="math inline">\(X\)</span>所有可能取值的集合）考虑不等式<span class="math inline">\(p(X;\theta_1)&gt;\lambda\cdot p(X;\theta_0)\)</span>。</p>
+<p><span class="math inline">\(G(\lambda)\)</span>是非负随机变量<span class="math inline">\(\frac{p(X;\theta_1)}{p(X;\theta_0)}&gt;\lambda\)</span>的概率，也就是说<span class="math inline">\(1-G(\lambda)\)</span>是随机变量<span class="math inline">\(\frac{p(X;\theta_1)}{p(X;\theta_0)}\)</span>的分布函数。因此，<span class="math inline">\(G(\lambda)\)</span>是一个非增、右连续的函数，且 <span class="math display">\[
+\begin{aligned}
+&amp;G(+\infty)=0 \\
+&amp;G(0-0)=1 \\
+&amp;G(\lambda-0)-G(\lambda)=P_{\theta_0}\{p(X;\theta_1)=\lambda\cdot p(X;\theta_0)\}
+\end{aligned}
+\]</span> 当给定<span class="math inline">\(\alpha \in (0,1)\)</span>之后，有且仅有下面两种情况：</p>
+<ol type="1">
+<li><p>存在<span class="math inline">\(\lambda_0\ge 0\)</span>，使得<span class="math inline">\(G(\lambda_0)=\alpha\)</span>（这通常对应于连续的情况）。定义 <span class="math display">\[
+  \phi(x)=
+  \begin{cases}
+  1, ~~p(x;\theta_1)&gt;\lambda_0\cdot p(x;\theta_0) \\
+  0, ~~p(x;\theta_1)\le \lambda_0\cdot p(x;\theta_0) \\
+  \end{cases}
+\]</span> 则有<span class="math inline">\(E_{\theta_0}\phi(X)=P_{\theta_0}\{p(X;\theta_1)&gt;\lambda\cdot p(X;\theta_0)\}=G(\lambda_0)=\alpha\)</span>。</p></li>
+<li><p>存在<span class="math inline">\(\lambda_0\ge 0\)</span>，使得<span class="math inline">\(G(\lambda_0)&lt;\alpha\le G(\lambda_0-0)\)</span>（这通常对应于离散的情况）。定义 <span class="math display">\[
+  \phi(x)=
+  \begin{cases}
+  \begin{aligned}
+  1, ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&amp;p(x;\theta_1)&gt;\lambda_0\cdot p(x;\theta_0) \\
+  \frac{\alpha-G(\lambda_0)}{G(\lambda_0-0)-G(\lambda_0)}, ~&amp;p(x;\theta_1)=\lambda_0\cdot p(x;\theta_0) \\
+  0, ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&amp;p(x;\theta_1)&lt; \lambda_0\cdot p(x;\theta_0) \\
+  \end{aligned}
+  \end{cases}
+\]</span> 此时 <span class="math display">\[
+  \begin{aligned}
+  E_{\theta_0}\phi(x)=&amp;P_{\theta_0}\{p(x;\theta_1)&gt;\lambda_0\cdot p(x;\theta_0)\}+\frac{\alpha-G(\lambda_0)}{G(\lambda_0-0)-G(\lambda_0)}\cdot P_{\theta_0}\{p(x;\theta_1)=\lambda_0\cdot p(x;\theta_0)\} \\
+  =&amp;G(\lambda_0)+[\alpha-G(\lambda_0)] \\
+  =&amp; \alpha
+  \end{aligned}
+\]</span></p></li>
+</ol>
+<p>在这两种情况下，<span class="math inline">\(\lambda_0\)</span>就可以取做非负常数<span class="math inline">\(k\)</span>，此时的<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的检验函数。</p>
+<p>然后证明上述得到的检验函数<span class="math inline">\(\phi(x)\)</span>为MPT。</p>
+<p>设<span class="math inline">\(\phi^*(x)\)</span>为其它任意一个水平为<span class="math inline">\(\alpha\)</span>的检验函数，即<span class="math inline">\(E_{\theta_0}\phi^*(x)\le \alpha\)</span>。根据<span class="math inline">\(\phi(x)\)</span>的定义，有 <span class="math display">\[
+[\phi(x)-\phi^*(x)]\cdot [p(x;\theta_1)-k\cdot p(x;\theta_0)]\ge 0
+\]</span> （这是因为，当<span class="math inline">\(p(x;\theta_1)-k\cdot p(x;\theta_0)&gt;0\)</span>时，<span class="math inline">\(\phi(x)=1\)</span>，此时无论<span class="math inline">\(\phi^*(x)\)</span>取何值，都有<span class="math inline">\(\phi(x)-\phi^*(x)\ge 0\)</span>成立；而当<span class="math inline">\(p(x;\theta_1)-k\cdot p(x;\theta_0)\le 0\)</span>时，<span class="math inline">\(\phi(x)=0\)</span>，此时总有<span class="math inline">\(\phi(x)-\phi^*(x)\le 0\)</span>。因此在这两个区间内都有上式成立。）</p>
+<p>因此， <span class="math display">\[
+\int [\phi(x)-\phi^*(x)]\cdot [p(x;\theta_1)-k\cdot p(x;\theta_0)] d\mu(x)\ge 0
+\]</span> 从而可得： <span class="math display">\[
+\begin{aligned}
+E_{\theta_1}\phi(X)-E_{\theta_1}\phi^*(X)\ge&amp;  k\cdot [E_{\theta_0}\phi(X)-E_{\theta_0}\phi^*(X)]\\
+=&amp; k\cdot [\alpha-E_{\theta_0}\phi^*(X)] \\
+\ge&amp; 0
+\end{aligned}
+\]</span></p>
+<p>最后证明，如果<span class="math inline">\(\phi^*(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的MPT，则一定存在非负常数<span class="math inline">\(k\)</span>，使得<span class="math inline">\(\phi^*(x)\)</span>满足 <span class="math display">\[
+\phi^*(x)=
+\begin{cases}
+1, ~p(x;\theta_1)&gt;k\cdot p(x;\theta_0) \\
+0, ~p(x;\theta_1)&lt;k\cdot p(x;\theta_0) \\
+\end{cases}
+\]</span> 由于<span class="math inline">\(\phi^*(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的MPT，故<span class="math inline">\(E_{\theta_1}\phi(X)=E_{\theta_1}\phi^*(X)\)</span>，此外还有<span class="math inline">\(E_{\theta_0}\phi^*(X)\le \alpha=E_{\theta_0}\phi(X)\)</span>，故有 <span class="math display">\[
+\begin{aligned}
+&amp;\int [\phi(x)-\phi^*(x)]\cdot [p(x;\theta_1)-k\cdot p(x;\theta_0)] d\mu(x) \\
+=&amp; E_{\theta_1}\phi(X)-E_{\theta_1}\phi^*(X)-k\cdot [E_{\theta_0}\phi(X)-E_{\theta_0}\phi^*(X)] \\
+\le &amp; 0
+\end{aligned}
+\]</span> 结合上面的结论，可得 <span class="math display">\[
+[\phi(x)-\phi^*(x)]\cdot [p(x;\theta_1)-k\cdot p(x;\theta_0)]=0,~a.s.
+\]</span> 因此在集合<span class="math inline">\(\{p(x;\theta_1)-k\cdot p(x;\theta_0)\ne 0\}\)</span>上，有<span class="math inline">\(\phi(x)=\phi^*(x),~a.s.\)</span>成立。从而证明完毕。</p>
+</blockquote>
+<p>当似然比函数<span class="math inline">\(\lambda(x)\)</span>为连续分布时，MPT检验函数可取为非随机化的形式： <span class="math display">\[
+\phi(x)=
+\begin{cases}
+1,~\lambda(x)\ge k \\
+0,~\lambda(x)&lt;k
+\end{cases}
+\]</span> 其中<span class="math inline">\(k\)</span>由<span class="math inline">\(E_{\theta_0}[\phi(X)]=P_{\theta_0}(\lambda(x)\ge k)=\alpha\)</span>确定。在<span class="math inline">\(\lambda(x)\)</span>为离散随机变量时，至多在集合<span class="math inline">\(\{x:\lambda(x)=k\}\)</span>上实施随机化，MPT检验函数可取为： <span class="math display">\[
+\phi(x)=
+\begin{cases}
+1,~\lambda(x)&gt; k \\
+r,~\lambda(x)= k\\
+0,~\lambda(x)&lt;k
+\end{cases}
+\]</span> 根据充分性原则，MPT检验函数及似然比检验函数也可以用充分统计量进行表示。</p>
+<blockquote>
+<p>例1：设<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>是来自于正态分布族<span class="math inline">\(\{N(\mu,1):-\infty&lt;\mu&lt;\infty\}\)</span>的样本，考虑检验问题：原假设<span class="math inline">\(H_0:\mu=0\)</span>对备择假设<span class="math inline">\(\mu=\mu_1(\mu_1&gt;0)\)</span>，取水平为<span class="math inline">\(\alpha(0&lt;\alpha&lt;1)\)</span>，可构造似然比统计量： <span class="math display">\[
+\lambda(x)=\frac{\prod_{i=1}^{n}p(x_i;\mu_1)}{\prod_{i=1}^{n}p(x_i;0)}=\exp \left\{n\mu_1\bar{x}- \frac{1}{2}n\mu_1^2\right\}
+\]</span> 由于<span class="math inline">\(\mu_1&gt;0\)</span>，故<span class="math inline">\(\lambda(x)\)</span>是关于<span class="math inline">\(\bar{x}\)</span>的增函数，因此，MPT的拒绝域具有形式： <span class="math display">\[
+W=\{x:\lambda(x)\ge k\}=\{x:\bar{x}\ge c\}
+\]</span> 当假设<span class="math inline">\(H_0\)</span>成立时，<span class="math inline">\(\bar{x}\sim N(0,\frac{1}{n})\)</span>，因此对于给定的水平<span class="math inline">\(\alpha\)</span>，<span class="math inline">\(c=\frac{U_{1-\alpha}}{\sqrt{n}}\)</span>。也就是说，检验的拒绝域为<span class="math inline">\(W=\{x:\bar{x}\ge \frac{U_{1-\alpha}}{\sqrt{n}} \}\)</span>。</p>
+<p>例2：设<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>是来自于泊松分布族<span class="math inline">\(\{P(\lambda):\lambda&gt;0\}\)</span>的样本，考虑检验问题：原假设<span class="math inline">\(H_0:\lambda=1\)</span>对备择假设<span class="math inline">\(H_1:\lambda=\lambda_1(\lambda_1&gt;1)\)</span>，取水平为<span class="math inline">\(\alpha(0&lt;\alpha&lt;1)\)</span>，可构造似然比统计量： <span class="math display">\[
+\lambda(x)=\frac{\prod_{i=1}^{n}p(x_i;\lambda_1)}{\prod_{i=1}^{n}p(x_i;1)}=(\lambda_1)^{\sum x_i}\cdot \exp \{-n(\lambda_1-1)\}
+\]</span> 由于<span class="math inline">\(\lambda_1&gt;1\)</span>，因此<span class="math inline">\(\lambda(x)\)</span>是<span class="math inline">\(T=\sum x_i\)</span>的严格单增函数。根据N-P基本引理，水平为<span class="math inline">\(\alpha\)</span>的MPT检验函数满足条件： <span class="math display">\[
+\phi(x)=
+\begin{cases}
+1, ~T&gt;k \\
+r, ~T=k \\
+0, ~T&lt;k \\
+\end{cases}
+\]</span> 根据泊松分布的可加性，当假设<span class="math inline">\(H_0\)</span>成立时，<span class="math inline">\(T\sim P(n)\)</span>，根据<span class="math inline">\(E_0(\phi(x))=\alpha\)</span>即可求得<span class="math inline">\(k\)</span>的值。</p>
+</blockquote>
+<p>关于MPT，有如下性质成立：</p>
+<p>设<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的最优势检验函数，则<span class="math inline">\(E_{\theta_1}\phi(X)\ge \alpha\)</span>。又设<span class="math inline">\(0&lt;\alpha&lt;1\)</span>，则除了<span class="math inline">\(p(x;\theta_1)=p(x;\theta_0)~a.e.[\mu]\)</span>外，必有<span class="math inline">\(E_{\theta_1}(\phi(X))&gt;\alpha\)</span>。</p>
+<h1 id="复合假设">复合假设</h1>
+<h2 id="一致最优势检验">一致最优势检验</h2>
+<h3 id="定义">定义</h3>
+<p>设<span class="math inline">\((\mathscr{X},\mathscr{B},\mathscr{P}=\{P_\theta:\theta\in \Theta\})\)</span>是一个参数统计结构，考虑检验问题<span class="math inline">\((\Theta_0,\Theta_1)\)</span>。设<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的检验，如果对任意一个水平为<span class="math inline">\(\alpha\)</span>的检验<span class="math inline">\(\phi_1(x)\)</span>，都有<span class="math inline">\(E_\theta[\phi(X)]\ge E_\theta[\phi_1(X)],\forall \theta\in \Theta_1\)</span>，则称检验<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的一致最优势检验（Uniformly Most Powerful Test，UMPT）。（MPT和UMPT的区别在于，MPT只是对特定参数<span class="math inline">\(\theta_1\in \Theta_1\)</span>而言，而UMPT则要求对于任意的<span class="math inline">\(\theta\in \Theta_1\)</span>都要成立）</p>
+<p>在一些特殊情况下，UMPT可以从N-P基本引理推导出来，但是需要使用到下面的结论：</p>
+<ol type="1">
+<li>设<span class="math inline">\(\phi(x)\)</span>是<span class="math inline">\((\alpha,\Theta_0,\Theta_1)\)</span>检验，<span class="math inline">\(\Theta_{01}\)</span>是<span class="math inline">\(\Theta_0\)</span>的子集，如果<span class="math inline">\(\phi(x)\)</span>是<span class="math inline">\((\alpha,\Theta_{01},\Theta_1)\)</span>的UMPT，则<span class="math inline">\(\phi(x)\)</span>是<span class="math inline">\((\alpha,\Theta_0,\Theta_1)\)</span>的UMPT。</li>
+<li>设<span class="math inline">\(\phi(x)\)</span>是<span class="math inline">\((\alpha,\Theta_0,\Theta_1)\)</span>检验，则<span class="math inline">\(\phi(x)\)</span>是<span class="math inline">\((\alpha,\Theta_{0},\Theta_1)\)</span>的UMPT的充要条件是，对于每一个<span class="math inline">\(\theta_1\in \Theta_1\)</span>，<span class="math inline">\(\phi(x)\)</span>是<span class="math inline">\((\alpha,\Theta_0,\{\theta_1\})\)</span>的MPT。</li>
+<li>设<span class="math inline">\(\phi(x)\)</span>是<span class="math inline">\((\alpha,\Theta_0,\Theta_1)\)</span>检验，假如对某个<span class="math inline">\(\theta_0\in \Theta_0\)</span>和对每一个<span class="math inline">\(\theta_1\in \Theta_1\)</span>，<span class="math inline">\(\phi(x)\)</span>都是<span class="math inline">\((\alpha,\{\theta_0\},\{\theta_1\})\)</span>的MPT，则<span class="math inline">\(\phi(x)\)</span>是<span class="math inline">\((\alpha,\Theta_0,\Theta_1)\)</span>的UMPT。</li>
+</ol>
+<p>对于上文中的两个例子，可以看到它们的备择假设并不依赖于备择假设的具体数值，因此可以适当扩大备择假设的范围。此外，如果势函数<span class="math inline">\(\phi(x)\)</span>确定，那么此时的势函数<span class="math inline">\(g(\theta)=E_\theta(\phi(X))\)</span>也是关于<span class="math inline">\(\theta\)</span>的单调函数，因此也可以适当地扩大原假设。通过这样，便可由MPT获得UMPT，从而扩大了N-P引理的使用范围。</p>
+<h3 id="单边假设检验">单边假设检验</h3>
+<p>对于如下的两个单边假设检验问题：</p>
+<ol type="1">
+<li>原假设<span class="math inline">\(H_0:\theta\le \theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta&gt;\theta_0\)</span></li>
+<li>原假设<span class="math inline">\(H_0:\theta\ge \theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta&lt;\theta_0\)</span></li>
+</ol>
+<p>它们的UMPT存在。为了寻求它们的UMPT，首先引入单调似然比的概念：</p>
+<p>设<span class="math inline">\(\{p(x;\theta):\theta\in \Theta\}\)</span>是含有实参数<span class="math inline">\(\theta\)</span>的概率密度族，其中<span class="math inline">\(\Theta\)</span>是实直线上的一个区间。如果存在实值统计量<span class="math inline">\(T(X)\)</span>，使得对于任意的<span class="math inline">\(\theta_1&lt;\theta_2\)</span>，都有：</p>
+<ul>
+<li>概率分布<span class="math inline">\(P_{\theta_1}\)</span>和<span class="math inline">\(P_{\theta_2}\)</span>不同</li>
+<li>似然比<span class="math inline">\(\lambda(x)=\frac{p(x;\theta_2)}{p(x;\theta_1)}\)</span>是<span class="math inline">\(T(x)\)</span>的非降函数（或者非增函数），则称概率密度族<span class="math inline">\(\{p(x;\theta):\theta\in \Theta\}\)</span>关于<span class="math inline">\(T(X)\)</span>具有非降（或者非增）单调似然比（Monotone Likelihood Ratio，MLR）。</li>
+</ul>
+<p>对于单参数指数型分布族 <span class="math display">\[
+p(x;\theta)=c(\theta)\cdot \exp\{Q(\theta)T(x)\}\cdot h(x), ~c(\theta)&gt; 0
+\]</span> 假设<span class="math inline">\(Q(\theta)\)</span>是<span class="math inline">\(\theta\)</span>的严增（或者严减）函数，则在<span class="math inline">\(\theta_1&lt;\theta_2\)</span>时，其似然比便相应地也是充分统计量<span class="math inline">\(T(x)\)</span>的严增（严减）函数。因此，它关于<span class="math inline">\(T(x)\)</span>具有非降（非增）MLR。而对于其它情况，则需要通过似然比函数来判断。</p>
+<p>设概率密度族<span class="math inline">\(\{p(x;\theta):\theta\in \Theta\}\)</span>关于<span class="math inline">\(T(X)\)</span>有非降的MLR，如果<span class="math inline">\(\psi(t)\)</span>是<span class="math inline">\(t\)</span>的一个非降函数，那么<span class="math inline">\(E_\theta \psi(T(X))\)</span>是<span class="math inline">\(\theta\)</span>的非降函数；相应地，如果<span class="math inline">\(\psi(t)\)</span>是<span class="math inline">\(t\)</span>的一个非增函数，那么<span class="math inline">\(E_\theta \psi(T(X))\)</span>是<span class="math inline">\(\theta\)</span>的非增函数。当概率密度族关于<span class="math inline">\(T(X)\)</span>有非增的MLR时，如果<span class="math inline">\(\psi(t)\)</span>是<span class="math inline">\(t\)</span>的一个非降函数，那么<span class="math inline">\(E_\theta \psi(T(X))\)</span>是<span class="math inline">\(\theta\)</span>的非增函数；如果<span class="math inline">\(\psi(t)\)</span>是<span class="math inline">\(t\)</span>的一个非增函数，那么<span class="math inline">\(E_\theta \psi(T(X))\)</span>是<span class="math inline">\(\theta\)</span>的非降函数。</p>
+<blockquote>
+<p>证明：</p>
+<p>以非降MLR，以及<span class="math inline">\(\psi(t)\)</span>为非降函数来证明。其余的证明方法类似。</p>
+<p>设<span class="math inline">\(\theta_1&lt;\theta_2\)</span>，令<span class="math inline">\(A=\{x:p(x;\theta_1)&lt;p(x;\theta_2)\}\)</span>，<span class="math inline">\(B=\{x:p(x;\theta_1)&gt;p(x;\theta_2)\}\)</span>。对于任意的<span class="math inline">\(x_1\in A\)</span>和<span class="math inline">\(x_2\in B\)</span>，有： <span class="math display">\[
+\lambda(x_1)=\frac{p(x_1;\theta_2)}{p(x_1;\theta_1)}&gt;1,~~\lambda(x_2)=\frac{p(x_2;\theta_2)}{p(x_2;\theta_1)}&lt;1
+\]</span> 因为似然比<span class="math inline">\(\lambda(x)\)</span>是<span class="math inline">\(T(x)\)</span>的非降函数，则由<span class="math inline">\(\lambda(x_1)&gt;\lambda(x_2)\)</span>可以推导出<span class="math inline">\(T(x_1)\ge T(x_2)\)</span>。又因为<span class="math inline">\(\psi(t)\)</span>为<span class="math inline">\(t\)</span>的非降函数，因此<span class="math inline">\(\psi(T(x_1))\ge \psi(T(x_2))\)</span>。令 <span class="math display">\[
+a=\inf\{\psi(T(x)):x\in A\},~~b=\sup\{\psi(T(x)):x\in B\}
+\]</span> 则有<span class="math inline">\(a\ge b\)</span>。从而有： <span class="math display">\[
+\begin{aligned}
+E_{\theta_2}\psi(T(X))-E_{\theta_1}\psi(T(X))=&amp;\int \psi(T(x))\cdot [p(x;\theta_2)-p(x;\theta_1)]d\mu(x) \\
+\ge&amp; a\cdot \int_{A}[p(x;\theta_2)-p(x;\theta_1)]d\mu(x)+b\cdot \int_{A}[p(x;\theta_2)-p(x;\theta_1)]d\mu(x) \\
+\end{aligned}
+\]</span> 由于 <span class="math display">\[
+\int_{A\cup B} [p(x;\theta_2)-p(x;\theta_1)]d\mu(x)=0
+\]</span> 因此有： <span class="math display">\[
+\int_{A}[p(x;\theta_2)-p(x;\theta_1)]d\mu(x)=-\int_{B}[p(x;\theta_2)-p(x;\theta_1)]d\mu(x)
+\]</span> 从而 <span class="math display">\[
+\begin{aligned}
+E_{\theta_2}\psi(T(X))-E_{\theta_1}\psi(T(X))
+\ge&amp; (a-b)\cdot \int_{A}[p(x;\theta_2)-p(x;\theta_1)]d\mu(x) \ge 0
+\end{aligned}
+\]</span> 由此完成证明。</p>
+</blockquote>
+<p>根据单调似然比的定义，假设概率密度族<span class="math inline">\(\{p(x;\theta):\theta\in \Theta\}\)</span>关于<span class="math inline">\(T(X)\)</span>有非降的MLR，则对于上述的单边假设检验问题1，有如下结论：</p>
+<ol type="1">
+<li><p>存在水平为<span class="math inline">\(\alpha\)</span>的UMPT检验函数 <span class="math display">\[
+\phi(T(X))=
+\begin{cases}
+1,~T(x)&gt;c\\
+r,~T(x)=c\\
+0,~T(x)&lt;c
+\end{cases}
+\]</span> 其中常数<span class="math inline">\(r(0\le r\le 1)\)</span>和<span class="math inline">\(c\)</span>由<span class="math inline">\(E_{\theta_0}\phi(T(X))=\alpha\)</span>确定。</p></li>
+<li><p>这个检验的势函数<span class="math inline">\(g(\theta)=E_\theta \phi(T(X))\)</span>是非降的，且在集合<span class="math inline">\(\{\theta:0&lt;g(\theta)&lt;1\}\)</span>上是严格增加的。</p></li>
+<li><p>在一切使得<span class="math inline">\(E_{\theta_0}\phi(T(X))=\alpha\)</span>的检验函数中，由上述确定的检验函数<span class="math inline">\(\phi(T(X))\)</span>，能够使得对于任意的<span class="math inline">\(\theta&lt;\theta_0\)</span>，<span class="math inline">\(E_\theta\phi(X)\)</span>都达到最小。</p></li>
+</ol>
+<blockquote>
+<p>证明：</p>
+<ol type="1">
+<li>考虑简单原假设<span class="math inline">\(\theta=\theta_0\)</span>对简单备择假设<span class="math inline">\(\theta=\theta_1(\theta_1&gt;\theta_0)\)</span>的检验问题。由N-P基本引理可知，当似然比统计量<span class="math inline">\(\lambda=\frac{p(x;\theta_1)}{p(x;\theta_0)}\)</span>比较大的时候拒绝原假设。</li>
+</ol>
+<p>由于<span class="math inline">\(\lambda\)</span>是<span class="math inline">\(T(x)\)</span>的非降函数，也就是说在<span class="math inline">\(T(x)\)</span>比较大的时候拒绝原假设。因此根据N-P引理，可以构造形如上述<span class="math inline">\(\phi(T(X))\)</span>的检验函数，它是简单原假设<span class="math inline">\(\theta=\theta_0\)</span>对简单备择假设<span class="math inline">\(\theta=\theta_1(\theta_1&gt;\theta_0)\)</span>的检验问题的MPT。由于只需要满足<span class="math inline">\(\theta_1&gt;\theta_0\)</span>，因此上述的<span class="math inline">\(\phi(T(X))\)</span>也是原假设<span class="math inline">\(\theta=\theta_0\)</span>对<span class="math inline">\(\theta&gt;\theta_0\)</span>的检验问题的水平为<span class="math inline">\(\alpha\)</span>的UMPT。</p>
+<p>此外，由于<span class="math inline">\(\phi(T(X))\)</span>是关于<span class="math inline">\(T(X)\)</span>的非降函数，因此势函数<span class="math inline">\(g(\theta)=E\phi(T(X))\)</span>是<span class="math inline">\(T(X)\)</span>的非降函数，因此在<span class="math inline">\(\theta\le \theta_0\)</span>时有<span class="math inline">\(E_\theta \phi(T(X))\le E_{\theta_0}\phi(T(X))=\alpha\)</span>。因此对于原假设<span class="math inline">\(\theta\le \theta_0\)</span>，<span class="math inline">\(\phi(T(X))\)</span>是水平为<span class="math inline">\(\alpha\)</span>的检验。</p>
+<p>综上，上述的检验函数<span class="math inline">\(\phi(T(X))\)</span>是单边假设检验问题<span class="math inline">\(H_0:\theta\le \theta_0\)</span>对<span class="math inline">\(H_1:\theta&gt;\theta_0\)</span>的UMPT。</p>
+<ol start="2" type="1">
+<li><p>上面已经证明了势函数<span class="math inline">\(g(\theta)\)</span>非降，接下来证明它在集合<span class="math inline">\(\{\theta:0&lt;g(\theta)&lt;1\}\)</span>上严格增加。由N-P基本引理可知，<span class="math inline">\(\phi(T(X))\)</span>也是<span class="math inline">\(H_0:\theta=\theta_1\)</span>对<span class="math inline">\(H_1:\theta=\theta_2(\theta_2&gt;\theta_1)\)</span>的水平为<span class="math inline">\(\alpha_1=E_{\theta_1}\phi(T(X))\)</span>的MPT。则在<span class="math inline">\(0&lt;\alpha_1&lt;1\)</span>时，有<span class="math inline">\(E_{\theta_2}\phi(T(X))&gt;\alpha_1\)</span>。因此在集合<span class="math inline">\(\{\theta:0&lt;g(\theta)&lt;1\}\)</span>上，<span class="math inline">\(g(\theta)\)</span>的值严格增加。</p></li>
+<li><p>考虑简单原假设<span class="math inline">\(H_0:\theta=\theta_0\)</span>对简单备择假设<span class="math inline">\(H_1:\theta=\theta_2(\theta_2&lt;\theta_0)\)</span>的水平为<span class="math inline">\(\alpha^*=1-\alpha\)</span>的检验问题。由N-P基本引理可知，在似然比统计量<span class="math display">\[\lambda=\frac{p(x;\theta_2)}{p(x;\theta_0)}\]</span>比较大的时候拒绝原假设。由于<span class="math inline">\(\theta_2&lt;\theta_0\)</span>，因此<span class="math inline">\(\lambda\)</span>为<span class="math inline">\(T(X)\)</span>的非增函数，也就是说在<span class="math inline">\(T(X)\)</span>较小的时候拒绝原假设。</p></li>
+</ol>
+<p>用类似于上述1的证明方法可得，<span class="math inline">\(\phi^*(T(X))=1-\phi(T(X))\)</span>为上述假设问题水平为<span class="math inline">\(\alpha^*\)</span>的MPT。因此<span class="math inline">\(\phi^*(T(X))\)</span>是在<span class="math inline">\(E_{\theta_0}\phi(T(X))\le \alpha^*\)</span>的条件下，使得<span class="math inline">\(E_{\theta_2}\phi(T(X))\)</span>达到最小。由于<span class="math inline">\(\theta_2\)</span>是小于<span class="math inline">\(\theta_0\)</span>的任意数，因此对于任意的<span class="math inline">\(\theta&lt;\theta_0\)</span>，<span class="math inline">\(\phi(T(X))\)</span>是在<span class="math inline">\(E_{\theta_0}\phi(T(X))\ge \alpha\)</span>的条件下，使得<span class="math inline">\(E_{\theta}\phi(X)\)</span>达到最小的检验法。</p>
+</blockquote>
+<p>而对于单边假设检验问题2，需要将<span class="math inline">\(\phi(T(X))\)</span>中的不等号反向，此时的势函数变为非增。如果概率密度族关于<span class="math inline">\(T(X)\)</span>是非增的MLR，则需要将<span class="math inline">\(T(X)\)</span>换成<span class="math inline">\(-T(X)\)</span>。在上述问题中，如果原假设只取等号，则相同的结论也仍然成立。</p>
+<blockquote>
+<p>例：设有<span class="math inline">\(N\)</span>件产品，其中含<span class="math inline">\(m\)</span>件不合格品。从中不放回地随机抽取<span class="math inline">\(n\)</span>件进行检验。设<span class="math inline">\(n\)</span>件中含有<span class="math inline">\(x\)</span>件不合格品，则<span class="math inline">\(x\)</span>服从超几何分布 <span class="math display">\[
+p(x;m)=\frac{\binom{m}{x}\cdot \binom{N-m}{n-x}}{\binom{N}{n}}
+\]</span></p>
+<p>这一概率密度分布族不是单参数指数型指数分布族。由于 <span class="math display">\[
+\frac{p(x;m+1)}{p(x;m)}=\frac{(m+1)(N-m-n+x)}{(N-m)(m+1-x)}
+\]</span> 是关于<span class="math inline">\(x\)</span>的严增函数，因此这一概率密度族关于<span class="math inline">\(T(x)=x\)</span>具有非降MLR。</p>
+<p>考虑假设检验问题<span class="math inline">\(H_0:0\le m\le m_0\)</span>对<span class="math inline">\(H_1:m_0&lt; m\le N\)</span>。这一检验问题存在水平为<span class="math inline">\(\alpha\)</span>的UMPT，其检验函数为： <span class="math display">\[
+\phi(x)=
+\begin{cases}
+1,~x&gt;m\\
+r,~x=m\\
+0,~x&lt;m\\
+\end{cases}
+\]</span> 其中<span class="math inline">\(m\)</span>和<span class="math inline">\(r\)</span>的值由<span class="math inline">\(E_{m_0}(\phi(x))=\alpha\)</span>确定。</p>
+</blockquote>
+<h2 id="一致最优势无偏检验">一致最优势无偏检验</h2>
+<h3 id="定义-1">定义</h3>
+<p>设<span class="math inline">\(\phi(x)\)</span>是原假设<span class="math inline">\(H_0:\theta\in \Theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta\in \Theta_1\)</span>的检验函数，如果其势函数<span class="math inline">\(g(\theta)=E_\theta \phi(X)\)</span>满足如下条件： <span class="math display">\[
+g(\theta) \le \alpha,~\forall \theta\in \Theta_0 \\
+g(\theta) \ge \alpha,~\forall \theta\in \Theta_1
+\]</span> 则称<span class="math inline">\(\phi(x)\)</span>为水平为<span class="math inline">\(\alpha\)</span>的无偏检验。显然，水平为<span class="math inline">\(\alpha\)</span>的UMPT也一定是水平为<span class="math inline">\(\alpha\)</span>的无偏检验。此处的无偏可以理解成一种约束条件，对于一些假设问题，它的UMPT不存在，此处的不存在是相对于所有的检验函数而言的。而如果在加上了无偏这一条件之后，在所有的无偏检验中便可以找到一个最优的检验函数。</p>
+<p>在检验问题<span class="math inline">\((\Theta_0,\Theta_1)\)</span>中，如果存在一个水平为<span class="math inline">\(\alpha\)</span>的无偏检验<span class="math inline">\(\phi(x)\)</span>，对于任何水平为<span class="math inline">\(\alpha\)</span>的无偏检验<span class="math inline">\(\phi_1(x)\)</span>，均满足下列条件： <span class="math display">\[
+E_\theta[\phi(X)]\ge E_\theta[\phi_1(X)],~\theta\in\Theta_1
+\]</span> 则称检验<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的一致最优势无偏检验（Uniformly Most Powerful Unbiased Test，UMPUT）。</p>
+<p>一般情况下，通过构造边界相似检验比构造无偏检验更加方便。边界相似检验指的是：如果无偏检验<span class="math inline">\(\phi(x)\)</span>的势函数<span class="math inline">\(E_\theta \phi(X)\)</span>是<span class="math inline">\(\theta\)</span>的连续函数，则一定有<span class="math inline">\(E_\theta \phi(X)=\alpha,~\theta\in \Gamma\)</span>，其中<span class="math inline">\(\Gamma\)</span>是<span class="math inline">\(\Theta_0\)</span>和<span class="math inline">\(\Theta_1\)</span>的公共边界。因此，可以用下面的引理来构造UMPUT：</p>
+<p>考虑原假设<span class="math inline">\(H_0:\theta\in \Theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta\in \Theta_1\)</span>的检验问题。设每一个检验函数的势函数都是<span class="math inline">\(\theta\)</span>的连续函数，如果<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的检验函数，则在<span class="math inline">\(\phi(x)\)</span>是所有边界相似检验函数类中的UMPT时，<span class="math inline">\(\phi(x)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的UMPUT。</p>
+<h3 id="双边假设检验">双边假设检验</h3>
+<p>对于单参数指数型分布族，双边假设检验问题：原假设<span class="math inline">\(H_0:\theta\le \theta_1~\text{or}~\theta\ge \theta_2\)</span>对备择假设<span class="math inline">\(H_1:\theta_1&lt;\theta&lt;\theta_2\)</span>，它存在UMPT。为了求解它的UMPT，首先需要对N-P基本引理进行推广（这一推广说明了上述双边假设检验问题UMPT的存在性）：</p>
+<p>设<span class="math inline">\(\mu\)</span>为可测空间<span class="math inline">\((\mathscr{X},\mathscr{B})\)</span>上的测度，<span class="math inline">\(p_0(x),p_1(x),\dots,p_m(x)\)</span>为<span class="math inline">\((\mathscr{X},\mathscr{B})\)</span>上<span class="math inline">\(m+1\)</span>个实可测且<span class="math inline">\(\mu\)</span>可积函数。<span class="math inline">\(\alpha_1,\dots,\alpha_m\)</span>为给定的<span class="math inline">\(m\)</span>个实常数，如果存在检验函数<span class="math inline">\(\phi(x)\)</span>满足如下两个条件：</p>
+<ol type="1">
+<li><p>如果有<span class="math inline">\(m\)</span>个非负常数<span class="math inline">\(k_1,\dots,k_m\)</span>，使得： <span class="math display">\[
+\phi(x)=
+\begin{cases}
+1,~p_0(x)&gt;\sum_{i=1}^m k_i\cdot p_i(x) \\
+0,~p_0(x)&lt;\sum_{i=1}^m k_i\cdot p_i(x) \\
+\end{cases}
+\]</span></p></li>
+<li><p><span class="math inline">\(\int \phi(x)\cdot p_i(x)d\mu(x)=\alpha_i~,i=1,\dots,m\)</span></p></li>
+</ol>
+<p>则对任一满足下式的检验函数<span class="math inline">\(\phi^*(x)\)</span> <span class="math display">\[
+\int \phi^*(x)\cdot p_i(x)d\mu(x)\le \alpha_i~,i=1,\dots,m
+\]</span> 都有 <span class="math display">\[
+\int \phi(x)\cdot p_0(x)d\mu(x)\ge \int \phi^*(x)\cdot p_0(x)d\mu(x)
+\]</span> &gt;证明： &gt; &gt;根据上述的假设，显然有下式成立： &gt;<span class="math display">\[
+&gt;[p_0(x)-\sum_{i=1}^{m}k_i\cdot p_i(x)]\cdot [\phi(x)-\phi^*(x)]\ge 0
+&gt;\]</span> &gt;因此 &gt;<span class="math display">\[
+&gt;\int p_0(x)\cdot [\phi(x)-\phi^*(x)] \ge \sum_{i=1}^{m} \int p_i(x)\cdot [\phi(x)-\phi^*(x)]
+&gt;\]</span> &gt;从而有 &gt;<span class="math display">\[
+&gt;\int p_0(x)\cdot \phi(x) d\mu(x) -\int p_0(x)\cdot \phi^*(x)d\mu(x) \ge \sum_{i=1}^{m} [\alpha_i-\int p_i(x)\cdot \phi^*(x)] \ge 0
+&gt;\]</span></p>
+<p>而对于求解如下两个双边假设检验问题：</p>
+<ul>
+<li>原假设<span class="math inline">\(H_0:\theta=\theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta\ne \theta_0\)</span></li>
+<li>原假设<span class="math inline">\(H_0:\theta_1\le\theta\le\theta_2\)</span>对备择假设<span class="math inline">\(H_1:\theta&lt;\theta_1~\text{or}~\theta&gt;\theta_2\)</span></li>
+</ul>
+<p>则需要对上述N-P引理的推广进行修改，允许常数<span class="math inline">\(k_1,\dots,k_m\)</span>可以取负值（这一结论说明上述两个双边假设问题存在UMPUT）。对于任意满足下式的检验函数<span class="math inline">\(\phi^*(x)\)</span> <span class="math display">\[
+\int \phi^*(x)\cdot p_i(x)d\mu(x)= \alpha_i~,i=1,\dots,m
+\]</span> 都有 <span class="math display">\[
+\int \phi(x)\cdot p_0(x)d\mu(x)\ge \int \phi^*(x)\cdot p_0(x)d\mu(x)
+\]</span> &gt;证明： &gt; &gt;证明方式与上面类似，只不过将最后的大于等于0改为等于0即可。</p>
+<p>下面说明上述三种假设检验问题的检验函数构造：</p>
+<ol type="1">
+<li>原假设<span class="math inline">\(H_0:\theta\le \theta_1~\text{or}~\theta\ge \theta_2\)</span>对备择假设<span class="math inline">\(H_1:\theta_1&lt;\theta&lt;\theta_2\)</span></li>
+</ol>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>服从单参数指数族分布 <span class="math display">\[
+p(x;\theta)=c(\theta)\cdot \exp\{Q(\theta)T(x)\}\cdot h(x), ~c(\theta)&gt; 0
+\]</span> 其中<span class="math inline">\(\theta\)</span>为实参数，<span class="math inline">\(Q(\theta)\)</span>是<span class="math inline">\(\theta\)</span>的严增函数。对于上述的双边假设检验问题，存在水平为<span class="math inline">\(\alpha(0&lt;\alpha&lt;1)\)</span>的UMPT，其检验函数仅依赖于充分统计量<span class="math inline">\(T(X)\)</span>，形如： <span class="math display">\[
+\phi(T(x))=
+\begin{cases}
+1,~~c_1&lt;T(x)&lt;c_2 \\
+r_i,~T(x)=c_i,i=1,2 \\
+0,~~T(x)&lt;c_1~\text{or}~T(x)&gt;c_2
+\end{cases}
+\]</span> 其中常数<span class="math inline">\(r_i\)</span>和<span class="math inline">\(c_i\)</span>由<span class="math inline">\(E_{\theta_1}\phi(T(X))=E_{\theta_2}\phi(T(X))=\alpha\)</span>确定。</p>
+<blockquote>
+<p>证明：</p>
+<p>简单起见，设<span class="math inline">\(T(X)\)</span>的密度函数为： <span class="math display">\[
+p(t;\theta)=c(\theta)\cdot \exp\{\theta\cdot t\}\cdot h(t)
+\]</span> 其中<span class="math inline">\(c(\theta)&gt;0\)</span>。</p>
+<p>先考虑原假设<span class="math inline">\(H_0:\theta=\theta_1~\text{or}~\theta_2\)</span>对备择假设<span class="math inline">\(\theta=\theta_3(\theta_1&lt;\theta_3&lt;\theta_2)\)</span>的检验问题。根据N-P引理的推广，取检验函数 <span class="math display">\[
+\phi(t)=
+\begin{cases}
+1,~p(t;\theta_3)&gt;\sum_{i=1}^2 k_i\cdot p(t;\theta_i) \\
+0,~p(t;\theta_3)&lt;\sum_{i=1}^2 k_i\cdot p(t;\theta_i) \\
+\end{cases}
+\]</span> 并满足条件 <span class="math display">\[
+\int \phi(t)\cdot p(t;\theta_1)dt=\int \phi(t)\cdot p(t;\theta_2)dt=\alpha
+\]</span> 将<span class="math inline">\(T(X)\)</span>的概率密度表达式代入<span class="math inline">\(\phi(t)\)</span>的表达式，化简之后可得到 <span class="math display">\[
+\phi(t)=
+\begin{cases}
+1,~a_1\cdot e^{b_1 t}+a_2\cdot e^{b_2 t}&lt;1 \\
+0,~a_1\cdot e^{b_1 t}+a_2\cdot e^{b_2 t}&gt;1 \\
+\end{cases}
+\]</span> 其中，<span class="math inline">\(a_i=\frac{k_i\cdot c(\theta_i)}{c(\theta_3)}\)</span>，<span class="math inline">\(b_i=\theta_i-\theta_3\)</span>。因此有<span class="math inline">\(b_1&lt;0&lt;b_2\)</span>。</p>
+<p>如果<span class="math inline">\(a_1\)</span>和<span class="math inline">\(a_2\)</span>都为负，那么势函数恒等于1，不符合水平为<span class="math inline">\(\alpha\)</span>的检测这一条件；如果一个为正一个为负，则<span class="math inline">\(a_1\cdot e^{b_1 t}+a_2\cdot e^{b_2 t}\)</span>严格单调，此时得到的检验函数形如单边假设的情形，无法满足双边假设的条件；因此只剩下二者都为正数的可能，也就是说<span class="math inline">\(k_1,k_2\)</span>也都为正数，这也满足了N-P引理的条件。</p>
+<p>由于<span class="math inline">\(b_1&lt;0&lt;b_2\)</span>，因此容易证明<span class="math inline">\(a_1\cdot e^{b_1 t}+a_2\cdot e^{b_2 t}\)</span>的值先减后增，且严格下凹（二阶导数恒大于0）。也就是说，存在两个常数<span class="math inline">\(c_1,c_2\)</span>，使得形如上述<span class="math inline">\(\phi(T(X))\)</span>的检验函数成立，同时也是检验问题原假设<span class="math inline">\(H_0:\theta=\theta_1~\text{or}~\theta_2\)</span>对备择假设<span class="math inline">\(\theta=\theta_3(\theta_1&lt;\theta_3&lt;\theta_2)\)</span>的MPT。由于<span class="math inline">\(\phi(t)\)</span>与<span class="math inline">\(\theta_3\)</span>的取值无关，因此它也是原假设<span class="math inline">\(H_0:\theta=\theta_1~\text{or}~\theta_2\)</span>对备择假设<span class="math inline">\(\theta_1&lt;\theta&lt;\theta_2\)</span>的UMPT。</p>
+<p>下面证明对于原假设<span class="math inline">\(H_0:\theta\le \theta_1 ~\text{or}~ \theta\ge \theta_2\)</span>，<span class="math inline">\(\phi(t)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的一个检验。任取<span class="math inline">\(\theta&#39;&lt;\theta_1\)</span>（另一种情况处理方法类似），考虑原假设<span class="math inline">\(\theta=\theta_1~\text{or}~\theta=\theta_2\)</span>对备择假设<span class="math inline">\(\theta=\theta&#39;\)</span>的检验问题。如果存在<span class="math inline">\(k_1&#39;,k_2&#39;\)</span>，使得： <span class="math display">\[
+1-\phi(t)=
+\begin{cases}
+1,~p(t;\theta&#39;)&gt;\sum_{i=1}^2 k_i&#39;\cdot p(t;\theta_i) \\
+0,~p(t;\theta&#39;)&lt;\sum_{i=1}^2 k_i&#39;\cdot p(t;\theta_i) \\
+\end{cases}
+\]</span> 由<span class="math inline">\(E_{\theta_1}[1-\phi(T)]=E_{\theta_2}[1-\phi(T)]=1-\alpha\)</span>，根据推广的N-P引理，可得： <span class="math display">\[
+E_{\theta&#39;}[1-\phi(T)]\ge E_{\theta&#39;}\phi^*(T)=1-\alpha
+\]</span> 其中<span class="math inline">\(\phi^*(t)\equiv 1-\alpha\)</span>。从而有<span class="math inline">\(E_{\theta&#39;}\phi(T)\le \alpha\)</span>成立。这说明，对于原假设<span class="math inline">\(\theta\le \theta_1~\text{or}~\theta\ge \theta_2\)</span>而言，<span class="math inline">\(\phi(t)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的一个检验。也就是说，如果能找到一组<span class="math inline">\(k_1&#39;,k_2&#39;\)</span>，即可证明我们所需的结论。</p>
+<p>由于 <span class="math display">\[
+1-\phi(T(x))=
+\begin{cases}
+0,~~c_1&lt;T(x)&lt;c_2 \\
+r_i,~T(x)=c_i,i=1,2 \\
+1,~~T(x)&lt;c_1~\text{or}~T(x)&gt;c_2
+\end{cases}
+\]</span> 这也就是说，<span class="math inline">\(k_1&#39;,k_2&#39;\)</span>应当满足如下条件： <span class="math display">\[
+p(t;\theta&#39;)&gt;\sum_{i=1}^2 k_i&#39;\cdot p(t;\theta_i) \Leftrightarrow t&lt;c_1~\text{or}~t&gt;c_2 \\
+p(t;\theta&#39;)&lt;\sum_{i=1}^2 k_i&#39;\cdot p(t;\theta_i) \Leftrightarrow c_1&lt;t&lt;c_2
+\]</span> 从而可得如下方程组： <span class="math display">\[
+\begin{cases}
+p(c_1;\theta&#39;)=k_1&#39;\cdot p(c_1;\theta_1)+k_2&#39;\cdot p(c_1;\theta_2) \\
+p(c_2;\theta&#39;)=k_1&#39;\cdot p(c_2;\theta_1)+k_2&#39;\cdot p(c_2;\theta_2) 
+\end{cases}
+\]</span> 其中未知参数为<span class="math inline">\(k_1&#39;,k_2&#39;\)</span>，从中可以解得 <span class="math display">\[
+\begin{cases}
+k_1&#39;=\frac{c(\theta&#39;)}{c(\theta_1)}\cdot \frac{\exp\{\theta&#39;\cdot c_1+\theta_2\cdot c_2\}-\exp\{\theta&#39;\cdot c_2+\theta_2\cdot c_1\}}{\exp\{\theta_1\cdot c_1+\theta_2\cdot c_2\}-\exp\{\theta_1\cdot c_2+\theta_2\cdot c_1\}} \\
+k_2&#39;=\frac{c(\theta&#39;)}{c(\theta_2)}\cdot \frac{\exp\{\theta&#39;\cdot c_2+\theta_1\cdot c_1\}-\exp\{\theta&#39;\cdot c_1+\theta_1\cdot c_2\}}{\exp\{\theta_1\cdot c_1+\theta_2\cdot c_2\}-\exp\{\theta_1\cdot c_2+\theta_2\cdot c_1\}}
+\end{cases}
+\]</span> 由于<span class="math inline">\(\theta&#39;&lt;\theta_1&lt;\theta_2\)</span>和<span class="math inline">\(c_1&lt;c_2\)</span>，从而有： <span class="math display">\[
+\theta&#39;\cdot c_1+\theta_2\cdot c_2-\theta&#39;\cdot c_2-\theta_2\cdot c_1 &gt;0  \\
+\theta&#39;\cdot c_2+\theta_1\cdot c_1-\theta&#39;\cdot c_1-\theta_1\cdot c_2&lt;0 \\
+\theta_1\cdot c_1+\theta_2\cdot c_2-\theta_1\cdot c_2-\theta_2\cdot c_1&gt;0
+\]</span> 因此有<span class="math inline">\(k_1&#39;&gt;0\)</span>，<span class="math inline">\(k_2&#39;&lt;0\)</span>。令 <span class="math display">\[
+y=\frac{k_1&#39;\cdot p(t;\theta_1)+k_2&#39;\cdot p(t;\theta_2)}{p(t;\theta&#39;)}=a_1\cdot e^{b_1 t}+a_2\cdot e^{b_2 t}
+\]</span> 其中<span class="math inline">\(a_1=k_1&#39;\cdot \frac{c(\theta_1)}{c(\theta&#39;)}&gt;0\)</span>，<span class="math inline">\(a_2=k_2&#39;\cdot \frac{c(\theta_2)}{c(\theta&#39;)}&lt;0\)</span>，<span class="math inline">\(b_1=\theta_1-\theta&#39;&gt;0\)</span>，<span class="math inline">\(b_2=\theta_2-\theta&#39;&gt;0\)</span>，且<span class="math inline">\(b_1&lt;b_2\)</span>。</p>
+<p>因此，<span class="math inline">\(y\)</span>的值先增后减，在<span class="math inline">\(t\rightarrow -\infty\)</span>时趋于0，而在<span class="math inline">\(t\rightarrow \infty\)</span>时趋于<span class="math inline">\(-\infty\)</span>。因此可以找到两个常数<span class="math inline">\(c_1,c_2\)</span>，使得<span class="math inline">\(y=1\)</span>，从而满足N-P引理的条件，也就是说存在这样的<span class="math inline">\(k_1&#39;,k_2&#39;\)</span>。</p>
+</blockquote>
+<ol start="2" type="1">
+<li>原假设<span class="math inline">\(H_0:\theta_1\le\theta\le\theta_2\)</span>对备择假设<span class="math inline">\(H_1:\theta&lt;\theta_1~\text{or}~\theta&gt;\theta_2\)</span></li>
+</ol>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>服从单参数指数族分布 <span class="math display">\[
+p(x;\theta)=c(\theta)\cdot \exp\{Q(\theta)T(x)\}\cdot h(x), ~c(\theta)&gt; 0
+\]</span> 其中<span class="math inline">\(\theta\)</span>为实参数，<span class="math inline">\(Q(\theta)\)</span>是<span class="math inline">\(\theta\)</span>的严增函数。对于上述的双边假设检验问题，存在水平为<span class="math inline">\(\alpha(0&lt;\alpha&lt;1)\)</span>的UMPUT，其检验函数为： <span class="math display">\[
+\phi(T(x))=
+\begin{cases}
+1,~~T(x)&lt;c_1~\text{or}~T(x)&gt;c_2 \\
+r_i,~T(x)=c_i,i=1,2\\
+0,~~c_1&lt;T(x)&lt;c_2
+\end{cases}
+\]</span> 其中常数<span class="math inline">\(r_i\)</span>和<span class="math inline">\(c_i\)</span>由<span class="math inline">\(E_{\theta_1}\phi(T(X))=E_{\theta_2}\phi(T(X))=\alpha\)</span>确定。</p>
+<blockquote>
+<p>证明：</p>
+<p>类似地，设<span class="math inline">\(T(X)\)</span>的分布密度函数为： <span class="math display">\[
+p(t;\theta)=c(\theta)\cdot \exp\{\theta \cdot t\}\cdot h(t) 
+\]</span> 先考虑原假设<span class="math inline">\(\theta=\theta_1~\text{or}~\theta_2\)</span>对备择假设<span class="math inline">\(\theta=\theta_3(\theta_3&lt;\theta_1&lt;\theta_2)\)</span>，如果<span class="math inline">\(\theta_1&lt;\theta_2&lt;\theta_3\)</span>的处理方法类似。</p>
+<p>取检验函数 <span class="math display">\[
+\phi(t)=
+\begin{cases}
+1,~p(t;\theta_3)&gt;\sum_{i=1}^{2} k_i \cdot p(t;\theta_i) \\
+0,~p(t;\theta_3)&lt;\sum_{i=1}^{2} k_i \cdot p(t;\theta_i) 
+\end{cases}
+\]</span> 化简后可得 <span class="math display">\[
+\phi(t)=
+\begin{cases}
+1,~a_1\cdot e^{b_1 t}+a_2\cdot e^{b_2 t}&lt;1 \\
+0,~a_1\cdot e^{b_1 t}+a_2\cdot e^{b_2 t}&gt;1 
+\end{cases}
+\]</span> 其中<span class="math inline">\(a_i=\frac{k_i\cdot c(\theta_i)}{c(\theta_3)}\)</span>，<span class="math inline">\(b_i=\theta_i-\theta_3\)</span>，故<span class="math inline">\(0&lt;b_1&lt;b_2\)</span>。</p>
+<p>如果<span class="math inline">\(a_1,a_2\)</span>都为负，则检验总是拒绝的；如果二者都为非负，且至少一个大于0，则<span class="math inline">\(a_1\cdot e^{b_1 t}+a_2\cdot e^{b_2 t}\)</span>严格单调，其势函数为单调函数，不可能满足<span class="math inline">\(E_{\theta_1}\phi(T(X))=E_{\theta_2}\phi(T(X))=\alpha\)</span>；如果<span class="math inline">\(a_1&lt;0,a_2&gt;0\)</span>，则在<span class="math inline">\(t\)</span>轴上方函数单调递增，所得到的势函数为单调函数。因此，只可能有<span class="math inline">\(a_1&gt;0,a_2&lt;0\)</span>这一种情况，此时<span class="math inline">\(k_1&gt;0,k_2&lt;0\)</span>，也就是说该检验只能寻找到UMPUT。此时便可以找到两个常数<span class="math inline">\(c_1,c_2\)</span>来构造检验函数<span class="math inline">\(\phi(t)\)</span>，它是检验问题原假设<span class="math inline">\(\theta_1\le \theta \le \theta_2\)</span>对备择假设<span class="math inline">\(\theta&lt;\theta_1~\text{or}~\theta&gt;\theta_2\)</span>的一致最优势边界相似的检验。</p>
+<p>接下来，使用与假设检验问题5类似的方法，可以证明对于原假设<span class="math inline">\(\theta_1\le \theta \le \theta_2\)</span>而言，<span class="math inline">\(\phi(t)\)</span>是水平为<span class="math inline">\(\alpha\)</span>的一个检验。从而完成证明。</p>
+</blockquote>
+<ol start="3" type="1">
+<li>原假设<span class="math inline">\(H_0:\theta=\theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta\ne \theta_0\)</span></li>
+</ol>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>服从单参数指数族分布 <span class="math display">\[
+p(x;\theta)=c(\theta)\cdot \exp\{Q(\theta)T(x)\}\cdot h(x), ~c(\theta)&gt; 0
+\]</span> 其中<span class="math inline">\(\theta\)</span>为实参数，<span class="math inline">\(Q(\theta)\)</span>是<span class="math inline">\(\theta\)</span>的严增函数。对于上述的双边假设检验问题，存在水平为<span class="math inline">\(\alpha(0&lt;\alpha&lt;1)\)</span>的UMPUT，其检验函数为： <span class="math display">\[
+\phi(T(x))=
+\begin{cases}
+1,~~T(x)&lt;c_1~\text{or}~T(x)&gt;c_2 \\
+r_i,~T(x)=c_i,i=1,2\\
+0,~~c_1&lt;T(x)&lt;c_2
+\end{cases}
+\]</span> 其中常数<span class="math inline">\(r_i\)</span>和<span class="math inline">\(c_i\)</span>由<span class="math inline">\(E_{\theta_0}\phi(T(X))=\alpha\)</span>和<span class="math inline">\(E_{\theta_0}[T(X)\cdot \phi(T(X))]=\alpha\cdot E_{\theta_0}T(X)\)</span>（这一条件是由势函数<span class="math inline">\(g(\theta)\)</span>在<span class="math inline">\(\theta_0\)</span>处达到最小值而得）确定。</p>
+<blockquote>
+<p>证明：</p>
+<p>类似地，设<span class="math inline">\(T(X)\)</span>的分布密度函数为： <span class="math display">\[
+p(t;\theta)=c(\theta)\cdot \exp\{\theta \cdot t\}\cdot h(t)
+\]</span> 首先证明原假设<span class="math inline">\(\theta=\theta_0\)</span>对备择假设<span class="math inline">\(\theta\ne \theta_0\)</span>的任意一个无偏检验<span class="math inline">\(\phi(t)\)</span>必然满足 <span class="math display">\[
+\begin{aligned}
+&amp;E_{\theta_0}\phi(T(X))=\alpha \\
+&amp;E_{\theta_0}[T(X)\cdot \phi(T(X))]=\alpha \cdot E_{\theta_0}[T(X)]
+\end{aligned}
+\]</span> 根据检验函数的无偏性可知，其势函数<span class="math inline">\(g(\theta)=E_{\theta}\phi(T)\)</span>必然在<span class="math inline">\(\theta=\theta_0\)</span>处取得最小值<span class="math inline">\(\alpha\)</span>，也就是说： <span class="math display">\[
+\begin{aligned}
+g(\theta)=\alpha ~&amp;\rightarrow~ E_{\theta_0}\phi(T(X))=\alpha \\
+g&#39;(\theta)=0 ~&amp;\rightarrow ~-E_{\theta}[T]\cdot E_{\theta}[\phi(T)]+E_{\theta}[\phi(T)\cdot T]=0
+\end{aligned}
+\]</span> 其中， <span class="math display">\[
+\begin{aligned}
+g(\theta)&amp;=E_{\theta}\phi(T)=\int \phi(t)\cdot c(\theta)\cdot \exp\{\theta\cdot t\}\cdot h(t) d\mu(t) \\
+g&#39;(\theta)&amp;=\int \phi(t)\cdot c&#39;(\theta)\cdot \exp\{\theta\cdot t\}\cdot h(t) d\mu(t)+\int \phi(t)\cdot c(\theta)\cdot t \cdot \exp\{\theta\cdot t\}\cdot h(t) d\mu(t) \\
+&amp;=\frac{c&#39;(\theta)}{c(\theta)}\cdot E_{\theta}[\phi(T)]+E_{\theta}[T\cdot \phi(T)]
+\end{aligned}
+\]</span> 上式中<span class="math inline">\(\frac{c&#39;(\theta)}{c(\theta)}=-E_{\theta}[T]\)</span>，证明如下：</p>
+<blockquote>
+<p>对密度函数取对数，有 <span class="math display">\[
+\ln p(t;\theta)=\ln c(\theta)+\theta\cdot t+\ln h(t)
+\]</span> 对参数<span class="math inline">\(\theta\)</span>求导可得 <span class="math display">\[
+\frac{\partial \ln p(t;\theta)}{\partial \theta}=\frac{c&#39;(\theta)}{c(\theta)}+t
+\]</span> 两侧对<span class="math inline">\(t\)</span>求期望可得 <span class="math display">\[
+E\left[\frac{\partial \ln p(t;\theta)}{\partial \theta}\right]=\frac{c&#39;(\theta)}{c(\theta)}+E_{\theta}[T]
+\]</span> 由于<span class="math inline">\(T\)</span>的密度函数属于指数分布族，它属于C-R正则族，故等号左侧等于0。从而得证。</p>
+</blockquote>
+<p>接下来考虑原假设<span class="math inline">\(H_0:\theta=\theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta=\theta_1,(\theta_1\ne \theta_0)\)</span>的检验问题，并要求势函数满足上述两个约束条件。</p>
+<p>取检验函数 <span class="math display">\[
+\phi(t)=
+\begin{cases}
+1,~p(t;\theta_1)&gt; k_1 \cdot p(t;\theta_0)+k_2\cdot t\cdot p(t;\theta_0) \\
+0,~p(t;\theta_1)&lt; k_1 \cdot p(t;\theta_0)+k_2\cdot t\cdot p(t;\theta_0) 
+\end{cases}
+\]</span> 化简后可得 <span class="math display">\[
+\phi(t)=
+\begin{cases}
+1,~a_1+a_2\cdot t&lt;e^{bt} \\
+0,~a_1+a_2\cdot t&gt;e^{bt}
+\end{cases}
+\]</span> 其中<span class="math inline">\(a_i=\frac{k_i\cdot c(\theta_0))}{c(\theta_i)}\)</span>，<span class="math inline">\(b=\theta_1-\theta_0\)</span>。</p>
+<p>上述不等式两侧，左侧为线性函数，右侧为指数函数。如果二者没有交点，则指数曲线总在直线上方，此时检验总是拒绝的；如果二者只有一个交点，则势函数为严格单调函数，无法满足势函数的最小值条件；因此指数曲线与直线相交于两点，也就是存在常数<span class="math inline">\(c_1,c_2\)</span>使得检验函数成立。</p>
+<p>这样确定的检验函数<span class="math inline">\(\phi(t)\)</span>与<span class="math inline">\(\theta_1\)</span>的具体取值无关。此外，对任意满足两个约束条件的检验函数<span class="math inline">\(\phi^*(t)\)</span>，都有<span class="math inline">\(E_{\theta_1}\phi(T)\ge E_{\theta_1}\phi^*(T)\)</span>，如果取<span class="math inline">\(\phi^*(t)=\alpha\)</span>，则有<span class="math inline">\(E_{\theta_1}\phi(T)\ge E_{\theta_1}\phi^*(T)=\alpha\)</span>成立，因此该检验函数是上述假设问题的无偏检验，其势函数在<span class="math inline">\(\theta_0\)</span>处取得最小值。因此该检验函数为水平为<span class="math inline">\(\alpha\)</span>的UMPUT。</p>
+</blockquote>
+<blockquote>
+<p>例：样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>来自于正态分布族<span class="math inline">\(\{N(0,\sigma^2):\sigma^2&gt;0\}\)</span>，求解如下三个双边假设检验问题：</p>
+<ol type="1">
+<li><span class="math inline">\(H_0:\sigma^2\le \sigma^2_1\)</span>或<span class="math inline">\(\sigma^2\ge \sigma^2_2\)</span>对<span class="math inline">\(H_1:\sigma^2_1&lt;\sigma^2&lt;\sigma^2_2\)</span></li>
+<li><span class="math inline">\(H_0:\sigma^2_1\le \sigma^2 \le \sigma^2_2\)</span>对<span class="math inline">\(H_0:\sigma^2&lt;\sigma^2_1\)</span>或<span class="math inline">\(\sigma^2&gt; \sigma^2_2\)</span></li>
+<li><span class="math inline">\(H_0:\sigma^2= \sigma^2_0\)</span>对<span class="math inline">\(H_1:\sigma^2\le \sigma^2_0\)</span></li>
+</ol>
+<p>样本<span class="math inline">\(X\)</span>的联合密度函数可以写作： <span class="math display">\[
+\begin{aligned}
+p(x;\sigma^2)=&amp;\frac{1}{(\sqrt{2\pi}\sigma)^n}\exp\{-\frac{\sum_{i=1}^{n}x_i^2}{2\sigma^2}\}  \\
+=&amp;c(\sigma^2)\exp\{Q(\sigma^2)T(X)\}
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(Q(\sigma^2)=-\frac{1}{2\sigma^2}\)</span>是<span class="math inline">\(\sigma^2\)</span>的严增函数；<span class="math inline">\(T(X)=\sum_{i=1}^{n}x_i^2\)</span>为充分统计量，且满足<span class="math inline">\(T(X)\sim \sigma^2 \chi^2(n)\)</span>，也即<span class="math inline">\(T(X)/\sigma^2 \sim \chi^2(n)\)</span>。</p>
+<p>对于检验问题1，其水平为<span class="math inline">\(\alpha\)</span>的UMPT的拒绝域为：<span class="math inline">\(W=\{x|c_1\le T(X)\le c_2\}\)</span>，其中<span class="math inline">\(c_1\)</span>和<span class="math inline">\(c_2\)</span>由下式确定： <span class="math display">\[
+P_{\sigma_1^2}(c_1\le T(X)\le c_2)=P_{\sigma_2^2}(c_1\le T(X)\le c_2)=\alpha
+\]</span> 也即： <span class="math display">\[
+\int_{c_1/\sigma_1^2}^{c_2/\sigma_1^2}\chi^2(x|n)dx=\alpha \\
+\int_{c_1/\sigma_2^2}^{c_2/\sigma_2^2}\chi^2(x|n)dx=\alpha \\
+\]</span> 对于检验问题2，其水平为<span class="math inline">\(\alpha\)</span>的UMPUT的拒绝域为：<span class="math inline">\(W=\{x|T(X)\le c_1 \cup T(X)\ge c_2\}\)</span>，其中<span class="math inline">\(c_1\)</span>和<span class="math inline">\(c_2\)</span>由下式确定： <span class="math display">\[
+\int_{c_1/\sigma_1^2}^{c_2/\sigma_1^2}\chi^2(x|n)dx=1-\alpha \\
+\int_{c_1/\sigma_2^2}^{c_2/\sigma_2^2}\chi^2(x|n)dx=1-\alpha \\
+\]</span> 而对于检验问题3，其水平为<span class="math inline">\(\alpha\)</span>的UMPUT的拒绝域同样形如：<span class="math inline">\(W=\{x|T(X)\le c_1 \cup T(X)\ge c_2\}\)</span>。由<span class="math inline">\(E_{\sigma_0^2}(T(X))=\alpha\)</span>可得： <span class="math display">\[
+\int_{c_1/\sigma_0^2}^{c_2/\sigma_0^2}\chi^2(x|n)dx=1-\alpha \\
+\]</span> 由<span class="math inline">\(E_{\sigma_0^2}(T\phi(T))=\alpha E_{\sigma_0^2}(T)\)</span>可得： <span class="math display">\[
+E_{\sigma_0^2}[T(1-\phi(T))]=n\sigma_0^2\cdot(1-\alpha)=n\sigma_0^2\cdot E_{\sigma_0^2}[1-\phi(T)]
+\]</span> 故可得： <span class="math display">\[
+E_{\sigma_0^2}\left[\left(\frac{T}{\sigma_0^2}-n\right)\cdot(1-\phi(T))\right]=0
+\]</span> 即： <span class="math display">\[
+\int_{c_1/\sigma_0^2}^{c_2/\sigma_0^2}(x-n)\cdot\chi^2(x|n)dx=0
+\]</span> 或者是根据这类双边假设检验问题中势函数的性质，即势函数<span class="math inline">\(g(\sigma^2)=1-\int_{c_1/\sigma^2}^{c_2/\sigma^2}\chi^2(x|n)dx\)</span>在<span class="math inline">\(\sigma^2=\sigma_0^2\)</span>处取得最小值，从而得到： <span class="math display">\[
+c_2\cdot \chi^2\left(\frac{c_2}{\sigma_0^2}|n\right)-c_1\cdot \chi^2\left(\frac{c_1}{\sigma_0^2}|n\right)=0
+\]</span></p>
+</blockquote>
+<h1 id="多参数指数型分布族">多参数指数型分布族</h1>
+<h2 id="概述">概述</h2>
+<p>对于一些检验问题，它的总体包含两个或者两个以上的未知参数，当仅对其中一个未知参数做假设检验时，其它的未知参数就变成了多余参数。一般来说，对于多参数指数型分布族的单边和双边假设检验问题，UMPT是不存在的，但是存在UMPUT。对于这类问题，寻找UMPUT需要用到指数型分布族的有关性质。</p>
+<p>设样本<span class="math inline">\(X\)</span>服从多参数指数型分布，其密度函数为： <span class="math display">\[
+p(x;\theta,\boldsymbol{r})=c(\theta,\boldsymbol{r})\cdot \exp \left\{\theta\cdot u(x)+\sum_{i=1}^k r_i\cdot t_i(x) \right\}\cdot h(x)
+\]</span> 其中<span class="math inline">\(\theta\)</span>代表被检验的参数，<span class="math inline">\(\boldsymbol{r}=(r_1;\dots,r_k)\)</span>为多余参数，<span class="math inline">\((\theta,\boldsymbol{r})\in \Omega \in R^{k+1}\)</span>。如果参数空间<span class="math inline">\(\Omega\)</span>有内点，则<span class="math inline">\((U(X),T(X))=(U(X),T_1(X),\dots,T_k(X))\)</span>是参数<span class="math inline">\((\theta,\boldsymbol{r})\)</span>的充分、完备的统计量。因此，根据充分性原则，我们只需要考虑基于<span class="math inline">\((U(X),T(X))\)</span>的检验。<span class="math inline">\((U(X),T(X))\)</span>的分布仍然为多参数指数型分布，密度函数为： <span class="math display">\[
+p(u,t;\theta,\boldsymbol{r})=c_1(\theta,\boldsymbol{r})\cdot \exp \left\{\theta\cdot u+\sum_{i=1}^k r_i\cdot t_i \right\}\cdot h(u,t)
+\]</span> 在<span class="math inline">\(T(X)=t\)</span>的条件下，<span class="math inline">\(U(X)\)</span>的条件分布与多余参数<span class="math inline">\(\boldsymbol{r}\)</span>无关，且为单参数指数分布： <span class="math display">\[
+p(u|T=t)=c_t(\theta)\cdot \exp\{\theta\cdot u\}\cdot h_t(u)
+\]</span> 因此，多参数指数型分布族中的假设问题便可转化为单参数指数型分布族中的假设检验问题，即在<span class="math inline">\(\{x:T(x)=t\}\)</span>的子空间上，寻找UMPT或者UMPUT。</p>
+<p><span class="math inline">\(T(X)\)</span>的边际分布为： <span class="math display">\[
+p(t)=c_\theta(\boldsymbol{r})\cdot \exp\left\{\sum_{i=1}^{k}r_i\cdot t_i \right\} \cdot h_\theta(t)
+\]</span> 在<span class="math inline">\(\theta\)</span>给定时，<span class="math inline">\(T(X)\)</span>的边际分布为指数型分布。令<span class="math inline">\(G_\theta=\{\boldsymbol{r}:(\theta,\boldsymbol{r})\in \Omega \}\)</span>，在<span class="math inline">\(\theta\)</span>给定之后，如果空间<span class="math inline">\(G_\theta\)</span>有内点，则<span class="math inline">\(T(X)\)</span>为参数<span class="math inline">\(\boldsymbol{r}\)</span>的充分、完备的统计量。而且可以证明，在<span class="math inline">\(T(X)=t\)</span>的条件下最优的检验，在整个样本空间上也是一致最优的检验。</p>
+<h2 id="假设检验">假设检验</h2>
+<p>下面为几种假设检验问题的检验函数：</p>
+<ol type="1">
+<li><p>原假设<span class="math inline">\(H_0:\theta \le \theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta&gt;\theta_0\)</span>：</p>
+<p>这一假设检验问题水平为<span class="math inline">\(\alpha\)</span>的UMPUT为： <span class="math display">\[
+\phi(u,t)=
+\begin{cases}
+1,~~~~~u&gt;c(t) \\
+r(t),u=c(t) \\
+0,~~~~~u&lt;c(t)
+\end{cases}
+\]</span> 其中<span class="math inline">\(r(t)(0\le r(t)\le 1)\)</span>和<span class="math inline">\(c(t)\)</span>由下式确定： <span class="math display">\[
+E_{\theta_0}[\phi(U,T)|T=t]=\alpha
+\]</span> 对于这一检验问题，如果存在一个统计量<span class="math inline">\(V=V(U,T)\)</span>，给定<span class="math inline">\(T=t\)</span>之后，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的<strong>单调增函数</strong>，且当<span class="math inline">\(\theta=\theta_0\)</span>时，<span class="math inline">\(V\)</span>与<span class="math inline">\(T\)</span>互相独立，则此时<span class="math inline">\(r\)</span>与<span class="math inline">\(c\)</span>不依赖于<span class="math inline">\(t\)</span>。检验函数变为： <span class="math display">\[
+\phi(v)=
+\begin{cases}
+1,~v&gt;c \\
+r,~v=c \\
+0,~v&lt;c
+\end{cases}
+\]</span> <span class="math inline">\(r\)</span>和<span class="math inline">\(c\)</span>由下式确定： <span class="math display">\[
+E_{\theta_0}[\phi(V)]=\alpha
+\]</span> 对于原假设<span class="math inline">\(H_0:\theta \ge \theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta&lt;\theta_0\)</span>的假设检验问题，只需要将<span class="math inline">\(\phi(u,t)\)</span>中的不等号改变方向即可。</p></li>
+<li><p>原假设<span class="math inline">\(H_0:\theta_1\le \theta \le \theta_2\)</span>对备择假设<span class="math inline">\(H_1:\theta&lt;\theta_1~\text{or}~\theta&gt;\theta_2\)</span>：</p>
+<p>这一假设检验问题水平为<span class="math inline">\(\alpha\)</span>的UMPUT为： <span class="math display">\[
+\phi(u,t)=\begin{cases}
+0, ~~~~~~c_1(t)&lt;u&lt;c_2(t) \\
+r_i(t), u=c_i(t),i=1,2 \\
+1,~~~~~~u&lt;c_1(t)~\text{or}~u&gt;c_2(t)
+\end{cases}
+\]</span> 其中<span class="math inline">\(r_i(t)\)</span>和<span class="math inline">\(c_i(t)\)</span>由下式确定： <span class="math display">\[
+E_{\theta_1}[\phi(U,T)|T=t]=E_{\theta_2}[\phi(U,T)|T=t]=\alpha
+\]</span> 对于这一检验问题，如果存在一个统计量<span class="math inline">\(V=V(U,T)\)</span>，给定<span class="math inline">\(T=t\)</span>之后，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的<strong>单调函数</strong>，且当<span class="math inline">\(\theta=\theta_1\)</span>和<span class="math inline">\(\theta=\theta_2\)</span>时，<span class="math inline">\(V\)</span>与<span class="math inline">\(T\)</span>互相独立，则此时<span class="math inline">\(r\)</span>与<span class="math inline">\(c\)</span>不依赖于<span class="math inline">\(t\)</span>。检验函数为： <span class="math display">\[
+\phi(v)=\begin{cases}
+0, ~~~~~~c_1&lt;v&lt;c_2 \\
+r_i,~~~~~ v=c_i,i=1,2 \\
+1,~~~~~~v&lt;c_1~\text{or}~v&gt;c_2
+\end{cases}
+\]</span> 其中<span class="math inline">\(r_i\)</span>和<span class="math inline">\(c_i\)</span>由下式确定： <span class="math display">\[
+E_{\theta_1}[\phi(V)]=E_{\theta_2}[\phi(V)]=\alpha
+\]</span> 如果考虑原假设<span class="math inline">\(H_0:\theta\le \theta_1~\text{or}~\theta\ge \theta_2\)</span>对备择假设<span class="math inline">\(H_1:\theta_1&lt; \theta &lt; \theta_2\)</span>的假设检验问题，只需要将检验函数改为如下形式： <span class="math display">\[
+\phi(u,t)=\begin{cases}
+0, ~~~~~~u&lt;c_1(t)~\text{or}~u&gt;c_2(t) \\
+r_i(t), u=c_i(t),i=1,2 \\
+1,~~~~~~c_1(t)&lt;u&lt;c_2(t)
+\end{cases}
+\]</span></p></li>
+<li><p>原假设<span class="math inline">\(H_0:\theta=\theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta\ne \theta_0\)</span>：</p>
+<p>这一假设检验问题的UMPUT为： <span class="math display">\[
+\phi(u,t)=\begin{cases}
+0, ~~~~~~c_1(t)&lt;u&lt;c_2(t) \\
+r_i(t), u=c_i(t),i=1,2 \\
+1,~~~~~~u&lt;c_1(t)~\text{or}~u&gt;c_2(t)
+\end{cases}
+\]</span> 其中<span class="math inline">\(r_i(t)\)</span>和<span class="math inline">\(c_i(t)\)</span>由下式确定： <span class="math display">\[
+E_{\theta_0}[\phi(U,T)|T=t]=\alpha \\
+E_{\theta_0}[U\cdot \phi(U,T)|T=t]=\alpha\cdot E_{\theta_0}[U|T=t]
+\]</span></p>
+<p>如果存在一个统计量<span class="math inline">\(V=a(T)\cdot U+b(T)\)</span>，即给定<span class="math inline">\(T=t\)</span>之后，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的线性函数，且当<span class="math inline">\(\theta=\theta_0\)</span>时，<span class="math inline">\(V\)</span>与<span class="math inline">\(T\)</span>相互独立，此时的检验函数为： <span class="math display">\[
+\phi(v)=\begin{cases}
+0, ~~~~~~c_1&lt;v&lt;c_2 \\
+r_i,~~~~~ v=c_i,i=1,2 \\
+1,~~~~~~v&lt;c_1~\text{or}~v&gt;c_2
+\end{cases}
+\]</span> 其中<span class="math inline">\(r_i\)</span>和<span class="math inline">\(c_i\)</span>由下式确定： <span class="math display">\[
+E_{\theta_0}[\phi(V)]=\alpha \\
+E_{\theta_0}[V\cdot\phi(V)]=\alpha\cdot E_{\theta_0}[V]
+\]</span></p></li>
+</ol>
+<p>从中可以看出，这些假设检验问题的检验函数与单参数指数型分布族类似，只是此时的检验函数变为多余参数<span class="math inline">\(t\)</span>的函数。且在一些特殊的情况下，检验函数不依赖于多余参数<span class="math inline">\(t\)</span>。</p>
+<blockquote>
+<p>例：设相互独立的两个总体<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>的分布分别是参数为<span class="math inline">\(\lambda\)</span>和<span class="math inline">\(\mu\)</span>的Poisson分布，构造假设检验问题比较这两个总体是否来自于同一个Poisson总体。</p>
+<p><span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>的联合分布可以表示为下式： <span class="math display">\[
+\begin{aligned}
+p(x,y;\mu,\lambda)=&amp;e^{-(\mu+\lambda)}\cdot \exp\{\ln \lambda\cdot x+\ln \mu\cdot y\}\cdot (x!y!)^{-1} \\
+=&amp; e^{-(\mu+\lambda)}\cdot \exp\{\ln(\mu/\lambda) \cdot y+\ln \lambda\cdot (x+y)\}\cdot (x!y!)^{-1} \\
+=&amp; e^{-(\mu+\lambda)}\cdot \exp\{\theta \cdot y+r\cdot (x+y)\}\cdot (x!y!)^{-1}
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(\theta=\ln(\mu/\lambda)\)</span>，<span class="math inline">\(r=\ln \lambda\)</span>。此时，比较参数<span class="math inline">\(\lambda\)</span>和<span class="math inline">\(\mu\)</span>的差异的检验问题就变为关于参数<span class="math inline">\(\theta\)</span>的检验问题。原假设<span class="math inline">\(H_0:\lambda\le \mu\)</span>对备择假设<span class="math inline">\(H_1:\lambda&gt;\mu\)</span>的检验问题就等价于原假设<span class="math inline">\(H_0:\theta\ge 0\)</span>对备择假设<span class="math inline">\(H_1:\theta&lt;0\)</span>的检验问题。因此，只需要在直线<span class="math inline">\(x+y=t\)</span>的整数点上寻找最优势的条件检验。</p>
+<p>在给定<span class="math inline">\(X+Y=t\)</span>之后，<span class="math inline">\(Y\)</span>的条件分布为： <span class="math display">\[
+\begin{aligned}
+p(y|x+y=t)=&amp;\frac{p(y,x+y=t)}{p(x+y=t)} \\
+=&amp;\frac{e^{-(\mu+\lambda)}\cdot \exp\{\theta \cdot y+r\cdot t\}\cdot ((t-y)!y!)^{-1}}{\sum_{i=0}^{t} e^{-(\mu+\lambda)}\cdot \exp\{\theta \cdot i+r\cdot t\}\cdot (i!(t-i)!)^{-1}} \\
+=&amp; \frac{\binom{t}{y}(\frac{e^\theta}{1+e^\theta})^y(\frac{1}{1+e^\theta})^{t-y}}{\sum_{i=0}^{t} \binom{t}{i}(\frac{e^\theta}{1+e^\theta})^i(\frac{1}{1+e^\theta})^{t-i}} \\
+=&amp;\binom{t}{y}(\frac{e^\theta}{1+e^\theta})^y(\frac{1}{1+e^\theta})^{t-y} \\
+=&amp;\binom{t}{y} p^y(1-p)^{t-y}
+\end{aligned}
+\]</span> 可以看出，此时的条件分布为二项分布，因此原来的假设检验问题就变为关于二项分布的参数<span class="math inline">\(p\)</span>的假设检验问题。原来的假设检验问题其实就等价于原假设<span class="math inline">\(H_0:p\ge 0.5\)</span>对备择假设<span class="math inline">\(H_1:p&lt;0.5\)</span>的假设检验问题。</p>
+</blockquote>
+<h2 id="正态总体参数的检验问题">正态总体参数的检验问题</h2>
+<p>要构造正态总体参数的检验问题的检验函数，首先介绍下面的引理：</p>
+<p>设<span class="math inline">\((\mathscr{X},\mathscr{B},\mathscr{P}=\{p_\theta:\theta\in \Theta\})\)</span>是一个参数统计结构，<span class="math inline">\(T(X)\)</span>为<span class="math inline">\(\theta\)</span>的充分完备统计量，如果可测统计量<span class="math inline">\(S(X)\)</span>的分布于<span class="math inline">\(\theta\)</span>无关，则对于所有的<span class="math inline">\(\theta\in \Theta\)</span>，<span class="math inline">\(T(X)\)</span>和<span class="math inline">\(S(X)\)</span>相互独立。</p>
+<p>下面叙述正态总体参数中常用的几种检验法：</p>
+<ol type="1">
+<li><p><span class="math inline">\(t\)</span>检验</p>
+<ol type="1">
+<li><p>单样本<span class="math inline">\(t\)</span>检验</p>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>来自于正态总体<span class="math inline">\(N(\mu,\sigma^2)\)</span>，其中<span class="math inline">\(-\infty&lt;\mu&lt;\infty\)</span>，<span class="math inline">\(\sigma^2&gt;0\)</span>。考虑关于<span class="math inline">\(\mu\)</span>的假设检验问题：（1）<span class="math inline">\(H_0:\mu\ge 0\)</span>对<span class="math inline">\(H_1:\mu&lt;0\)</span>，（2）<span class="math inline">\(H_0:\mu\le 0\)</span>对<span class="math inline">\(H_1:\mu&gt;0\)</span>，（3）<span class="math inline">\(H_0:\mu= 0\)</span>对<span class="math inline">\(H_1:\mu\ne 0\)</span>。如果考虑假设检验问题<span class="math inline">\(H_0:\mu\ge \mu_0\)</span>对<span class="math inline">\(H_1:\mu&lt;\mu_0\)</span>，则可以通过变换<span class="math inline">\(Y=X-\mu_0\)</span>变为上述情况之一。</p>
+<p>样本的联合概率密度为： <span class="math display">\[
+\begin{aligned}
+p(x;\mu,\sigma^2)=&amp;(\sqrt{2\pi}\sigma)^{-n}\exp \left\{-\frac{n\mu^2}{2\sigma^2} \right\}\cdot \exp \left\{\frac{\mu}{\sigma^2}\cdot \sum_{i=1}^{n}x_i-\frac{1}{2\sigma^2}\sum_{i=1}^{n}x_i^2 \right\} \\
+=&amp;(\sqrt{2\pi}\sigma)^{-n}\exp \left\{-\frac{n\mu^2}{2\sigma^2} \right\}\cdot \exp \left\{\theta\cdot u+r\cdot t \right\}
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(\theta=\frac{n\mu}{\sigma^2}\)</span>，<span class="math inline">\(r=(-2\sigma^2)^{-1}\)</span>，<span class="math inline">\(u=\bar{x}\)</span>，<span class="math inline">\(t=\sum_{i=1}^{n}x_i^2\)</span>。此时关于<span class="math inline">\(\mu\)</span>的检验问题就变为了关于<span class="math inline">\(\theta\)</span>的检验问题。</p>
+<p>接下来寻找统计量<span class="math inline">\(V=V(U,T)\)</span>，使得对于给定的<span class="math inline">\(T\)</span>，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的单调函数，且在<span class="math inline">\(\mu=0\)</span>即<span class="math inline">\(\theta=0\)</span>时，<span class="math inline">\(V\)</span>与<span class="math inline">\(T\)</span>相互独立。</p>
+<p>为此，令 <span class="math display">\[
+V=\sqrt{n(n-1)}\cdot \frac{U}{\sqrt{T-nU^2}}=\sqrt{n(n-1)} \cdot \frac{\bar{X}}{\sqrt{\sum_{i=1}^n (X_i-\bar{X})^2}}
+\]</span> 当<span class="math inline">\(\mu=0\)</span>时，样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>来自于正态总体<span class="math inline">\(N(0,\sigma^2)\)</span>，此时<span class="math inline">\(T=\sum_{i=1}^n X_i^2\)</span>是<span class="math inline">\(\sigma^2\)</span>的充分、完备的统计量，且在<span class="math inline">\(\mu=0\)</span>时，由于 <span class="math display">\[
+V=\sqrt{n(n-1)} \cdot \frac{\bar{X}}{\sqrt{\sum_{i=1}^n (X_i-\bar{X})^2}}=\sqrt{n(n-1)} \cdot \frac{\bar{Z}}{\sqrt{\sum_{i=1}^n (Z_i-\bar{Z})^2}}
+\]</span> 其中<span class="math inline">\(Z_i=X_i/\sigma\sim N(0,1)\)</span>，所以<span class="math inline">\(V\)</span>的分布与参数<span class="math inline">\(\sigma^2\)</span>无关。故可得<span class="math inline">\(V\)</span>与<span class="math inline">\(T\)</span>相互独立，在<span class="math inline">\(\mu=0\)</span>时，<span class="math inline">\(V\sim t(n-1)\)</span>。</p>
+<p>因此，对于检验问题（1）和（2），它们的UMPUT拒绝域分别为<span class="math inline">\(\{x:v\le t_\alpha(n-1)\}\)</span>和<span class="math inline">\(\{x:v\ge t_{1-\alpha}(n-1)\}\)</span>。</p>
+<p>而对于检验问题（3），首先需要构造<span class="math inline">\(U\)</span>的线性统计量。令 <span class="math display">\[
+W=\frac{U}{\sqrt{T}}=\frac{\bar{X}}{\sqrt{\sum_{i=1}^n X_i^2}}
+\]</span> 对于固定的<span class="math inline">\(T\)</span>，<span class="math inline">\(W\)</span>是<span class="math inline">\(U\)</span>的线性函数；且在<span class="math inline">\(\mu=0\)</span>时，由于<span class="math inline">\(T\)</span>是<span class="math inline">\(\sigma^2\)</span>的充分完备统计量，且由于<span class="math inline">\(W\)</span>的分布与参数<span class="math inline">\(\sigma^2\)</span>无关，因此<span class="math inline">\(W\)</span>与<span class="math inline">\(T\)</span>互相独立。由于<span class="math inline">\(W\)</span>的分布关于原点对称，因此检验问题（3）的UMPUT拒绝域为<span class="math inline">\(\{x:|w|\ge c\}\)</span>。由于 <span class="math display">\[
+V=\sqrt{n(n-1)}\frac{W}{\sqrt{1-nW^2}}
+\]</span> 故<span class="math inline">\(|V|\)</span>是<span class="math inline">\(|W|\)</span>的单调增函数，从而可以将拒绝域等价表示为<span class="math inline">\(\{x:|v|\ge c\}\)</span>。已知<span class="math inline">\(\mu=0\)</span>时，<span class="math inline">\(V\sim t(n-1)\)</span>，从而该检验问题的UMPUT拒绝域为<span class="math inline">\(\{x:|v|\ge t_{1-\alpha/2}(n-1)\}\)</span>。</p></li>
+<li><p>两样本<span class="math inline">\(t\)</span>检验</p>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_m)\)</span>和样本<span class="math inline">\(Y=(Y_1,\dots,Y_n)\)</span>互相独立。它们分别来自于正态总体<span class="math inline">\(N(\mu_1,\sigma^2)\)</span>和<span class="math inline">\(N(\mu_2,\sigma^2)\)</span>，其中<span class="math inline">\(-\infty&lt;\mu_1&lt;\infty\)</span>，<span class="math inline">\(-\infty&lt;\mu_2&lt;\infty\)</span>。考虑这两个正态总体的均值的检验问题：<span class="math inline">\(H_0:\mu_1=\mu_2\)</span>对<span class="math inline">\(H_1:\mu_1\ne \mu_2\)</span>。</p>
+<p>样本的联合密度为： <span class="math display">\[
+p(x,y;\mu_1,\mu_2,\sigma^2)=(2\pi \sigma^2)^{-\frac{m+n}{2}}\exp \{-\frac{m\mu_1^2+n\mu_2^2}{2\sigma^2}\}\cdot \exp\{\theta\cdot u+r_1\cdot t_1+r_2\cdot t_2\}
+\]</span> 其中，<span class="math inline">\(\theta=\frac{mn(\mu_2-\mu_1)}{(m+n)\sigma^2}\)</span>，<span class="math inline">\(r_1=\frac{m\mu_1+n\mu_2}{(m+n)\sigma^2}\)</span>，<span class="math inline">\(r_2=-\frac{1}{2\sigma^2}\)</span>，<span class="math inline">\(u=\bar{y}-\bar{x}\)</span>，<span class="math inline">\(t_1=m\bar{x}+n\bar{y}\)</span>，<span class="math inline">\(t_2=\sum_{i=1}^{m}x_i^2+\sum_{i=1}^{n}y_i^2\)</span>。</p>
+<p>此时，检验问题等价于<span class="math inline">\(H_0:\theta=0\)</span>对<span class="math inline">\(H_1:\theta\ne 0\)</span>。</p>
+<p>首先构造统计量<span class="math inline">\(V\)</span>，使得对于固定的<span class="math inline">\(T_1\)</span>和<span class="math inline">\(T_2\)</span>，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的线性函数，且在<span class="math inline">\(\theta=0\)</span>时，<span class="math inline">\(V\)</span>与<span class="math inline">\((T_1,T_2)\)</span>相互独立。为此，令 <span class="math display">\[
+V=\frac{U}{\sqrt{T_2-\frac{T_1^2}{m+n}}}
+\]</span> 对于固定的<span class="math inline">\(T_1\)</span>和<span class="math inline">\(T_2\)</span>，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的线性函数，且在<span class="math inline">\(\theta=0\)</span>即<span class="math inline">\(\mu_1=\mu_2=\mu\)</span>时，合样本<span class="math inline">\((X_1,\dots,X_m,Y_1,\dots,Y_n)\)</span>互相独立且同分布。此时，<span class="math inline">\(\sigma^2\)</span>和<span class="math inline">\(\mu\)</span>的充分、完备统计量为<span class="math inline">\(T_1\)</span>和<span class="math inline">\(T_2\)</span>。由于在<span class="math inline">\(\theta=0\)</span>时，<span class="math inline">\(V\)</span>的分布与参数<span class="math inline">\(\sigma^2\)</span>和<span class="math inline">\(\mu\)</span>无关，因此<span class="math inline">\(V\)</span>与<span class="math inline">\((T_1,T_2)\)</span>相互独立。并且由于在<span class="math inline">\(\theta=\theta_0\)</span>时，<span class="math inline">\(V\)</span>的分布关于原点对称，故此时该检验问题的UMPUT拒绝域为： <span class="math display">\[
+\{x,y:|v|\ge c\}
+\]</span> 进一步，令 <span class="math display">\[
+\begin{aligned}
+W=&amp; \sqrt{\frac{nm(m+n-2)}{m+n}}\frac{V}{\sqrt{1-\frac{mn}{m+n}V^2}} \\
+=&amp;\sqrt{\frac{nm(m+n-2)}{m+n}}\frac{\bar{Y}-\bar{X}}{\sqrt{\sum_{i=1}^{m}(X_i-\bar{X})^2+\sum_{i=1}^{n}(Y_i-\bar{Y})^2}}
+\end{aligned}
+\]</span> 则<span class="math inline">\(W\)</span>是<span class="math inline">\(V\)</span>的单调增函数，并且在<span class="math inline">\(\theta=0\)</span>时，<span class="math inline">\(W\sim t(m+n-2)\)</span>。故该检验问题的UMPUT拒绝域为<span class="math inline">\(\{x,y:|w|\ge t_{1-\alpha/2}(m+n-2)\}\)</span>。类似地，检验问题<span class="math inline">\(H_0:\mu_1\le \mu_2\)</span>对<span class="math inline">\(H_1:\mu_1&gt;\mu_2\)</span>和检验问题<span class="math inline">\(H_0:\mu_1\ge \mu_2\)</span>对<span class="math inline">\(H_1:\mu_1&lt;\mu_2\)</span>的UMPUT拒绝域分别为：<span class="math inline">\(\{x,y:w\le t_\alpha(m+n-2)\}\)</span>和<span class="math inline">\(\{x,y:w\ge t_{1-\alpha}(m+n-2)\}\)</span>。</p></li>
+</ol></li>
+<li><p><span class="math inline">\(\chi^2\)</span>检验</p>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>来自于正态总体<span class="math inline">\(N(\mu,\sigma^2)\)</span>，其中<span class="math inline">\(-\infty&lt;\mu&lt;\infty\)</span>，<span class="math inline">\(\sigma^2&gt;0\)</span>。考虑关于<span class="math inline">\(\sigma^2\)</span>的假设问题：（1）<span class="math inline">\(H_0:\sigma^2\ge \sigma^2_0\)</span>对<span class="math inline">\(H_1:\sigma^2&lt; \sigma^2_0\)</span>；（2）<span class="math inline">\(H_0:\sigma^2\le \sigma^2_0\)</span>对<span class="math inline">\(H_1:\sigma^2&gt; \sigma^2_0\)</span>；（3）<span class="math inline">\(H_0:\sigma^2= \sigma^2_0\)</span>对<span class="math inline">\(H_1:\sigma^2 \ne \sigma^2_0\)</span>。</p>
+<p>样本的联合概率密度为： <span class="math display">\[
+\begin{aligned}
+p(x;\mu,\sigma^2)=&amp;(\sqrt{2\pi}\sigma)^{-n}\exp \left\{-\frac{n\mu^2}{2\sigma^2} \right\}\cdot \exp \left\{\frac{\mu}{\sigma^2}\cdot \sum_{i=1}^{n}x_i-\frac{1}{2\sigma^2}\sum_{i=1}^{n}x_i^2 \right\} \\
+=&amp;(\sqrt{2\pi}\sigma)^{-n}\exp \left\{-\frac{n\mu^2}{2\sigma^2} \right\}\cdot \exp \left\{\theta\cdot u+r\cdot t \right\}
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(\theta=(-2\sigma^2)^{-1}\)</span>，<span class="math inline">\(r=\frac{n\mu}{\sigma^2}\)</span>，<span class="math inline">\(u=\sum_{i=1}^{n}x_i^2\)</span>，<span class="math inline">\(t=\bar{x}\)</span>。此时关于<span class="math inline">\(\sigma^2\)</span>的检验问题就变为关于<span class="math inline">\(\theta\)</span>的检验问题。</p>
+<p>令 <span class="math display">\[
+V=U-n\cdot T^2=\sum_{i=1}^{n}(X_i-\bar{X})^2
+\]</span> 则对于固定的<span class="math inline">\(T=\bar{X}\)</span>，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的线性增函数，且<span class="math inline">\(V\)</span>与<span class="math inline">\(T\)</span>相互独立。在<span class="math inline">\(\sigma^2=\sigma^2_0\)</span>时，<span class="math inline">\(V\sim \sigma^2_0\cdot \chi^2(n-1)\)</span>。因此，对于前两个问题，它们的UMPUT拒绝域分别为<span class="math inline">\(\{x:v\le \sigma_0^2\cdot \chi^2(n-1)\}\)</span>和<span class="math inline">\(\{x:v\ge \sigma_0^2\cdot \chi^2(n-1)\}\)</span>。而对于问题（3），常取<span class="math inline">\(\{x:v\le \sigma_0^2\cdot \chi^2_{\alpha/2}(n-1)~\text{or}~v\ge \sigma_0^2\cdot \chi^2_{1-\alpha/2}(n-1) \}\)</span>。</p></li>
+<li><p><span class="math inline">\(F\)</span>检验</p>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_m)\)</span>和样本<span class="math inline">\(Y=(Y_1,\dots,Y_n)\)</span>互相独立。它们分别来自于正态总体<span class="math inline">\(N(\mu_1,\sigma_1^2)\)</span>和<span class="math inline">\(N(\mu_2,\sigma_2^2)\)</span>，其中<span class="math inline">\(-\infty&lt;\mu_1&lt;\infty\)</span>，<span class="math inline">\(-\infty&lt;\mu_2&lt;\infty\)</span>，<span class="math inline">\(\sigma^2_1\ge 0\)</span>，<span class="math inline">\(\sigma^2_2\ge 0\)</span>。考虑比较这两个正态总体方差的检验问题：<span class="math inline">\(H_0:\sigma_1^2=\sigma^2_2\)</span>对<span class="math inline">\(H_1:\sigma_1^2\ne \sigma_2^2\)</span>。</p>
+<p>样本的联合密度为： <span class="math display">\[
+p(x,y;\mu_1,\mu_2,\sigma^2_1,\sigma^2_2)=c(\mu_1,\mu_2,\sigma_1^2,\sigma_2^2)\cdot \exp\{\theta\cdot u+r_1\cdot t_1+r_2\cdot t_2+r_3\cdot t_3\}
+\]</span> 其中，<span class="math inline">\(\theta=\frac{1}{2\sigma_1^2}-\frac{1}{2\sigma_2^2}\)</span>，<span class="math inline">\(r_1=-\frac{1}{2\sigma_1^2}\)</span>，<span class="math inline">\(r_2=\frac{m\mu_1}{\sigma_1^2}\)</span>，<span class="math inline">\(r_3=\frac{m\mu_2}{\sigma_2^2}\)</span>，<span class="math inline">\(u=\sum_{i=1}^{n}y_i^2\)</span>，<span class="math inline">\(t_1=\sum_{i=1}^{m}x_i^2+\sum_{i=1}^{n}y_i^2\)</span>，<span class="math inline">\(t_2=\bar{x}\)</span>，<span class="math inline">\(t_3=\bar{y}\)</span>。</p>
+<p>此时，关于<span class="math inline">\(\sigma^2\)</span>的检验问题<span class="math inline">\(H_0:\sigma_1^2=\sigma^2_2\)</span>对<span class="math inline">\(H_1:\sigma_1^2\ne \sigma_2^2\)</span>就变为关于<span class="math inline">\(\theta\)</span>的检验问题<span class="math inline">\(H_0:\theta=0\)</span>对<span class="math inline">\(H_1:\theta\ne 0\)</span>。</p>
+<p>首先寻找统计量<span class="math inline">\(V\)</span>，使得对于固定的<span class="math inline">\((T_1,T_2,T_3)\)</span>，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的线性函数，且在<span class="math inline">\(\theta=0\)</span>时，<span class="math inline">\(V\)</span>与<span class="math inline">\((T_1,T_2,T_3)\)</span>互相独立。为此令 <span class="math display">\[
+V=\frac{U-nT_3^2}{T_1-mT_2^2-nT_3^2}=\frac{\sum_{i=1}^n(Y_i-\bar{Y})^2}{\sum_{i=1}^m(X_i-\bar{X})^2+\sum_{i=1}^n(Y_i-\bar{Y})^2}
+\]</span> 则对于给定的<span class="math inline">\((T_1,T_2,T_3)\)</span>，<span class="math inline">\(V\)</span>是<span class="math inline">\(U\)</span>的线性函数。在<span class="math inline">\(\theta=0\)</span>时，<span class="math inline">\(\mu_1\)</span>，<span class="math inline">\(\mu_2\)</span>，<span class="math inline">\(\sigma^2\)</span>的充分完备统计量为： <span class="math display">\[
+\begin{aligned}
+&amp;T_2=\bar{X} \\
+&amp;T_3=\bar{Y} \\
+&amp;T_1-mT_2^2-nT_3^2=\sum_{i=1}^m(X_i-\bar{X})^2+\sum_{i=1}^n(Y_i-\bar{Y})^2
+\end{aligned}
+\]</span> 由于在<span class="math inline">\(\theta=0\)</span>时，<span class="math inline">\(V\)</span>的分布与参数<span class="math inline">\(\mu_1\)</span>，<span class="math inline">\(\mu_2\)</span>和<span class="math inline">\(\sigma^2\)</span>无关，因此<span class="math inline">\(V\)</span>与<span class="math inline">\((T_2,T_3,T_1-mT_2^2-nT_3^2)\)</span>相互独立，即与<span class="math inline">\((T_1,T_2,T_3)\)</span>互相独立。此时，<span class="math inline">\(V\sim Be(\frac{n-1}{2},\frac{m-1}{2})\)</span>，因此上述检验问题的UMPUT拒绝域为<span class="math inline">\(\{x,y:v\le c_1~\text{or}~v\ge c_2\}\)</span>。其中<span class="math inline">\(c_1\)</span>和<span class="math inline">\(c_2\)</span>由如下两式确定： <span class="math display">\[
+\begin{aligned}
+&amp; \int_{c_1}^{c_2}Be(x|\frac{n-1}{2},\frac{m-1}{2})dx=1-\alpha \\
+&amp; \int_{c_1}^{c_2} (x-\frac{n-1}{m+n-2}) Be(x|\frac{n-1}{2},\frac{m-1}{2})dx=0
+\end{aligned}
+\]</span> 另一种计算<span class="math inline">\(c_1\)</span>和<span class="math inline">\(c_2\)</span>的方法是，令 <span class="math display">\[
+F=\frac{V}{1-V}\cdot \frac{m-1}{n-1}=\frac{\sum_{i=1}^n(Y_i-\bar{Y})^2}{\sum_{i=1}^m(X_i-\bar{X})^2}\cdot \frac{m-1}{n-1}
+\]</span> 则在<span class="math inline">\(\theta=0\)</span>时，<span class="math inline">\(F\sim F(n-1,m-1)\)</span>。由于<span class="math inline">\(F\)</span>是<span class="math inline">\(V\)</span>的严增函数，故该检验问题的UMPUT拒绝域可以等价写为<span class="math inline">\(\{x,y:F\le c_1 ~\text{or} F\ge c_2\}\)</span>，其中<span class="math inline">\(c_1\)</span>和<span class="math inline">\(c_2\)</span>由如下两式确定： <span class="math display">\[
+\begin{aligned}
+&amp; \int_{c_1}^{c_2} F(x|n-1,m-1)dx=1-\alpha \\
+&amp; \int_{c_1}^{c_2} \frac{x-1}{(n-1)x+(m-1)}F(x|n-1,m-1)dx=0
+\end{aligned}
+\]</span> 由于这一检验的势函数与参数<span class="math inline">\(\mu_1\)</span>和<span class="math inline">\(\mu_2\)</span>无关，仅依赖于比值<span class="math inline">\(\rho=\frac{\sigma_1^2}{\sigma_2^2}\)</span>，它的势函数为： <span class="math display">\[
+g(\rho)=1-\int_{\rho\cdot c_1}^{\rho \cdot c_2}F(x|n-1,m-1)dx
+\]</span> 由势函数在<span class="math inline">\(\rho=1\)</span>时达到最小值可得，<span class="math inline">\(c_1\)</span>和<span class="math inline">\(c_2\)</span>也可以由如下两式确定： <span class="math display">\[
+\begin{aligned}
+&amp; \int_{c_1}^{c_2} F(x|n-1,m-1)dx=1-\alpha \\
+&amp; c_2\cdot F(c_2|n-1,m-1)=c_1\cdot F(c_1|n-1,m-1)
+\end{aligned}
+\]</span> 一般常取<span class="math inline">\(c_1=F_{\alpha/2}(n-1,m-1)\)</span>，<span class="math inline">\(c_2=F_{1-\alpha/2}(n-1,m-1)\)</span>。这便是常用的<span class="math inline">\(F\)</span>检验法。</p>
+<p>由于<span class="math inline">\(F\)</span>也可以改写为 <span class="math display">\[
+F=\frac{U-nT_3^2}{T_1-mT_2^2-U}\cdot \frac{m-1}{n-1}
+\]</span> 故对于给定的<span class="math inline">\((T_1,T_2,T_3)\)</span>，<span class="math inline">\(F\)</span>是<span class="math inline">\(U\)</span>的严增函数，且与<span class="math inline">\((T_1,T_2,T_3)\)</span>互相独立。因此，检验问题<span class="math inline">\(H_0:\sigma_1^2\le \sigma_2^2\)</span>对<span class="math inline">\(H_1:\sigma_1^2&gt;\sigma_2^2\)</span>，以及<span class="math inline">\(H_0:\sigma_1^2\ge \sigma_2^2\)</span>对<span class="math inline">\(H_1:\sigma_1^2&lt;\sigma_2^2\)</span>的UMPUT拒绝域分别为<span class="math inline">\(\{x,y:F\le F_\alpha(n-1,m-1)\}\)</span>和<span class="math inline">\(\{x,y:F\ge F_{1-\alpha}(n-1,m-1)\}\)</span>。</p></li>
+</ol>
+<h1 id="似然比检验">似然比检验</h1>
+<h2 id="定义-2">定义</h2>
+<p>在许多复合假设的检验问题中，UMPT和UMPUT可能不存在，此时便可以使用似然比检验的方法，在复合假设的检验问题中构造检验。设<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>的分布函数为<span class="math inline">\(p(x;\theta)\)</span>，其中未知参数<span class="math inline">\(\theta \in \Theta\)</span>可以是向量。考虑复合假设的检验问题：原假设<span class="math inline">\(H_0:\theta\in \Theta_0\)</span>对备择假设<span class="math inline">\(H_1:\theta\in \Theta_1\)</span>。在这一检验问题中，定义似然比<span class="math inline">\(\lambda(x)\)</span>为： <span class="math display">\[
+\lambda(x)=\frac{\sup_{\theta\in \Theta_1}p(x;\theta)}{\sup_{\theta\in \Theta_0}p(x;\theta)}
+=\frac{p(x;\hat{\theta_1})}{p(x;\hat{\theta_0})}
+\]</span> 其中，<span class="math inline">\(\hat{\theta}_0\)</span>和<span class="math inline">\(\hat{\theta}_1\)</span>分别是<span class="math inline">\(H_0\)</span>和<span class="math inline">\(H_1\)</span>成立时，<span class="math inline">\(\theta\)</span>的MLE。<span class="math inline">\(p(x;\hat{\theta}_0)\)</span>代表原假设成立时，观察到样本点<span class="math inline">\(x\)</span>概率的度量；<span class="math inline">\(p(x;\hat{\theta}_1)\)</span>代表备择假设成立时，观察到样本点<span class="math inline">\(x\)</span>概率的度量。在<span class="math inline">\(\lambda(x)\)</span>较大时，备择假设成立观察到样本点<span class="math inline">\(x\)</span>的可能性比较大，因此很自然地可以在<span class="math inline">\(\lambda\)</span>比较大的时候拒绝原假设。故检验的拒绝域取为<span class="math inline">\(\{x:\lambda(x)\ge c\}\)</span>。</p>
+<p>似然比检验方法常常用来区分样本来自于两类不同分布中哪一种的检验问题。</p>
+<p>另一个很自然的推广是： <span class="math display">\[
+\lambda(x)=\frac{\sup_{\theta\in \Theta}p(x;\theta)}{\sup_{\theta\in \Theta_0}p(x;\theta)}
+=\frac{p(x;\hat{\theta})}{p(x;\hat{\theta_0})}
+\]</span> 其中<span class="math inline">\(\hat{\theta}\)</span>是<span class="math inline">\(\theta\in \Theta\)</span>，代表<span class="math inline">\(\theta\)</span>没有受到限制时的MLE；而<span class="math inline">\(\hat{\theta}_0\)</span>是原假设<span class="math inline">\(\theta\in \Theta_0\)</span>成立时，代表<span class="math inline">\(\theta\)</span>受到限制时的MLE。这种方法常用于参数假设检验问题。例如正态分布的<span class="math inline">\(t\)</span>检验便是似然比检验。</p>
+<h2 id="简单原假设的检验问题">简单原假设的检验问题</h2>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>来自于密度函数族<span class="math inline">\(\{p(x;\theta):\theta\in \Theta\}\)</span>，其中未知参数<span class="math inline">\(\boldsymbol{\theta}=(\theta_1,\dots,\theta_k)\)</span>，参数空间<span class="math inline">\(\Theta\)</span>是<span class="math inline">\(k\)</span>维欧氏空间<span class="math inline">\(R^k\)</span>中的一个含有内点的集合。假设参数真值<span class="math inline">\(\boldsymbol{\theta}_0\)</span>是<span class="math inline">\(\Theta\)</span>的一个内点。如果该密度函数族满足以下四个条件：</p>
+<ol type="1">
+<li><span class="math inline">\(\int_x \frac{\partial p(x;\boldsymbol{\theta})}{\partial \theta_i}d\mu(x)=\int_x \frac{\partial^2 p(x;\boldsymbol{\theta})}{\partial \theta_i \partial \theta_j}d\mu(x)=0\)</span>，<span class="math inline">\(i,j=1,\dots,k\)</span></li>
+<li><span class="math inline">\(\boldsymbol{I}(\boldsymbol{\theta})=(I_{ij}(\boldsymbol{\theta}))_{k\times k}&gt;0,\forall \boldsymbol{\theta} \in \Theta\)</span>。</li>
+<li>存在<span class="math inline">\(M(x)\)</span>，使得<span class="math inline">\(\int_x M(x)\cdot p(x;\boldsymbol{\theta})d\mu(x)&lt;K,\forall \boldsymbol{\theta}\in \Theta\)</span>，其中<span class="math inline">\(K\)</span>与<span class="math inline">\(\boldsymbol{\theta}\)</span>无关，而且在含有参数真值<span class="math inline">\(\boldsymbol{\theta}_0\)</span>的一个邻域内有<span class="math inline">\(|\partial^3 \ln p(x;\boldsymbol{\theta})/\partial \theta_i \partial \theta_j \partial \theta_k|\le M(x)\)</span>成立。</li>
+<li>不同的<span class="math inline">\(\boldsymbol{\theta}\)</span>值对应于不同的概率分布。</li>
+</ol>
+<p>此外，当<span class="math inline">\(\boldsymbol{\theta}\)</span>的MLE<span class="math inline">\(\boldsymbol{\hat{\theta}}\)</span>是似然方程<span class="math inline">\(\frac{\partial l(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}}=0\)</span>的解，并且在<span class="math inline">\(n\rightarrow \infty\)</span>时，<span class="math inline">\(\boldsymbol{\hat{\theta}}\)</span>以概率收敛于参数真值<span class="math inline">\(\boldsymbol{\theta}_0\)</span>。</p>
+<p>考虑双边假设检验问题：简单原假设<span class="math inline">\(H_0:\boldsymbol{\theta}=\boldsymbol{\theta}_0\)</span>对简单备择假设<span class="math inline">\(H_1:\boldsymbol{\theta}\ne \boldsymbol{\theta}_0\)</span>。该检验问题的似然统计量为： <span class="math display">\[
+\lambda(X)=\frac{\prod_{i=1}^n p(X_i;\boldsymbol{\hat{\theta}})}{\prod_{i=1}^n p(X_i;\boldsymbol{\theta}_0)}
+\]</span> 那么在原假设<span class="math inline">\(H_0\)</span>成立时，<span class="math inline">\(2\ln \lambda(X)\)</span>随着<span class="math inline">\(n\)</span>增大依分布收敛于<span class="math inline">\(\chi^2(k)\)</span>。</p>
+<blockquote>
+<p>例：Pearson拟合优度检验</p>
+<p>根据某项指标，总体被分为<span class="math inline">\(r\)</span>类：<span class="math inline">\(A_1,\dots,A_r\)</span>。由经验或者是某个理论提出如下的检验问题：</p>
+<p>原假设<span class="math inline">\(H_0\)</span>：随机抽取一个个体<span class="math inline">\(x\)</span>进行观测，<span class="math inline">\(P(x\in A_i)\)</span>已知且等于<span class="math inline">\(p_{0i}(i=1,\dots,r)\)</span>，其中<span class="math inline">\(\sum_{i=1}^r p_{0i}=1\)</span>。</p>
+<p>备择假设<span class="math inline">\(H_1\)</span>：<span class="math inline">\(P(x\in A_i)=p_{0i},i=1,\dots,r\)</span>不全成立。</p>
+<p>随机抽取<span class="math inline">\(n\)</span>个个体进行观测，假设有<span class="math inline">\(n_i\)</span>个个体属于类<span class="math inline">\(A_i\)</span>。样本服从多项分布，其概率密度为 <span class="math display">\[
+p(n_1,\dots,n_r)=\frac{n!}{n_1!\cdots n_r!}\cdot \prod_{i=1}^r p_i^{n_i}
+\]</span> 其中<span class="math inline">\(p_i\)</span>代表类<span class="math inline">\(A_i\)</span>所占的比例。由于约束条件<span class="math inline">\(\sum_{i=1}^{n}p_i=1\)</span>，故参数空间<span class="math inline">\(\Theta=\{(p_1,\dots,p_r):p_i\ge 0,\sum_{i=1}^{n}p_i=1\}\)</span>中的独立参数只有<span class="math inline">\(r-1\)</span>个，因此<span class="math inline">\(\Theta\)</span>是<span class="math inline">\(r-1\)</span>维欧氏空间中的一个含有内点的集合。</p>
+<p>由于<span class="math inline">\(p_i\)</span>的MLE为<span class="math inline">\(\hat{p}_i=n_i/n\)</span>，故这一检验问题的似然比统计量为： <span class="math display">\[
+\Lambda=\frac{\prod_{i=1}^r(\frac{n_i}{n})^{n_i}}{(p_{0i})^{n_i}}
+\]</span> 根据上述定理，当<span class="math inline">\(2\ln \Lambda\ge \chi^2_{1-\alpha}(r-1)\)</span>时拒绝原假设。</p>
+</blockquote>
+<h2 id="复合原假设的检验问题">复合原假设的检验问题</h2>
+<p>设样本<span class="math inline">\(X=(X_1,\dots,X_n)\)</span>来自于密度函数族<span class="math inline">\(\{p(x;\boldsymbol{\theta}):\boldsymbol{\theta}\in \Theta\}\)</span>，其中未知参数<span class="math inline">\(\boldsymbol{\theta}=(\theta_1,\dots,\theta_k)\)</span>，参数空间<span class="math inline">\(\Theta\)</span>是<span class="math inline">\(k\)</span>维欧氏空间<span class="math inline">\(R^k\)</span>中的一个含有内点的集合，参数的真值<span class="math inline">\(\boldsymbol{\theta}_0\)</span>是<span class="math inline">\(\Theta\)</span>的一个内点。同样假设该密度函数族满足上述简单原假设的检验问题中的四个条件。</p>
+<p>考虑复合原假设检验问题：原假设<span class="math inline">\(H_0:\boldsymbol{\theta}\in \Theta_0\)</span>对备择假设<span class="math inline">\(H_1:\boldsymbol{\theta}\notin \Theta_0\)</span>。其中<span class="math inline">\(\Theta_0\)</span>是<span class="math inline">\(\Theta\)</span>的一个非单点子集。一般来说，复合假设有如下三种情况：</p>
+<ol type="1">
+<li>原假设<span class="math inline">\(H_0:\theta_{r+1}=\cdots=\theta_k=0\)</span>。</li>
+<li>原假设<span class="math inline">\(H_0:R_i(\theta_1,\cdots,\theta_k)=0,i=1,\dots,s\)</span>，其中<span class="math inline">\(R_i\)</span>具有一阶的连续偏导数。此时，参数<span class="math inline">\(\boldsymbol{\theta}\)</span>受到<span class="math inline">\(s\)</span>个条件的限制。此时，可以通过重新定义参数<span class="math inline">\(\boldsymbol{w}=(w_1,\dots,w_k)\)</span>，使得原假设变为<span class="math inline">\(H_0:w_{k-s+1}=\cdots=w_k=0\)</span>，从而情况2变为情况1.</li>
+<li>原假设<span class="math inline">\(H_0:\theta_i=g_i(\varphi_1,\cdots,\varphi_r),i=1,\dots,k(r&lt;k)\)</span>，其中<span class="math inline">\(g_i\)</span>具有一阶连续偏导数。</li>
+</ol>
+<p>而如果取<span class="math inline">\(\boldsymbol{\varphi}=(\theta_1,\cdots,\theta_r)\)</span>，则情况1可以变为情况3，从而情况2也可以变为情况3。因此只需要讨论情况3的假设检验问题即可。</p>
+<p>对于假设问题3，定义似然比统计量 <span class="math display">\[
+\lambda(X)=\frac{\prod_{i=1}^n p(X_i;\boldsymbol{\hat{\theta}})}{\prod_{i=1}^n p(X_i;\boldsymbol{\hat{\theta}}_0)}
+\]</span> 则在原假设<span class="math inline">\(H_0\)</span>成立时，<span class="math inline">\(2\ln \lambda(X)\)</span>随着<span class="math inline">\(n\)</span>增大而依分布收敛于<span class="math inline">\(\chi^2(k-r)\)</span>。其中<span class="math inline">\(r\)</span>可以理解为约束条件的个数，<span class="math inline">\(k-r\)</span>便代表独立参数的个数。</p>
+<p>应用1：二维列联表的独立性检验</p>
+<p>设有<span class="math inline">\(X,Y\)</span>两个离散型随机变量，分别可以取<span class="math inline">\(r\)</span>和<span class="math inline">\(c\)</span>个值，与此相联系的有一个二维列联表<span class="math inline">\(r\times c\)</span>。作<span class="math inline">\(n\)</span>次观测，在<span class="math inline">\((i,j)\)</span>格的观测频数为<span class="math inline">\(n_{ij}\)</span>。观测值落入<span class="math inline">\((i,j)\)</span>格的概率为<span class="math inline">\(p_{ij}\)</span>。此时，观测频数服从多项分布，其概率密度为： <span class="math display">\[
+\frac{n!}{\prod_{i=1}^r\prod_{j=1}^c}\cdot \prod_{i=1}^r\prod_{j=1}^c p_{ij}^{n_{ij}}
+\]</span> 由于<span class="math inline">\(\sum_{i=1}^r \sum_{j=1}^c p_{ij}=1\)</span>，所以参数空间<span class="math inline">\(\Theta=\{p_{ij}:i=1,\cdots,r;j=1,\cdots,c;p_{ij}\ge 0;\sum_{i=1}^r \sum_{j=1}^c p_{ij}=1\}\)</span>中独立参数只有<span class="math inline">\(r\times c-1\)</span>个。因此<span class="math inline">\(\Theta\)</span>为<span class="math inline">\(r\cdot c-1\)</span>维欧氏空间的一个含有内点的集合。<span class="math inline">\(p_{ij}\)</span>的MLE为<span class="math inline">\(\hat{p}_{ij}=n_{ij}/n\)</span>。</p>
+<p>考虑独立性检验：原假设<span class="math inline">\(H_0:p_{ij}=p_{i\cdot}\cdot p_{\cdot j}\)</span>，其中<span class="math inline">\(p_{i\cdot}\)</span>和<span class="math inline">\(p_{\cdot j}\)</span>分别是<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>的边缘分布。因此其参数空间<span class="math inline">\(\Theta_0\)</span>与下述集合<span class="math inline">\(A\)</span>一一对应： <span class="math display">\[
+A=\{(p_{i\cdot},p_{\cdot j}):i=1,\cdots,r;j=1,\cdots,c;p_{ij}\ge 0;\sum_{i=1}^r p_{i\cdot}= \sum_{j=1}^c p_{\cdot j}=1\}
+\]</span> 集合<span class="math inline">\(A\)</span>中的独立参数只有<span class="math inline">\(r+c-2\)</span>个（<span class="math inline">\(p_{i\cdot}\)</span>和<span class="math inline">\(p_{\cdot j}\)</span>一共<span class="math inline">\(r+c\)</span>个，加上两个约束条件）。此时，<span class="math inline">\(p_{ij}\)</span>的MLE为<span class="math inline">\(\hat{p}_{i\cdot}\cdot \hat{p}_{\cdot j}=(n_{i\cdot}/n)\cdot (n_{\cdot j}/n)\)</span>，其中<span class="math inline">\(n_{i\cdot}=\sum_{j=1}^c n_{ij}\)</span>，<span class="math inline">\(n_{\cdot j}=\sum_{i=1}^k n_{ij}\)</span>。</p>
+<p>该检验问题的似然比统计量为： <span class="math display">\[
+\Lambda=\frac{\prod_{i=1}^r\prod_{j=1}^k (\frac{n_{ij}}{n})^{n_{ij}}}{\prod_{i=1}^r\prod_{j=1}^k(\frac{n_{i\cdot}}{n}\cdot\frac{n_{\cdot j}}{n})^{n_{ij}}}
+\]</span> 由于<span class="math inline">\((r\cdot c-1)-(r+c-2)=(r-1)(c-1)\)</span>，因此在原假设成立时，<span class="math inline">\(2\ln \Lambda\)</span>的极限分布为<span class="math inline">\(\chi^2((r-1)(c-1))\)</span>，因此在<span class="math inline">\(2\ln \Lambda \ge \chi_{1-\alpha}^2((r-1)(c-1))\)</span>时，拒绝原假设。</p>
+<p>应用2：三维列联表的条件独立性检验</p>
+<p>设有<span class="math inline">\(X,Y,Z\)</span>三个离散型随机变量，与此相联系的有一个三维列联表<span class="math inline">\(r\times c\times t\)</span>。作<span class="math inline">\(n\)</span>次观测，在<span class="math inline">\((i,j,k)\)</span>格的观测频数为<span class="math inline">\(n_{ijk},i=1,\dots,r,j=1,\dots,c,k=1,\dots,t\)</span>，观测值落入<span class="math inline">\((i,j,k)\)</span>格的概率为<span class="math inline">\(p_{ijk}\)</span>。<span class="math inline">\(n_{ijk}\)</span>服从多项分布，其概率密度为： <span class="math display">\[
+\frac{n!}{\prod_{i=1}^{r}\prod_{j=1}^{c}\prod_{k=1}^{t}n_{ijk}!}\cdot \prod_{i=1}^{r}\prod_{j=1}^{c}\prod_{k=1}^{t}p_{ijk}^{n_{ijk}}
+\]</span> 由于<span class="math inline">\(\sum_{i=1}^{r}\sum_{j=1}^{c}\sum_{k=1}^{t}p_{ijk}=1\)</span>，所以参数空间<span class="math inline">\(\Theta=\{p_{ijk}:p_{ijk}\ge 0,\sum_{i=1}^{r}\sum_{j=1}^{c}\sum_{k=1}^{t}p_{ijk}=1\}\)</span>中的独立参数有<span class="math inline">\(r\cdot c\cdot t-1\)</span>个。因此<span class="math inline">\(\Theta\)</span>是<span class="math inline">\(r\cdot c\cdot t-1\)</span>维欧氏空间的一个含有内点的集合。<span class="math inline">\(p_{ijk}\)</span>的MLE为<span class="math inline">\(\hat{p}_{ijk}=n_{ijk}/n\)</span>。</p>
+<p>对于三维列联表，共有三种不同的检验问题，原假设分别为：（1）三个随机变量相互独立，（2）一个随机变量和另外两个随机变量相互独立，（3）给定一个随机变量之后另外两个随机变量相互条件独立。对于前两个假设检验问题来说，类似于二维列联表的独立性检验问题。下面推导第三个检验问题的似然比检验。</p>
+<p>不失一般性地，考虑给定<span class="math inline">\(Z\)</span>之后，<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>相互条件独立的检验问题。如果条件独立性成立，则有： <span class="math display">\[
+P(X=i,Y=j|Z=k)=P(X=i|Z=k)\cdot P(Y=j|Z=k)
+\]</span> 从而有： <span class="math display">\[
+p_{ijk}=\frac{p_{i\cdot k}\cdot p_{\cdot jk}}{p_{\cdot \cdot k}}
+\]</span> 当条件独立性成立时，<span class="math inline">\(p_{ijk}\)</span>的MLE为： <span class="math display">\[
+\frac{\hat p_{i\cdot k}\cdot \hat p_{\cdot jk}}{\hat p_{\cdot \cdot k}}=\frac{n_{i\cdot k}\cdot n_{\cdot jk}}{n\cdot n_{\cdot \cdot k}}
+\]</span> 此时的参数空间<span class="math inline">\(\Theta_0\)</span>与下面的集合<span class="math inline">\(A\)</span>一一对应： <span class="math display">\[
+A=\left\{(p_{i\cdot k}, p_{\cdot jk},p_{\cdot \cdot k}):p_{i\cdot k}\ge 0,p_{\cdot jk}\ge 0,p_{\cdot \cdot k}=\sum_{i=1}^r p_{i\cdot k}=\sum_{j=1}^{c}p_{\cdot jk},\sum_{k=1}^{t}p_{\cdot \cdot k}=1 \right\}
+\]</span> 从中可得，<span class="math inline">\(A\)</span>中的独立参数只有<span class="math inline">\(t\cdot(r+c-1)-1\)</span>个（<span class="math inline">\(p_{i\cdot k}\)</span>一共<span class="math inline">\(r\times t\)</span>个，<span class="math inline">\(p_{\cdot jk}\)</span>一共<span class="math inline">\(c\times t\)</span>个，<span class="math inline">\(p_{\cdot \cdot t}\)</span>一共<span class="math inline">\(t\)</span>个，约束条件有<span class="math inline">\(1+2t\)</span>个）。</p>
+<p>该检验问题的似然比统计量为： <span class="math display">\[
+\Lambda=\frac{\prod_{i=1}^{r}\prod_{j=1}^{c}\prod_{k=1}^{t}(\frac{n_{ijk}}{n})^{n_{ijk}}}{\prod_{i=1}^{r}\prod_{j=1}^{c}\prod_{k=1}^{t}(\frac{n_{i\cdot k}\cdot n_{\cdot jk}}{n\cdot n_{\cdot \cdot k}})^{n_{ijk}}}
+\]</span> 由于<span class="math inline">\((r\cdot c\cdot t-1)-[t\cdot(r+c-1)-1]=t\cdot(r-1)\cdot(c-1)\)</span>，因此在原假设成立时，<span class="math inline">\(2\ln \Lambda\)</span>的极限分布为<span class="math inline">\(\chi^2(t\cdot(r-1)\cdot(c-1))\)</span>。故在<span class="math inline">\(2\ln \Lambda\ge \chi^2_{1-\alpha}(t\cdot(r-1)\cdot(c-1))\)</span>时拒绝原假设。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/" title="数理统计-参数假设检验">http://lyf35.github.io/2021/12/26/数理统计-参数假设检验/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag"><i class="fa fa-tag"></i> 统计学</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/26/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C/" rel="prev" title="数理统计-非参数假设检验">
+      <i class="fa fa-chevron-left"></i> 数理统计-非参数假设检验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/07/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1-%E5%8C%BA%E9%97%B4%E4%BC%B0%E8%AE%A1/" rel="next" title="数理统计-区间估计">
+      数理统计-区间估计 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '6b32014a4c3ffa3b96df763a59682d97',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

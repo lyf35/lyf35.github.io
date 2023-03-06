@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="人工神经网络 M-P神经元模型 在生物的神经网络中，每个神经元与其它神经元相连，当它兴奋时就会向相连的神经元发送化学物质，从而改变神经元内的电位；如果某神经元的电位超过了一个阈值，那么它就会被激活，向其他神经元发送化学物质。生物学中神经元的结构如下图所示：  仿照生物学中神经网络的概念，人们提出了人工神经网络结构。人工神经网络是由具有适应性的简单单元组成的广泛并行互联的网络，它的组织可以模拟生物神">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习-深度前馈网络与模型训练">
+<meta property="og:url" content="http://lyf35.github.io/2020/12/15/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%B7%B1%E5%BA%A6%E5%89%8D%E9%A6%88%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="人工神经网络 M-P神经元模型 在生物的神经网络中，每个神经元与其它神经元相连，当它兴奋时就会向相连的神经元发送化学物质，从而改变神经元内的电位；如果某神经元的电位超过了一个阈值，那么它就会被激活，向其他神经元发送化学物质。生物学中神经元的结构如下图所示：  仿照生物学中神经网络的概念，人们提出了人工神经网络结构。人工神经网络是由具有适应性的简单单元组成的广泛并行互联的网络，它的组织可以模拟生物神">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412205850.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412212719.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412223925.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412231539.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210414232148.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210417014150.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210417230738.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210418233635.png">
+<meta property="article:published_time" content="2020-12-15T15:09:52.000Z">
+<meta property="article:modified_time" content="2021-03-26T14:40:16.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412205850.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2020/12/15/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%B7%B1%E5%BA%A6%E5%89%8D%E9%A6%88%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深度学习-深度前馈网络与模型训练 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%BA%E5%B7%A5%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">1.</span> <span class="nav-text">人工神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#m-p%E7%A5%9E%E7%BB%8F%E5%85%83%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">M-P神经元模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%84%9F%E7%9F%A5%E6%9C%BA"><span class="nav-number">1.2.</span> <span class="nav-text">感知机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E5%B1%82%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-number">1.3.</span> <span class="nav-text">多层前馈神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.2.</span> <span class="nav-text">激活函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%87%E8%83%BD%E8%BF%91%E4%BC%BC%E5%AE%9A%E7%90%86"><span class="nav-number">1.3.3.</span> <span class="nav-text">万能近似定理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="nav-number">2.</span> <span class="nav-text">模型训练-反向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E4%B8%8E%E6%A2%AF%E5%BA%A6%E7%88%86%E7%82%B8"><span class="nav-number">2.2.</span> <span class="nav-text">梯度消失与梯度爆炸</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.2.1.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.2.</span> <span class="nav-text">解决方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%87%E6%8B%9F%E5%90%88%E7%9A%84%E9%A2%84%E9%98%B2"><span class="nav-number">3.</span> <span class="nav-text">过拟合的预防</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E4%BC%98%E5%8C%96%E4%B8%AD%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">4.</span> <span class="nav-text">网络优化中的挑战</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">优化器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95"><span class="nav-number">5.1.</span> <span class="nav-text">梯度下降法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E9%87%8F%E4%BC%98%E5%8C%96%E6%B3%95"><span class="nav-number">5.2.</span> <span class="nav-text">动量优化法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E9%80%82%E5%BA%94%E5%AD%A6%E4%B9%A0%E7%8E%87%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95"><span class="nav-number">5.3.</span> <span class="nav-text">自适应学习率优化算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7"><span class="nav-number">6.</span> <span class="nav-text">模型训练技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">6.1.</span> <span class="nav-text">数据预处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">6.2.</span> <span class="nav-text">参数初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E8%8A%82"><span class="nav-number">6.3.</span> <span class="nav-text">超参数调节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E5%AE%83"><span class="nav-number">6.4.</span> <span class="nav-text">其它</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2020/12/15/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%B7%B1%E5%BA%A6%E5%89%8D%E9%A6%88%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习-深度前馈网络与模型训练
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-15 23:09:52" itemprop="dateCreated datePublished" datetime="2020-12-15T23:09:52+08:00">2020-12-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-26 22:40:16" itemprop="dateModified" datetime="2021-03-26T22:40:16+08:00">2021-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/12/15/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%B7%B1%E5%BA%A6%E5%89%8D%E9%A6%88%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83/" class="post-meta-item leancloud_visitors" data-flag-title="深度学习-深度前馈网络与模型训练" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>20k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>18 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="人工神经网络">人工神经网络</h1>
+<h2 id="m-p神经元模型">M-P神经元模型</h2>
+<p>在生物的神经网络中，每个神经元与其它神经元相连，当它兴奋时就会向相连的神经元发送化学物质，从而改变神经元内的电位；如果某神经元的电位超过了一个阈值，那么它就会被激活，向其他神经元发送化学物质。生物学中神经元的结构如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412205850.png" alt="img" style="zoom: 50%;" /></p>
+<p>仿照生物学中神经网络的概念，人们提出了人工神经网络结构。人工神经网络是由具有适应性的简单单元组成的广泛并行互联的网络，它的组织可以模拟生物神经系统对于真实世界物体所做出的交互反应。在人工神经网络中，神经元被抽象为如下所示的M-P神经元模型：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412212719.png" alt="MP神经元模型" style="zoom: 50%;" /></p>
+<span id="more"></span>
+<p>在上面的M-P神经元模型中，神经元接收到来自<span class="math inline">\(n\)</span>个其他神经元传递过来的输入信号，这些输入信号通过带权重的连接进行传递，神经元将接收到的总输入值与神经元的阈值（其实等同于添加了一个偏置）进行比较，然后通过激活函数处理以产生神经元的输出。将多个神经元按照一定的层次结构连接起来，就可以得到神经网络。</p>
+<h2 id="感知机">感知机</h2>
+<p>感知机是最简单的神经网络结构，它的结构如下图所示（需要注意下图所示感知机结构的<span class="math inline">\(x_1,x_2,\dots,x_n\)</span>代表模型的输入；而在M-P神经元模型中，<span class="math inline">\(x_1,x_2,\dots,x_n\)</span>可以为模型的输入，也可以为来自于其它神经元的输出）：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412223925.png" alt="感知机" style="zoom: 50%;" /></p>
+<p>在上图的感知机结构中，有两层神经元，分别为输入层和输出层。输入层接收外界输入信号后传递给输出层，输出层是M-P神经元。因此，<span class="math inline">\(y=f(\Sigma_i w_i x_i-\theta)\)</span>。</p>
+<p>感知机模型的学习能力非常有限，只能处理线性可分的问题。如果两种类别线性可分，那么感知机的学习过程一定会收敛，得到一个权重向量<span class="math inline">\(\boldsymbol{w}\)</span>（这一权重向量不唯一，它与模型的初始化参数与迭代过程都有关）；否则感知机的学习过程将会发生振荡，模型的训练过程无法收敛。</p>
+<h2 id="多层前馈神经网络">多层前馈神经网络</h2>
+<h3 id="网络结构">网络结构</h3>
+<p>上述的感知机模型学习能力有限，因此在实际应用中是使用多个M-P神经元模型构造出多层的网络结构，使得网络具有更强大的学习能力。最常见的神经网络结构是<strong>多层前馈神经网络（也叫深度前馈网络、多层感知机等）</strong>。在这种网络结构中，每一层神经元与下一层神经元全互联，神经元之间不存在同层连接或是跨层连接，构成一个有向无环图。它的结构如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210412231539.png" alt="MLP" /><figcaption aria-hidden="true">MLP</figcaption>
+</figure>
+<p>上图所示的结构主要分为三部分：输入层、隐藏层（可以有多个）和输出层。外界输入首先被送到输入层中，然后隐藏层神经元对信号进行加工，最终输出层神经元加工并输出最终结果，这一过程被称为<strong>前向传播</strong>。网络的训练过程，就是根据训练数据来调整神经元之间的连接权重以及每个神经元的阈值（偏置）；相对应地，网络的训练通常使用<strong>反向传播</strong>算法。也就是说，神经网络最终学到的东西就包含在连接权重和阈值中。</p>
+<p>对于一个<span class="math inline">\(n\)</span>层的网络，我们可以使用矩阵运算来表示其计算过程。假设输入为<span class="math inline">\(X^{(0)}\)</span>，第<span class="math inline">\(i\)</span>层的权重为<span class="math inline">\(W^{(i)}\)</span>，偏置为<span class="math inline">\(\boldsymbol{b}^{(i)}\)</span>，激活函数为<span class="math inline">\(f^{(i)}\)</span>，输出为<span class="math inline">\(X^{(i)}\)</span>。那么第<span class="math inline">\(i\)</span>层的输出<span class="math inline">\(X^{(i)}\)</span>便可以表示为： <span class="math display">\[
+X^{(i)}=f^{(i)}(W^{(i)}X^{(i-1)}+\boldsymbol{b}^{(i)}),~i=1,2,\dots,n
+\]</span> 也就是说，多层前馈神经网络可以看成一个层层嵌套的复合函数。</p>
+<h3 id="激活函数">激活函数</h3>
+<p>如果所有的激活函数<span class="math inline">\(f^{(i)}\)</span>都为线性关系的函数，那么前馈网络作为一个整体，其输出仍然是输入的线性变换。为了增强网络的表达能力，我们需要引入非线性的激活函数，从而使得输出与输入之间能够形成非线性的复杂映射。一般来说，激活函数都为逐元素的非线性函数，不同激活函数的区别仅仅在于其激活函数的表达式。常用的激活函数包括：</p>
+<ul>
+<li><p>整流线性单元（ReLU）：<span class="math inline">\(f(x)=\max \{0,x\}\)</span></p>
+<p>整流线性单元在其一半的定义域上输出为0，也就是说，当<span class="math inline">\(x\)</span>为正数时，神经元的输出为<span class="math inline">\(x\)</span>本身，相当于神经元处于激活状态；而当<span class="math inline">\(x\)</span>为负时，神经元的输出为0，相当于神经元没有被激活，对后续的计算没有影响。同时，只要整流线性单元处于激活状态，它的一阶导数处处为1，梯度值不仅大而且一致，因此它易于优化。但是它的缺陷是当神经元没有被激活时，由于其一阶导数的值为0，因此不能通过基于梯度的训练方法（如梯度下降法）使得这些神经元重新被激活。</p>
+<p>此外还有一些整流线性单元的扩展，它们对整流线性单元中<span class="math inline">\(x&lt;0\)</span>的部分进行了修改，保证了定义域的各个位置上梯度值都不为0。常用的扩展包括：</p>
+<ul>
+<li>绝对值整流：<span class="math inline">\(f(x)=|x|\)</span>。</li>
+<li>渗漏整流线性单元（Leaky ReLU）：<span class="math inline">\(f(x)=\max \{0,x\}+\alpha \min \{0,x\}\)</span>，其中<span class="math inline">\(\alpha\)</span>是一个较小的正数。</li>
+<li>参数化整流线性单元（PReLU）：表达式同样为<span class="math inline">\(f(x)=\max \{0,x\}+\alpha \min \{0,x\}\)</span>，但是其中的<span class="math inline">\(\alpha\)</span>是一个可学习的参数。</li>
+<li>指数线性单元（ELU）：<span class="math inline">\(f(x)=\begin{cases}\alpha(\exp(x)-1)~~~x&lt;0 \\ x ~~~x\ge 0\end{cases}\)</span>。其中<span class="math inline">\(\alpha\)</span>可以为固定值，也可以作为可学习参数。这一激活函数处处可导。</li>
+</ul></li>
+<li><p>Sigmoid：<span class="math inline">\(f(x)=\sigma(x)=\frac{1}{1+\exp(-x)}\)</span></p>
+<p>Sigmoid激活函数在其大部分的定义域内都饱和（即梯度值很小），只有当<span class="math inline">\(x\)</span>的值在0附近时，它才会对输入强烈敏感。这一特性使得基于梯度的学习变得非常困难，在学习过程中很容易出现梯度消失的现象。此外，Sigmoid的输出总为正数，在一些情况下将会导致训练过程中收敛缓慢。因此，在前馈神经网络中通常不适用这一激活函数，它通常被使用在如循环网络、概率模型、自编码器等不能使用分段线性激活函数的模型中；或是被用于二分类任务的输出层，使得输出对应于<span class="math inline">\((0,1)\)</span>区间内的概率值（多分类使用Softmax）。</p></li>
+<li><p>双曲正切激活函数：<span class="math inline">\(f(x)=\tanh(x)\)</span></p>
+<p>双曲正切激活函数与Sigmoid类似，因为<span class="math inline">\(\tanh(x)=2\sigma(2x)-1\)</span>。但是双曲正切激活函数通常要比Sigmoid激活函数的表现更好。此外，双曲正切激活函数的输出关于<span class="math inline">\(x=0\)</span>中心对称，避免了Sigmoid激活函数中输出总是大于0的问题。</p></li>
+<li><p>Softplus：<span class="math inline">\(f(x)=\log(1+e^x)\)</span></p>
+<p>这一激活函数相当于是整流线性单元的平滑版本，在定义域上处处可导。</p></li>
+</ul>
+<h3 id="万能近似定理">万能近似定理</h3>
+<p>万能近似定理（universal approximation theorem）表明，一个前馈神经网络如果具有线性输出层和至少一层具有任何一种“挤压”性质的激活函数（例如sigmoid激活函数）的隐藏层，只要给予网络足够数量的隐藏单元，它能以任意的精度来近似任何从一个有限维空间到另一个有限维空间的Borel可测函数，前馈网络的导数也可以任意好地来近似函数的导数（Borel可测的概念较为复杂，我们只需要知道定义在<span class="math inline">\(\R^n\)</span>的有界闭集上的任意连续函数是Borel可测的，因此可以用神经网络来近似）。万能近似定理也已经被证明对于更广泛类别的激活函数也是适用的，其中就包括常用的整流线性单元。</p>
+<p>万能近似定理意味着，无论我们试图学习什么函数，一定存在一个大的MLP能够表示这个函数。然而，我们不能保证训练算法能够学得这个函数；即使MLP能够表示该函数，学习也可能因不同的原因而失败，比如优化算法很难找到期望函数的参数值，也或者是训练算法由于过拟合而选择了错误的函数。</p>
+<p>从经验上来讲，通常更深的模型在广泛的任务中能够取得更好的泛化效果。因此通常倾向于将网络的层数设计的深一些，而不是把每一层的神经元个数设计的多一些。</p>
+<h1 id="模型训练-反向传播">模型训练-反向传播</h1>
+<h2 id="原理">原理</h2>
+<p>反向传播算法是将来自于损失函数的信息通过网络向后流动，以便<strong>计算梯度</strong>，从而进一步使用基于梯度的优化算法对模型参数进行优化。需要明确的是，反向传播算法仅仅是一种计算梯度的方法，不能将其误解为多层神经网络的整个学习算法。此外，反向传播算法其实是一种计算复合函数导数的算法，可以适用于计算任何函数的梯度。如果将复合函数的计算过程看作一个计算图，我们在计算输出值的导数时，需要使用链式法则进行计算，而使用链式法则进行一步步计算的过程其实便相当于是在计算图中做反向传播的过程。</p>
+<p>我们以下图所示的计算图为例来说明反向传播的过程：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210414232148.png" alt="image-20210414232141239" style="zoom:67%;" /></p>
+<p>在上图中，<span class="math inline">\(x=f_1(w),y=f_2(x),z=f_3(y)\)</span>，如果我们要计算<span class="math inline">\(\frac{\partial z}{\partial w}\)</span>的话，可以有两种方式： <span class="math display">\[
+\begin{aligned}
+ \frac{\partial z}{\partial w} 
+=&amp; \frac{\partial z}{\partial y}\frac{\partial y}{\partial x}\frac{\partial x}{\partial w} \\
+=&amp; f_3&#39;(y) f_2&#39;(x) f_1&#39;(w) \\
+=&amp; f_3&#39;(f_2(f_1(w)))f_2&#39;(f_1(w))f_1&#39;(w)
+\end{aligned}
+\]</span> 上述公式的最后两行对应于链式求导法则的两种不同实现。其中倒数第二行便对应于反向传播的方法，而倒数第一行为链式法则的另一种实现方式。对比二者我们可以发现，反向传播方法的计算公式较为简单，但是却需要花费更多的空间去存储中间表达式的值；而另一种方式的计算过程复杂，但相应地也只需要更小的存储空间。因此，当存储空间足够时，优先考虑使用反向传播算法来计算梯度。</p>
+<p>接下来我们以MLP为例，说明神经网络中的反向传播过程。在下面的推导过程中会使用到一些数学符号，这些符号的上标表示网络的层数，下标表示网络某一层中对应的神经元。一般地，我们假设网络的输入为向量<span class="math inline">\(\boldsymbol{x}=\{x_1,x_2,\dots,x_d\}\)</span>，输出为向量<span class="math inline">\(\hat{\boldsymbol{y}}=\{\hat{y_1},\hat{y_2},\dots,\hat{y_l}\}\)</span>，损失函数为<span class="math inline">\(L(\hat{\boldsymbol{y}},\boldsymbol{y})\)</span>，隐藏层共有<span class="math inline">\(K\)</span>层，如下图所示：</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210417014150.png" alt="image-20210417014143779" /><figcaption aria-hidden="true">image-20210417014143779</figcaption>
+</figure>
+<p>接下来的推导过程中，我们将会使用到如下的一些符号：</p>
+<ul>
+<li><span class="math inline">\(b_m^k\)</span>：第<span class="math inline">\(k\)</span>层第<span class="math inline">\(m\)</span>个神经元的偏置</li>
+<li><span class="math inline">\(w_{mn}^{k}\)</span>：第<span class="math inline">\(k-1\)</span>层的第<span class="math inline">\(m\)</span>个神经元和第<span class="math inline">\(k\)</span>层的第<span class="math inline">\(n\)</span>个神经元之间的权重</li>
+<li><span class="math inline">\(f^k\)</span>：第<span class="math inline">\(k\)</span>层神经元使用的激活函数</li>
+<li><span class="math inline">\(\beta_m^k\)</span>：第<span class="math inline">\(k\)</span>层第<span class="math inline">\(m\)</span>个神经元的输入，即<span class="math inline">\(\beta_m^k=\sum_{i} w_{im}^k a_{i}^{k-1}+b_m^k\)</span></li>
+<li><span class="math inline">\(a_m^k\)</span>：第<span class="math inline">\(k\)</span>层第<span class="math inline">\(m\)</span>个神经元的输出，即<span class="math inline">\(a_m^k=f^k(\beta_m^k)=f^k(\sum_{i} w_{im}^k a_{i}^{k-1}+b_m^k)\)</span>。对于输出层来说，有<span class="math inline">\(a_m^{K+1}=\hat{y_m}\)</span></li>
+</ul>
+<p>在上图所示的网络中，需要优化的变量为所有的权重<span class="math inline">\(w_{mn}^{k}\)</span>和偏置<span class="math inline">\(b_m^k\)</span>。这一优化过程可以通过梯度下降算法来实现，即根据表达式<span class="math inline">\(\Delta w_{mn}^{k}=-\eta \frac{\partial L}{\partial w_{mn}^{k}}\)</span>以及<span class="math inline">\(\Delta b_{m}^{k}=-\eta \frac{\partial L}{\partial b_{m}^{k}}\)</span>来对参数进行调整。因此，问题的关键便为如何求解表达式<span class="math inline">\(\frac{\partial L}{\partial w_{mn}^{k}}\)</span>和<span class="math inline">\(\frac{\partial L}{\partial b_{m}^{k}}\)</span>的值。要求解这一表达式，如果我们按照从前往后的顺序求解的话，由于前面的计算结果会一直影响到后面的输出，使用链式求导法则将会得到很长的表达式，而且其中的一些子表达式在计算后面隐藏层的梯度时也会用到。因此我们不妨考虑从输出层（即第<span class="math inline">\(K+1\)</span>层）开始，通过使用反向传播的方法，自后向前地计算梯度。</p>
+<p>具体地，我们可以先计算<span class="math inline">\(\frac{\partial L}{\partial w_{mn}^{K+1}}\)</span>和<span class="math inline">\(\frac{\partial L}{\partial b_{m}^{K+1}}\)</span>：</p>
+$$
+<span class="math display">\[\begin{aligned}
+\frac{\partial L}{\partial w_{mn}^{K+1}}=&amp; \color{red}{\frac{\partial L}{\partial a_n^{K+1}}} \color{green}\frac{\partial a_n^{K+1}}{\partial \beta_n^{K+1}} \color{purple}\frac{\partial \beta_n^{K+1}}{\partial w_{mn}^{K+1}}\\
+
+=&amp; \frac{\partial L}{\partial \hat{y_n}} \cdot f&#39;^{K+1}(\beta_n^{K+1}) \cdot a_{m}^{K} \\
+
+\frac{\partial L}{\partial b_{n}^{K+1}}=&amp; \color{red}\frac{\partial L}{\partial a_n^{K+1}} \color{green}\frac{\partial a_n^{K+1}}{\partial \beta_n^{K+1}} \color{purple}\frac{\partial \beta_n^{K+1}}{\partial b_{n}^{K+1}}\\
+
+=&amp; \frac{\partial L}{\partial \hat{y_n}} \cdot f&#39;^{K+1}(\beta_n^{K+1}) \cdot 1 \\
+
+\end{aligned}\]</span>
+<p>$$</p>
+<p>其中，<span class="math inline">\(\frac{\partial L}{\partial \hat{y_n}}\)</span>代表损失函数<span class="math inline">\(L\)</span>相对于预测值<span class="math inline">\(\hat{y_n}\)</span>的偏导，比如我们使用平方损失函数，那么这一表达式的值便为<span class="math inline">\(2(\hat{y_n}-y_n)\)</span>；<span class="math inline">\(f&#39;^{K+1}\)</span>则为第<span class="math inline">\(K+1\)</span>层（即输出层）损失函数的一阶导数。</p>
+在计算完第<span class="math inline">\(K+1\)</span>层每个参数的梯度值之后，接下来我们计算第<span class="math inline">\(K\)</span>层参数的梯度<span class="math inline">\(\frac{\partial L}{\partial w_{mn}^{K}}\)</span>和<span class="math inline">\(\frac{\partial L}{\partial b_{m}^{K}}\)</span>： $$
+<span class="math display">\[\begin{aligned}
+\frac{\partial L}{\partial w_{mn}^{K}}=&amp; \color{red}\frac{\partial L}{\partial a_n^{K}} \color{green}\frac{\partial a_n^{K}}{\partial \beta_{n}^{K}} \color{purple}\frac{\partial \beta_n^{K}}{\partial w_{mn}^{K}}\\
+=&amp; \frac{\partial L}{\partial a_n^{K}}\cdot f&#39;^K(\beta_{n}^{K})\cdot a_m^{K-1}\\
+
+\frac{\partial L}{\partial b_{n}^{K}}=&amp; \color{red}\frac{\partial L}{\partial a_n^{K}} \color{green}\frac{\partial a_n^{K}}{\partial \beta_{n}^{K}} \color{purple}\frac{\partial \beta_n^{K}}{\partial b_{n}^{K}}\\
+=&amp; \frac{\partial L}{\partial a_n^{K}}\cdot f&#39;^K(\beta_{n}^{K})\cdot 1
+
+\end{aligned}\]</span>
+<p>$$ 对比第<span class="math inline">\(K\)</span>层和第<span class="math inline">\(K+1\)</span>层的表达式，我们发现二者其实很相似，除了<span class="math inline">\(\frac{\partial L}{\partial a_n^{K}}\)</span>需要做额外的计算。</p>
+<p>将<span class="math inline">\(\frac{\partial L}{\partial a_n^{K}}\)</span>使用链式法则展开可得： <span class="math display">\[
+\begin{aligned}
+\frac{\partial L}{\partial a_n^{K}}=&amp; \sum_{i} \color{red}\frac{\partial L}{\partial a_i^{K+1}} \color{green}\frac{\partial a_i^{K+1}}{\partial \beta_i^{K+1}} \color{blue}\frac{\partial \beta_i^{K+1}}{\partial a_n^{K}} \\
+=&amp; \sum_{i} \frac{\partial L}{\partial \hat{y_i}} \cdot f&#39;^{K+1}(\beta_i^{K+1}) \cdot w_{ni}^{K+1}
+\end{aligned}
+\]</span> 从中不难看出，<span class="math inline">\(\frac{\partial L}{\partial a_n^{K}}\)</span>计算式中的一些元素在计算第<span class="math inline">\(K+1\)</span>层参数的梯度时就已经计算过，可以直接使用。</p>
+综上，我们可以将这一结论推广至任意的第<span class="math inline">\(k\)</span>层： $$
+<span class="math display">\[\begin{aligned}
+\frac{\partial L}{\partial w_{mn}^{k}}=&amp; \color{red}\frac{\partial L}{\partial a_n^{k}} \color{green}\frac{\partial a_n^{k}}{\partial \beta_{n}^{k}} \color{purple}\frac{\partial \beta_n^{k}}{\partial w_{mn}^{k}}\\
+=&amp; \frac{\partial L}{\partial a_n^{k}}\cdot f&#39;^k(\beta_{n}^{k})\cdot a_m^{k-1}\\
+
+\frac{\partial L}{\partial b_{n}^{k}}=&amp; \color{red}\frac{\partial L}{\partial a_n^{k}} \color{green}\frac{\partial a_n^{k}}{\partial \beta_{n}^{k}} \color{purple}\frac{\partial \beta_n^{k}}{\partial b_{n}^{k}}\\
+=&amp; \frac{\partial L}{\partial a_n^{k}}\cdot f&#39;^k(\beta_{n}^{k})\cdot 1
+
+\end{aligned}\]</span>
+<p><span class="math display">\[
+其中，
+\]</span> =_{i}    \ $$ （这一部分的推导可以结合视频https://www.bilibili.com/video/BV16x411V7Qg?p=2来帮助理解）</p>
+<h2 id="梯度消失与梯度爆炸">梯度消失与梯度爆炸</h2>
+<h3 id="原因">原因</h3>
+<p>在上文推导的反向传播梯度表达式中的<span class="math inline">\(\frac{\partial L}{\partial a_n^{k}}\)</span>一项中，包含了表达式<span class="math inline">\(\frac{\partial L}{\partial a_i^{k+1}}\)</span>；而表达式<span class="math inline">\(\frac{\partial L}{\partial a_i^{k+1}}\)</span>又需要继续使用链式法则，展开为包含<span class="math inline">\(\frac{\partial L}{\partial a_i^{k+2}}\)</span>的连乘式，如此下去直到输出部分。也就是说，越是靠近输入层的部分，在计算参数的梯度时所对应的链式求导连乘式也越长。这便会导致当神经网络层数比较多时，在模型训练的过程中会遇到梯度消失和梯度爆炸的问题；而且随着网络层数的增加，这一问题将会变得越来越明显。</p>
+<p>梯度消失通常是因为连乘式中包含了许多小于1的项，它们累乘起来便会导致最终的乘积变为一个很小的数。例如当我们使用Sigmoid激活函数时，它导数的最大值也只有0.25，而且当<span class="math inline">\(x\)</span>与0偏离较多的时候，导数值会迅速地变为一个接近0的数字。从数值计算的角度来看，<span class="math inline">\(0.25^5\approx 1\times 10^{-3}\)</span>，而<span class="math inline">\(0.1^{5}= 1\times 10^{-5}\)</span>，因此在累乘式中如果有很多个数值较小的项，则它们累乘起来的结果就几乎等于0，也就是出现梯度消失。</p>
+<p>而梯度爆炸则是因为连乘式中出现了很多大于1的项，它们累乘起来便会出现类似于指数爆炸的情况。例如模型的初始化参数设定不恰当时，使模型中出现许多数值大于1的参数，那么在计算梯度的时候，它们在相乘之后就会得到一个很大的数值，从而导致梯度爆炸。</p>
+<h3 id="解决方法">解决方法</h3>
+<ul>
+<li><p>使用合适的初始化策略</p>
+<p>一些初始化策略可以减轻梯度消失或者梯度爆炸，例如Xavier（Glorit）初始化（详情可阅读：http://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf）或者Kaiming（He）初始化（详情可阅读：https://arxiv.org/pdf/1502.01852.pdf）。</p></li>
+<li><p>梯度剪切和权重正则化</p>
+<p>这两种方法主要是针对于梯度爆炸。梯度剪切的思想是设置一个梯度剪切的阈值，如果梯度超过这个阈值就将其强制截断到这个值。而权重正则化则是在损失函数中加上权重的L1或者L2正则项，如果发生梯度爆炸的话，那么权重的正则项就会变得非常大，因此正则化也可以部分限制梯度爆炸的发生。</p></li>
+<li><p>使用ReLU、Leaky ReLU、ELU等激活函数</p>
+<p>如果使用整流线性单元类的激活函数，由于它们在<span class="math inline">\(x&gt;0\)</span>区间的导数恒为1，这样便可以一定程度上避免梯度消失。虽然它们也有一些缺点，但是仍然是目前使用最多的激活函数。</p></li>
+<li><p>Batch Normalization</p>
+<p>Batch Normalization顾名思义，正如其字面意思“批标准化”。这一操作首先将一个mini-batch在神经网络某处的值<span class="math inline">\(x_i\)</span>做标准化处理，然后通过放缩与平移改变其均值和方差，最终变为<span class="math inline">\(y_i\)</span>。它的计算公式如下： <span class="math display">\[
+\begin{aligned}
+\mu_B=&amp;\frac{1}{m}\sum_{i=1}^{m}x_i ~~~~\text{mini-batch mean}\\
+\sigma_B=&amp;\frac{1}{m}\sum_{i=1}^{m}(x_i-\mu_B)^2 ~~~~\text{mini-batch variance}\\
+\hat{x_i}=&amp;\frac{x_i-\mu_B}{\sqrt{\sigma_{B}^2+\epsilon}} ~~~~\text{normalize}\\
+y_i=&amp;\gamma\hat{x_i}+\beta ~~~~\text{scale and shift}\\
+\end{aligned}
+\]</span> 其中<span class="math inline">\(\epsilon\)</span>是个很小的数字，主要是为了防止出现<span class="math inline">\(\sigma_B=0\)</span>的情况。<span class="math inline">\(\gamma\)</span>和<span class="math inline">\(\beta\)</span>为Batch Normalization需要学习的参数，即缩放与平移参数。加入这两个参数的原因是，如果只是做标准化操作，让网络中每一层的输入都具有均值为0，方差为1的标准正态分布，这将会降低神经网络的表达能力，因此需要对Batch Normalization之后的结果重新放缩和平移。这里会有一个疑问，为什么将均值先标准化为0，然后再引入参数使它可以被重新设置为任意值？这是因为，如果不使用Batch Normalization的话，那么<span class="math inline">\(x_i\)</span>的均值与方差取决于网络参数的复杂关联；而在使用Batch Normalization之后，其均值和方差仅仅由<span class="math inline">\(\gamma\)</span>和<span class="math inline">\(\beta\)</span>确定，而这两个参数很容易通过梯度下降来学习。</p>
+<p>在训练阶段，<span class="math inline">\(\mu_B\)</span>和<span class="math inline">\(\sigma_B\)</span>分别为当前mini-batch的均值和方差；而在模型推理阶段，<span class="math inline">\(\mu_B\)</span>和<span class="math inline">\(\sigma_B\)</span>分别被设置为训练集所有数据的均值和方差，这可以通过在训练阶段保存每个mini-batch的均值和方差，然后计算得到二者的值。</p>
+<p>值得一提的是，Batch Normalization提出的初衷是为了解决数据的Internal Covariate Shift（ICS）问题，即神经网络参数更新会引起网络中每一层输入值分布发生改变，并且随着网络层数的加深而变得更加严重。一些激活函数如Sigmoid、tanh等，在输入值距离0很远的情况下，就会陷入梯度饱和区，从而出现梯度消失的现象，进而使得参数的更新速度变慢。但是也有一些研究认为，Batch Normalization与ICS无关，它的实质是改变了优化问题，使得优化空间变得平滑。</p></li>
+<li><p>残差结构</p>
+<p>残差网络中加入了捷径部分，即在网络中额外添加一些直接跳过某些网络层的路径，形成如下图所示的残差结构：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210417230738.jpeg" style="zoom: 50%;" /></p>
+<p>在加入捷径之后，反向传播的过程便包含了两条路径：一条路径为通过隐藏层的常规路径，这条路径的梯度链式展开表达式较长；而另一条则是通过捷径“跳过”某些层的路径，梯度的链式展开表达式则相对较短。这样就可以在一定程度上缓解梯度消失和爆炸的现象。</p></li>
+</ul>
+<h1 id="过拟合的预防">过拟合的预防</h1>
+<p>由于神经网络的参数非常多，因此在训练的时候很容易便会出现过拟合的现象。为了缓解过拟合现象，可以使用的方法包括但不限于下面这些：</p>
+<ul>
+<li><p>正则化</p>
+<p>正则化指的是在损失函数中添加一个参数范数的惩罚项，通常使用L2范数或者L1范数。</p></li>
+<li><p>提前终止（early stopping）</p>
+<p>在训练表示能力足够强甚至会过拟合的大模型时，我们会经常观察到训练误差随着时间推移逐渐降低，但是验证集的误差却先下降再上升。此时便意味着出现了过拟合。这也就意味着我们每一次应该返回使得验证集误差最低的参数设置，这样的模型更有希望获得更好的测试误差。</p>
+<p>提前终止技术指的是，在每次验证集误差获得一个最小值时，就将此时对应的模型保存一个副本（在迭代过程中可以把之前保存的副本删除）。同时，我们需要设置一个最大容忍次数，如果模型循环训练了这么多轮之后，验证集上的误差仍然没有取得新的最小值，就可以停止训练，取最终保存的那个模型副本作为训练的结果。</p>
+<p>提前终止技术几乎不需要改变基本的训练过程、目标函数、或者允许的参数值等，同时可以与其它的正则化策略一起使用。因此，这种方式可以很容易地被使用到神经网络的训练过程中去。</p>
+<p>但是提前终止需要一个验证集，这就意味着一些数据无法被送入到模型中进行训练。为了更好地利用这些额外的数据，我们可以在使用提前终止策略的首次训练之后，再进行一次额外的训练。在第二次额外训练中，使用所有的训练数据对模型进行训练，此时可以使用两种不同的训练策略：第一种是再次初始化模型，然后使用第一轮提前终止训练确定的最佳训练轮数；第二种方法是保持第一轮训练获得的参数，然后使用全部的数据继续训练，此时是通过监控验证集的平均损失函数，直到它低于第一次训练时的验证集误差便停止训练。这两种方法都各自有不同的优缺点，第一种方法是无法确定对参数进行相同次数的更新和对数据集循环相同的轮数哪个更好；而第二种方法是验证集的目标可能不一定能达到之前的那个最小值，因此它甚至不能保证终止。</p></li>
+<li><p>Dropout</p>
+<p>Dropout方法提供了一种廉价的Bagging集成近似，具体来说，它是在网络的每个训练轮次中，以概率<span class="math inline">\(p\)</span>随机选取一定比例的神经元，让它们的输出变为0。在之后的训练过程中，便基于修改后的网络做前向和反向传播。如下图所示：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210418233635.png" /></p>
+<p>由于训练过程中屏蔽掉了一些神经元，而模型训练完成之后的推理过程却使用全部的神经元，因此我们需要做一些缩放操作。有两种方式，一种是在训练的时候不做缩放，而在模型推理阶段，对每个权重参数乘以<span class="math inline">\(p\)</span>；第二种方法是在训练的时候，将未被屏蔽的神经元的输出乘上<span class="math inline">\(1/(1-p)\)</span>，这样在测试阶段便不需要再做缩放。</p>
+<p>Dropout在每一轮训练中去掉不同神经元的操作其实等同于每一轮训练不同的网络结构，因此使用Dropout方法训练完成之后，在模型推理时其实相当于是对多个不同的网络取平均。同时也可以减少隐藏层结点之间的相互作用，使得权值更新不再依赖于有固定关系的隐藏结点之间的共同作用，从而一定程度上减轻过拟合。</p></li>
+<li><p>数据集增强</p>
+<p>数据集增强指的是创建一些假数据用于训练模型。例如对图像进行平移、旋转、缩放等操作，或是在网络的输入层注入噪声等。</p></li>
+</ul>
+<h1 id="网络优化中的挑战">网络优化中的挑战</h1>
+<p>对于传统的机器学习算法，如SVM、逻辑回归等，会小心地设计目标函数和约束条件，从而确保优化问题是一个凸优化问题。但是神经网络模型具有复杂的表达式且参数量很大，而且由于模型可辨识性等问题的影响，使得神经网络的损失函数所对应的是高维空间中一个极其复杂的曲面，这将给模型训练带来很多困难。</p>
+<blockquote>
+<p>备注：</p>
+<p>模型可辨识性指的是，一个足够大的训练集可以唯一确定一组模型参数。但是对于神经网络模型来说，它不具有模型可辨识性。如果我们考虑交换网络中某一层任意两个神经元的传入权重向量和传出权重向量，这样便会得到一个完全等价的模型；另一个例子是，如果某个隐藏层使用ReLU激活函数，我们可以将传入权重和偏置扩大<span class="math inline">\(\alpha\)</span>倍，同时将传出权重和偏置变为原来的<span class="math inline">\(1/\alpha\)</span>倍，这样可以得到一个完全等价的模型。</p>
+</blockquote>
+<p>第一个问题是局部极小值的问题，神经网络的损失函数通常具有非常多甚至是无限个局部极小值。如果损失函数值较大的局部极小值很多，这将会给基于梯度的优化算法带来很大问题。需要注意的是，网络难优化的原因不能单单被归为局部极小值的影响，需要根据具体问题来分析。</p>
+<p>此外还有鞍点的影响。鞍点处的梯度为0，在鞍点附近，一些点的值大于鞍点的值，也有一些点的值小于鞍点的值，此时Hessian矩阵同时具有正负特征值。对于神经网络这种高维非凸函数模型而言，其损失函数曲面上的鞍点通常要比局部极小值还要多。一些优化方法在遇到鞍点时将无法逃离鞍点，在其附近震荡。</p>
+<p>多层神经网络也通常存在像悬崖一样的斜率较大区域，这通常是由于几个较大的权重相差导致的（即梯度爆炸）。遇到斜率极大的悬崖结构时，梯度更新将会使得参数值的变化很大。使用梯度截断方法可以避免悬崖区域产生的严重后果。</p>
+<h1 id="优化器">优化器</h1>
+<h2 id="梯度下降法">梯度下降法</h2>
+<p>梯度下降是最基本的一类优化器，主要包括标准的梯度下降法（Gradient Descent），随机梯度下降法（Stochastic Gradient Descent, SGD）以及批量梯度下降法（Mini-batch Stochastic Gradient Descent）。</p>
+<ul>
+<li><p>标准梯度下降法</p>
+<p>假设要训练的模型参数为<span class="math inline">\(\boldsymbol{\theta}\)</span>，损失函数为<span class="math inline">\(L(\boldsymbol{\theta},\boldsymbol{x},\boldsymbol{y})\)</span>，学习率为<span class="math inline">\(\eta\)</span>，那么使用梯度下降法更新参数的公式为： <span class="math display">\[
+\boldsymbol{\theta}\leftarrow \boldsymbol{\theta}-\eta\sum_{i=1}^{n}\frac{1}{n}\nabla L(\boldsymbol{\theta},\boldsymbol{x}_i,\boldsymbol{y}_i)
+\]</span> 这一优化策略沿着<strong>整个训练集</strong>的梯度方向去不断地优化模型参数，从而最小化损失函数。该策略可以理解为“在有限的视距内寻找最快路径下山”。由于在每次迭代时都要遍历所有的样本来计算损失函数的梯度值，因此训练过程缓慢；而且也因为这种方法使用全部训练样本的梯度信息，因此当落入局部最优解（如鞍点）时，由于此时计算出的梯度值为0，模型参数便不再更新。</p></li>
+<li><p>随机梯度下降法</p>
+<p>随机梯度下降法指的是从一批训练样本中随机选取一个样本<span class="math inline">\(\boldsymbol{x}_i\)</span>，然后基于这一个样本的损失去更新参数，即： <span class="math display">\[
+\boldsymbol{\theta}\leftarrow \boldsymbol{\theta}-\eta\nabla L(\boldsymbol{\theta},\boldsymbol{x}_i,\boldsymbol{y}_i)
+\]</span> 这一过程类似于“盲人下山”，优化过程需要走一些“弯路”，但是最终也可以到达山底。由于SGD每一次只选择一个样本计算梯度来进行优化，因此SGD优化方法计算梯度很快。但是随机选择梯度的同时也会引入噪声，使得权重更新的方向不一定正确；此外，SGD也无法克服局部最优解的问题。</p></li>
+<li><p>批量梯度下降法</p>
+<p>批量梯度下降法指的是每次从训练集中抽取一个包含<span class="math inline">\(n&#39;\)</span>个样本的小批量，然后基于这一小批量样本的梯度值进行优化： <span class="math display">\[
+\boldsymbol{\theta}\leftarrow \boldsymbol{\theta}-\eta\sum_{i=1}^{n&#39;}\frac{1}{n&#39;}\nabla L(\boldsymbol{\theta},\boldsymbol{x}_i,\boldsymbol{y}_i)
+\]</span> 这种方法中和了随机梯度下降和标准梯度下降各自的优缺点，可以在每一步的梯度下降过程中选择大致正确的方向，而且训练速度也较快。</p></li>
+</ul>
+<p>无论是对于哪一种梯度下降优化算法而言，选择合适的学习率都很重要。如果学习率太高，则最终将无法收敛甚至是发散；而如果学习率太低，则会导致模型收敛太慢。而且梯度下降算法对所有的参数都使用相同的学习率，这并不适用于所有的参数更新。</p>
+<h2 id="动量优化法">动量优化法</h2>
+<p>动量优化方法是在梯度下降法的基础上做了进一步的优化，可以加速梯度下降的过程。动量来自于物理的类比，在动量算法中引入了变量<span class="math inline">\(\boldsymbol{v}\)</span>来充当“速度”角色，代表参数在参数空间移动的方向和速率；而负梯度则被当成是“加速度”。参数的更新规则如下： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{v}\leftarrow &amp;\alpha \boldsymbol{v}-\eta\sum_{i=1}^{n&#39;}\frac{1}{n&#39;}\nabla L(\boldsymbol{\theta},\boldsymbol{x}_i,\boldsymbol{y}_i) \\
+\boldsymbol{\theta}\leftarrow &amp;\boldsymbol{\theta}+\boldsymbol{v}
+\end{aligned}
+\]</span> 其中变量<span class="math inline">\(\boldsymbol{v}\)</span>累积了之前的梯度元素；超参数<span class="math inline">\(\alpha\)</span>则表示之前梯度元素的衰减速率（可以理解为物理上的摩擦力），如果<span class="math inline">\(\alpha=0\)</span>则等同于梯度下降，按照经验通常被设置为0.9；超参数<span class="math inline">\(\eta\)</span>则代表当前梯度对于优化方向的影响程度。</p>
+<p>上述动量优化方法的一种变体是Nesterov加速梯度（Nesterov Accelerated Gradient, NAG），它的参数更新规则如下： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{v}\leftarrow &amp;\alpha \boldsymbol{v}-\eta\sum_{i=1}^{n&#39;}\frac{1}{n&#39;}\nabla L(\boldsymbol{\theta}+\alpha \boldsymbol{v},\boldsymbol{x}_i,\boldsymbol{y}_i) \\
+\boldsymbol{\theta}\leftarrow &amp;\boldsymbol{\theta}+\boldsymbol{v}
+\end{aligned}
+\]</span> 这一变体与标准动量优化方法的区别在于梯度计算的位置上。Nestrov动量中，梯度计算的位置是在当前位置施加当前速度之后的新位置，这可以被理解为向标准动量方法中添加了一个校正因子。这相当于是提前预估它可能将要去的位置，然后将其使用到当前位置的参数更新中去。</p>
+<p>动量优化方法不仅可以加快优化速度，同时解决了随机梯度下降法中引入噪声以及梯度波动较大的问题。</p>
+<h2 id="自适应学习率优化算法">自适应学习率优化算法</h2>
+<p>在上述的优化算法中，学习率是一个常数，如果要调节的话只能手动操作。但是学习率通常对于模型的性能有着显著的影响，因此人们提出了一些自适应学习率算法。下面为一些常用的自适应学习率算法：</p>
+<ul>
+<li><p>AdaGrad</p>
+<p>AdaGrad算法独立地适应所有模型参数的学习率，缩放每个参数反比于其所有梯度历史平方值总和的平方根。具有较大偏导的参数有一个快速下降的学习率，而具有小偏导的参数则学习率下降较慢。它的参数更新过程如下： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{g} \leftarrow &amp; \sum_{i=1}^{n&#39;} \frac{1}{n&#39;} \nabla L(\boldsymbol{\theta},\boldsymbol{x}_i,\boldsymbol{y}_i) \\
+\boldsymbol{r}\leftarrow &amp; \boldsymbol{r}+\boldsymbol{g} \odot \boldsymbol{g} \\
+\boldsymbol{\theta} \leftarrow &amp; \boldsymbol{\theta }-\frac{\epsilon}{\delta+\sqrt{\boldsymbol{r}}}\odot \boldsymbol{g}\\
+\end{aligned}
+\]</span></p>
+<p>其中，<span class="math inline">\(\epsilon\)</span>为全局学习率，<span class="math inline">\(\delta\)</span>为一个用于保证数值计算稳定性的小常数。</p></li>
+<li><p>RMSProp</p>
+<p>相比于AdaGrad根据平方梯度的整个历史收缩学习率，RMSProp使用指数衰减平均的方法，丢弃历史较远的梯度值。RMSProp分为标准形式以及结合Nestrov动量的形式。其中标准形式的参数更新如下： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{g} \leftarrow &amp; \sum_{i=1}^{n&#39;} \frac{1}{n&#39;} \nabla L(\boldsymbol{\theta},\boldsymbol{x}_i,\boldsymbol{y}_i) \\
+\boldsymbol{r}\leftarrow &amp; \rho\boldsymbol{r}+(1-\rho)\boldsymbol{g} \odot \boldsymbol{g} \\
+\boldsymbol{\theta} \leftarrow &amp; \boldsymbol{\theta }-\frac{\epsilon}{\delta+\sqrt{\boldsymbol{r}}}\odot \boldsymbol{g}\\
+\end{aligned}
+\]</span> 结合Nestrov动量形式的参数更新如下： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{g} \leftarrow &amp; \sum_{i=1}^{n&#39;} \frac{1}{n&#39;} \nabla L(\boldsymbol{\theta}+\alpha \boldsymbol{v} ,\boldsymbol{x}_i,\boldsymbol{y}_i) \\
+\boldsymbol{r}\leftarrow &amp; \rho\boldsymbol{r}+(1-\rho)\boldsymbol{g} \odot \boldsymbol{g} \\
+\boldsymbol{v}\leftarrow &amp; \alpha \boldsymbol{v}-\frac{\epsilon}{\sqrt{\boldsymbol{r}}}\odot \boldsymbol{g} \\
+\boldsymbol{\theta} \leftarrow &amp; \boldsymbol{\theta }-\frac{\epsilon}{\delta+\sqrt{\boldsymbol{r}}}\odot \boldsymbol{g}\\
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(\epsilon\)</span>为全局学习率，<span class="math inline">\(\rho\)</span>为衰减速率，<span class="math inline">\(\alpha\)</span>为动量系数，<span class="math inline">\(\delta\)</span>为一个用于保证数值计算稳定性的小常数。</p></li>
+<li><p>Adam</p>
+<p>在Adam算法中，动量被并入了梯度一阶矩的估计；同时也包括了偏置修正，修正从原点初始化的一阶矩和二阶矩的估计。因此，Adam优化器对于超参数的选择相当鲁棒。 <span class="math display">\[
+\begin{aligned}
+\boldsymbol{g} \leftarrow &amp; \sum_{i=1}^{n&#39;} \frac{1}{n&#39;} \nabla L(\boldsymbol{\theta},\boldsymbol{x}_i,\boldsymbol{y}_i) \\
+\boldsymbol{s}\leftarrow &amp; \rho_1 \boldsymbol{s}+(1-\rho_1)\boldsymbol{g} \\
+\boldsymbol{r}\leftarrow &amp; \rho_2 \boldsymbol{r}+(1-\rho_2)\boldsymbol{g} \odot \boldsymbol{g} \\
+\boldsymbol{\hat{s}}\leftarrow &amp; \frac{\boldsymbol{s}}{1-\rho_1}\\
+\boldsymbol{\hat{r}}\leftarrow &amp; \frac{\boldsymbol{r}}{1-\rho_2}\\
+\boldsymbol{\theta} \leftarrow &amp; \boldsymbol{\theta }-\frac{\epsilon \boldsymbol \cdot {\hat{s}}}{\delta+\sqrt{\hat{\boldsymbol{r}}}}\\
+\end{aligned}
+\]</span> 其中，<span class="math inline">\(\epsilon\)</span>为全局学习率，<span class="math inline">\(\rho_1\)</span>和<span class="math inline">\(\rho_2\)</span>为衰减速率，<span class="math inline">\(\delta\)</span>为一个用于保证数值计算稳定性的小常数。</p>
+<p>在实际应用中，自适应学习率优化算法通常可以取得较好的效果。但是这些学习器没有哪个可以脱颖而出，因此在实际使用中，通常是结合实际问题以及使用者对于优化器的熟悉程度来选择。如果不确定如何选择的话，一般首选<strong>Adam优化器</strong>。</p></li>
+</ul>
+<h1 id="模型训练技巧">模型训练技巧</h1>
+<h2 id="数据预处理">数据预处理</h2>
+<p>常用的数据预处理方式包括但不限于：</p>
+<ul>
+<li>零均值化：将数据的均值变成0，这可以通过对每一个数据减去所有数据的均值来实现。</li>
+<li>标准化：将输入向量中每个特征的方差变为1。</li>
+<li>数据增强：对于图像而言，可以通过翻转、平移、裁剪、调节亮度对比度等操作来对训练数据进行扩充</li>
+</ul>
+<p>网络最终可以达到的效果与数据集的相关性很大，因此首先考虑的问题应当是对数据集做优化与扩充。</p>
+<h2 id="参数初始化">参数初始化</h2>
+<p>参数初始化是一定要做的工作，如果不做的话可能会减慢收敛速度，影响收敛结果，甚至造成NaN等一系列问题。如果要从头训练一个网络，常用的两种初始化方式包括：</p>
+<ul>
+<li>Xavier初始化：初始化参数服从均值为0，标准差为<span class="math inline">\(\sqrt{\frac{2}{n_{\text{in}}+n_{\text{out}}}}\)</span>的正态分布，或者是服从<span class="math inline">\([-\sqrt{\frac{6}{n_{\text{in}}+n_{\text{out}}}},\sqrt{\frac{6}{n_{\text{in}}+n_{\text{out}}}}]\)</span>的均匀分布，适用于tanh、sigmoid等激活函数</li>
+<li>He初始化：初始化参数服从均值为0，标准差为<span class="math inline">\(\sqrt{\frac{2}{n_{\text{in}}}}\)</span>的正态分布，或者是服从<span class="math inline">\([-\sqrt{\frac{6}{n_{\text{in}}}},\sqrt{\frac{6}{n_{\text{in}}}}]\)</span>的均匀分布，适用于ReLU激活函数</li>
+</ul>
+<p>如果我们要训练的网络与一个现有的网络所解决的问题类似，我们也可以使用迁移学习的办法，复用这个现有网络较低层（远离输出层）的结构与参数。这是因为较低层可能已经学会了如何检测图片中的一些低级特征，因此在一个与原问题类似的问题上，这些参数可能同样有效。</p>
+<p>此外，也可以使用一些预训练手段来生成模型的初始化参数。比如可以使用无监督的Autoencoder，或是使用一个辅助任务去预训练网络的模型参数。</p>
+<blockquote>
+<p>无论是Xavier初始化还是He初始化，它们生成的神经网络初始化参数通常大部分都是数值较小的浮点数。因此对于回归任务来说，如果要预测的值是一个比较大的数值，最好是让网络输出一个小的数值，然后通过固定的放缩和平移变换使其变为一个较大的数值。否则网络可能会很难收敛，或者是学习效果很差。</p>
+</blockquote>
+<h2 id="超参数调节">超参数调节</h2>
+<p>常用的超参数调节顺序为：</p>
+<ol type="1">
+<li>初始学习率。最开始的时候，初始学习率可以尝试1，0.1，0.01，0.001这四个，然后再做微调；或者时间充足的话，可以从一个很小的数字，按照指数增长往上调。学习率一般要随着训练进行衰减，衰减时期一般是验证集准确率不再上升，或者是固定轮数。</li>
+<li>隐藏层大小、mini-batch的大小。隐藏层大小一般尝试16、32、64、128，较大的隐藏层比较少见。Mini-batch的大小一般从128开始调整，太小或者太大都可能导致收敛结果变差。</li>
+<li>网络层数、其它超参数。Dropout的参数通常设为0.5；L2正则的参数通常从1.0左右开始调整；RNN的embedding size通常从128开始调整；梯度裁剪的值通常从10左右调整。</li>
+</ol>
+<h2 id="其它">其它</h2>
+<p>在构造模型时，通常有如下这些小技巧：</p>
+<ul>
+<li>BatchNorm+ReLU结合使用</li>
+<li>在靠近输出层的网络层使用Dropout，且Dropout的层数不宜过大</li>
+<li>中间隐藏层优先选择ReLU激活函数，RNN优先选择tanh激活函数；对于输出层，回归任务用线性输出，多分类任务使用softmax，二分类使用Sigmoid输出</li>
+</ul>
+<p>模型训练时的小技巧：</p>
+<ul>
+<li>将训练集的顺序打乱</li>
+<li>优先使用Adam与Momentum优化器</li>
+<li>设置随机数种子，方便复现模型训练的结果</li>
+<li>使用Early stopping技术</li>
+<li>做好训练记录与模型存档，包括每一轮的误差、模型参数、最优模型等</li>
+<li>先使用小的数据集进行模型检查以及调参，然后再使用全部数据集训练</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li>机器学习，周志华</li>
+<li>深度学习，GoodFellow</li>
+<li>Hands-on Machine Learning with Scikit-learn and TensorFlow</li>
+<li>https://www.bilibili.com/video/BV16x411V7Qg?p=2</li>
+<li>https://zhuanlan.zhihu.com/p/29815081</li>
+<li>https://blog.csdn.net/cheneykl/article/details/79687894</li>
+<li>https://blog.csdn.net/tyhj_sf/article/details/79932893</li>
+<li>https://blog.csdn.net/qq_25737169/article/details/78847691</li>
+<li>https://blog.csdn.net/qq_27825451/article/details/88707423</li>
+<li>https://zhuanlan.zhihu.com/p/34879333</li>
+<li>https://zhuanlan.zhihu.com/p/52749286</li>
+<li>https://blog.csdn.net/program_developer/article/details/80737724</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MDE3MDkwMi9hcnRpY2xlL2RldGFpbHMvODAwOTI2Mjg=">机器学习：各种优化器Optimizer的总结与比较_SanFancsgo的博客-CSDN博客_优化器<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9jbG91ZC50ZW5jZW50LmNvbS9kZXZlbG9wZXIvYXJ0aWNsZS8xMDc3NzQ5">一文看懂各种神经网络优化算法：从梯度下降到Adam方法 - 云+社区 - 腾讯云 (tencent.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzQxNjMxNjMx">你有哪些deep learning（rnn、cnn）调参的经验？ - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly96aHVhbmxhbi56aGlodS5jb20vcC8yNDcyMDk1NA==">深度学习网络调参技巧 - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2020/12/15/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E6%B7%B1%E5%BA%A6%E5%89%8D%E9%A6%88%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83/" title="深度学习-深度前馈网络与模型训练">http://lyf35.github.io/2020/12/15/深度学习-深度前馈网络与模型训练/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-%E7%89%A9%E7%90%86%E5%B1%82/" rel="prev" title="计算机网络-物理层">
+      <i class="fa fa-chevron-left"></i> 计算机网络-物理层
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/18/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" rel="next" title="操作系统-进程与线程">
+      操作系统-进程与线程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '0a8a8ff12cd04cf453ddf821b059779f',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+  <link rel="manifest" href="/images/site.webmanifest">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+  <meta name="msvalidate.01" content="<meta name="msvalidate.01" content="5D3796A5DDB32CC875380613FB613833" />">
+  <meta name="baidu-site-verification" content="<meta name="baidu-site-verification" content="kewHZtFYQk" />">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Helvetica:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-flat-top.min.css">
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lyf35.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":true,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":{"gitalk":{"order":-2}},"activeClass":"gitalk"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="基本概念 隐马尔科夫模型（Hidden Markov Model，HMM）是可以用于标注问题的统计学习模型，描述由隐藏的马尔科夫随机链随机生成观测序列的过程。HMM属于生成模型，在语音识别、自然语言处理、生物信息等领域有着广泛的应用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习-隐马尔科夫模型">
+<meta property="og:url" content="http://lyf35.github.io/2021/09/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%9A%90%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Yufei Luo&#39;s Blog">
+<meta property="og:description" content="基本概念 隐马尔科夫模型（Hidden Markov Model，HMM）是可以用于标注问题的统计学习模型，描述由隐藏的马尔科夫随机链随机生成观测序列的过程。HMM属于生成模型，在语音识别、自然语言处理、生物信息等领域有着广泛的应用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210920214550.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210920214554.png">
+<meta property="article:published_time" content="2021-09-14T12:00:35.000Z">
+<meta property="article:modified_time" content="2021-09-15T14:41:56.000Z">
+<meta property="article:author" content="Yufei Luo">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210920214550.png">
+
+<link rel="canonical" href="http://lyf35.github.io/2021/09/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%9A%90%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB%E6%A8%A1%E5%9E%8B/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>机器学习-隐马尔科夫模型 | Yufei Luo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+ <!--   <div class="headband"></div>-->
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yufei Luo's Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">But I was so much older then, I am younger than that now.</p>
+      <img class="custom-logo-image" src="/images/logo.png" alt="Yufei Luo's Blog">
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-计算机基础">
+
+    <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80" rel="section"><i class="fa fa-tags fa-fw"></i>计算机基础</a>
+
+  </li>
+        <li class="menu-item menu-item-机器学习">
+
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>机器学习</a>
+
+  </li>
+        <li class="menu-item menu-item-深度学习">
+
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" rel="section"><i class="fa fa-tags fa-fw"></i>深度学习</a>
+
+  </li>
+        <li class="menu-item menu-item-工程实践">
+
+    <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5" rel="section"><i class="fa fa-tags fa-fw"></i>工程实践</a>
+
+  </li>
+        <li class="menu-item menu-item-论文笔记">
+
+    <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0" rel="section"><i class="fa fa-tags fa-fw"></i>论文笔记</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%82%E6%B5%8B%E5%BA%8F%E5%88%97%E7%9A%84%E7%94%9F%E6%88%90"><span class="nav-number">1.3.</span> <span class="nav-text">观测序列的生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">基本问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E8%AE%A1%E7%AE%97%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">概率计算算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E8%AE%A1%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">直接计算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">前向算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E5%90%91%E7%AE%97%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text">后向算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">学习算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0"><span class="nav-number">3.1.</span> <span class="nav-text">监督学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#baum-welch%E7%AE%97%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">Baum-Welch算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E7%AE%97%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">预测算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.</span> <span class="nav-text">近似算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%B4%E7%89%B9%E6%AF%94%E7%AE%97%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">维特比算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yufei Luo"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">Yufei Luo</p>
+  <div class="site-description" itemprop="description">哪怕什么真理无穷，进一寸有进一寸的欢喜</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lyf35"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOmx5ZjEyMzQwMDAwMDBAMTYzLmNvbQ==" title="E-Mail → mailto:lyf1234000000@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
+
+
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2x5ZjM1" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lyf35.github.io/2021/09/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%9A%90%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="Yufei Luo">
+      <meta itemprop="description" content="哪怕什么真理无穷，进一寸有进一寸的欢喜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yufei Luo's Blog">
+    </span>
+
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习-隐马尔科夫模型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-09-14 20:00:35" itemprop="dateCreated datePublished" datetime="2021-09-14T20:00:35+08:00">2021-09-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-15 22:41:56" itemprop="dateModified" datetime="2021-09-15T22:41:56+08:00">2021-09-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">理论知识</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/09/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%9A%90%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB%E6%A8%A1%E5%9E%8B/" class="post-meta-item leancloud_visitors" data-flag-title="机器学习-隐马尔科夫模型" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="基本概念">基本概念</h1>
+<p>隐马尔科夫模型（Hidden Markov Model，HMM）是可以用于标注问题的统计学习模型，描述由隐藏的马尔科夫随机链随机生成观测序列的过程。HMM属于生成模型，在语音识别、自然语言处理、生物信息等领域有着广泛的应用。</p>
+<span id="more"></span>
+<h2 id="定义">定义</h2>
+<p>隐马尔科夫模型是关于时序的概率模型，它描述由一个隐藏的马尔科夫链随机生成不可观测的状态随机序列，再由各个状态生成一个观测而产生观测随机序列的过程。隐马尔科夫链随机生成的状态的序列被称为状态序列；每个状态生成一个观测，由此产生的观测的随机序列被称为观测序列。序列中的每一个位置又可以看作一个时刻。</p>
+<p>隐马尔科夫模型由初始概率分布、状态转移概率分布以及观测概率分布确定。用数学语言可以描述如下：</p>
+<p>设<span class="math inline">\(Q=\{q_1,q_2,\dots,q_N\}\)</span>是所有可能的状态的集合，<span class="math inline">\(V=\{v_1,v_2,\dots,v_M\}\)</span>是所有可能的观测的集合。<span class="math inline">\(I=\{i_1,i_2,\dots,i_T\}\)</span>是长度为<span class="math inline">\(T\)</span>的状态序列，<span class="math inline">\(O=\{o_1,o_2,\dots,o_T\}\)</span>是对应的观测序列。、</p>
+<p><span class="math inline">\(A=[a_{ij}]_{N\times N}\)</span>是状态转移概率矩阵，其中<span class="math inline">\(a_{ij}=P(i_{t+1}=q_j|i_t=q_i);i,j=1,2,\dots,N\)</span>指的是在时刻<span class="math inline">\(t\)</span>处于状态<span class="math inline">\(q_i\)</span>的条件下在时刻<span class="math inline">\(t+1\)</span>转移到状态<span class="math inline">\(q_j\)</span>的概率。</p>
+<p><span class="math inline">\(B=[b_j(k)]_{N\times M}\)</span>为观测概率矩阵，其中<span class="math inline">\(b_j(k)=P(o_t=v_k|i_t=q_j),k=1,2,\dots,M;j=1,2,\dots,N\)</span>是在时刻<span class="math inline">\(t\)</span>处于状态<span class="math inline">\(q_j\)</span>的条件下生成观测<span class="math inline">\(v_k\)</span>的概率。</p>
+<p><span class="math inline">\(\pi=(\pi_i)\)</span>为初始状态概率向量，其中<span class="math inline">\(\pi_i=p(i_1=q_i),i=1,2,\dots,N\)</span>是时刻<span class="math inline">\(t=1\)</span>处于状态<span class="math inline">\(q_i\)</span>的概率。</p>
+<p>隐马尔科夫模型由初始状态概率向量<span class="math inline">\(\pi\)</span>、状态转移概率矩阵<span class="math inline">\(A\)</span>和观测概率矩阵<span class="math inline">\(B\)</span>决定。<span class="math inline">\(\pi\)</span>和<span class="math inline">\(A\)</span>决定状态序列，<span class="math inline">\(B\)</span>决定观测序列。因此一个隐马尔科夫模型<span class="math inline">\(\lambda\)</span>可以用三元符号表示： <span class="math display">\[
+\lambda=(A,B,\pi)
+\]</span> 状态转移矩阵<span class="math inline">\(A\)</span>和初始状态概率向量<span class="math inline">\(\pi\)</span>确定了隐藏的马尔科夫链，生成不可观测的状态序列；观测概率矩阵<span class="math inline">\(B\)</span>确定了如何从状态生成序列，与状态序列总和确定了如何产生观测序列。</p>
+<p>从定义可知，隐马尔科夫模型做了两个基本假设：</p>
+<ol type="1">
+<li>齐次马尔科夫性假设：假设隐藏的马尔科夫链在任意时刻<span class="math inline">\(t\)</span>的状态只依赖于前一时刻的状态，与其他时刻的状态和观测无关，也与时刻<span class="math inline">\(t\)</span>无关</li>
+<li>观测独立性假设：即假设任意时刻的观测只依赖于该时刻的马尔科夫链的状态，与其他观测及状态无关。</li>
+</ol>
+<p>隐马尔科夫模型可以用于标注，标注问题指的是给定观测的序列预测其预测的标记序列，此时状态就对应于标记。可以假设标注问题的数据是由隐马尔科夫模型生成的，这样就可以用隐马尔科夫模型的学习与预测算法进行标注。</p>
+<h2 id="示例">示例</h2>
+<p>下面是一个简单的隐马尔科夫模型的例子。我们假设有4个盒子，每个盒子里都装有红白两种颜色的球，盒子里的红白球数量如下表：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">盒子</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">红球数</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">白球数</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2</td>
+</tr>
+</tbody>
+</table>
+<p>按照如下办法抽球，从而产生一个球的颜色观测序列：开始时，从4个盒子里面等概率地随机选取一个盒子，从中随机抽取一个球，记录颜色之后放回；然后从当前盒子转移到下一个盒子，如果当前盒子为1，那么下个盒子一定是2，如果当前是盒子2或3，那么分别以概率0.4和0.6转移到左边或者右边的盒子，如果当前为盒子4，那么以各0.5的概率停留在盒子4或者转移到盒子3；确定转移的盒子之后，再从中随机抽取一个球，记录其颜色并放回。如此重复5次，得到一个球的颜色观测序列<span class="math inline">\(O=\{o_1,o_2,\dots,o_5\}\)</span>。在这一过程中，观察者只能观察到球的颜色序列，观测不到球是从哪个盒子取出的。</p>
+<p>在这个例子中有两个随机序列：一个是盒子的序列，即状态序列；另一个是球颜色的序列，即观测序列。前者是隐藏的，只有后者是可观测到的。这个例子便为一个隐马尔科夫模型的例子。根据所给条件，我们可以确定如下的模型三要素：</p>
+<ul>
+<li>初始概率分布为<span class="math inline">\(\pi=(0.25,0.25,0.25,0.25)\)</span></li>
+<li>状态转移概率分布为<span class="math inline">\(A=\begin{bmatrix}0 &amp; 1 &amp; 0 &amp; 0 \\ 0.4 &amp; 0 &amp; 0.6 &amp; 0 \\0 &amp; 0.4 &amp; 0 &amp; 0.6 \\0 &amp; 0 &amp; 0.5 &amp; 0.5 \end{bmatrix}\)</span></li>
+<li>观测概率分布为<span class="math inline">\(B=\begin{bmatrix} 0.5 &amp; 0.5 \\ 0.3 &amp; 0.7 \\0.6 &amp; 0.4 \\0.8 &amp; 0.2 \end{bmatrix}\)</span></li>
+</ul>
+<h2 id="观测序列的生成">观测序列的生成</h2>
+<p>根据隐马尔科夫模型的定义，一个长度为<span class="math inline">\(T\)</span>的观测序列<span class="math inline">\(O=\{o_1,o_2,\dots,o_T\}\)</span>的生成过程如下：</p>
+<ol type="1">
+<li>按照初始状态分布<span class="math inline">\(\pi\)</span>产生状态<span class="math inline">\(i_1\)</span></li>
+<li><span class="math inline">\(t=1\sim T\)</span>，做如下操作：
+<ol type="1">
+<li>按照状态<span class="math inline">\(i_t\)</span>的观测概率分布<span class="math inline">\(b_{i_t}(k)\)</span>生成<span class="math inline">\(o_t\)</span></li>
+<li>按照状态<span class="math inline">\(i_t\)</span>的状态转移概率分布<span class="math inline">\(\{a_{i_t i_{t+1}}\}\)</span>产生状态<span class="math inline">\(i_{t+1}\)</span></li>
+</ol></li>
+</ol>
+<h2 id="基本问题">基本问题</h2>
+<p>对于隐马尔科夫模型有3个基本问题：</p>
+<ol type="1">
+<li>概率计算问题：给定模型<span class="math inline">\(\lambda\)</span>和观测序列<span class="math inline">\(O\)</span>，计算在模型<span class="math inline">\(\lambda\)</span>下观测序列<span class="math inline">\(O\)</span>出现的概率<span class="math inline">\(P(O|\lambda)\)</span></li>
+<li>学习问题：已知观测序列<span class="math inline">\(O\)</span>，估计模型<span class="math inline">\(\lambda\)</span>的参数，使得在该模型下观测序列概率<span class="math inline">\(P(O|\lambda)\)</span>最大</li>
+<li>预测问题：也称为解码问题，已知模型<span class="math inline">\(\lambda\)</span>和观测序列<span class="math inline">\(O\)</span>，求观测序列<span class="math inline">\(O\)</span>最有可能对应的状态序列<span class="math inline">\(I\)</span></li>
+</ol>
+<h1 id="概率计算算法">概率计算算法</h1>
+<h2 id="直接计算法">直接计算法</h2>
+<p>给定模型<span class="math inline">\(\lambda=(A,B,\pi)\)</span>和观测序列<span class="math inline">\(O=(o_1,o_2,\dots,o_T)\)</span>，要计算观测序列<span class="math inline">\(O\)</span>出现的概率<span class="math inline">\(P(O|\lambda)\)</span>，最直接的办法是按照概率公式直接计算。通过列举所有可能的长度为<span class="math inline">\(T\)</span>的状态序列<span class="math inline">\(I\)</span>，求各个状态序列与观测序列<span class="math inline">\(O\)</span>的联合概率<span class="math inline">\(P(O,I|\lambda)\)</span>，然后对所有可能的状态序列求和得到<span class="math inline">\(P(O|\lambda)\)</span>。</p>
+<p>状态序列<span class="math inline">\(I=(i_1,i_2,\dots,i_T)\)</span>的概率是： <span class="math display">\[
+P(I|\lambda)=\pi_{i_1}a_{i_1 i_2}a_{i_2 i_3}\cdots a_{i_{T-1} i_T}
+\]</span> 对于固定的状态序列<span class="math inline">\(I=(i_1,i_2,\dots,i_T)\)</span>，观测序列<span class="math inline">\(O=(o_1,o_2,\dots,o_T)\)</span>出现的概率为： <span class="math display">\[
+P(O|I,\lambda)=b_{i_1}(o_1)b_{i_2}(o_2)\cdots b_{i_T}(o_T)
+\]</span> <span class="math inline">\(O\)</span>和<span class="math inline">\(I\)</span>同时出现的联合概率为： <span class="math display">\[
+\begin{aligned}
+P(O,I|\lambda)=&amp; P(O|I,\lambda)P(I|\lambda) \\
+=&amp; \pi_{i_1}b_{i_1}(o_1)a_{i_1 i_2}b_{i_2}(o_2)\cdots a_{i_{T-1} i_T}b_{i_T}(o_T)
+\end{aligned}
+\]</span> 但是上述公式的计算量很大，因此不可行。一种有效计算观测序列概率<span class="math inline">\(P(O|\lambda)\)</span>的算法为前向-后向算法。</p>
+<h2 id="前向算法">前向算法</h2>
+<p>首先给出前向概率的定义。给定隐马尔科夫模型<span class="math inline">\(\lambda\)</span>，定义到时刻<span class="math inline">\(t\)</span>部分观测序列为<span class="math inline">\(o_1,o_2,\dots,o_t\)</span>且状态为<span class="math inline">\(q_i\)</span>的概率为前向概率，记为： <span class="math display">\[
+\alpha_t(i)=P(o_1,o_2,\dots,o_t,i_t=q_i|\lambda)
+\]</span> 前向概率以及观测序列概率可以通过递推的方式求得：</p>
+<ol type="1">
+<li>计算初值：<span class="math inline">\(\alpha_1(i)=\pi_i b_i(o_1)\)</span>，<span class="math inline">\(i=1,2,\dots,N\)</span>。这一步是初始化前向概率，相当于计算初始时刻状态<span class="math inline">\(i_1=q_i\)</span>和观测<span class="math inline">\(o_1\)</span>的联合概率</li>
+<li>递推：对于<span class="math inline">\(t=1,2,\dots,T-1\)</span>，计算<span class="math inline">\(\alpha_{t+1}(i)=[\sum_{j=1}^{N}\alpha_t(j)a_{ji}]b_i(o_{t+1})\)</span>，<span class="math inline">\(i=1,2,\dots,N\)</span>。这一步计算时刻<span class="math inline">\(1\sim t+1\)</span>部分观测序列为<span class="math inline">\(o_1,o_2,\dots,o_t,o_{t+1}\)</span>且在时刻<span class="math inline">\(t+1\)</span>处于状态<span class="math inline">\(q_i\)</span>的前向概率。这一公式代表同时考虑<span class="math inline">\(t\)</span>时刻所有可能的<span class="math inline">\(N\)</span>个状态，并对其求和。</li>
+<li>终止：<span class="math inline">\(P(O|\lambda)=\sum_{i=1}^{N} \alpha_T(i)\)</span></li>
+</ol>
+<p>前向算法实际是基于状态序列的路径结构递推计算<span class="math inline">\(P(O|\lambda)\)</span>的算法，它高效的关键是局部计算前向概率，然后利用路径结构将前向概率“递推”到全局。这样，每一次计算直接引用前一个时刻的计算结果，从而避免了重复计算。递推的计算流程可以表示为下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210920214550.png" alt="image-20210914234546383" style="zoom:67%;" /></p>
+<h2 id="后向算法">后向算法</h2>
+<p>首先给出后向概率的定义。给定隐马尔科夫模型<span class="math inline">\(\lambda\)</span>，定义在时刻<span class="math inline">\(t\)</span>状态为<span class="math inline">\(q_i\)</span>的条件下，从<span class="math inline">\(t+1\)</span>到<span class="math inline">\(T\)</span>的部分观测序列为<span class="math inline">\(o_{t+1},o_{t+2},\dots,o_{T}\)</span>的概率为后向概率，记为 <span class="math display">\[
+\beta_t(i)=P(o_{t+1},o_{t+2},\dots,o_{T}|i_t=q_i,\lambda)
+\]</span> 可以用递推的办法求得后向概率<span class="math inline">\(\beta_t(i)\)</span>以及观测序列概率<span class="math inline">\(P(O|\lambda)\)</span>。</p>
+<p>观测序列概率的后向算法步骤如下：</p>
+<ol type="1">
+<li>初始化：<span class="math inline">\(\beta_T(i)=1\)</span>，<span class="math inline">\(i=1,2,\dots,N\)</span></li>
+<li>对于<span class="math inline">\(t=T-1,T-2,\dots,1\)</span>，计算<span class="math inline">\(\beta_t(i)=\sum_{j=1}^{N}a_{ij}b_j(o_{t+1})\beta_{t+1}(j)\)</span>，<span class="math inline">\(i=1,2,\dots,N\)</span></li>
+<li><span class="math inline">\(P(O|\lambda)=\sum_{i=1}^{N}\pi_i b_i(o_1)\beta_1(i)\)</span></li>
+</ol>
+<p>后向算法与前向算法的思路基本类似，相当于是前向算法的“镜像”版本。后向概率的递推计算流程如下图：</p>
+<p><img data-src="https://raw.githubusercontent.com/lyf35/blog_figures/main/img/20210920214554.png" alt="image-20210914235830617" style="zoom:67%;" /></p>
+<h1 id="学习算法">学习算法</h1>
+<h2 id="监督学习">监督学习</h2>
+<p>假设已给的训练数据包含<span class="math inline">\(S\)</span>个长度相同的观测序列和对应的状态序列<span class="math inline">\(\{(O_1,I_1),(O_2,I_2),\dots,(O_S,I_S)\}\)</span>，那么可以用极大似然估计法来估计隐马尔科夫模型的参数。</p>
+<p>具体方法为：</p>
+<ol type="1">
+<li><p>估计转移概率<span class="math inline">\(a_{ij}\)</span></p>
+<p>设样本中时刻<span class="math inline">\(t\)</span>处于状态<span class="math inline">\(i\)</span>，时刻<span class="math inline">\(t+1\)</span>处于状态<span class="math inline">\(j\)</span>的频数为<span class="math inline">\(A_{ij}\)</span>，那么状态转移概率<span class="math inline">\(a_{ij}\)</span>的估计值为： <span class="math display">\[
+\hat{a_{ij}}=\frac{A_{ij}}{\sum_{j=1}^{N}A_{ij}}
+\]</span></p></li>
+<li><p>观测概率<span class="math inline">\(b_j(k)\)</span>的估计</p>
+<p>设样本中状态为<span class="math inline">\(j\)</span>并观测为<span class="math inline">\(k\)</span>的频数为<span class="math inline">\(B_{jk}\)</span>，那么状态为<span class="math inline">\(j\)</span>观测为<span class="math inline">\(k\)</span>的概率<span class="math inline">\(b_j(k)\)</span>的估计为： <span class="math display">\[
+\hat{b}_j(k)=\frac{B_{jk}}{\sum_{k=1}^{M}B_{jk}}
+\]</span></p></li>
+<li><p>初始状态概率<span class="math inline">\(\pi_i\)</span>的估计</p>
+<p><span class="math inline">\(\hat{\pi}\)</span>为<span class="math inline">\(S\)</span>个样本中初始状态为<span class="math inline">\(q_i\)</span>的概率。</p></li>
+</ol>
+<h2 id="baum-welch算法">Baum-Welch算法</h2>
+<p>由于监督学习需要使用标注数据，而人工标注训练数据往往代价很高，因此有时候会利用非监督学习的办法。我们假定给定训练数据只包含了<span class="math inline">\(S\)</span>个长度为<span class="math inline">\(T\)</span>的观测序列<span class="math inline">\(\{O_1,O_2,\dots,O_S\}\)</span>，而没有对应的状态序列，目标是学习隐马尔科夫模型<span class="math inline">\(\lambda=(A,B,\pi)\)</span>的参数。我们将观测序列数据看作是观测数据<span class="math inline">\(O\)</span>，状态序列数据看作不可观测的隐数据<span class="math inline">\(I\)</span>，那么隐马尔科夫模型事实上是一个含有隐变量的概率模型 <span class="math display">\[
+P(O|\lambda)=\sum_{I}P(O|I,\lambda)P(I|\lambda)
+\]</span> 它的参数学习可以通过EM算法来实现，步骤如下：</p>
+<ol type="1">
+<li><p>确定完全数据的对数似然函数</p>
+<p>所有观测数据可以写为<span class="math inline">\(O=\{o_1,o_2,\dots,o_T\}\)</span>，所有隐数据写为<span class="math inline">\(I=\{i_1,i_2,\dots,i_T\}\)</span>，完全数据为<span class="math inline">\((O,I)=\{o_1,o_2,\dots,o_T,i_1,i_2,\dots,i_T\}\)</span>，完全数据的对数似然函数为<span class="math inline">\(\log P(O,I|\lambda)\)</span></p></li>
+<li><p>EM算法的E步：求<span class="math inline">\(Q\)</span>函数<span class="math inline">\(Q(\lambda,\bar{\lambda})\)</span>（公式中略去了对于<span class="math inline">\(\lambda\)</span>而言的常数因子<span class="math inline">\(1/P(O|\bar{\lambda})\)</span>） <span class="math display">\[
+Q(\lambda,\bar{\lambda})=\sum_{I}P(O,I|\bar{\lambda})\log P(O,I|\lambda)
+\]</span> 其中<span class="math inline">\(\bar{\lambda}\)</span>为隐马尔科夫模型参数的当前估计值，<span class="math inline">\(\lambda\)</span>是要极大化的隐马尔科夫模型参数。</p>
+<p>由于 <span class="math display">\[
+P(O,I|\lambda)=\pi_{i_1}b_{i_1}(o_1)a_{i_1 i_2}b_{i_2}(o_2)\cdots a_{i_{T-1} i_T}b_{i_T}(o_T)
+\]</span> 因此函数<span class="math inline">\(Q(\lambda,\bar{\lambda})\)</span>可以写成： <span class="math display">\[
+Q(\lambda,\bar{\lambda})=\sum_{I}\log \pi_{i_1}P(O,I|\bar{\lambda})+\sum_{I}(\sum_{t=1}^{T-1}\log a_{i_t i_{t+1}})P(O,I|\bar{\lambda})+\sum_{I}(\sum_{t=1}^{T}\log b_{i_t}(o_t))P(O,I|\bar{\lambda})
+\]</span></p></li>
+<li><p>EM算法的M步：极大化<span class="math inline">\(Q\)</span>函数，求模型参数<span class="math inline">\(A\)</span>，<span class="math inline">\(B\)</span>和<span class="math inline">\(\pi\)</span></p>
+<p>由于要极大化的参数在上式中单独出现在3个项中，所以只需要对各项分别做极大化：</p>
+<ol type="1">
+<li><p>第1项可以写为： <span class="math display">\[
+\sum_{I}\log \pi_{i_1}P(O,I|\bar{\lambda})=\sum_{i=1}^{N}\log \pi_i P(O,i_1=i|\bar{\lambda})
+\]</span> 其中<span class="math inline">\(\pi_i\)</span>满足约束条件<span class="math inline">\(\sum_{i=1}^{N}\pi_i=1\)</span>，可以利用拉格朗日乘子法解得： <span class="math display">\[
+\pi_i=\frac{P(O,i_1=i|\bar{\lambda})}{P(O|\bar{\lambda})}
+\]</span></p></li>
+<li><p>第2项可以写为： <span class="math display">\[
+\sum_{I}(\sum_{t=1}^{T-1}\log a_{i_t i_{t+1}})P(O,I|\bar{\lambda})=\sum_{i=1}^{N}\sum_{j=1}^{N}\sum_{t=1}^{T-1}\log a_{ij}P(O,i_t=i,i_{t+1}=j|\bar{\lambda})
+\]</span> 类似地，使用具有约束条件<span class="math inline">\(\sum_{j=1}^N a_{ij}=1\)</span>的拉格朗日乘子法可以计算出： <span class="math display">\[
+a_{ij}=\frac{\sum_{t=1}^{T-1}P(O,i_t=i,i_{t+1}=j|\bar{\lambda})}{\sum_{t=1}^{T-1}P(O,i_t=i|\bar{\lambda})}
+\]</span></p></li>
+<li><p>第3项可以写为： <span class="math display">\[
+\sum_{I}(\sum_{t=1}^{T}\log b_{i_t}(o_t))P(O,I|\bar{\lambda})=\sum_{j=1}^{N}\sum_{t=1}^{T}\log b_j(o_t)P(O,i_t=j|\bar{\lambda})
+\]</span> 同样使用拉格朗日乘子法，约束条件为<span class="math inline">\(\sum_{k=1}^{M}b_j(k)=1\)</span>。需要注意的是，此时只有在<span class="math inline">\(o_t=v_k\)</span>时，<span class="math inline">\(b_j(o_t)\)</span>对<span class="math inline">\(b_j(k)\)</span>的偏导数才不为0。以<span class="math inline">\(I(o_t=v_k)\)</span>表示，可得： <span class="math display">\[
+b_j(k)=\frac{\sum_{t=1}^T P(O,i_t=j|\bar{\lambda})I(o_t=v_k)}{\sum_{t=1}^T P(O,i_t=j|\bar{\lambda})}
+\]</span></p></li>
+</ol>
+<p>上述公式里面的概率值需要通过前向或者后向公式进行计算。</p></li>
+</ol>
+<h1 id="预测算法">预测算法</h1>
+<h2 id="近似算法">近似算法</h2>
+<p>近似算法的思想是，在每个时刻<span class="math inline">\(t\)</span>选择在该时刻最有可能出现的状态<span class="math inline">\(i_t^*\)</span>，从而得到一个状态序列<span class="math inline">\(I^*=(i_1^*,i_2^*,\cdots,i_T^*)\)</span>，将它作为预测的结果。</p>
+<p>给定隐马尔科夫模型<span class="math inline">\(\lambda\)</span>和观测序列<span class="math inline">\(O\)</span>，在时刻<span class="math inline">\(t\)</span>处于状态<span class="math inline">\(q_i\)</span>的概率<span class="math inline">\(\gamma_t(i)\)</span>是： <span class="math display">\[
+\gamma_t(i)=\frac{\alpha_t(i)\beta_t(i)}{P(O|\lambda)}=\frac{\alpha_t(i)\beta_t(i)}{\sum_{j=1}^{N}\alpha_t(j)\beta_t(j)}
+\]</span> 在每一个时刻<span class="math inline">\(t\)</span>最有可能的状态<span class="math inline">\(i_t^*\)</span>是： <span class="math display">\[
+i_t^*=\arg \max_{i\le i\le N}[\gamma_t(i)], t=1,2,\dots,T
+\]</span> 从而得到状态序列<span class="math inline">\(I^*=(i_1^*,i_2^*,\cdots,i_T^*)\)</span>。</p>
+<p>近似算法的优点是计算简单，其缺点是无法保证预测的状态序列整体是最有可能的状态序列，因为预测的状态序列可能有实际不发生的部分。事实上，上述方法得到的状态序列有可能存在转移状态为0的相邻状态。尽管如此，这一算法仍然是有用的。</p>
+<h2 id="维特比算法">维特比算法</h2>
+<p>维特比算法实际是用动态规划算法求解隐马尔科夫预测问题，即使用动态规划求概率最大路径（最优路径）。此时一条路径对应于一个状态序列。</p>
+<p>根据动态规划原理，最优路径具有如下特性：如果最优路径为时刻<span class="math inline">\(t\)</span>通过结点<span class="math inline">\(i_t^*\)</span>，那么这一路径从结点<span class="math inline">\(i_t^*\)</span>到终点<span class="math inline">\(i^*_T\)</span>的部分路径，对于从<span class="math inline">\(i_t^*\)</span>到<span class="math inline">\(i^*_T\)</span>的所有可能的部分路径来说，必须是最优的。假如不是这样，那么从<span class="math inline">\(i_t^*\)</span>到<span class="math inline">\(i^*_T\)</span>就会有另一条更好的部分路径存在，如果把它和从<span class="math inline">\(i_1^*\)</span>到<span class="math inline">\(i^*_t\)</span>的部分路径连接起来，就可以得到一条比原路径更优的路径。</p>
+<p>依据这一原理，我们只需要从时刻<span class="math inline">\(t=1\)</span>开始，递推地计算在时刻<span class="math inline">\(t\)</span>状态为<span class="math inline">\(i\)</span>的各条部分路径的最大概率，直至得到时刻<span class="math inline">\(t=T\)</span>状态为<span class="math inline">\(i\)</span>的各条路径的最大概率。时刻<span class="math inline">\(t=T\)</span>的最大概率即为最优路径的概率<span class="math inline">\(P^*\)</span>，也同时得到了最优路径的终点<span class="math inline">\(i_T^*\)</span>。之后，为了找出最优路径的各个节点，从终点<span class="math inline">\(i_T^*\)</span>开始，由后向前逐步求得结点<span class="math inline">\(i_{T-1}^*,\dots,i_1^*\)</span>，从而得到最优路径<span class="math inline">\(I^*=(i_1^*,i_2^*,\cdots,i_T^*)\)</span>。</p>
+<p>定义<span class="math inline">\(\delta_t(i)\)</span>为时刻<span class="math inline">\(t\)</span>状态为<span class="math inline">\(i\)</span>的所有单个路径<span class="math inline">\((i_1.i_2,\dots,i_t)\)</span>中概率的最大值，即 <span class="math display">\[
+\delta_t(i)=\max_{i_1,i_2,\dots,i_{t-1}} P(i_t=i,i_{t-1},\dots,i_1,o_t,\dots,o_1|\lambda),~i=1,2,\dots,N
+\]</span> 由定义可知<span class="math inline">\(\delta\)</span>的递推公式： <span class="math display">\[
+\begin{aligned}
+\delta_{t+1}(i)=&amp;\max_{i_1,i_2,\dots,i_t} P(i_{t+1}=i,i_t,\dots,i_1,o_{t+1},\dots,o_1|\lambda) \\
+=&amp; \max_{1\le j \le N} [\delta_t(j)a_{ji}]b_i(o_{t+1}) ,i=1,2,\dots,N;t=1,2,\dots,T-1
+\end{aligned}
+\]</span> 定义<span class="math inline">\(\psi_t(i)\)</span>为在时刻<span class="math inline">\(t\)</span>状态为<span class="math inline">\(i\)</span>的所有单个路径<span class="math inline">\((i_1.i_2,\dots,i_t)\)</span>中，概率最大路径的第<span class="math inline">\(t-1\)</span>个结点： <span class="math display">\[
+\psi_t(i)=\arg\max_{1\le j \le N} [\delta_{t-1}(j)a_{ji}], i=1,2,\dots,N
+\]</span> 维特比算法的步骤如下：</p>
+<ol type="1">
+<li><p>初始化： <span class="math display">\[
+\delta_1(i)=\pi_i b_i(o_1) ,i=1,2,\dots,N \\
+\psi_1(i)=0, i=1,2,\dots,N
+\]</span></p></li>
+<li><p>递推：对于<span class="math inline">\(t=2,3,\dots,T\)</span>，计算 <span class="math display">\[
+\delta_t(i)=\max_{1\le j \le N} [\delta_{t-1}(j)a_{ji}]b_i(o_t), i=1,2,\dots,N\\
+\psi_t(i)=\arg\max_{i\le j\le N}[\delta_{t-1}(j)a_{ji}], i=1,2,\dots,N
+\]</span></p></li>
+<li><p>终止： <span class="math display">\[
+P^*=\max_{1\le i \le N}\delta_T(i) \\
+i_T^*=\arg \max_{1\le i \le N}[\delta_T(i)]
+\]</span></p></li>
+<li><p>最优路径回溯：对<span class="math inline">\(t=T-1,T-2,\dots,1\)</span>， <span class="math display">\[
+i^*_t=\psi_{t+1}(i^*_{t+1})
+\]</span> 从而求得最优路径<span class="math inline">\(I^*=(i_1^*,i_2^*,\cdots,i_T^*)\)</span></p></li>
+</ol>
+<h1 id="参考">参考</h1>
+<ol type="1">
+<li>统计学习方法，李航</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzIwOTYyMjQw">如何用简单易懂的例子解释隐马尔可夫模型？ - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzIwMTM2MTQ0">如何通俗地讲解 viterbi 算法？ - 知乎 (zhihu.com)<i class="fa fa-external-link-alt"></i></span></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Yufei Luo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lyf35.github.io/2021/09/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%9A%90%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB%E6%A8%A1%E5%9E%8B/" title="机器学习-隐马尔科夫模型">http://lyf35.github.io/2021/09/14/机器学习-隐马尔科夫模型/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/06/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E5%9B%BE%E5%83%8F%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC/" rel="prev" title="深度学习-图像对抗样本">
+      <i class="fa fa-chevron-left"></i> 深度学习-图像对抗样本
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/17/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA/" rel="next" title="机器学习-条件随机场">
+      机器学习-条件随机场 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yufei Luo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">22:56</span>
+</div>
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      const visitors = document.querySelector('.leancloud_visitors');
+      const url = decodeURI(visitors.id);
+      const title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            const counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      const visitors = document.querySelectorAll('.leancloud_visitors');
+      const entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz","app_key":"0TDwohU7eO4yHTn4tley8PtE","server_url":"https://leancloud.cn/dashboard/data.html?appid=ypNNXSdcGIIoldC5BBmViS2g-gzGzoHsz#/","security":false};
+    function fetchData(api_server) {
+      const Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    const api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/npm/ribbon.js@1/dist/ribbon.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/next-theme/pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+    <div class="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments('#gitalk-container', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '4dcdc02d24075b0e9d3a',
+      clientSecret: '53cf2cb8b89b9d4bba922bb19bda1290f0d0bf95',
+      repo        : 'lyf35.github.io',
+      owner       : 'lyf35',
+      admin       : ['lyf35'],
+      id          : '6ef8ad05f0b623969573d6044115f400',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
